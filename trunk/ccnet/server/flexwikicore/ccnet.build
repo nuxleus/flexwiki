@@ -1,14 +1,27 @@
 <project name="ccnet" default="go">
   <target name="go">
+
+    <property name="cvs.tag" value="Build${label-to-apply}" />
+
+    <!-- Tag the tree with the build label -->
+    <exec program="cvs.exe"
+	  workingdir="build">
+      <arg value="tag" />
+      <arg value="-F" />         <!-- Move tag if it already exists -->
+      <arg value="-R" />         <!-- Tag recursively -->
+      <arg value="${cvs.tag}" /> <!-- Tag name -->
+    </exec>
     
-    <!-- Update the build directory with the latest sources -->
+    <!-- Update the build directory with the sources we just tagged -->
     <exec program="cvs.exe"
 	      workingdir="build">
-      <arg value="update" /> <!-- Command -->
-      <arg value="-P" /> <!-- Prune empty dirs -->
-      <arg value="-R" /> <!-- Recursive -->
-      <arg value="-C" /> <!-- Overwrite modified files -->
-      <arg value="-d" /> <!-- Create new repository directories -->
+      <arg value="update" />     <!-- Command -->
+      <arg value="-P" />         <!-- Prune empty dirs -->
+      <arg value="-R" />         <!-- Recursive -->
+      <arg value="-C" />         <!-- Overwrite modified files -->
+      <arg value="-d" />         <!-- Create new repository directories -->
+      <arg value="-r" />         <!-- Update by tag -->
+      <arg value="${cvs.tag}" /> <!-- Argument to -r -->
     </exec>
 
     <!-- Override the version numbers when building from CCNet -->
