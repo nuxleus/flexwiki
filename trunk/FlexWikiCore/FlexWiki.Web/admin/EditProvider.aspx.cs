@@ -16,6 +16,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Web;
+using System.Web.Mail;
 using System.Web.SessionState;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -133,7 +134,7 @@ namespace FlexWiki.Web.Admin
 				{
 					if (!isCreate && !each.IsPersistent)
 						continue;	// skip create only parms for non-create scenario
-					if (provider.ValidateParameter(each.ID, GetParm(each.ID)) != null)
+					if (provider.ValidateParameter(TheFederation, each.ID, GetParm(each.ID)) != null)
 					{
 						err = true;
 						break;
@@ -142,7 +143,7 @@ namespace FlexWiki.Web.Admin
 
 				if (!err)
 				{
-					errors = provider.ValidateAggregate(isCreate);
+					errors = provider.ValidateAggregate(TheFederation, isCreate);
 					if (errors == null)
 					{
 						// Great!  All's OK.  Create/modify the provider
@@ -155,10 +156,11 @@ namespace FlexWiki.Web.Admin
 							provider.SetParameter(each.ID, GetParm(each.ID));
 							provider.SavePersistentParametersToDefinition(def);
 						}
+						IList namespaces = null;
 						if (isCreate)
 						{
 							TheFederation.CurrentConfiguration.NamespaceMappings.Add(def);
-							provider.CreateNamespaces(TheFederation);
+							namespaces = provider.CreateNamespaces(TheFederation);
 						}
 						else
 						{
@@ -169,9 +171,23 @@ namespace FlexWiki.Web.Admin
 
 						TheFederation.CurrentConfiguration.WriteToFile(TheFederation.CurrentConfiguration.FederationNamespaceMapFilename);
 						if (isCreate)
+						{
 							UIResponse.WritePara("The provider has been created.");
+							if (provider.OwnerMailingAddress != null)
+								NotifyOwnerOfCreation(provider.OwnerMailingAddress, namespaces);
+							UIResponse.WritePara("Namespaces created:");
+							UIResponse.WriteStartUnorderedList();
+							foreach (string ns in namespaces)
+							{
+								string url = TheLinkMaker.LinkToTopic(TheFederation.ContentBaseForNamespace(ns).HomePageTopicName);
+								UIResponse.WriteListItem("<a href='" + url + "'>" + HTMLWriter.Escape(ns) + "</a>");
+							}
+							UIResponse.WriteEndUnorderedList();
+						}
 						else
+						{
 							UIResponse.WritePara("The provider has been updated.");
+						}
 						UIResponse.WritePara(UIResponse.Link("providers.aspx", "View provider list"));
 						return;
 					}
@@ -208,7 +224,7 @@ namespace FlexWiki.Web.Admin
 				}
 				bool readOnly = !isCreate && !provider.CanParameterBeEdited(each.ID);
 				UIResponse.WriteInputField(each.ID, each.Title, each.Description, val, readOnly);
-				string error = provider.ValidateParameter(each.ID, val);
+				string error = provider.ValidateParameter(TheFederation, each.ID, val);
 				if (error != null)
 					UIResponse.WriteFieldError(UIResponse.Escape(error));
 			}
@@ -226,6 +242,34 @@ namespace FlexWiki.Web.Admin
 			UIResponse.WriteEndForm();				
 
 		}
+
+		void NotifyOwnerOfCreation(string ownerMailingAddress, IList namespaces)
+		{
+			MailMessage msg = new MailMessage();
+			string adminMail = SendRequestsTo;
+			msg.To = ownerMailingAddress;
+			msg.BodyFormat = MailFormat.Html;
+			msg.From = adminMail;
+			msg.Subject = "FlexWiki creation request completed";
+			string body = @"<p>Your request has been completed.</p>";
+			foreach (string ns in namespaces)
+			{
+				string url = TheLinkMaker.LinkToTopic(TheFederation.ContentBaseForNamespace(ns).HomePageTopicName);
+				body += @"<p>The namespace " + ns + " has been created.  You can visit the home page at <a href='" + url + "'>" + HTMLWriter.Escape(url) + "</a>.</p>";
+			}
+			msg.Body = body;
+			string fail = SendMail(msg);
+			if (fail == null)
+				UIResponse.Write(@"<p>Mail has been sent notifying the namespace owner of creation of the namespace(s).");
+			else
+			{
+				Response.Write(@"<p>Mail could not be sent to the namespace oner notifying them of creation..");
+				Response.Write(@"<p>The error that occurred is: <pre>
+" + EscapeHTML(fail) 
+					+ "</pre>");
+			}
+		}
+
 
 		static string ParmNameSaveNow = "SaveNow";
 		string SaveNowParm

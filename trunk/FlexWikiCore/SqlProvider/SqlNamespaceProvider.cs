@@ -29,6 +29,14 @@ namespace SqlProvider
 			static public string Description = "Description";
 		};
 		
+		public string OwnerMailingAddress
+		{
+			get
+			{
+				return Contact;
+			}
+		}
+
 		public SqlNamespaceProvider()
 		{
 		}
@@ -50,8 +58,10 @@ namespace SqlProvider
 		/// Can also be used to create initial content in the namespaces.
 		/// </summary>
 		/// <param name="aFed"></param>
-		public void CreateNamespaces(Federation aFed)
+		public IList CreateNamespaces(Federation aFed)
 		{
+			ArrayList answer = new ArrayList();
+
 			if( SqlNamespaceProvider.Exists(Namespace, ConnectionString) )
 			{
 				throw new Exception("Namespace with the specified name already exists.");
@@ -70,7 +80,8 @@ namespace SqlProvider
 
 			// whoever is last should write a new version
 			store.SetFieldValue(store.DefinitionTopicName.LocalName, "Description", NamespaceDescription, true);
-
+			answer.Add(Namespace);
+			return ArrayList.ReadOnly(answer);
 		}
 
 		/// <summary>
@@ -195,7 +206,7 @@ namespace SqlProvider
 		/// <param name="val">Parameter value to validate.</param>
 		/// <returns>returns null to indicate success otherwise returns 
 		/// the error message to be displayed.</returns>
-		public string ValidateParameter(string param, string val)
+		public string ValidateParameter(Federation aFed, string param, string val)
 		{
 			if (param == ConfigurationParameterNames.Namespace)
 			{
@@ -203,6 +214,9 @@ namespace SqlProvider
 				// names for the FileSystemNameSpaceProvider
 				if (val == "")
 					return "Namespace can not be null or blank";
+				if (aFed.ContentBaseForNamespace(val) != null)
+					return "Namespace already exists";
+
 			}
 			else if (param == ConfigurationParameterNames.ConnectionString)
 			{
@@ -255,7 +269,7 @@ namespace SqlProvider
 			return param != ConfigurationParameterNames.Namespace;
 		}
 
-		public IList ValidateAggregate(bool isCreate)
+		public IList ValidateAggregate(Federation aFed, bool isCreate)
 		{
 			return null;
 		}

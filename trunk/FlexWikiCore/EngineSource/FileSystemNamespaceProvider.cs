@@ -24,6 +24,14 @@ namespace FlexWiki
 		{
 		}
 
+		public string OwnerMailingAddress
+		{
+			get
+			{
+				return Contact;
+			}
+		}
+
 		public ArrayList _ParameterDescriptors;
 		public IList ParameterDescriptors
 		{
@@ -161,19 +169,21 @@ namespace FlexWiki
 				throw new Exception("Unknown parameter: " + param);
 		}
 
-		public string ValidateParameter(string param, string val)
+		public string ValidateParameter(Federation aFed, string param, string val)
 		{
 			if (param == Names.Namespace)
 			{
 				if (val == "")
 					return "Namespace can not be blank";
+				if (aFed.ContentBaseForNamespace(val) != null)
+					return "Namespace already exists";
 				// TODO -- check other constraints (valid chars) for namespaces
 			}
 
 			return null;
 		}
 
-		public IList ValidateAggregate(bool isCreate)
+		public IList ValidateAggregate(Federation aFed, bool isCreate)
 		{
 			// no errors
 			return null;
@@ -195,7 +205,7 @@ namespace FlexWiki
 			aFed.RegisterNamespace(store);
 		}
 
-		public void CreateNamespaces(Federation aFed)
+		public IList CreateNamespaces(Federation aFed)
 		{
 			FileSystemStore store = new FileSystemStore(aFed, Namespace, DefaultedRoot);
 			aFed.RegisterNamespace(store);
@@ -208,6 +218,10 @@ namespace FlexWiki
 
 			// whoever is last should write a new version
 			store.SetFieldValue(store.DefinitionTopicName.LocalName, "Description", NamespaceDescription, true);
+
+			ArrayList answer = new ArrayList();
+			answer.Add(Namespace);
+			return ArrayList.ReadOnly(answer);
 		}
 
 		public void UpdateNamespaces(Federation aFed)

@@ -26,6 +26,14 @@ namespace CalendarProvider
 		}
 		#region INamespaceProvider Members
 
+		public string OwnerMailingAddress
+		{
+			get
+			{
+				return null;
+			}
+		}
+
 		public int Year;
 
 		public string GetParameter(string paramID)
@@ -94,17 +102,20 @@ namespace CalendarProvider
 			}
 		}
 
-		public void CreateNamespaces(Federation aFed)
+		public IList CreateNamespaces(Federation aFed)
 		{
 			int month = 1;
+			ArrayList answer = new ArrayList();
 			foreach (string each in NamespaceNames)
 			{
 				CalendarStore store = new CalendarStore(aFed, each, Year, month);
+				answer.Add(store.Namespace);
 				aFed.RegisterNamespace(store);
 			}
+			return ArrayList.ReadOnly(answer);
 		}
 
-		public string ValidateParameter(string paramID, string proposedValue)
+		public string ValidateParameter(Federation aFed, string paramID, string proposedValue)
 		{
 			if (paramID != "Year")
 				throw new Exception("Only parameter is 'Year'.");
@@ -140,7 +151,7 @@ namespace CalendarProvider
 			return true;
 		}
 
-		public System.Collections.IList ValidateAggregate(bool isCreate)
+		public System.Collections.IList ValidateAggregate(Federation aFed, bool isCreate)
 		{
 			return null;
 		}

@@ -245,6 +245,14 @@ namespace FlexWiki
 			}
 		}
 
+		public AbsoluteTopicName HomePageTopicName
+		{
+			get
+			{
+				return new AbsoluteTopicName(HomePage, Namespace);
+			}
+		}
+
 
 		/// <summary>
 		/// Answer the human-friendly title for the ContentBase (Title if available, else Namespace)

@@ -30,9 +30,10 @@ namespace FlexWiki
 		/// <summary>
 		/// Called when a provider is first created.  Must register all associated namespaces with the federation.
 		/// Can also be used to create initial content in the namespaces.
+		/// Answer a read-only IList of namespaces created (as strings).
 		/// </summary>
 		/// <param name="aFed"></param>
-		void CreateNamespaces(Federation aFed);
+		IList CreateNamespaces(Federation aFed);
 		/// <summary>
 		/// Called when a provider definition is changed.  Should make sure the right changes happen in the federation
 		/// to reflect the updated provider definition (e.g., removing/adding/updating namespace registrations).
@@ -45,10 +46,11 @@ namespace FlexWiki
 
 		string Description { get; }
 		IList ParameterDescriptors { get; }
-		string ValidateParameter(string paramID, string proposedValue);
+		string ValidateParameter(Federation aFed, string paramID, string proposedValue);
 		void SetParameter(string paramID, string proposedValue);
 		string GetParameter(string paramID);
 		bool CanParameterBeEdited(string paramID);
-		IList ValidateAggregate(bool isCreate);	
+		IList ValidateAggregate(Federation aFed, bool isCreate);	
+		string OwnerMailingAddress {get;}
 	}
 }
