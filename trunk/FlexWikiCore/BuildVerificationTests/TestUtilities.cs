@@ -98,7 +98,14 @@ namespace FlexWiki.BuildVerificationTests
         foreach (TestTopic topic in ns.Topics)
         {
           LocalTopicName name = new LocalTopicName(topic.Name); 
-          contentBase.WriteTopic(name, topic.Content); 
+          foreach (string text in topic.ContentHistory)
+          {
+            name.Version = AbsoluteTopicName.NewVersionStringForUser("BuildVerificationTests");
+            contentBase.WriteTopicAndNewVersion(name, text); 
+            //CA We need to sleep a little while so we don't try to write two topics 
+            //CA within the same time slice, or they get the same version name. 
+            System.Threading.Thread.Sleep(30); 
+          }
         }
       }
 

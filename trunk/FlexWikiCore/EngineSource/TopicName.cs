@@ -113,8 +113,12 @@ namespace FlexWiki
 		/// <summary>
 		/// Answer a version string that can be used to identify a topic version for the supplied user.
 		/// </summary>
-		/// <param name="user">a username string</param>
-		/// <returns></returns>
+		/// <param name="user">A username string.</param>
+		/// <returns>A new version string.</returns>
+		/// <remarks>Note that calling this method very rapidly with the same user can result in duplicate
+		/// version strings being returned, as DateTime only has a resolution of about 15ms. The fix for this
+		/// is to sleep at least 30ms between calls to this method when specifying the same user, or to 
+		/// specify different users.</remarks>
 		public static string NewVersionStringForUser(string user)
 		{
 			string u = user;

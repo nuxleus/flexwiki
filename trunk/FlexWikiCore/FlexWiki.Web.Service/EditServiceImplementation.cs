@@ -101,24 +101,24 @@ namespace FlexWiki.Web.Services
 
 			return new ContentBaseWireFormat(TheFederation.DefaultContentBase);
 		}
-#if false
-
 		/// <summary>
 		/// Returns the AbsoluteTopicNames for a given Namespace.
 		/// </summary>
 		/// <param name="cb">The ContentBase.</param>
 		/// <returns>A AbsoluteTopicNameCollection of the AbsoluteTopicNames for the ContentBase</returns>
 		[WebMethod]
-		public AbsoluteTopicNameCollection GetAllTopics(ContentBase cb)
+		public AbsoluteTopicNameWireFormatCollection GetAllTopics(ContentBaseWireFormat cb)
 		{
-			AbsoluteTopicNameCollection topicNames = new AbsoluteTopicNameCollection();
+			AbsoluteTopicNameWireFormatCollection topicNames = new AbsoluteTopicNameWireFormatCollection();
 			 
 			foreach (AbsoluteTopicName ab in TheFederation.ContentBaseForNamespace(cb.Namespace).AllTopics(false))
 			{
         // We need to also return the current version
         ContentBase cb2 = TheFederation.ContentBaseForTopic(ab); 
-        AbsoluteTopicName atn = new AbsoluteTopicName(ab.Name, ab.Namespace); 
-        string version = cb2.LatestVersionForTopic(ab);
+        AbsoluteTopicNameWireFormat atn = new AbsoluteTopicNameWireFormat();
+        atn.Name = ab.Name;
+        atn.Namespace = ab.Namespace; 
+        string version = cb2.LatestVersionForTopic(ab.LocalName);
         if (version == null)
         {
           // There's only one version, so just use the empty string
@@ -137,22 +137,27 @@ namespace FlexWiki.Web.Services
 		/// <param name="topicName">An AbsoluteTopicName.</param>
 		/// <returns>Formatted HTML string.</returns>
 		[WebMethod]
-		public string GetHtmlForTopic(AbsoluteTopicName topicName)
+		public string GetHtmlForTopic(AbsoluteTopicNameWireFormat topicName)
 		{
-			return InternalGetHtmlForTopic(topicName, null);
+      AbsoluteTopicName atn = new AbsoluteTopicName(topicName.Name, topicName.Namespace); 
+			return InternalGetHtmlForTopic(atn, null);
 		}
 
-		/// <summary>
+    /// <summary>
 		/// Returns the formatted HTML for a previous version of a given Topic. 
 		/// </summary>
 		/// <param name="topicName">An AbsoluteTopicName.</param>
 		/// <param name="version">The version string to return. The list of known version strings for a given Topic can be obtained by calling <see cref="GetVersionsForTopic"/>.</param>
 		/// <returns>Formatted HTML string.</returns>
 		[WebMethod]
-		public string GetHtmlForTopicVersion(AbsoluteTopicName topicName, string version)
+		public string GetHtmlForTopicVersion(AbsoluteTopicNameWireFormat topicName, string version)
 		{
-			return InternalGetHtmlForTopic(topicName, version);
+      AbsoluteTopicName atn = new AbsoluteTopicName(topicName.Name, topicName.Namespace); 
+			return InternalGetHtmlForTopic(atn, version);
 		}
+
+#if false
+
 
 		/// <summary>
 		/// Returns the raw Text for a version of a given Topic. 
@@ -251,30 +256,6 @@ namespace FlexWiki.Web.Services
 			}
 		}
 
-		private string InternalGetHtmlForTopic(AbsoluteTopicName topicName, string version)
-		{
-			_linkMaker = new LinkMaker(RootUrl(Context.Request));
-
-			if (version != null && version == topicName.Version)
-			{
-				return FlexWiki.Formatting.Formatter.FormattedTopic(topicName, Formatting.OutputFormat.HTML, false,  TheFederation, _linkMaker, null);
-			}
-			else
-			{
-				IEnumerable changeList;
-				changeList = TheFederation.ContentBaseForTopic(topicName).AllChangesForTopic(topicName);
-
-				foreach (TopicChange change in changeList)
-				{
-					if (change.Version == version)
-					{
-						return FlexWiki.Formatting.Formatter.FormattedTopic(change.Topic, Formatting.OutputFormat.HTML, false,  TheFederation, _linkMaker, null);
-					}
-				}
-
-				return FlexWiki.Formatting.Formatter.FormattedTopic(topicName, Formatting.OutputFormat.HTML, false,  TheFederation, _linkMaker, null);
-			}
-		}
 		private void WriteNewTopic(AbsoluteTopicName theTopic, string postedTopicText, string visitorIdentityString, string version)
 		{
 			_linkMaker = new LinkMaker(RootUrl(Context.Request));
@@ -319,6 +300,30 @@ namespace FlexWiki.Web.Services
         return visitorIdentityString;
       }
 		}
+    private string InternalGetHtmlForTopic(AbsoluteTopicName topicName, string version)
+    {
+      _linkMaker = new LinkMaker(RootUrl(Context.Request));
+
+      if (version != null && version == topicName.Version)
+      {
+        return FlexWiki.Formatting.Formatter.FormattedTopic(topicName, Formatting.OutputFormat.HTML, false,  TheFederation, _linkMaker, null);
+      }
+      else
+      {
+        IEnumerable changeList;
+        changeList = TheFederation.ContentBaseForTopic(topicName).AllChangesForTopic(topicName.LocalName);
+
+        foreach (TopicChange change in changeList)
+        {
+          if (change.Version == version)
+          {
+            return FlexWiki.Formatting.Formatter.FormattedTopic(change.Topic, Formatting.OutputFormat.HTML, false,  TheFederation, _linkMaker, null);
+          }
+        }
+
+        return FlexWiki.Formatting.Formatter.FormattedTopic(topicName, Formatting.OutputFormat.HTML, false,  TheFederation, _linkMaker, null);
+      }
+    }
 
     private string RootUrl(HttpRequest req)
     {

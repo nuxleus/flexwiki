@@ -16,18 +16,23 @@ namespace FlexWiki.BuildVerificationTests
 {
   internal sealed class TestTopic
   {
-    private string content; 
+    private string[] contentHistory; 
     private string name; 
 
-    internal TestTopic(string name, string content)
+    internal TestTopic(string name, params string[] contentHistory)
     {
       this.name = name; 
-      this.content = content; 
+      this.contentHistory = contentHistory; 
     }
 
-    internal string Content
+    internal string LatestContent
     {
-      get { return content; }
+      get { return contentHistory[contentHistory.Length - 1]; }
+    }
+
+    internal string[] ContentHistory
+    {
+      get { return contentHistory; }
     }
 
     internal string Name
