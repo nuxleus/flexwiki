@@ -195,7 +195,7 @@ namespace FlexWiki.Web
 		</div>
 		<div class='EditZone' id='EditZone' >
 			<form id='Form1' method='post'>
-			<textarea class='EditBox' onkeydown='if (document.all && event.keyCode == 9) {  event.returnValue= false; document.selection.createRange().text = String.fromCharCode(9)} ' rows='40' cols='100' name='Text1' onfocus='textArea_OnFocus(event)' onblur='textArea_OnBlur(event)'>");
+			<textarea class='EditBox' onkeydown='if (document.all && event.keyCode == 9) {  event.returnValue= false; document.selection.createRange().text = String.fromCharCode(9)} ' rows='20' cols='50' name='Text1' onfocus='textArea_OnFocus(event)' onblur='textArea_OnBlur(event)'>");
 
 			string content = null;
 			if (DefaultContentBase.TopicExists(TheTopic))

@@ -23,14 +23,16 @@ function Document_OnKeyPress(event)
 {
 	if (event != null) // FireFox only
 	{
-		if(event.keyCode == 9)
+		if (event.keyCode == 9)
 		{
 			textArea = document.forms["Form1"].Text1;
 			selStart = textArea.selectionStart;
 			selEnd = textArea.selectionEnd;
+			selTop = textArea.scrollTop;
 			textArea.value = textArea.value.substring(0, selStart) + String.fromCharCode(9) + textArea.value.substring(selEnd, textArea.textLength);
 			textArea.selectionStart = selEnd + 1;
 			textArea.selectionEnd = selEnd + 1;
+			textArea.scrollTop = selTop;
 			return false;
 		}
 	}
@@ -129,7 +131,8 @@ function MainWidth()
 .EditZone {
 	background: lemonchiffon;
 	overflow: hidden;
-	height: expression(CalcEditZoneHeight());
+	height: 100%;
+	height: expression(CalcEditZoneHeight());  /* IE only, other browsers ignore expression */
 	width: 100%;
 }
 
@@ -155,6 +158,7 @@ function MainWidth()
 .EditBox {
     font: 9pt Courier New;
     background: whitesmoke;
+    height: 100%;
 	height: expression(CalcEditBoxHeight());
 	width: 100%;
 }

@@ -378,7 +378,9 @@
 .Main 
 {
 	/* BACKGROUND: url(/watermark.jpeg) white fixed no-repeat center center; */
-	height: expression(MainHeight());
+	height: 100%;
+	height: expression(MainHeight()); /* IE only, other browsers ignore expression */
+	width: 100%;
 	width: expression(MainWidth());
 	overflow: auto;
 	color: #303030;
@@ -388,8 +390,10 @@
 
 .EditMain 
 {
-	BACKGROUND: white; 
+	BACKGROUND: white;
+	height: 100%;
 	height: expression(MainHeight());
+	width: 100%;
 	width: expression(MainWidth());
 	overflow: auto;
 	color: #303030;
