@@ -21,6 +21,8 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 using System.Text;
+using System.Xml;
+
 using FlexWiki.Newsletters;
 
 namespace FlexWiki.Web
@@ -60,89 +62,109 @@ namespace FlexWiki.Web
 			string preferredNamespace = Request.QueryString["namespace"];
 			string newsletterName = Request.QueryString["newsletter"];
 
-			if (newsletterName != null)
-				NewsletterFeed(newsletterName);
+			XmlTextWriter newsletter = new XmlTextWriter(Response.Output);
+
+			newsletter.Formatting = System.Xml.Formatting.Indented;
+
+			if (newsletterName != null) 
+			{
+				NewsletterFeed(newsletterName, newsletter);
+			}
 			else
 			{
-				if (preferredNamespace == null)
+				if (preferredNamespace == null) 
+				{
 					preferredNamespace  = DefaultNamespace;
-				NamespaceFeed(preferredNamespace);
+				}
+				NamespaceFeed(preferredNamespace, newsletter);
 			}
 		}
 
-		void NewsletterFeed(string newsletterName)
+		void NewsletterFeed(string newsletterName, XmlTextWriter newsletter)
 		{
 			NewsletterManager nm = new NewsletterManager(TheFederation, TheLinkMaker);
 			TopicInfo info = TheFederation.GetTopicInfo(newsletterName);
-			if (!info.Exists)
+			if (!info.Exists) 
+			{
 				throw new Exception("Newsletter " +  newsletterName + "  does not exist.");
-			if (!info.HasProperty("Topics"))
+			}
+			if (!info.HasProperty("Topics")) 
+			{
 				throw new Exception("Topic " +  newsletterName + " is not a newsletter; no Topics property defined.");
+			}
 			string desc = info.GetProperty("Description");
-			if (desc == null)
+			if (desc == null) 
+			{
 				desc = "";
+			}
 
-			Response.Write(@"<rss version='2.0' >
-<channel>
-    <title>" + newsletterName + @"</title>
-    <description>" + desc + @"</description>
-    <link>" + TheLinkMaker.LinkToTopic(info.Fullname) + @"</link>");
+			newsletter.WriteStartDocument();
+			newsletter.WriteStartElement("rss");
+			newsletter.WriteAttributeString("version", "2.0");
+			newsletter.WriteStartElement("channel");
+			newsletter.WriteElementString("title", newsletterName);
+			newsletter.WriteElementString("description", desc);
+
+			Uri link = new Uri(TheLinkMaker.LinkToTopic(info.Fullname, true), false);
+			newsletter.WriteElementString("link", link.AbsoluteUri);
 
 			DateTime last = DateTime.MinValue;
 			foreach (AbsoluteTopicName topic in nm.AllTopicsForNewsletter(info.Fullname))
 			{
-				Response.Write(FormmatedRSSItem(topic));
+				FormatRSSItem(topic, newsletter);
 				TopicInfo each = new TopicInfo(TheFederation, topic);
 				DateTime lm = each.LastModified;
-				if (lm > last)
+				if (lm > last) 
+				{
 					last = lm;
+				}
 			}
 
-			Response.Write("<lastBuildDate>");
-			Response.Write(last.ToUniversalTime().ToString("r"));
-			Response.Write("</lastBuildDate>");
+			newsletter.WriteElementString("lastBuildDate", last.ToUniversalTime().ToString("r"));
 
-			Response.Write(@"</channel>
-</rss>");
-
+			newsletter.WriteEndElement();
+			newsletter.WriteEndElement();
 		}
 
 
-		void NamespaceFeed(string preferredNamespace)
+		void NamespaceFeed(string preferredNamespace, XmlWriter newsletter)
 		{
 			bool inherited = "y".Equals(Request.QueryString["inherited"]);
 			
 			ContentBase cb = TheFederation.ContentBaseForNamespace(preferredNamespace);
 
-			Response.Write(@"<rss version='2.0' >
-<channel>
-    <title>" + (cb.Title != null ? cb.Title : cb.Namespace) + @"</title>
-    <description>" + cb.Description + @"</description>
-    <link>" + TheLinkMaker.LinkToTopic(new AbsoluteTopicName(preferredNamespace + "." + TheFederation.ContentBaseForNamespace(preferredNamespace).HomePage)) + @"</link>");
+			newsletter.WriteStartDocument();
+			newsletter.WriteStartElement("rss");
+			newsletter.WriteAttributeString("version", "2.0");
+			newsletter.WriteStartElement("channel");
+			newsletter.WriteElementString("title", (cb.Title != null ? cb.Title : cb.Namespace));
+			newsletter.WriteElementString("description", cb.Description);
 
-			Response.Write("<lastBuildDate>");
-			Response.Write(cb.LastModified(true).ToUniversalTime().ToString("r"));
-			Response.Write("</lastBuildDate>");
+			Uri link = new Uri(
+				TheLinkMaker.LinkToTopic(
+				new AbsoluteTopicName(
+				preferredNamespace + 
+				"." + 
+				TheFederation.ContentBaseForNamespace(preferredNamespace).HomePage
+				),
+				true
+				),
+				false
+				);
 
-			foreach (AbsoluteTopicName topic in cb.AllTopicsSortedLastModifiedDescending())
-			{
-				Response.Write(FormmatedRSSItem(topic));
+			newsletter.WriteElementString("link", link.AbsoluteUri);
+
+			newsletter.WriteElementString(
+				"lastBuildDate", 
+				cb.LastModified(true).ToUniversalTime().ToString("r")
+				);
+
+			foreach (AbsoluteTopicName topic in cb.AllTopics(inherited)) {
+				FormatRSSItem(topic, newsletter);
 			}
 
-			if (inherited)
-			{
-				foreach (ContentBase each in cb.ImportedContentBases)
-				{
-					foreach (AbsoluteTopicName topic in each.AllTopicsSortedLastModifiedDescending())
-					{
-						Response.Write(FormmatedRSSItem(topic));
-					}					
-				}
-			}
-
-			Response.Write(@"</channel>
-</rss>");
-
+			newsletter.WriteEndElement();
+			newsletter.WriteEndElement();
 		}
 
 		/// <summary>
@@ -150,52 +172,47 @@ namespace FlexWiki.Web
 		/// </summary>
 		/// <param name="topic"></param>
 		/// <returns></returns>
-		public string FormmatedRSSItem(AbsoluteTopicName topic)
+		public void FormatRSSItem(AbsoluteTopicName topic, XmlWriter newsletter)
 		{
-			StringBuilder builder = new StringBuilder();
 			ContentBase cb = TheFederation.ContentBaseForNamespace(topic.Namespace);
 
-			string textHistory = FormattedRSSTopicHistory(topic, false);
+			IEnumerable changes = TheFederation.GetTopicChanges(topic);
 
-			if (textHistory == null)
-				return "";
+			IEnumerator e = changes.GetEnumerator();
+			if (!e.MoveNext())
+				return;	// No history!
 
-			string htmlHistory = FormattedRSSTopicHistory(topic, true);
-
-			builder.Append("\n    <item>\n");
-            
-			builder.Append("      <title>");
-			builder.Append(topic.Name);
-			builder.Append("</title>\n");
-            
-			builder.Append("      <description>");
-			builder.Append(textHistory);
-			builder.Append("</description>\n");
-            
-			builder.Append("      <body xmlns=\"http://www.w3.org/1999/xhtml\">");
-			builder.Append(htmlHistory);
-			builder.Append("</body>\n");
-            
-			builder.Append("      <created>");
-			builder.Append(cb.GetTopicCreationTime(topic.LocalName).ToUniversalTime().ToString("r"));
-			builder.Append("</created>\n");
-            
-			builder.Append("      <link>");
-			builder.Append(TheLinkMaker.LinkToTopic(topic));
-			builder.Append("</link>\n");
-            
-			builder.Append("      <pubDate>");
-			builder.Append(cb.GetTopicLastWriteTime(topic.LocalName).ToUniversalTime().ToString("r"));
-			builder.Append("</pubDate>\n");
-            
-			builder.Append("      <guid>");
-			builder.Append(TheLinkMaker.LinkToTopic(topic));
-			builder.Append("</guid>\n");
-            
-			builder.Append("    </item>\n");
+			newsletter.WriteStartElement("item");
+			newsletter.WriteElementString("title", topic.Name);
 			
-			return builder.ToString();
+			newsletter.WriteStartElement("description");
+			FormatRSSTopicHistory(topic, false, newsletter, changes);
+			newsletter.WriteEndElement();
+			
+			newsletter.WriteStartElement("body");
+			newsletter.WriteAttributeString("xmlns", @"http://www.w3.org/1999/xhtml");
+			FormatRSSTopicHistory(topic, true, newsletter, changes);
+			newsletter.WriteEndElement();
+
+			newsletter.WriteElementString(
+				"created", 
+				TheFederation.GetTopicCreationTime(topic).ToUniversalTime().ToString("r")
+				);
+	 
+			Uri link = new Uri(TheLinkMaker.LinkToTopic(topic, true), false);
+			newsletter.WriteElementString("link", link.AbsoluteUri);
+
+			newsletter.WriteElementString(
+				"pubDate", 
+				TheFederation.GetTopicModificationTime(topic).ToUniversalTime().ToString("r")
+				);
+
+			newsletter.WriteElementString("guid", link.ToString());
+
+			newsletter.WriteEndElement();
 		}
+
+		static int MaxChanges = 10;
 
 		/// <summary>
 		/// Answer the RSS topic history for a given topic
@@ -203,52 +220,99 @@ namespace FlexWiki.Web
 		/// <param name="topic"></param>
 		/// <param name="useHTML"></param>
 		/// <returns></returns>
-		string FormattedRSSTopicHistory(AbsoluteTopicName topic, bool useHTML)
+		void FormatRSSTopicHistory(AbsoluteTopicName topic, bool useHTML, XmlWriter newsletter, IEnumerable changesForThisTopic)
 		{
-			ContentBase cb = TheFederation.ContentBaseForNamespace(topic.Namespace);
-
-			IEnumerable changesForThisTopic = cb.AllChangesForTopicSince(topic.LocalName, DateTime.MinValue);
-			StringBuilder builder = new StringBuilder();
 			ArrayList names = new ArrayList();
+			Hashtable changeInfo = new Hashtable();		// key = author, value = TopicChange
 			int count = 0;
 			foreach (TopicChange change in changesForThisTopic)
 			{
+				if (count >= MaxChanges)
+				{
+					break;
+				}
 				count++;
-				if (names.Contains(change.Author))
+				if (names.Contains(change.Author)) 
+				{
 					continue;
+				}
 				names.Add(change.Author);
+				changeInfo[change.Author] = change;
 			}
-			if (count == 0)
-				return null;
+
+			if (count == 0) 
+			{
+				return;
+			}
 
 			if (useHTML)
 			{
-				builder.AppendFormat("{0} was changed {1} time{2} by \n",
-					"<a title=\"" + topic.Fullname + "\" href='" + TheLinkMaker.LinkToTopic(topic) + "'>" + topic.Name + "</a>",
-					count,
-					(count == 1 ? "" : "s"));
+				Uri link = new Uri(TheLinkMaker.LinkToTopic(topic, true), false);
+				newsletter.WriteStartElement("a");
+				newsletter.WriteAttributeString("title", HTMLWriter.Escape(topic.Fullname));
+				newsletter.WriteAttributeString("href", link.AbsoluteUri);
+				newsletter.WriteString(HTMLWriter.Escape(topic.Name));
+				newsletter.WriteEndElement();
 			}
 			else
 			{
-				builder.AppendFormat("{0} was changed {1} time{2} by \n",
-					topic.Name,
-					count,
-					(count == 1 ? "" : "s"));
+				newsletter.WriteString(HTMLWriter.Escape(topic.Name));
 			}
+
+			newsletter.WriteString(
+				string.Format(" was most recently changed by: ")
+				);
 
 			bool firstName = true;
+
+			if (useHTML)
+			{
+				newsletter.WriteStartElement("ul");
+			}
+
 			foreach (string eachAuthor in names)
 			{
-				if (!firstName)
-					builder.Append(", ");
+				if (useHTML)
+				{
+					newsletter.WriteStartElement("li");
+				}
+				else 
+				{
+					if (!firstName)
+					{
+						newsletter.WriteString(", ");
+					}
+				}
 				firstName = false;
-				builder.Append(eachAuthor);
+
+				newsletter.WriteString(HTMLWriter.Escape(eachAuthor) + " (" + ((TopicChange)(changeInfo[eachAuthor])).Timestamp.ToString() + ")");
+				
+				if(useHTML)
+				{
+					newsletter.WriteEndElement();
+				}
 			}	
 			if (useHTML)
-				builder.Append("<br />\n");
+			{
+				newsletter.WriteEndElement();
+				Uri link = new Uri(TheLinkMaker.LinkToVersions(topic.ToString()), false);
+
+				newsletter.WriteString("View the ");
+				newsletter.WriteStartElement("a");
+				newsletter.WriteAttributeString("title", "Versions for " + HTMLWriter.Escape(topic.Fullname));
+				newsletter.WriteAttributeString("href", link.AbsoluteUri);
+				newsletter.WriteString("complete version history");
+				newsletter.WriteEndElement();
+
+				newsletter.WriteStartElement("br");
+				newsletter.WriteEndElement();
+			}
 			else
-				builder.Append("\n");
-			return builder.ToString();
+			{
+				newsletter.WriteString("\n");
+			}
+			return;
 		}
+
 	}
 }
