@@ -56,6 +56,17 @@ namespace FlexWiki.BuildVerificationTests
 			Assert.AreEqual("This fat hen", doc.Title);
 		}
 
+		
+		[Test]
+		public void ControlTopicBar()
+		{
+			AbsoluteTopicName top = new AbsoluteTopicName("TitledTopic", TheFederation.DefaultContentBase.Namespace);
+			string t = TheLinkMaker.LinkToTopic(top);
+			DocumentElement doc = TheBrowser.Navigate(t, true);
+			HTMLElement staticTopicBar = (HTMLElement)doc.GetElementByName("StaticTopicBar");
+
+			Assert.AreEqual("This fat hen", staticTopicBar.InnerText);
+		}
 
 		[Test]
 		public void CreateTestPage()

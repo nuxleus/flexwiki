@@ -82,7 +82,7 @@ namespace FlexWiki.Web
 		{
 			string title = TheFederation.GetTopicProperty(GetTopicName(), "Title");
 			if (title == null || title == "")
-				title = GetTopicName().Name;
+				title = GetTopicName().FormattedName;
 			return HTMLStringWriter.Escape(title);
 		}
 
@@ -310,8 +310,7 @@ function tbinput()
 			Response.Write(@"<div id='MainRegion' class='TopicBody'>
 <form method='post' action='" + lm.LinkToQuicklink() + @"?QuickLinkNamespace=" + topic.Namespace + @"' name='QuickLinkForm'>
 <div id='TopicBar' title='Click here to quickly jump to or create a topic' class='TopicBar' onmouseover='javascript:TopicBarMouseOver()'  onclick='javascript:TopicBarClick(event)'  onmouseout='javascript:TopicBarMouseOut()'>
-<div  id='StaticTopicBar'  class='StaticTopicBar' style='display: block'>" + topic.FormattedName + @"
-</div>
+<div  id='StaticTopicBar'  class='StaticTopicBar' style='display: block'>" + GetTitle() + @"</div>
 <div id='DynamicTopicBar' class='DynamicTopicBar' style='display: none'>
 <!-- <input id='TopicBarNamespace' style='display: none' type='text'  name='QuickLinkNamespace'> -->
 <input id='TopicBarInputBox' title='Enter a topic here to go to or create' class='QuickLinkInput' type=""text""  name=""QuickLink"">
