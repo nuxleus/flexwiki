@@ -415,6 +415,19 @@
 	     basedir="${targetdir}">
       <include name="*.dll" />
       <include name="*.pdb" />
+      <exclude name="*.UnitTests.*" />
+      <exclude name="Interop.ShDocVw.dll" />
+      <exclude name="Microsoft.mshtml.dll" />
+      <exclude name="nunit.framework.dll" />
+      <exclude name="BuildVerificationTests.*" />
+      <exclude name="FlexBehaviorDebugger.pdb" />
+      <exclude name="FlexWikiSqlStoreManagerLib.dll" />
+      <exclude name="PrintTopic.pdb" />
+      <exclude name="Win32Security.*" />
+      <exclude name="fwsqlmgr.pdb" />
+      <exclude name="SqlStoreManagerGui.pdb" />
+      <exclude name="wikidpad2flexwiki.pdb" />
+      <exclude name="CreatePerfCounters.pdb" />
     </fileset>
 
     <!-- Define the files that go in the "other binaries" zip
