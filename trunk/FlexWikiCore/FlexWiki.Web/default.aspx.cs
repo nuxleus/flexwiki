@@ -97,26 +97,22 @@ namespace FlexWiki.Web
 					}
 					else
 					{
-						// Might be a topic
-						Regex name = new Regex(Formatter.wikiName);
+						// Must be a topic name
 						string trimmed = redir.Trim();
-						if (name.IsMatch(trimmed))
-						{
-							RelativeTopicName rel = new RelativeTopicName(trimmed);
-							IList all = TheFederation.ContentBaseForTopic(GetTopicName()).AllAbsoluteTopicNamesThatExist(rel);
+						RelativeTopicName rel = new RelativeTopicName(trimmed);
+						IList all = TheFederation.ContentBaseForTopic(GetTopicName()).AllAbsoluteTopicNamesThatExist(rel);
 
-							if (all.Count == 1) 
-							{
-								URI = new UriBuilder(lm.LinkToTopic((TopicName)(all[0])));
-								URI.Query = Request.QueryString.ToString();
-							}
+						if (all.Count == 1) 
+						{
+							URI = new UriBuilder(lm.LinkToTopic((TopicName)(all[0])));
+							URI.Query = Request.QueryString.ToString();
+						}
+						else
+						{
+							if (all.Count == 0)
+								Response.Write("<!-- Redirect topic does not exist -->\n");
 							else
-							{
-								if (all.Count == 0)
-									Response.Write("<!-- Redirect topic does not exist -->\n");
-								else
-									Response.Write("<!-- Redirect topic is ambiguous -->\n");
-							}
+								Response.Write("<!-- Redirect topic is ambiguous -->\n");
 						}
 					}
 					if (URI != null)
