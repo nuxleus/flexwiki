@@ -128,6 +128,24 @@ namespace FlexWiki
 			return Value.IndexOf(obj as string) != -1;
 		}
 
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the string converted to an integer")]
+		public int AsInteger
+		{
+			get
+			{
+				if (Value == null)
+					return 0;
+				try
+				{
+					return int.Parse(Value);
+				}
+				catch (Exception)
+				{
+					return 0;	
+				}
+			}
+		}
+
 		public override int GetHashCode()
 		{
 			if (Value == null)

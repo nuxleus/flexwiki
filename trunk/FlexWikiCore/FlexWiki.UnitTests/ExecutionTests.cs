@@ -389,6 +389,14 @@ with(""short"")
 			Assert.AreEqual("P(false)", Run(@"20.Equals(""blah"")"));
 		}
 
+		#region BELString integer conversion
+		[Test]
+		public void ConvertStringToInteger()
+		{
+			Assert.AreEqual(@"P(true)", Run(@"""123"".AsInteger.Equals(123)"));			
+		}
+		#endregion
+
 		bool FindRule(ExecutionContext ctx, Type type)
 		{
 			foreach (CacheRule each in ctx.CacheRules)
