@@ -80,6 +80,14 @@ namespace FlexWiki
 			_FrameStack.Add(f);
 		}
 
+		public int StackDepth
+		{
+			get
+			{
+				return _FrameStack.Count;
+			}
+		}
+
 		public void PopFrame()
 		{
 			if (_FrameStack.Count == 0)

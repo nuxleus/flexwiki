@@ -65,6 +65,9 @@ namespace FlexWiki.Web
 		LogEvent MainEvent;
 		protected void StartPage()
 		{
+			if (Federation.GetPerformanceCounter(Federation.PerformanceCounterNames.TopicReads) != null)
+				Federation.GetPerformanceCounter(Federation.PerformanceCounterNames.TopicReads).Increment();
+
 			MainEvent = TheFederation.LogEventFactory.CreateAndStartEvent(Request.UserHostAddress, VisitorIdentityString, GetTopicName().ToString(), LogEvent.LogEventType.ReadTopic);
 			VisitorEvent e = new VisitorEvent(GetTopicName(), VisitorEvent.Read, DateTime.Now);
 			LogVisitorEvent(e);

@@ -32,6 +32,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalendarProvider", "Calenda
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreatePerfCounters", "CreatePerformanceCounters\CreatePerfCounters.csproj", "{4F58F3F4-204B-47CB-9C4E-4576C758F742}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -70,6 +74,10 @@ Global
 		{5F81B8BC-C8F3-491A-8680-9531350E1744}.Debug.Build.0 = Debug|.NET
 		{5F81B8BC-C8F3-491A-8680-9531350E1744}.Release.ActiveCfg = Release|.NET
 		{5F81B8BC-C8F3-491A-8680-9531350E1744}.Release.Build.0 = Release|.NET
+		{4F58F3F4-204B-47CB-9C4E-4576C758F742}.Debug.ActiveCfg = Debug|.NET
+		{4F58F3F4-204B-47CB-9C4E-4576C758F742}.Debug.Build.0 = Debug|.NET
+		{4F58F3F4-204B-47CB-9C4E-4576C758F742}.Release.ActiveCfg = Release|.NET
+		{4F58F3F4-204B-47CB-9C4E-4576C758F742}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
 		Download NUnit.url = Download NUnit.url

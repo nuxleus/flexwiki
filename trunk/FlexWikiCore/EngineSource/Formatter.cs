@@ -719,11 +719,25 @@ namespace FlexWiki.Formatting
 			return answer;
 		}
 
+		const int MaxiumuNestingDepth = 20;
+
+		public bool IsBeyondSafeNestingDepth
+		{
+			get
+			{
+				return _Output.GetNestingLevel() > MaxiumuNestingDepth;		// No more nesting that N deep
+			}
+		}
+
 		/// <summary>
 		/// Main formatting function.  The process of formatting the input to the output starts here.
 		/// </summary>
 		public void Format()
 		{
+			if (Federation.GetPerformanceCounter(Federation.PerformanceCounterNames.TopicFormat) != null)
+				Federation.GetPerformanceCounter(Federation.PerformanceCounterNames.TopicFormat).Increment();
+
+
 			CurrentState = new NeutralState(this);
 			_CurrentLineIndex = 0;
 			bool inMultilineProperty = false;
@@ -861,7 +875,7 @@ namespace FlexWiki.Formatting
 					AddCacheRule(ContentBase.CacheRuleForAllPossibleInstancesOfTopic(topicName));
 					if (ContentBase.TopicExists(topicName)) 
 					{
-						if (_Output.GetNestingLevel() < 10) 
+						if (!IsBeyondSafeNestingDepth) 
 						{
 							_Output.Write(IncludedTopic(topicName, _HeadingLevelBase + tabs));
 						}
@@ -1226,8 +1240,17 @@ namespace FlexWiki.Formatting
 		public string NestedFormat(string input, WikiOutput parent)
 		{
 			WikiOutput output = WikiOutput.ForFormat(_Output.Format, parent);
-			IList lines = SplitStringIntoStyledLines(input, Output.Style);
-			Formatter.Format(CurrentTopic, lines, output, ContentBase, LinkMaker(), _ExternalWikiMap, _HeadingLevelBase, CacheRuleAccumulator);
+			if (!IsBeyondSafeNestingDepth)
+			{
+				IList lines = SplitStringIntoStyledLines(input, Output.Style);
+				Formatter.Format(CurrentTopic, lines, output, ContentBase, LinkMaker(), _ExternalWikiMap, _HeadingLevelBase, CacheRuleAccumulator);
+			}
+			else
+			{
+				/// we're headed for trouble.  The formatting depth is beyond a reasonable depth.  We're likely headed towards
+				/// infinite recursion.  
+				output.WriteErrorMessage("exceeded maximum nesting depth (" + MaxiumuNestingDepth + ")", "The maximum nesting depth for formatting topics has been exceeded.  This is likely caused by infinite recursion in some WikiTalk.");
+			}
 			string str = output.ToString();
 
 			// TODO -- Hack alert.  Right now the formatter pretty much always returns its results wrapped in a paragraph.  This is just not

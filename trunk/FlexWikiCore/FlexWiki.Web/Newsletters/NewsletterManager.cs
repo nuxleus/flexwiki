@@ -25,6 +25,7 @@ namespace FlexWiki.Newsletters
 	/// <summary>
 	/// Summary description for NewsletterManager.
 	/// </summary>
+
 	public class NewsletterManager
 	{
 		IDeliveryBoy _DeliveryBoy;
@@ -159,10 +160,22 @@ namespace FlexWiki.Newsletters
 
 			Hashtable immediatelyPreviousVersions = new Hashtable();
 
+			builder.Append("<div class='NewsletterTOCHeader'>Table of Contents</div>");
+
+			builder.Append("<table class='NewsletterTOCTable' border=0 cellpadding=2 cellspacing=0>");
+			builder.Append("<tr>");
+			builder.Append("<td class='NewsletterTOCHeaderCell'>" + "Topic" + "</td>");
+			builder.Append("<td class='NewsletterTOCHeaderCell'>" + "Changes" + "</td>");
+			builder.Append("<td class='NewsletterTOCHeaderCell'>" + "Most Recent" + "</td>");
+			builder.Append("</tr>");
+
+			
 			foreach (AbsoluteTopicName each in topics)
 			{
 				if (!changeMap.ContainsKey(each))
 					continue;
+
+
 				ArrayList changesForThisTopic = (ArrayList)(changeMap[each]);
 
 				// Go through the changes and (1) find the version immediately prior 
@@ -190,9 +203,16 @@ namespace FlexWiki.Newsletters
 				string appearAs = (homeNamespace == each.Namespace) ? each.Name : each.Fullname;
 				TopicChange newestChange = (TopicChange)(changesForThisTopic[0]);
 
-				builder.Append("<div class='NewsletterTableOfContentsChangedTopicName'><a href='#" + each.Fullname + "'>" + appearAs + "</a></div>");
-				builder.AppendFormat("<div  class='NewsletterTableOfContentsChangedTopicDetails'>Changed {0} time(s).  Latest change at {1}.</div>", changesForThisTopic.Count, newestChange.Timestamp.ToString());
+				builder.Append("<tr>");
+				builder.Append("<td class='NewsletterTOCBodyCell'>" + "<div class='NewsletterTableOfContentsChangedTopicName'><a href='#" + each.Fullname + "'>" + appearAs + "</a></div>" + "</td>");
+				builder.Append("<td class='NewsletterTOCBodyCell'>" + changesForThisTopic.Count + "</td>");
+				builder.Append("<td class='NewsletterTOCBodyCell'>" + newestChange.Timestamp.ToString() + "</td>");
+				builder.Append("</tr>");
+
 			}
+			builder.Append("</table>");
+
+			builder.Append("<br /><div class='NewsletterTOCFinsher'>&nbsp;</div>");
 
 			foreach (AbsoluteTopicName each in topics)
 			{
@@ -202,7 +222,6 @@ namespace FlexWiki.Newsletters
 				ArrayList changesForThisTopic = (ArrayList)(changeMap[each]);
 				string appearAs = (homeNamespace == each.Namespace) ? each.Name : each.Fullname;
 				
-				builder.AppendFormat("<div class='NewsletterTopicName'><a name='#" + each.Fullname + "'>{0}</a></div>", "<a href='" + lm.LinkToTopic(each) + "'>" + appearAs + "</a>");
 				TopicChange newestChange = (TopicChange)(changesForThisTopic[0]);
 				TopicChange oldestChange = (TopicChange)immediatelyPreviousVersions[each];
 				if (oldestChange == null)
@@ -216,12 +235,19 @@ namespace FlexWiki.Newsletters
 						continue;
 					changers.Add(c.Author);
 					if (changedBy == null)
-						changedBy = "Changes by: " + c.Author;
+						changedBy = "changed by: " + c.Author;
 					else
 						changedBy += ", " + c.Author;
 				}			
+
+
+				builder.AppendFormat("<div class='NewsletterTopicName'>");
+				builder.AppendFormat("<a name='#" + each.Fullname + "'>{0}</a>", "<a href='" + lm.LinkToTopic(each) + "'>" + appearAs + "</a>");
+				builder.AppendFormat(" (");
+				builder.AppendFormat("<span class='NewsletterTopicChangers'>{0}</span>",  Formatter.EscapeHTML(changedBy));
+				builder.AppendFormat(" )");
+				builder.AppendFormat("</div>");
 				
-				builder.AppendFormat("<div class='NewsletterTopicChangers'>{0}</div>",  Formatter.EscapeHTML(changedBy));
 				builder.Append("<div class='NewsletterTopicBody'>");
 				try
 				{

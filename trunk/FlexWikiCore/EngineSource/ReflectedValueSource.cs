@@ -123,6 +123,8 @@ namespace FlexWiki
 			object result = null;
 			invocationFrame.PushScope(ctx.CurrentScope); // the new frame starts with the same scope as this one
 			ctx.PushFrame(invocationFrame);
+			if (Federation.GetPerformanceCounter(Federation.PerformanceCounterNames.MethodInvocation) != null)
+				Federation.GetPerformanceCounter(Federation.PerformanceCounterNames.MethodInvocation).Increment();
 			try
 			{
 				result = mi.MethodInfo.Invoke(this, args.ToArray());

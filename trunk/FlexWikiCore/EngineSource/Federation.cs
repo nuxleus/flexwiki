@@ -15,6 +15,7 @@ using System.Collections;
 using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
+using System.Diagnostics;
 using System.Reflection;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -289,7 +290,93 @@ namespace FlexWiki
 		{
 			Format = format;
 			LinkMaker = linker;
+			InitializePerformanceCounters();
 		}
+
+		private static void InitializePerformanceCounters()
+		{
+			SetupPerformanceCounters();
+		}
+
+		public struct PerformanceCounterNames
+		{
+			public static string TopicReads = "Topic reads";
+			public static string TopicWrite = "Topic writes";
+			public static string TopicFormat = "Topic formats";
+			public static string MethodInvocation = "WikiTalk method invocations";
+		};
+
+		private static string PerformanceCounterCategoryName = "FlexWiki";
+
+		// key = string name; value = PerformanceCounter
+		static Hashtable _PerformanceCounterHash = new Hashtable();
+
+		public static PerformanceCounter GetPerformanceCounter(string name)
+		{
+			return (PerformanceCounter)(_PerformanceCounterHash[name]);
+		}
+			
+		public static bool CreatePerformanceCounters()
+		{        
+			if ( !PerformanceCounterCategory.Exists(PerformanceCounterCategoryName) ) 
+			{
+				CounterCreationDataCollection CCDC = new CounterCreationDataCollection();
+
+				// Add the counter.
+				CreateCounter(CCDC, PerformanceCounterType.RateOfCountsPerSecond64, PerformanceCounterNames.TopicReads);
+				CreateCounter(CCDC, PerformanceCounterType.RateOfCountsPerSecond64, PerformanceCounterNames.TopicWrite);
+				CreateCounter(CCDC, PerformanceCounterType.RateOfCountsPerSecond64, PerformanceCounterNames.TopicFormat);
+				CreateCounter(CCDC, PerformanceCounterType.RateOfCountsPerSecond64, PerformanceCounterNames.MethodInvocation);
+            
+				// Create the category.
+				PerformanceCounterCategory.Create(PerformanceCounterCategoryName, 
+					"FlexWiki application performance", 
+					CCDC);                
+				return(true);
+			}
+			else
+			{
+				return(false);
+			}
+		}
+
+		public static void DeletePerformanceCounters()
+		{
+			PerformanceCounterCategory.Delete(PerformanceCounterCategoryName);
+		}
+
+		private static void CreateCounter(CounterCreationDataCollection ccdc, PerformanceCounterType type, string name)
+		{
+			CounterCreationData ccd;
+			ccd = new CounterCreationData();
+			ccd.CounterType = type;
+			ccd.CounterName = name;
+			ccdc.Add(ccd);
+		}
+
+		private static void SetupPerformanceCounters()
+		{
+			// If the counters exist, use them
+			if (!PerformanceCounterCategory.Exists(PerformanceCounterCategoryName)) 
+				return;
+			SetupCounter(PerformanceCounterNames.TopicReads);
+			SetupCounter(PerformanceCounterNames.TopicWrite);
+			SetupCounter(PerformanceCounterNames.TopicFormat);
+			SetupCounter(PerformanceCounterNames.MethodInvocation);
+		}
+
+		private static void SetupCounter(string name)
+		{
+			_PerformanceCounterHash[name] = InitializePerformanceCounter(name);
+		}
+
+		private static PerformanceCounter InitializePerformanceCounter(string name)
+		{
+			PerformanceCounter answer = new PerformanceCounter(PerformanceCounterCategoryName, name, false);
+			answer.RawValue = 0;
+			return answer;
+		}
+
 
 		/// <summary>
 		/// Answer a new federation loaded from the given configuration file

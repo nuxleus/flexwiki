@@ -127,6 +127,8 @@ namespace FlexWiki.Web
 			}
 			finally
 			{
+				if (Federation.GetPerformanceCounter(Federation.PerformanceCounterNames.TopicWrite) != null)
+					Federation.GetPerformanceCounter(Federation.PerformanceCounterNames.TopicWrite).Increment();
 				ev.Record();
 			}
 
