@@ -401,15 +401,20 @@ Add your wiki text here.
 
 			if (IsWritable)
 			{
-				Response.Write("<div style='margin-top: 12px; text-align: center'>");			
-				Response.Write("<button onclick='jscript:Save()' name='SaveButton'>Save</button> ");
-				Response.Write("<Button OnClick='jscript:search()' ID='button3'>Search</Button> ");
-				Response.Write("<Button OnClick='jscript:preview()' ID='button1'>Preview</Button>");
+				// generate cancel, save, search, preview, and Save&Return buttons
+				Response.Write(@"
+<div style='margin-top: 12px; text-align: center'><table>
+<tr><td><button onclick='jscript:Cancel()' name='CancelButton'>Cancel</button></td>
+<td><button onclick='jscript:Save()' name='SaveButton'>Save</button></td></tr>
+<tr><td><Button OnClick='jscript:search()' ID='button3'>Search</Button></td>
+<td><Button OnClick='jscript:preview()' ID='button1'>Preview</Button></td></tr>");
+
 				if (ReturnTopic != null)
 				{
-					Response.Write("<br /><button onclick='jscript:SaveAndReturn()'  name='SaveButton'>Save and Back</button>");
+					Response.Write("<tr><td colspan='2'><button onclick='jscript:SaveAndReturn()'  name='SaveButton'>Save and Back</button></td></tr>");
 				}
-				Response.Write("</div>");
+
+				Response.Write("</table></div>");
 			}
 
 			Response.Write("</td></tr></table>");

@@ -44,6 +44,11 @@ function SetUserName()
 		document.getElementById("UserSuppliedName").value = r.value;
 }
 
+function Cancel()
+{
+	history.back();
+}
+
 function Save()
 {
 	SetUserName();
