@@ -21,7 +21,7 @@ namespace FlexWiki.Formatting
 	public class TestWikiOutput : HTMLWikiOutput
 	{
 
-		public TestWikiOutput(bool isNested) : base(isNested)
+		public TestWikiOutput(WikiOutput parent) : base(parent)
 		{
 		}
 

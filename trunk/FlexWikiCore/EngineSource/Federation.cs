@@ -356,7 +356,7 @@ namespace FlexWiki
 			// OK, we need to figure it out.  
 			CompositeCacheRule rule = new CompositeCacheRule();				
 			IEnumerable borderText = BorderText(name, border, rule);
-			WikiOutput output = new HTMLWikiOutput(true);
+			WikiOutput output = new HTMLWikiOutput(null);
 			foreach (IBELObject borderComponent in borderText)
 			{
 				IOutputSequence seq = borderComponent.ToOutputSequence();

@@ -1135,7 +1135,7 @@ And the text in the parens and brackets should be code formatted:
 
 		string FormattedTestText(string inputString, AbsoluteTopicName top)
 		{
-			WikiOutput output = WikiOutput.ForFormat(OutputFormat.Testing, false);
+			WikiOutput output = WikiOutput.ForFormat(OutputFormat.Testing, null);
 			Formatter.Format(top, inputString, output,  _cb, _lm, _externals, 0, null);
 			string o = output.ToString();
 			string o1 = o.Replace("\r", "");

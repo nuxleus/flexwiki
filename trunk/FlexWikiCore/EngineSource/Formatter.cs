@@ -47,7 +47,7 @@ namespace FlexWiki.Formatting
 		{
 			// TODO -- some of the cases in which this call happens actually *are* nested, even though the false arg
 			// below says that they aren't.  This causes scripts to be emitted multiple times -- should clean up.
-			WikiOutput output = WikiOutput.ForFormat(format, false);	
+			WikiOutput output = WikiOutput.ForFormat(format, null);	
 			Hashtable ew;
 			if (relativeToContentBase != null)
 				ew = relativeToContentBase.ExternalWikiHash();
@@ -56,7 +56,7 @@ namespace FlexWiki.Formatting
 			Format(null, input, output, relativeToContentBase, lm, ew, 0, accumulator);
 			return output.ToString();
 		}
-	
+
 		/// <summary>
 		/// Answer the formatted text for a given topic, formatted using a given OutputFormat and possibly showing diffs with the previous revision
 		/// </summary>
@@ -97,7 +97,7 @@ namespace FlexWiki.Formatting
 
 			if (accumulator != null)
 				accumulator.Add(relativeToBase.CacheRuleForAllPossibleInstancesOfTopic(topic));
-			WikiOutput output = WikiOutput.ForFormat(format, false);
+			WikiOutput output = WikiOutput.ForFormat(format, null);
 			if (diffWithThisVersion != null)
 			{
 				ArrayList styledLines = new ArrayList();
@@ -818,8 +818,13 @@ namespace FlexWiki.Formatting
 
 					Ensure(typeof(NeutralState));
 					AddCacheRule(ContentBase.CacheRuleForAllPossibleInstancesOfTopic(topicName));
-					if (ContentBase.TopicExists(topicName))
-						_Output.Write(IncludedTopic(topicName, _HeadingLevelBase + tabs));
+					if (ContentBase.TopicExists(topicName)) 
+					{
+						if (_Output.GetNestingLevel() < 10) 
+						{
+							_Output.Write(IncludedTopic(topicName, _HeadingLevelBase + tabs));
+						}
+					}
 					else
 					{
 						EnsureParaOpen();
@@ -1104,7 +1109,7 @@ namespace FlexWiki.Formatting
 					}
 					else
 					{	// eval succeeded
-						WikiOutput nOut = WikiOutput.ForFormat(Output.Format, true);
+						WikiOutput nOut = WikiOutput.ForFormat(Output.Format, Output);
 						interpreter.Value.OutputTo(nOut);
 						replacement = nOut.ToString();
 					}
@@ -1130,10 +1135,10 @@ namespace FlexWiki.Formatting
 
 		static Regex externalWikiRef = new Regex(@"(?<param>[\w\.\-]+)@(?<behavior>[a-zA-Z0-9\-]+)(((\.[a-zA-Z0-9\-]{1,})*(\.[a-zA-Z]{2,3}){1,2})|(\.*?\b*?))");
 
-	  public string ErrorMessage(string title, string body)
+		public string ErrorMessage(string title, string body)
 		{
 			// We can't use the fancy ErrorString method -- it didn't exist in v0
-			WikiOutput nOut = WikiOutput.ForFormat(Output.Format, true);
+			WikiOutput nOut = WikiOutput.ForFormat(Output.Format, Output);
 			nOut.WriteErrorMessage(title, body);
 			return nOut.ToString();
 		}
@@ -1165,7 +1170,7 @@ namespace FlexWiki.Formatting
 			string ns = ContentBase.UnambiguousTopicNamespace(topic);
 			AbsoluteTopicName abs = new AbsoluteTopicName(topic.Name, ns);
 			string content = ContentBase.Read(abs).TrimEnd();
-			WikiOutput output = WikiOutput.ForFormat(_Output.Format, true);
+			WikiOutput output = WikiOutput.ForFormat(_Output.Format, Output);
 			Formatter.Format(abs, content, output, ContentBase, LinkMaker(), _ExternalWikiMap, headingLevelBase, CacheRuleAccumulator);
 			return output.ToString().Trim();
 		}
@@ -1176,9 +1181,9 @@ namespace FlexWiki.Formatting
 		/// </summary>
 		/// <param name="input"></param>
 		/// <returns></returns>
-		public string NestedFormat(string input)
+		public string NestedFormat(string input, WikiOutput parent)
 		{
-			WikiOutput output = WikiOutput.ForFormat(_Output.Format, true);
+			WikiOutput output = WikiOutput.ForFormat(_Output.Format, parent);
 			IList lines = SplitStringIntoStyledLines(input, Output.Style);
 			Formatter.Format(CurrentTopic, lines, output, ContentBase, LinkMaker(), _ExternalWikiMap, _HeadingLevelBase, CacheRuleAccumulator);
 			string str = output.ToString();
@@ -1676,7 +1681,7 @@ namespace FlexWiki.Formatting
 
 		public string WikiToPresentation(string s)
 		{
-			return NestedFormat(s);
+			return NestedFormat(s, Output);
 		}
 
 		#endregion

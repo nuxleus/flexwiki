@@ -24,7 +24,7 @@ namespace FlexWiki.Formatting
 	{
 		LineStyle _CurrentStyle = LineStyle.Unchanged;
 
-		public HTMLWikiOutput(bool isNested) : base(isNested)
+		public HTMLWikiOutput(WikiOutput parent) : base(parent)
 		{
 		}
 

@@ -47,7 +47,7 @@ namespace FlexWiki.UnitTests
 
 		string OutputSequenceToString(IOutputSequence s)
 		{
-			WikiOutput output = WikiOutput.ForFormat(OutputFormat.Testing, false);
+			WikiOutput output = WikiOutput.ForFormat(OutputFormat.Testing, null);
 			s.ToPresentation(this).OutputTo(output);
 			return output.ToString();
 		}

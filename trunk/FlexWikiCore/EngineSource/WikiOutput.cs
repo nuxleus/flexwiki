@@ -34,39 +34,47 @@ namespace FlexWiki.Formatting
 
 	public abstract class WikiOutput
 	{
-		public static WikiOutput ForFormat(OutputFormat aFormat, bool isNested)
+		public static WikiOutput ForFormat(OutputFormat aFormat, WikiOutput parent)
 		{
 			switch (aFormat)
 			{
 				case OutputFormat.HTML:
-					return new HTMLWikiOutput(isNested);
+					return new HTMLWikiOutput(parent);
 
 				case OutputFormat.Testing:
-					return new TestWikiOutput(isNested);
+					return new TestWikiOutput(parent);
 
 				default:
 					throw new Exception("Unsupported output type requested: " + aFormat.ToString());
 			}
 		}
 
-		bool _IsNested = false;
+		WikiOutput _Parent;
 
 		public bool IsNested
 		{
 			get
 			{
-				return _IsNested;
-			}
-			set
-			{
-				_IsNested = value;
+				return _Parent == null;
 			}
 		}
 
-		public WikiOutput(bool isNested)
+		public int GetNestingLevel() 
+		{
+			if (_Parent != null) 
+			{
+				return 1 + _Parent.GetNestingLevel();
+			} 
+			else 
+			{
+				return 0;
+			}
+		}
+
+		public WikiOutput(WikiOutput parent)
 		{
 			_TextWriter = new StringWriter();
-			_IsNested = isNested;
+			_Parent = parent;
 		}
 
 		public void Write(string s)

@@ -619,7 +619,7 @@ namespace FlexWiki.BeL.Debugger
 				Fail(interpreter.ErrorString);
 				return;
 			}
-			WikiOutput output = WikiOutput.ForFormat(OutputFormat.Testing, false);
+			WikiOutput output = WikiOutput.ForFormat(OutputFormat.Testing, null);
 			interpreter.Value.ToPresentation(this).OutputTo(output);
 			final = output.ToString();
 			Success(final);
