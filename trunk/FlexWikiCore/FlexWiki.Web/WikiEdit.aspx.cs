@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Text;
 using System.Collections;
 using System.ComponentModel;
 using System.Data;
@@ -19,6 +20,7 @@ using System.Web;
 using System.Web.SessionState;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Web.Mail;
 using System.Web.UI.HtmlControls;
 using System.Text.RegularExpressions;
 using System.IO;
@@ -98,6 +100,34 @@ namespace FlexWiki.Web
 				return TheFederation.TopicExists(TheTopic) && 
 					!(currentStamp = TheFederation.GetTopicModificationTime(TheTopic)).ToString("s").Equals(lastEdit);
 			}
+		}
+
+		void LogBannedAttempt()
+		{
+			string to = System.Configuration.ConfigurationSettings.AppSettings["SendBanNotificationsToMailAddress"];
+			if (to == null || to == "")
+				return;
+
+			HTMLStringWriter w = new HTMLStringWriter();
+			w.WritePara(String.Format("{0} attempted to post a change with banned content to the topic {1} on the FlexWiki site at {2}.", 
+				HTMLStringWriter.Escape(VisitorIdentityString), HTMLStringWriter.Escape(TheTopic.Fullname), HTMLStringWriter.Escape((Request.Url.Host))));
+			w.WritePara("Banned content includes:");
+			w.WriteStartUnorderedList();
+			string proposed = PostedTopicText;
+			foreach (string each in TheFederation.BlacklistedExternalLinkPrefixes)
+			{
+				if (proposed.ToUpper().IndexOf(each.ToUpper()) >= 0)
+					w.WriteListItem(HTMLStringWriter.Escape(each));
+			}
+			w.WriteEndUnorderedList();
+
+			MailMessage msg = new MailMessage();
+			msg.To = to;
+			msg.From = "noreply_spam_report@" + Request.Url.Host;
+			msg.Subject = "Banned content post attempt from " + VisitorIdentityString;
+			msg.BodyFormat = MailFormat.Html;
+			msg.Body = w.ToString();
+			SendMail(msg);
 		}
 
 		bool IsBanned
@@ -296,6 +326,7 @@ Add your wiki text here.
 				Response.Write("<div class='BannedChange'>Your change can not be saved.</div>");
 				Response.Write("The changes you are trying to save include banned URLs.");
 				ClosePane(Response.Output);
+				LogBannedAttempt();
 			}
 
 			///////////////////////////////

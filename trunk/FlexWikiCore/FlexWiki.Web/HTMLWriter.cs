@@ -370,6 +370,36 @@ namespace FlexWiki.Web
 			Write("</div>");
 		}
 
+		public void WriteStartUnorderedList()
+		{
+			Write(StartUnorderedList());
+		}
+
+		public void WriteEndUnorderedList()
+		{
+			Write(EndUnorderedList());
+		}
+
+		public void WriteListItem(string html)
+		{
+			Write(ListItem(html));
+		}
+
+		public string ListItem(string html)
+		{
+			return "<li>" + html + "</li>";
+		}
+
+		public string StartUnorderedList()
+		{
+			return "<ul>";
+		}
+		
+		public string EndUnorderedList()
+		{
+			return "</ul>";
+		}
+		
 		public void WriteSubmitButton(string name, string label)
 		{
 			Write("<INPUT name='" + name + "' value ='" + Escape(label) + @"' type='submit'>");
