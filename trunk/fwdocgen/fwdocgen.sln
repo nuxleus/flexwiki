@@ -1,0 +1,21 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fwdocgen", "fwdocgen.csproj", "{FA17BF24-26A0-40BB-B023-FF1D429AE7EC}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{FA17BF24-26A0-40BB-B023-FF1D429AE7EC}.Debug.ActiveCfg = Debug|.NET
+		{FA17BF24-26A0-40BB-B023-FF1D429AE7EC}.Debug.Build.0 = Debug|.NET
+		{FA17BF24-26A0-40BB-B023-FF1D429AE7EC}.Release.ActiveCfg = Release|.NET
+		{FA17BF24-26A0-40BB-B023-FF1D429AE7EC}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

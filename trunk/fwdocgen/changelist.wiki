@@ -1,0 +1,23 @@
+! Version 0.4
+  * Bumped version to 0.4
+  * Added NUnit assembly to lib directory and updated reference
+  * Updated build file to use common functionality from common.build
+  * Now includes debug symbols as part of release package
+  * Many XSLT changes
+    * Added comment links to topics 
+    * Updated events, properties, and methods to include a signature section
+    * Added visibility (public, internal, etc.) to declarations
+    * Added contract (virtual, sealed, etc.) to declarations
+    * Escaped periods where they were appearing in type namespaces, confusing FlexWiki
+    * Added "inherited from" column to methods, properties, etc.
+    * Fixed type derivation syntax - public Foo : Bar, IFoo now renders correctly
+    * Added keyword support for Boolean and Byte primitive types
+    * Other various, small fixes
+
+! Version 0.3.1812.6145
+  * Added hidden /debug switch to allow attach to debugger from command line
+  * Bumped version to 0.3
+  * Augmented build script to enable automated release
+  * Added RegexMatch function to XSLT helper class
+  * Fixed problem where files that were overwritten were not being truncated
+  * Massive overhaul of XSLT - many improvements to output 

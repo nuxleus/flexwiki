@@ -1,0 +1,232 @@
+<project name="fwcontrib-common" default="test">
+  
+  <sysinfo />
+  <version startDate="2002-11-01" />
+  
+  <regex input="${sys.version}"
+	 pattern="(?'vermajor'\d+).(?'verminor'\d+).(?'verbuild'\d+).(?'verrevision'\d+)" />
+
+  <echo message="Building version ${vermajor}.${verminor}.${verbuild}.${verrevision}" />
+
+  <ifnot propertyexists="configuration">
+    <property name="configuration"
+	      value="Debug" />
+  </ifnot>
+
+  <ifnot propertyexists="basedir">
+    <property name="basedir" 
+	      value="${nant.project.basedir}" />
+  </ifnot>
+
+  <ifnot propertyexists="targetdir">
+    <property name="targetdir" 
+	      value="${nant.project.basedir}/bin/${configuration}" />
+  </ifnot>
+
+  <ifnot propertyexists="distdir">
+    <property name="distdir"
+	      value="${nant.project.basedir}/dist" />
+  </ifnot>
+
+  <ifnot propertyexists="diffdir">
+    <property name="diffdir" value="diff" />
+  </ifnot>
+
+  <ifnot propertyexists="release.dir">
+    <property name="release.dir" value="release" />
+  </ifnot>
+
+  <ifnot propertyexists="build.skip">
+    <property name="build.skip" value="false" />
+  </ifnot>
+
+  <ifnot propertyexists="test.skip">
+    <property name="test.skip" value="false" />
+  </ifnot>
+
+  <ifnot propertyexists="dist.skip">
+    <property name="dist.skip" value="false" />
+  </ifnot>
+
+  <ifnot propertyexists="upload.skip">
+    <property name="upload.skip" value="false" />
+  </ifnot>
+
+  <ifnot propertyexists="cvs.root">
+    <property name="cvs.root" value=":ext:candera@SourceForgeCVS:/cvsroot/fwcontrib" />
+  </ifnot>
+
+  <target name="init">
+    <mkdir dir="${targetdir}" />
+
+    <ifnot uptodatefile="AssemblyAttributes.cs" 
+	   comparefile="build.number">
+      <asminfo output="AssemblyAttributes.cs"
+	       language="CSharp">
+	<imports>
+	  <import name="System" />
+	  <import name="System.Reflection" />
+	</imports>
+	<attributes>
+	  <attribute type="AssemblyVersionAttribute"
+		     value="${vermajor}.${verminor}.${verbuild}.${verrevision}"
+		     />
+	</attributes>
+      </asminfo>
+    </ifnot>
+  </target>
+
+  <target name="build" depends="init" unless="${build.skip}">
+    <solution configuration="${configuration}" 
+	      outputdir="${targetdir}"
+	      solutionfile="${nant.project.name}.sln">
+    </solution>
+    <!-- We need to do copy the help dir in the script, since the
+	 solution task isn't smart enough to run post build steps -->
+    <property name="todir" value="${targetdir}\Help" />
+    <call target="copyhelpdir" />
+  </target>
+
+  <target name="test" depends="build" unless="${test.skip}">
+    <nunit2>
+      <formatter type="Plain" />
+      <test assemblyname="${targetdir}/${nant.project.name}.exe" />
+    </nunit2>
+  </target>
+
+  <target name="dist" depends="test" unless="${dist.skip}">
+    <mkdir dir="${distdir}" />
+
+    <property name="stagingdir" value="${distdir}\staging" />
+    <available property="dist.stagingdir.available" 
+	       type="Directory"
+	       resource="${stagingdir}" />
+    <delete dir="${stagingdir}" if="${dist.stagingdir.available}" />
+    <mkdir dir="${stagingdir}" />
+
+    <property name="todir" value="${stagingdir}\Help" />
+    <call target="copyhelpdir" />
+
+    <copy todir="${stagingdir}">
+      <fileset refid="dist.binfiles" />
+    </copy>
+
+    <property name="dist.binzip" 
+	      value="${distdir}/${nant.project.name}-${vermajor}.${verminor}.${verbuild}.${verrevision}-${configuration}.zip" />
+    <property name="dist.srczip" 
+	      value="${distdir}/${nant.project.name}-${vermajor}.${verminor}.${verbuild}.${verrevision}-src.zip" />
+    <zip zipfile="${dist.binzip}">
+      <fileset basedir="${stagingdir}">
+	<includes name="**\*" />
+      </fileset>
+    </zip>
+    <zip zipfile="${dist.srczip}">
+      <fileset refid="dist.sources" />
+    </zip>
+  </target>
+
+  <target name="upload" depends="dist" unless="${upload.skip}">
+    <echo message="Uploading ${dist.binzip} and ${dist.srczip} to SourceForge" />
+    <exec program="ncftpput" workingdir="${distdir}">
+      <arg value="-p" />
+      <arg value="candera@sourceforge.net" />
+      <arg value="upload.sourceforge.net" />
+      <arg value="incoming" />
+      <arg value="${dist.binzip}" />
+      <arg value="${dist.srczip}" />
+    </exec>
+  </target>
+
+  <target name="clean">
+    <delete dir="${targetdir}" />
+    <delete dir="${distdir}" />
+    <delete dir="${diffdir}" />
+    <delete dir="${release.dir}" />
+  </target>
+
+  <target name="release">
+    <delete dir="${release.dir}" failonerror="false" />
+    <mkdir dir="${release.dir}" />
+
+    <exec program="cvs.exe">
+      <arg value="-d" />
+      <arg value="${cvs.root}" />
+      <arg value="co" />
+      <arg value="-R" />
+      <arg value="-d" />
+      <arg value="${release.dir}" />
+      <arg value="${nant.project.name}" />
+    </exec>
+
+<!-- For some reason this stopped working. Had to go with the exec
+      instead. Weird.     
+    <nant buildfile="${release.dir}/${nant.project.name}.build"
+	  inheritall="false"
+	  target="upload">
+      <properties>                              
+	<property name="configuration" value="${useconfig}" />
+      </properties>
+    </nant>
+-->
+
+    <exec program="nant.exe">
+      <arg
+	value="-buildfile:${release.dir}/${nant.project.name}.build"
+      />
+      <arg value="-D:configuration=${configuration}" />
+      <arg value="upload" />
+    </exec>
+
+    <exec program="cvs.exe" workingdir="${release.dir}">
+      <arg value="-d" />
+      <arg value="${cvs.root}" />
+      <arg value="tag" />
+      <arg value="-R" />
+      <arg value="Build-${vermajor}-${verminor}-${verbuild}-${verrevision}-${configuration}" />
+    </exec>
+
+  </target>
+
+  <target name="diff">
+    <delete dir="${diffdir}" failonerror="false" />
+    <mkdir dir="${diffdir}" />
+
+    <exec program="cvs.exe">
+      <arg value="-d" />
+      <arg value="${cvs.root}" />
+      <arg value="co" />
+      <arg value="-R" />
+      <arg value="-d" />
+      <arg value="${diffdir}" />
+      <arg value="${nant.project.name}" />
+    </exec>
+
+    <exec program="winmerge.exe">
+      <arg value="-r" />
+      <arg value="${diffdir}" />
+      <arg value="${basedir}" />
+    </exec>
+	  
+  </target>
+
+  <target name="copyhelpdir">
+    <property name="helpdir" value="${basedir}\Help" />
+    <available property="helpdir.available"
+	       type="Directory"
+	       resource="${helpdir}" />
+
+    <if propertytrue="helpdir.available">
+      <available property="todir.available" 
+		 type="Directory"
+		 resource="${todir}" />
+      <delete dir="${todir}" if="${todir.available}" />
+      <mkdir dir="${todir}" />
+      <copy todir="${todir}">
+	<fileset basedir="${helpdir}">
+	  <includes name="**\*" />
+	</fileset>
+      </copy>
+    </if>
+  </target>
+
+</project>
