@@ -32,14 +32,14 @@ namespace FlexWiki.UnitTests
 		{
 			TableCellInfo info = new TableCellInfo();
 			info.Parse("");
-			Assertion.Assert(info.HasBorder);
-			Assertion.Assert(!info.IsHighlighted);
+			Assert.IsTrue(info.HasBorder);
+			Assert.IsTrue(!info.IsHighlighted);
 		}
 
 		public void TestError()
 		{
 			TableCellInfo info = new TableCellInfo();
-			Assertion.Assert(info.Parse("T%") != null);
+			Assert.IsTrue(info.Parse("T%") != null);
 		}
 
 
@@ -47,39 +47,39 @@ namespace FlexWiki.UnitTests
 		{
 			TableCellInfo info = new TableCellInfo();
 			info.Parse("T-T]");
-			Assertion.Assert(!info.HasBorder);
-			Assertion.AssertEquals(info.TableAlignment, TableCellInfo.AlignOption.Right);
+			Assert.IsTrue(!info.HasBorder);
+			Assert.AreEqual(info.TableAlignment, TableCellInfo.AlignOption.Right);
 			info.Parse("T[");
-			Assertion.AssertEquals(info.TableAlignment, TableCellInfo.AlignOption.Left);
+			Assert.AreEqual(info.TableAlignment, TableCellInfo.AlignOption.Left);
 			info.Parse("T^");
-			Assertion.AssertEquals(info.TableAlignment, TableCellInfo.AlignOption.Center);
+			Assert.AreEqual(info.TableAlignment, TableCellInfo.AlignOption.Center);
 		}
 
 		public void TestCellAlignment()
 		{
 			TableCellInfo info = new TableCellInfo();
 			info.Parse("]");
-			Assertion.AssertEquals(info.CellAlignment, TableCellInfo.AlignOption.Right);
+			Assert.AreEqual(info.CellAlignment, TableCellInfo.AlignOption.Right);
 			info.Parse("[");
-			Assertion.AssertEquals(info.CellAlignment, TableCellInfo.AlignOption.Left);
+			Assert.AreEqual(info.CellAlignment, TableCellInfo.AlignOption.Left);
 			info.Parse("^");
-			Assertion.AssertEquals(info.CellAlignment, TableCellInfo.AlignOption.Center);
+			Assert.AreEqual(info.CellAlignment, TableCellInfo.AlignOption.Center);
 		}
 
 		public void TestHighlight()
 		{
 			TableCellInfo info = new TableCellInfo();
 			info.Parse("!");
-			Assertion.Assert(info.IsHighlighted);
+			Assert.IsTrue(info.IsHighlighted);
 		}
 
 		public void TestSpans()
 		{
 			TableCellInfo info = new TableCellInfo();
 			info.Parse("C10!R5T-");
-			Assertion.Assert(info.IsHighlighted);
-			Assertion.AssertEquals(info.ColSpan, 10);
-			Assertion.AssertEquals(info.RowSpan, 5);
+			Assert.IsTrue(info.IsHighlighted);
+			Assert.AreEqual(info.ColSpan, 10);
+			Assert.AreEqual(info.RowSpan, 5);
 		}
 
 	}
@@ -166,7 +166,7 @@ lenSpanning=@@topics.TopicWithBehaviorProperties.FaceSpanningLines(""parsing is 
 			AbsoluteTopicName top = new AbsoluteTopicName("InlineTestTopic", _cb.Namespace);
 			Formatter.Format(top, TheFederation.ContentBaseForTopic(top).Read(top.LocalName), output,  _cb, _lm, _externals, 0, null);
 			string result = output.ToString();
-			Assertion.Assert(result.IndexOf("aaa foo zzz") >= 0);
+			Assert.IsTrue(result.IndexOf("aaa foo zzz") >= 0);
 		}
 
 		[Test] public void TopicBehaviorProperty()
@@ -196,7 +196,7 @@ lenSpanning=@@topics.TopicWithBehaviorProperties.FaceSpanningLines(""parsing is 
 
 		void AssertStringContains(string container, string find)
 		{
-			Assertion.Assert("Searching for " + find + " in " + container, container.IndexOf(find) != -1);
+			Assert.IsTrue(container.IndexOf(find) != -1, "Searching for " + find + " in " + container);
 		}
 
 		[Test] public void WikiURIForTopic()
@@ -1131,7 +1131,7 @@ And the text in the parens and brackets should be code formatted:
 				Console.Error.WriteLine("Got     : " + o1);
 				Console.Error.WriteLine("Expected: " + o2);
 			}
-			Assertion.AssertEquals(o2, o1);
+			Assert.AreEqual(o2, o1);
 		}			
 
 		[Test] public void PreFormattedBlockTests()
@@ -1249,12 +1249,12 @@ Normal again
 			Regex m = new Regex(Formatter.extractWikiNamesString);
 			if (match != null)
 			{
-				Assertion.AssertEquals(match, 1, m.Matches(input).Count);
-				Assertion.AssertEquals(match, match, m.Matches(input)[0].Groups["topic"].Value);
+				Assert.AreEqual(1, m.Matches(input).Count, match);
+				Assert.AreEqual(match, m.Matches(input)[0].Groups["topic"].Value, match);
 			}
 			else
 			{
-				Assertion.AssertEquals(match, 0, m.Matches(input).Count);
+				Assert.AreEqual(0, m.Matches(input).Count, match);
 			}
 		}
 
@@ -1386,7 +1386,7 @@ b
 				Console.Error.WriteLine("Got     : " + got);
 				Console.Error.WriteLine("Expected: " + o2);
 			}
-			Assertion.AssertEquals(o2, got);
+			Assert.AreEqual(o2, got);
 		}
 	}
 }

@@ -42,7 +42,7 @@ namespace FlexWiki.BuildVerificationTests
 		{
 			string home = TheLinkMaker.LinkToTopic(HomePage);
 			DocumentElement doc = TheBrowser.Navigate(home, true);
-			Assertion.Assert(doc.Body.OuterHTML.IndexOf("The two most important things ") > 0);
+			Assert.IsTrue(doc.Body.OuterHTML.IndexOf("The two most important things ") > 0);
 		}
 
 		[Test]
@@ -53,11 +53,11 @@ namespace FlexWiki.BuildVerificationTests
 			bool exists;
 			
 			exists = TheFederation.TopicExists(top);
-			Assertion.Assert(!exists);
+			Assert.IsTrue(!exists);
 
 			string home = TheLinkMaker.LinkToTopic(top);
 			DocumentElement doc = TheBrowser.Navigate(home, true);
-			Assertion.Assert(doc.Body.OuterHTML.IndexOf("Formatting Tips") > 0);
+			Assert.IsTrue(doc.Body.OuterHTML.IndexOf("Formatting Tips") > 0);
 			InputElement text = (InputElement) doc.GetElementByName("Text1");
 			text.Value = "This is SoCool!";
 			ButtonElement save = (ButtonElement) doc.GetElementByName("SaveButton");
@@ -65,7 +65,7 @@ namespace FlexWiki.BuildVerificationTests
 			save.Click(true);
 			// Make sure it actually got saved
 			exists = TheFederation.TopicExists(top);
-			Assertion.Assert(exists);
+			Assert.IsTrue(exists);
 		}
 
 		[Test]
@@ -76,9 +76,9 @@ namespace FlexWiki.BuildVerificationTests
 			string rc = TheLinkMaker.LinkToRecentChanges(TheFederation.DefaultNamespace);
 			DocumentElement doc = TheBrowser.Navigate(rc, true);
 			SelectElement sel = (SelectElement)doc.GetElementByID("NamespaceFilter");
-			Assertion.AssertNotNull(sel);
+			Assert.IsNotNull(sel);
 			IList list = sel.Options;
-			Assertion.AssertEquals("Matching number of namespaces", FederationContent.Namespaces.Length, list.Count);
+			Assert.AreEqual(FederationContent.Namespaces.Length, list.Count, "Matching number of namespaces");
 			for (int i = 0; i < FederationContent.Namespaces.Length; i++)
 			{
 				string n = FederationContent.Namespaces[i].Name;
@@ -91,7 +91,7 @@ namespace FlexWiki.BuildVerificationTests
 						break;
 					}
 				}
-				Assertion.Assert("Finding namespace " + n, found);
+				Assert.IsTrue(found, "Finding namespace " + n);
 			}
 		}
 

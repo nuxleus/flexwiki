@@ -31,7 +31,7 @@ namespace FlexWiki.UnitTests
 		{
 			BehaviorParser parser = new BehaviorParser();
 			ExposableParseTreeNode obj = parser.Parse(input);
-			Assertion.AssertNotNull(obj);
+			Assert.IsNotNull(obj);
 			ExecutionContext ctx = new ExecutionContext();
 			ctx.WikiTalkVersion = 1;
 			IBELObject evaluated = obj.Expose(ctx);
@@ -144,12 +144,12 @@ Color: red
 
 		[Test] public void TestCanNotHideCoreLanguageElements()
 		{
-			Assertion.AssertEquals("P(null)", Run(" { null | null }.Value(100)"));
+			Assert.AreEqual("P(null)", Run(" { null | null }.Value(100)"));
 		}
 
 		[Test] public void TestBlockCanSeeEnclosingLexicalBlock()
 		{
-			Assertion.AssertEquals("P(100)", Run(" { a | {a}.Value }.Value(100)"));
+			Assert.AreEqual("P(100)", Run(" { a | {a}.Value }.Value(100)"));
 		}
 
 		[Test] public void TestThis()
@@ -239,7 +239,7 @@ Color: red
 				Console.Out.WriteLine(find);
 				Console.Out.WriteLine(fmt);
 			}
-			Assertion.Assert("Searching for " + find, sense == found);
+			Assert.IsTrue(sense == found, "Searching for " + find);
 		}
 
 		string FormattedTopic(string topic)

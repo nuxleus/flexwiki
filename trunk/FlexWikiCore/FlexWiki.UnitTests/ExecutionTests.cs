@@ -33,7 +33,7 @@ namespace FlexWiki.UnitTests
 		{
 			BehaviorParser parser = new BehaviorParser();
 			ExposableParseTreeNode obj = parser.Parse(input);
-			Assertion.AssertNotNull(obj);
+			Assert.IsNotNull(obj);
 			ExecutionContext ctx = new ExecutionContext();
 			ctx.WikiTalkVersion = wikiTalkVersion;
 			IBELObject evaluated = obj.Expose(ctx);
@@ -68,135 +68,135 @@ namespace FlexWiki.UnitTests
 
 		[Test] public void TestSimpleLiterals()
 		{
-			Assertion.AssertEquals("P(100)", Run("100")); 
-			Assertion.AssertEquals("P(-100)", Run("-100")); 
-			Assertion.AssertEquals(@"P(mustard ""and"" greens)", Run(@"""mustard \""and\"" greens""")); 
+			Assert.AreEqual("P(100)", Run("100")); 
+			Assert.AreEqual("P(-100)", Run("-100")); 
+			Assert.AreEqual(@"P(mustard ""and"" greens)", Run(@"""mustard \""and\"" greens""")); 
 		}
 
 		[Test] public void TestBlockTypeChecking()
 		{
-			Assertion.AssertEquals("P(100)", Run(" {Integer  x | x }.Value(100)"));
-			Assertion.AssertEquals("P(100)", Run(" {String  x | x }.Value(\"100\")"));
-			Assertion.AssertEquals("P(2)", Run(" {Block  x | x.Value }.Value( { 2 })"));
+			Assert.AreEqual("P(100)", Run(" {Integer  x | x }.Value(100)"));
+			Assert.AreEqual("P(100)", Run(" {String  x | x }.Value(\"100\")"));
+			Assert.AreEqual("P(2)", Run(" {Block  x | x.Value }.Value( { 2 })"));
 		}
 
 
 
 		[Test] public void TestSimpleVariableReference()
 		{
-			Assertion.AssertEquals("P(null)", Run("null"));
+			Assert.AreEqual("P(null)", Run("null"));
 		}
 
 		[Test] public void TestWithMethod()
 		{
-			Assertion.AssertEquals("P(el)", Run("with(\"hello\", {Substring(1,2)})"));
+			Assert.AreEqual("P(el)", Run("with(\"hello\", {Substring(1,2)})"));
 		}
 
 		[Test] public void TestNewline()
 		{ 
-			Assertion.AssertEquals(@"P(
+			Assert.AreEqual(@"P(
 )", Run("Newline"));
 		}
 
 		[Test] public void TestTab()
 		{ 
-			Assertion.AssertEquals(@"P(	)", Run("Tab"));
+			Assert.AreEqual(@"P(	)", Run("Tab"));
 		}
 
 		[Test] public void TestSpace()
 		{ 
-			Assertion.AssertEquals(@"P( )", Run("Space"));
+			Assert.AreEqual(@"P( )", Run("Space"));
 		}
 
 		[Test] public void TestWithProperty()
 		{
-			Assertion.AssertEquals("P(5)", Run("with(\"hello\", {Length})"));
-			Assertion.AssertEquals("P(2)", Run("with([1,2], {Count})"));
-			Assertion.AssertEquals("P(12)", Run("with([1,2], {Collect({e | e})})"));
+			Assert.AreEqual("P(5)", Run("with(\"hello\", {Length})"));
+			Assert.AreEqual("P(2)", Run("with([1,2], {Count})"));
+			Assert.AreEqual("P(12)", Run("with([1,2], {Collect({e | e})})"));
 		}
 
 		[Test] public void TestWithFindLast()
 		{
-			Assertion.AssertEquals("P(5)", Run("with(100, null, \"hello\", {Length})"));
+			Assert.AreEqual("P(5)", Run("with(100, null, \"hello\", {Length})"));
 		}
 
 		[Test] public void TestWithFindFirst()
 		{
-			Assertion.AssertEquals("P(5)", Run("with( \"hello\", 100, null, {Length})"));
+			Assert.AreEqual("P(5)", Run("with( \"hello\", 100, null, {Length})"));
 		}
 
 		[Test] public void TestLiteralProperty()
 		{
-			Assertion.AssertEquals("P(5)", Run(@"""hello"".Length"));
+			Assert.AreEqual("P(5)", Run(@"""hello"".Length"));
 		}
 
 		[Test] public void TestChain()
 		{
-			Assertion.AssertEquals("P(5)", Run(@"""hello"".Reverse.Length"));
+			Assert.AreEqual("P(5)", Run(@"""hello"".Reverse.Length"));
 		}
 
 		[Test] public void TestArgs()
 		{
-			Assertion.AssertEquals("P(llo)", Run(@"""hello"".Substring(2,3)"));
+			Assert.AreEqual("P(llo)", Run(@"""hello"".Substring(2,3)"));
 		}
 
 		[Test] public void TestOptionalArgs()
 		{
-			Assertion.AssertEquals("P(llo)", Run(@"""hello"".Substring(2)"));
+			Assert.AreEqual("P(llo)", Run(@"""hello"".Substring(2)"));
 		}
 
 		[Test] public void TestChainedArgs()
 		{
-			Assertion.AssertEquals("P(ll)", Run(@"""hello"".Substring(2,3).Substring(0,2)"));
+			Assert.AreEqual("P(ll)", Run(@"""hello"".Substring(2,3).Substring(0,2)"));
 		}
 
 		[Test] public void TestToString()
 		{
-			Assertion.AssertEquals("P(5)", Run(@"10000.ToString.Length"));
-			Assertion.AssertEquals("P(hello)", Run(@"""hello"".ToString"));
+			Assert.AreEqual("P(5)", Run(@"10000.ToString.Length"));
+			Assert.AreEqual("P(hello)", Run(@"""hello"".ToString"));
 		}
 
 		[Test] public void TestBadSignature()
 		{
-			Assertion.Assert(InvExcept(@"""hello"".Substring"));
-			Assertion.Assert(InvExcept(@"""hello"".Substring(100, ""z"")"));
-			Assertion.Assert(InvExcept(@"""hello"".Length(100)"));
+			Assert.IsTrue(InvExcept(@"""hello"".Substring"));
+			Assert.IsTrue(InvExcept(@"""hello"".Substring(100, ""z"")"));
+			Assert.IsTrue(InvExcept(@"""hello"".Length(100)"));
 		}
 
 		[Test] public void TestFunctionWithArgsThatMustBeEvaluated()
 		{
-			Assertion.AssertEquals("P(llo)", Run(@"""hello"".Substring(""xx"".Length,""zzz"".Length)"));
+			Assert.AreEqual("P(llo)", Run(@"""hello"".Substring(""xx"".Length,""zzz"".Length)"));
 		}
 
 		[Test] public void TestArray()
 		{
-			Assertion.AssertEquals("P(3)", Run(@"[100, 200, ""hello""].Count"));
-			Assertion.AssertEquals("P(1002005)", Run(@"[100, 200, ""hello"".Length]"));
-			Assertion.AssertEquals("P(1002004)", Run(@"[100, 200, [1,2,3,4].Count]"));
-			Assertion.AssertEquals("P(1002001234)", Run(@"[100, 200, [1,2,3,4]]"));
+			Assert.AreEqual("P(3)", Run(@"[100, 200, ""hello""].Count"));
+			Assert.AreEqual("P(1002005)", Run(@"[100, 200, ""hello"".Length]"));
+			Assert.AreEqual("P(1002004)", Run(@"[100, 200, [1,2,3,4].Count]"));
+			Assert.AreEqual("P(1002001234)", Run(@"[100, 200, [1,2,3,4]]"));
 		}
 
 		[Test] public void TestArrayIndex()
 		{
-			Assertion.AssertEquals("P(100)", Run(@"[100, 200, 300].Item(0)"));
-			Assertion.AssertEquals("P(300)", Run(@"[100, 200, 300].Item(2)"));
+			Assert.AreEqual("P(100)", Run(@"[100, 200, 300].Item(0)"));
+			Assert.AreEqual("P(300)", Run(@"[100, 200, 300].Item(2)"));
 		}
 
 		[Test] public void TestNull()
 		{
-			Assertion.AssertEquals("P(null)", Run(@"null"));
+			Assert.AreEqual("P(null)", Run(@"null"));
 		}
 
 		[Test] public void TestTypeName()
 		{
-			Assertion.AssertEquals("P(Integer)", Run(@"100.Type.Name"));
-			Assertion.AssertEquals("P(Array)", Run(@"[100,200].Type.Name"));
+			Assert.AreEqual("P(Integer)", Run(@"100.Type.Name"));
+			Assert.AreEqual("P(Array)", Run(@"[100,200].Type.Name"));
 		}
 
 		[Test] public void TestType()
 		{
-			Assertion.AssertEquals("P(Integer)", Run(@"100.Type.Name"));
-			Assertion.AssertEquals("P(Array)", Run(@"[100,200].Type.Name"));
+			Assert.AreEqual("P(Integer)", Run(@"100.Type.Name"));
+			Assert.AreEqual("P(Array)", Run(@"[100,200].Type.Name"));
 		}
 
 		bool ExpectIndexOutOfBounds(string str)
@@ -227,30 +227,30 @@ namespace FlexWiki.UnitTests
 
 		[Test] public void TestNoSuchMember()
 		{
-			Assertion.Assert(ExpectNoSuchMember("fooCouldNotPossiblyExist"));
-			Assertion.Assert(ExpectNoSuchMember("null.fooCouldNotPossiblyExist"));
+			Assert.IsTrue(ExpectNoSuchMember("fooCouldNotPossiblyExist"));
+			Assert.IsTrue(ExpectNoSuchMember("null.fooCouldNotPossiblyExist"));
 		}
 
 
 		[Test] public void TestArrayIndexOutOfBounds()
 		{
-			Assertion.Assert(ExpectIndexOutOfBounds("[100, 200, 300].Item(-1)"));
-			Assertion.Assert(ExpectIndexOutOfBounds("[100, 200, 300].Item(-2)"));
-			Assertion.Assert(ExpectIndexOutOfBounds("[100, 200, 300].Item(3)"));
-			Assertion.Assert(ExpectIndexOutOfBounds("[100, 200, 300].Item(4)"));
+			Assert.IsTrue(ExpectIndexOutOfBounds("[100, 200, 300].Item(-1)"));
+			Assert.IsTrue(ExpectIndexOutOfBounds("[100, 200, 300].Item(-2)"));
+			Assert.IsTrue(ExpectIndexOutOfBounds("[100, 200, 300].Item(3)"));
+			Assert.IsTrue(ExpectIndexOutOfBounds("[100, 200, 300].Item(4)"));
 		}
 
 		[Test] public void TestCollect()
 		{
-			Assertion.AssertEquals("P(358)", 
+			Assert.AreEqual("P(358)", 
 				Run(@"[""abc"",""12345"",""12345678""].Collect({ Object each | each.Length})"));
 		}
 
 
 		[Test] public void TestBlockArgument()
 		{
-			Assertion.AssertEquals("P(358)", Run(@"[""abc"",""12345"",""12345678""].Collect {each | each.Length}"));
-			Assertion.AssertEquals("P(358)", Run(@"[""abc"",""12345"",""12345678""].Collect {String each | each.Length}"));
+			Assert.AreEqual("P(358)", Run(@"[""abc"",""12345"",""12345678""].Collect {each | each.Length}"));
+			Assert.AreEqual("P(358)", Run(@"[""abc"",""12345"",""12345678""].Collect {String each | each.Length}"));
 		}
 
 		[Test] public void TestMethodCacheNever()
@@ -258,12 +258,12 @@ namespace FlexWiki.UnitTests
 			IBELObject p = new Dummy();
 			ExecutionContext ctx = new ExecutionContext();
 			IBELObject v1 = p.ValueOf("NumberNever", null, ctx);
-			Assertion.Assert(FindRule(ctx, typeof(CacheRuleNever)));
+			Assert.IsTrue(FindRule(ctx, typeof(CacheRuleNever)));
 		}
 
 		[Test] public void TestNestedBlockArg()
 		{
-			Assertion.AssertEquals("P(6)", 
+			Assert.AreEqual("P(6)", 
 				Run(@"
 with(""short"")
 {
@@ -277,7 +277,7 @@ with(""short"")
 
 		[Test] public void TestNestedWith()
 		{
-			Assertion.AssertEquals("P(5)", 
+			Assert.AreEqual("P(5)", 
 				Run(@"
 with(""short"")
 {
@@ -291,102 +291,102 @@ with(""short"")
 
 		[Test] public void TestTypes()
 		{
-			Assertion.AssertEquals("P("+ DateTime.MinValue.ToString() + ")", Run(@"with (types) {DateTime.MinValue}"));
-			Assertion.AssertEquals("P("+ DateTime.MinValue.ToString() + ")", Run(@"types.DateTime.MinValue"));
+			Assert.AreEqual("P("+ DateTime.MinValue.ToString() + ")", Run(@"with (types) {DateTime.MinValue}"));
+			Assert.AreEqual("P("+ DateTime.MinValue.ToString() + ")", Run(@"types.DateTime.MinValue"));
 		}
 
 		[Test] public void TestEmpty()
 		{
-			Assertion.AssertEquals("P(0)", Run(@"empty.Length"));
+			Assert.AreEqual("P(0)", Run(@"empty.Length"));
 		}
 
 
 		[Test] public void TestMetaTypeBasics()
 		{
-			Assertion.AssertEquals("P("+ DateTime.MinValue.ToString() + ")", Run(@"Now.Type.MinValue"));
+			Assert.AreEqual("P("+ DateTime.MinValue.ToString() + ")", Run(@"Now.Type.MinValue"));
 		}
 
 		[Test] public void TestMetaTypeName()
 		{
-			Assertion.AssertEquals("P(DateTimeType)", Run(@"Now.Type.Type.Name"));
+			Assert.AreEqual("P(DateTimeType)", Run(@"Now.Type.Type.Name"));
 		}
 
 		[Test] public void TestBoolTrue()
 		{
-			Assertion.AssertEquals("P(true)", Run(@"true"));
+			Assert.AreEqual("P(true)", Run(@"true"));
 		}
 
 		[Test] public void TestBoolFalse()
 		{
-			Assertion.AssertEquals("P(false)", Run(@"false"));
+			Assert.AreEqual("P(false)", Run(@"false"));
 		}
 
 		[Test] public void TestIfNull()
 		{
-			Assertion.AssertEquals("P(null)", Run(@"100.IfNull {""yuppo""}"));
-			Assertion.AssertEquals("P(yuppo)", Run(@"null.IfNull {""yuppo""}"));
+			Assert.AreEqual("P(null)", Run(@"100.IfNull {""yuppo""}"));
+			Assert.AreEqual("P(yuppo)", Run(@"null.IfNull {""yuppo""}"));
 		}
 
 		[Test] public void TestIfTrue()
 		{
-			Assertion.AssertEquals("P(5)", Run(@"true.IfTrue {5}"));
-			Assertion.AssertEquals("P(null)", Run(@"false.IfTrue {5}"));
+			Assert.AreEqual("P(5)", Run(@"true.IfTrue {5}"));
+			Assert.AreEqual("P(null)", Run(@"false.IfTrue {5}"));
 		}
 
 		[Test] public void TestIfFalse()
 		{
-			Assertion.AssertEquals("P(5)", Run(@"false.IfFalse {5}"));
-			Assertion.AssertEquals("P(null)", Run(@"true.IfFalse {5}"));
+			Assert.AreEqual("P(5)", Run(@"false.IfFalse {5}"));
+			Assert.AreEqual("P(null)", Run(@"true.IfFalse {5}"));
 		}
 
 		[Test] public void TestIfTrueIfFalse()
 		{
-			Assertion.AssertEquals("P(5)", Run(@"true.IfTrue {5} IfFalse {3}"));
-			Assertion.AssertEquals("P(3)", Run(@"false.IfTrue {5} IfFalse {3}"));
+			Assert.AreEqual("P(5)", Run(@"true.IfTrue {5} IfFalse {3}"));
+			Assert.AreEqual("P(3)", Run(@"false.IfTrue {5} IfFalse {3}"));
 		}
 
 		[Test] public void TestIfFalseIfTrue()
 		{
-			Assertion.AssertEquals("P(5)", Run(@"false.IfFalse {5} IfTrue {3}"));
-			Assertion.AssertEquals("P(3)", Run(@"true.IfFalse {5} IfTrue {3}"));
+			Assert.AreEqual("P(5)", Run(@"false.IfFalse {5} IfTrue {3}"));
+			Assert.AreEqual("P(3)", Run(@"true.IfFalse {5} IfTrue {3}"));
 		}
 
 
 		[Test] public void TestStringEquals()
 		{
-			Assertion.AssertEquals("P(true)", Run(@"""hello"".Equals(""hello"")"));
-			Assertion.AssertEquals("P(false)", Run(@"""hello"".Equals(""goodbye"")"));
+			Assert.AreEqual("P(true)", Run(@"""hello"".Equals(""hello"")"));
+			Assert.AreEqual("P(false)", Run(@"""hello"".Equals(""goodbye"")"));
 		}
 
 		
 		[Test] public void TestStringEqualsCaseInsensitive()
 		{
-			Assertion.AssertEquals("P(true)", Run(@"""hello"".EqualsCaseInsensitive(""hello"")"));
-			Assertion.AssertEquals("P(true)", Run(@"""HELLO"".EqualsCaseInsensitive(""hello"")"));
-			Assertion.AssertEquals("P(false)", Run(@"""hello"".EqualsCaseInsensitive(""goodbye"")"));
+			Assert.AreEqual("P(true)", Run(@"""hello"".EqualsCaseInsensitive(""hello"")"));
+			Assert.AreEqual("P(true)", Run(@"""HELLO"".EqualsCaseInsensitive(""hello"")"));
+			Assert.AreEqual("P(false)", Run(@"""hello"".EqualsCaseInsensitive(""goodbye"")"));
 		}
 
 		[Test] public void TestStringContains()
 		{
-			Assertion.AssertEquals("P(true)", Run(@"""hello"".Contains(""ell"")"));
-			Assertion.AssertEquals("P(true)", Run(@"""hello"".Contains(""h"")"));
-			Assertion.AssertEquals("P(false)", Run(@"""hello"".Contains(""xl"")"));
+			Assert.AreEqual("P(true)", Run(@"""hello"".Contains(""ell"")"));
+			Assert.AreEqual("P(true)", Run(@"""hello"".Contains(""h"")"));
+			Assert.AreEqual("P(false)", Run(@"""hello"".Contains(""xl"")"));
 		}
 
 		[Test] public void TestBooleanEquals()
 		{
-			Assertion.AssertEquals("P(true)", Run(@"false.Not.Equals(true)"));
-			Assertion.AssertEquals("P(true)", Run(@"true.Equals(true)"));
-			Assertion.AssertEquals("P(true)", Run(@"false.Equals(false)"));
-			Assertion.AssertEquals("P(false)", Run(@"true.Equals(false)"));
+			Assert.AreEqual("P(true)", Run(@"false.Not.Equals(true)"));
+			Assert.AreEqual("P(true)", Run(@"true.Equals(true)"));
+			Assert.AreEqual("P(true)", Run(@"false.Equals(false)"));
+			Assert.AreEqual("P(false)", Run(@"true.Equals(false)"));
 		}
 		
 		[Test] public void TestIntegerEquals()
 		{
-			Assertion.AssertEquals("P(true)", Run(@"100.Equals(100)"));
-			Assertion.AssertEquals("P(true)", Run(@"-100.Equals(-100)"));
-			Assertion.AssertEquals("P(false)", Run(@"20.Equals(10)"));
-			Assertion.AssertEquals("P(false)", Run(@"20.Equals(""blah"")"));
+			Assert.AreEqual("P(true)", Run(@"100.Equals(100)"));
+			Assert.AreEqual("P(true)", Run(@"-100.Equals(-100)"));
+			Assert.AreEqual("P(false)", Run(@"20.Equals(10)"));
+			Assert.AreEqual("P(false)", Run(@"20.Equals(""blah"")"));
 		}
 
 		bool FindRule(ExecutionContext ctx, Type type)
@@ -408,7 +408,7 @@ with(""short"")
 			args.Add(s2);
 			IBELObject v = p.ValueOf("ArgCounterZero", args, ctx);
 			IOutputSequence seq = v.ToOutputSequence();
-			Assertion.AssertEquals("P(2)", OutputSequenceToString(seq));			
+			Assert.AreEqual("P(2)", OutputSequenceToString(seq));			
 		}
 
 		[Test] public void TestVarArgsExtract()
@@ -423,7 +423,7 @@ with(""short"")
 			args.Add(s2);
 			IBELObject v = p.ValueOf("ExtractExtraArg", args, ctx);
 			IOutputSequence seq = v.ToOutputSequence();
-			Assertion.AssertEquals("P(string2)", OutputSequenceToString(seq));			
+			Assert.AreEqual("P(string2)", OutputSequenceToString(seq));			
 		}
 
 
@@ -431,14 +431,14 @@ with(""short"")
 		{
 			BELType belType = new BELType();
 			BELType result = belType.TypeForName("NamespaceInfo");
-			Assertion.AssertEquals("Type NamespaceInfo", result.ToString());
+			Assert.AreEqual("Type NamespaceInfo", result.ToString());
 		}
 
 		[Test] public void TestTypeForNameDoesNotExist()
 		{
 			BELType belType = new BELType();
 			BELType result = belType.TypeForName("WardInfo");
-			Assertion.AssertEquals(null, result);
+			Assert.AreEqual(null, result);
 		}
 
 

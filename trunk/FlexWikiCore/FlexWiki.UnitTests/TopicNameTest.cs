@@ -19,19 +19,19 @@ namespace FlexWiki.UnitTests
 	{
 		[Test] public void SimpleTests()
 		{
-			Assertion.AssertEquals("Hello", new AbsoluteTopicName("Hello").Name);
-			Assertion.AssertEquals("Hello", new AbsoluteTopicName("Dog.Hello").Name);
-			Assertion.AssertEquals("Dog", new AbsoluteTopicName("Dog.Hello").Namespace);
-			Assertion.AssertEquals("Cat.Dog", new AbsoluteTopicName("Cat.Dog.Hello").Namespace);
-			Assertion.AssertEquals("Hello", new AbsoluteTopicName("Cat.Dog.Hello").Name);
+			Assert.AreEqual("Hello", new AbsoluteTopicName("Hello").Name);
+			Assert.AreEqual("Hello", new AbsoluteTopicName("Dog.Hello").Name);
+			Assert.AreEqual("Dog", new AbsoluteTopicName("Dog.Hello").Namespace);
+			Assert.AreEqual("Cat.Dog", new AbsoluteTopicName("Cat.Dog.Hello").Namespace);
+			Assert.AreEqual("Hello", new AbsoluteTopicName("Cat.Dog.Hello").Name);
 
-			Assertion.AssertEquals(null, new AbsoluteTopicName("Hello()").Version);
-			Assertion.AssertEquals("123-abc", new AbsoluteTopicName("Hello(123-abc)").Version);
-			Assertion.AssertEquals("Hello", new AbsoluteTopicName("Hello(123-abc)").Name);
-			Assertion.AssertEquals(null, new AbsoluteTopicName("Hello(123-abc)").Namespace);
-			Assertion.AssertEquals("Foo.Bar", new AbsoluteTopicName("Foo.Bar.Hello(123-abc)").Namespace);
+			Assert.AreEqual(null, new AbsoluteTopicName("Hello()").Version);
+			Assert.AreEqual("123-abc", new AbsoluteTopicName("Hello(123-abc)").Version);
+			Assert.AreEqual("Hello", new AbsoluteTopicName("Hello(123-abc)").Name);
+			Assert.AreEqual(null, new AbsoluteTopicName("Hello(123-abc)").Namespace);
+			Assert.AreEqual("Foo.Bar", new AbsoluteTopicName("Foo.Bar.Hello(123-abc)").Namespace);
 
-			Assertion.AssertEquals("TEST That Acryonyms SPACE Correctly", new AbsoluteTopicName("TESTThatAcryonymsSPACECorrectly").FormattedName);
+			Assert.AreEqual("TEST That Acryonyms SPACE Correctly", new AbsoluteTopicName("TESTThatAcryonymsSPACECorrectly").FormattedName);
 		}
 
 	}

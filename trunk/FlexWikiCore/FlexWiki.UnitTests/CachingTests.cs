@@ -154,7 +154,7 @@ namespace FlexWiki.UnitTests
 				set.AddRange(rule.AllLeafRules);
 			foreach (CacheRule r in rules)
 			{
-				Assertion.Assert("Unable to find expected CacheRule (" + r.Description + ")", set.Contains(r));
+				Assert.IsTrue(set.Contains(r), "Unable to find expected CacheRule (" + r.Description + ")");
 				set.Remove(r);
 			}
 		}
@@ -220,7 +220,7 @@ namespace FlexWiki.UnitTests
 			int count = CountTopicRuleMatches(rule, absName);
 			if (count == 0)
 				System.Console.Error.WriteLine("Rule: " + rule.Description);
-			Assertion.Assert("Searching for topic (" + absName + ") in cache rule", count > 0); 
+			Assert.IsTrue(count > 0, "Searching for topic (" + absName + ") in cache rule"); 
 		}
 
 		int CountTopicRuleMatches(CacheRule rule, string path)

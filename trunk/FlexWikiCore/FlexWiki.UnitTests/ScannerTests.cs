@@ -33,7 +33,7 @@ namespace FlexWiki.UnitTests
 		{
 			Scanner scanner = new Scanner("");
 			Token t = scanner.Next();
-			Assertion.AssertEquals(TokenType.TokenEndOfInput, t.Type); 
+			Assert.AreEqual(TokenType.TokenEndOfInput, t.Type); 
 		}
 
 
@@ -41,7 +41,7 @@ namespace FlexWiki.UnitTests
 		{
 			Scanner scanner = new Scanner("1");
 			Token t = scanner.Next();
-			Assertion.AssertSame(t, scanner.LatestToken); 
+			Assert.AreEqual(t, scanner.LatestToken); 
 		}
 
 		[Test] public void Pushbacktest()
@@ -50,31 +50,31 @@ namespace FlexWiki.UnitTests
 			Token t = scanner.Next();
 			scanner.Pushback(t);
 			Token t2 = scanner.Next();
-			Assertion.AssertSame(t, t2); 
+			Assert.AreSame(t, t2); 
 		}
 
 		[Test] public void ScanTest()
 		{
 			Scanner scanner = new Scanner(@"|_ident{}abc_def(),abc123[]""he\""llo""100-100#");
-			Assertion.AssertEquals(TokenType.TokenBar, scanner.Next().Type);
-			Assertion.AssertEquals(TokenType.TokenIdentifier, scanner.Next().Type);
-			Assertion.AssertEquals(TokenType.TokenLeftBrace, scanner.Next().Type);
-			Assertion.AssertEquals(TokenType.TokenRightBrace, scanner.Next().Type);
-			Assertion.AssertEquals(TokenType.TokenIdentifier, scanner.Next().Type);
-			Assertion.AssertEquals(TokenType.TokenLeftParen, scanner.Next().Type);
-			Assertion.AssertEquals(TokenType.TokenRightParen, scanner.Next().Type);
-			Assertion.AssertEquals(TokenType.TokenComma, scanner.Next().Type);
-			Assertion.AssertEquals(TokenType.TokenIdentifier, scanner.Next().Type);
-			Assertion.AssertEquals("abc123", scanner.LatestToken.Value);
-			Assertion.AssertEquals(TokenType.TokenLeftBracket, scanner.Next().Type);
-			Assertion.AssertEquals(TokenType.TokenRightBracket, scanner.Next().Type);
-			Assertion.AssertEquals(TokenType.TokenString, scanner.Next().Type);
-			Assertion.AssertEquals(@"he""llo", scanner.LatestToken.Value);
-			Assertion.AssertEquals(TokenType.TokenInteger, scanner.Next().Type);
-			Assertion.AssertEquals("100", scanner.LatestToken.Value);
-			Assertion.AssertEquals(TokenType.TokenInteger, scanner.Next().Type);
-			Assertion.AssertEquals("-100", scanner.LatestToken.Value);
-			Assertion.AssertEquals(TokenType.TokenOther, scanner.Next().Type);
+			Assert.AreEqual(TokenType.TokenBar, scanner.Next().Type);
+			Assert.AreEqual(TokenType.TokenIdentifier, scanner.Next().Type);
+			Assert.AreEqual(TokenType.TokenLeftBrace, scanner.Next().Type);
+			Assert.AreEqual(TokenType.TokenRightBrace, scanner.Next().Type);
+			Assert.AreEqual(TokenType.TokenIdentifier, scanner.Next().Type);
+			Assert.AreEqual(TokenType.TokenLeftParen, scanner.Next().Type);
+			Assert.AreEqual(TokenType.TokenRightParen, scanner.Next().Type);
+			Assert.AreEqual(TokenType.TokenComma, scanner.Next().Type);
+			Assert.AreEqual(TokenType.TokenIdentifier, scanner.Next().Type);
+			Assert.AreEqual("abc123", scanner.LatestToken.Value);
+			Assert.AreEqual(TokenType.TokenLeftBracket, scanner.Next().Type);
+			Assert.AreEqual(TokenType.TokenRightBracket, scanner.Next().Type);
+			Assert.AreEqual(TokenType.TokenString, scanner.Next().Type);
+			Assert.AreEqual(@"he""llo", scanner.LatestToken.Value);
+			Assert.AreEqual(TokenType.TokenInteger, scanner.Next().Type);
+			Assert.AreEqual("100", scanner.LatestToken.Value);
+			Assert.AreEqual(TokenType.TokenInteger, scanner.Next().Type);
+			Assert.AreEqual("-100", scanner.LatestToken.Value);
+			Assert.AreEqual(TokenType.TokenOther, scanner.Next().Type);
 		}
 
 

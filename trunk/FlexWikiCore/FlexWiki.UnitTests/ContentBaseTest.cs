@@ -117,10 +117,10 @@ Role:Developer", author);
 
 			foreach (AbsoluteTopicName topic in _base.AllTopics(true))
 			{
-				Assertion.Assert("Looking for " + topic.ToString(), expecting.Contains(topic.Fullname));
+				Assert.IsTrue(expecting.Contains(topic.Fullname), "Looking for " + topic.ToString());
 				expecting.Remove(topic.Fullname); 
 			}
-			Assertion.AssertEquals(expecting.Count, 0);
+			Assert.AreEqual(expecting.Count, 0);
 		}
 
 		[Test] public void TopicsWithTest()
@@ -159,7 +159,7 @@ Role:Developer", author);
 				Console.Error.WriteLine("Got     : " + o1);
 				Console.Error.WriteLine("But Couldn't Find: " + o2);
 			}
-			Assertion.Assert(pass);
+			Assert.IsTrue(pass);
 		}			
 
 		[Test] public void ReferenceTopicInNonImportedNamespace()
@@ -521,7 +521,7 @@ Change2: new value
 		
 		public static void CompareFederationUpdates(FederationUpdate expected, IList events, bool considerTopicChanges, bool considerPropertyChanges)
 		{
-			Assertion.Assert("Did not get any federation update events", events.Count > 0);
+			Assert.IsTrue(events.Count > 0, "Did not get any federation update events");
 
 			FederationUpdate got = null;
 
@@ -533,31 +533,31 @@ Change2: new value
 					got.AddUpdatesFrom((FederationUpdate)(events[i]));
 			}
 
-			Assertion.AssertEquals("FederationPropertiesChanged  doesn't match", expected.FederationPropertiesChanged, got.FederationPropertiesChanged);
-			Assertion.AssertEquals("NamespaceListChanged doesn't match", expected.NamespaceListChanged, got.NamespaceListChanged);
+			Assert.AreEqual(expected.FederationPropertiesChanged, got.FederationPropertiesChanged, "FederationPropertiesChanged  doesn't match");
+			Assert.AreEqual(expected.NamespaceListChanged, got.NamespaceListChanged, "NamespaceListChanged doesn't match");
 
 			if (considerTopicChanges)
 			{
 				// OK, look to see if/where got and expected topics are different; assert that they're the same
 				foreach (AbsoluteTopicName t in expected.CreatedTopics)
-					Assertion.Assert("Missing created topic (" + t.FullnameWithVersion + ") from fired event(s)", got.CreatedTopics.Contains(t));
-				Assertion.AssertEquals("Non-matching number of created topics", expected.CreatedTopics.Count, got.CreatedTopics.Count);
+					Assert.IsTrue(got.CreatedTopics.Contains(t), "Missing created topic (" + t.FullnameWithVersion + ") from fired event(s)");
+				Assert.AreEqual(expected.CreatedTopics.Count, got.CreatedTopics.Count, "Non-matching number of created topics");
 
 				foreach (AbsoluteTopicName t in expected.UpdatedTopics)
-					Assertion.Assert("Missing updated topic (" + t.FullnameWithVersion + ") from fired event(s)", got.UpdatedTopics.Contains(t));
-				Assertion.AssertEquals("Non-matching number of updated topics", expected.UpdatedTopics.Count, got.UpdatedTopics.Count);
+					Assert.IsTrue(got.UpdatedTopics.Contains(t), "Missing updated topic (" + t.FullnameWithVersion + ") from fired event(s)");
+				Assert.AreEqual(expected.UpdatedTopics.Count, got.UpdatedTopics.Count, "Non-matching number of updated topics");
 
 				foreach (AbsoluteTopicName t in expected.DeletedTopics)
-					Assertion.Assert("Missing deleted topic (" + t.FullnameWithVersion + ") from fired event(s)", got.DeletedTopics.Contains(t));
-				Assertion.AssertEquals("Non-matching number of deleted topics", expected.DeletedTopics.Count, got.DeletedTopics.Count);
+					Assert.IsTrue(got.DeletedTopics.Contains(t),"Missing deleted topic (" + t.FullnameWithVersion + ") from fired event(s)");
+				Assert.AreEqual(expected.DeletedTopics.Count, got.DeletedTopics.Count,"Non-matching number of deleted topics");
 			}
 
 			if (considerPropertyChanges)
 			{
 				// Start by looking through the topics to be sure it's the expected set
 				foreach (AbsoluteTopicName t in expected.AllTopicsWithChangedProperties)
-					Assertion.Assert("Missing topic with property update(s) (" + t.FullnameWithVersion + ")", got.AllTopicsWithChangedProperties.Contains(t));
-				Assertion.AssertEquals("Non-matching number of topics with property updates", expected.AllTopicsWithChangedProperties.Count, got.AllTopicsWithChangedProperties.Count);
+					Assert.IsTrue(got.AllTopicsWithChangedProperties.Contains(t), "Missing topic with property update(s) (" + t.FullnameWithVersion + ")");
+				Assert.AreEqual(expected.AllTopicsWithChangedProperties.Count, got.AllTopicsWithChangedProperties.Count, "Non-matching number of topics with property updates");
 
 				// OK, we have the right topics; let's check each one for the right set of properties and the right kind of changes
 				foreach (AbsoluteTopicName t in expected.AllTopicsWithChangedProperties)
@@ -577,7 +577,7 @@ Change2: new value
 				bool found = gotProperties.Contains(propertyName);
 				if (!found)
 					System.Diagnostics.Debug.WriteLine("ACK!");
-				Assertion.Assert("Missing " + verb + " property (" + propertyName + " in " + t.FullnameWithVersion + ") from fired event(s)", found);
+				Assert.IsTrue(found, "Missing " + verb + " property (" + propertyName + " in " + t.FullnameWithVersion + ") from fired event(s)");
 				gotProperties.Remove(propertyName);
 			}
 			if (gotProperties.Count == 0)
@@ -654,9 +654,9 @@ Change2: new value
 			AbsoluteTopicName name1 = ContentBase().TopicNameFor("TopicOne");
 			AbsoluteTopicName name2 = ContentBase().TopicNameFor("TopicTwo");
 			ArrayList log = ContentBase().RenameTopic(name1.LocalName, "TopicOneRenamed", true);
-			Assertion.AssertEquals(log.Count, 1);
+			Assert.AreEqual(log.Count, 1);
 			string t2 = ContentBase().Read(name2.LocalName);
-			Assertion.AssertEquals("Something about TopicOneRenamed and more!", t2);
+			Assert.AreEqual("Something about TopicOneRenamed and more!", t2);
 		}
 
 		[Test] public void RenameAndVerifyVersionsGetRenamedTest()
@@ -671,7 +671,7 @@ Change2: new value
 				x.ToString();		// do something with x just to shut the compiler up
 				c++;			
 			}
-			Assertion.AssertEquals(c, 4);	// should be 4 versions, even after rename
+			Assert.AreEqual(c, 4);	// should be 4 versions, even after rename
 		}
 
 		
@@ -687,7 +687,7 @@ Change2: new value
 			{
 				list.Add(s);
 			}
-			Assertion.AssertEquals(list.Count, 2);
+			Assert.AreEqual(list.Count, 2);
 		}
 
 		[Test] public void AllChangesForTopicSinceTests()
@@ -697,14 +697,14 @@ Change2: new value
 			{
 				list.Add(c);
 			}
-			Assertion.AssertEquals(list.Count, 2);
+			Assert.AreEqual(list.Count, 2);
 
 			list = new ArrayList();
 			foreach (string s in ContentBase().AllChangesForTopicSince(new LocalTopicName("Versioned"), DateTime.MaxValue))
 			{
 				list.Add(s);
 			}
-			Assertion.AssertEquals(list.Count, 0);
+			Assert.AreEqual(list.Count, 0);
 		}
 
 		[Test] public void EnsureContentBaseDirectoryIsMadeIfAbsent()
@@ -713,36 +713,36 @@ Change2: new value
 			string p = @"\temp-wikitests-creation";
 
 			FileSystemStore store = new FileSystemStore(TheFederation, ns, p);
-			Assertion.Assert(Directory.Exists(p));
+			Assert.IsTrue(Directory.Exists(p));
 			store.Delete();
 		}
 
 		[Test] public void TopicTimeTests()
 		{
-			Assertion.Assert(ContentBase().GetTopicCreationTime(new LocalTopicName("TopicOlder")) < ContentBase().GetTopicCreationTime(new LocalTopicName("TopicNewer")));
-			Assertion.AssertEquals(ContentBase().GetTopicLastWriteTime(new LocalTopicName("TopicNewer")), ContentBase().LastModified(true));
+			Assert.IsTrue(ContentBase().GetTopicCreationTime(new LocalTopicName("TopicOlder")) < ContentBase().GetTopicCreationTime(new LocalTopicName("TopicNewer")));
+			Assert.AreEqual(ContentBase().GetTopicLastWriteTime(new LocalTopicName("TopicNewer")), ContentBase().LastModified(true));
 		}
 
 		[Test] public void AuthorshipTests()
 		{
-			Assertion.AssertEquals(ContentBase().GetTopicLastAuthor(new LocalTopicName("TopicNewer")), ContentBase().GetTopicLastAuthor(new LocalTopicName("TopicOlder")));
+			Assert.AreEqual(ContentBase().GetTopicLastAuthor(new LocalTopicName("TopicNewer")), ContentBase().GetTopicLastAuthor(new LocalTopicName("TopicOlder")));
 		}
 
 		[Test] public void ExternalWikisTests()
 		{
 			Hashtable t = ContentBase().ExternalWikiHash();
-			Assertion.AssertEquals(t.Count, 2);
-			Assertion.AssertEquals(t["wiki1"], "dozo$$$");
-			Assertion.AssertEquals(t["wiki2"], "fat$$$");
+			Assert.AreEqual(t.Count, 2);
+			Assert.AreEqual(t["wiki1"], "dozo$$$");
+			Assert.AreEqual(t["wiki2"], "fat$$$");
 		}
 
 		[Test] public void GetFieldsTest()
 		{
 
 			Hashtable t = ContentBase().GetFieldsForTopic(new LocalTopicName("Props"));
-			Assertion.AssertEquals(t["First"], "one");
-			Assertion.AssertEquals(t["Second"], "two");
-			Assertion.AssertEquals(t["Third"], @"lots
+			Assert.AreEqual(t["First"], "one");
+			Assert.AreEqual(t["Second"], "two");
+			Assert.AreEqual(t["Third"], @"lots
 and
 
 lots");
@@ -765,10 +765,10 @@ lots");
 
 			foreach (AbsoluteTopicName topic in ContentBase().AllTopics(false))
 			{
-				Assertion.Assert("Looking for " + topic.Name, expecting.Contains(topic.Name));
+				Assert.IsTrue(expecting.Contains(topic.Name), "Looking for " + topic.Name);
 				expecting.Remove(topic.Name);
 			}
-			Assertion.AssertEquals(expecting.Count, 0);
+			Assert.AreEqual(expecting.Count, 0);
 		}
 
 		
@@ -784,32 +784,32 @@ lots");
 			
 			cb.SetFieldValue(wn.LocalName, "First", "one", false);
 			t = cb.GetFieldsForTopic(wn.LocalName);
-			Assertion.AssertEquals(t["First"], "one");
+			Assert.AreEqual(t["First"], "one");
 
 			cb.SetFieldValue(wn.LocalName, "Second", "two", false);
 			t = cb.GetFieldsForTopic(wn.LocalName);
-			Assertion.AssertEquals(t["First"], "one");
-			Assertion.AssertEquals(t["Second"], "two");
+			Assert.AreEqual(t["First"], "one");
+			Assert.AreEqual(t["Second"], "two");
 			
 			cb.SetFieldValue(wn.LocalName, "Second", "change", false);
 			t = cb.GetFieldsForTopic(wn.LocalName);
-			Assertion.AssertEquals(t["First"], "one");
-			Assertion.AssertEquals(t["Second"], "change");
+			Assert.AreEqual(t["First"], "one");
+			Assert.AreEqual(t["Second"], "change");
 
 			cb.SetFieldValue(wn.LocalName, "First", @"change
 is
 good", false);
 			t = cb.GetFieldsForTopic(wn.LocalName);
-			Assertion.AssertEquals(t["First"], @"change
+			Assert.AreEqual(t["First"], @"change
 is
 good");
-			Assertion.AssertEquals(t["Second"], "change");
+			Assert.AreEqual(t["Second"], "change");
 
 			cb.SetFieldValue(wn.LocalName, "First", "one", false);
 			cb.SetFieldValue(wn.LocalName, "Second", "change", false);
 			t = cb.GetFieldsForTopic(wn.LocalName);
-			Assertion.AssertEquals(t["First"], "one");
-			Assertion.AssertEquals(t["Second"], "change");
+			Assert.AreEqual(t["First"], "one");
+			Assert.AreEqual(t["Second"], "change");
 		}
 
 		[Test] public void SimpleReadingAndWritingTest()
@@ -823,17 +823,17 @@ There";
 			{
 				ret = sr.ReadToEnd();
 			}
-			Assertion.AssertEquals(c, ret);
+			Assert.AreEqual(c, ret);
 
 			ContentBase().DeleteTopic(an);
-			Assertion.Assert(!ContentBase().TopicExistsLocally(an));
+			Assert.IsTrue(!ContentBase().TopicExistsLocally(an));
 		}
 
 
 
 		[Test] public void SimpleTopicExistsTest()
 		{
-			Assertion.Assert(ContentBase().TopicExists(ContentBase().TopicNameFor("TopicOne")));
+			Assert.IsTrue(ContentBase().TopicExists(ContentBase().TopicNameFor("TopicOne")));
 		}
 
     [Test] public void LatestVersionForTopic()
@@ -873,12 +873,9 @@ There";
         break;
       }
 
-      Assertion.AssertEquals("Checking that latest version is calculated correctly", 
-        version1, cb.LatestVersionForTopic(atn1)); 
-      Assertion.AssertEquals("Checking that latest version is calculated correctly", 
-        version2, cb.LatestVersionForTopic(atn2)); 
-      Assertion.AssertEquals("Checking that latest version is calculated correctly", 
-        version3, cb.LatestVersionForTopic(atn3)); 
+      Assert.AreEqual(version1, cb.LatestVersionForTopic(atn1), "Checking that latest version is calculated correctly"); 
+      Assert.AreEqual(version2, cb.LatestVersionForTopic(atn2), "Checking that latest version is calculated correctly"); 
+      Assert.AreEqual(version3, cb.LatestVersionForTopic(atn3), "Checking that latest version is calculated correctly"); 
 
     }
 
@@ -913,9 +910,9 @@ Import: FlexWiki.Projects.Wiki", author);
 
 		[Test] public void TestRecurse()
 		{
-			Assertion.AssertEquals("FlexWiki.Projects.Wiki", _base.Namespace);
-			Assertion.AssertEquals("FlexWiki.Projects.Wiki1", _imp1.Namespace);
-			Assertion.AssertEquals("FlexWiki.Projects.Wiki2", _imp2.Namespace);
+			Assert.AreEqual("FlexWiki.Projects.Wiki", _base.Namespace);
+			Assert.AreEqual("FlexWiki.Projects.Wiki1", _imp1.Namespace);
+			Assert.AreEqual("FlexWiki.Projects.Wiki2", _imp2.Namespace);
 		}
 
 		[TearDown] public void DeInit()
@@ -962,17 +959,17 @@ Import: FlexWiki.Projects.Wiki1, FlexWiki.Projects.Wiki2", author);
 
 		[Test] public void SimpleReadingTest()
 		{
-			Assertion.AssertEquals("FlexWiki.Projects.Wiki", Base.Namespace);
-			Assertion.AssertEquals("Test description", Base.Description);
+			Assert.AreEqual("FlexWiki.Projects.Wiki", Base.Namespace);
+			Assert.AreEqual("Test description", Base.Description);
 			ArrayList rels = new ArrayList();
 			rels.Add(_imp1.Namespace);
 			rels.Add(_imp2.Namespace);
 			foreach (ContentBase each in  Base.ImportedContentBases)
 			{
-				Assertion.Assert(rels.Contains(each.Namespace));
+				Assert.IsTrue(rels.Contains(each.Namespace));
 				rels.Remove(each.Namespace);
 			}
-			Assertion.AssertEquals(0, rels.Count);					
+			Assert.AreEqual(0, rels.Count);					
 		}
 	}
 	[TestFixture] public class ExtractTests : WikiTests
@@ -981,12 +978,12 @@ Import: FlexWiki.Projects.Wiki1, FlexWiki.Projects.Wiki2", author);
 
 		[Test] public void VersionTest()
 		{
-			Assertion.AssertEquals("2003-11-24-20-31-20-WINGROUP-davidorn", FlexWiki.FileSystemStore.ExtractVersionFromHistoricalFilename(full));
+			Assert.AreEqual("2003-11-24-20-31-20-WINGROUP-davidorn", FlexWiki.FileSystemStore.ExtractVersionFromHistoricalFilename(full));
 		}
 
 		[Test] public void NameTest()
 		{
-			Assertion.AssertEquals("HomePage",  FlexWiki.FileSystemStore.ExtractTopicFromHistoricalFilename(full));
+			Assert.AreEqual("HomePage",  FlexWiki.FileSystemStore.ExtractTopicFromHistoricalFilename(full));
 		}			
 	}
 
