@@ -381,11 +381,30 @@
       <includes name="tools/nant/bin" />
       <includes name="tools/nunit/bin" />
     </fileset>
+    
+    <!-- We'll stage all the sources in a directory because we want to modify 
+          them slightly before zipping them up -->
+    <property name="dist.srcdir" value="${dist.stagingdir}/src" />
+    
+    <!-- Delete the contents of the staging directory if it's present and recreate it -->
+    <property name="clean.dir.to.clean" value="${dist.srcdir}" />
+    <call target="clean.dir" />
+    <mkdir dir="${dist.srcdir}" />    
+      
+    <!-- Copy the sources into the staging directory -->
+    <copy todir="${dist.srcdir}">
+      <fileset refid="dist.sources" />
+    </copy>
+    
+    <!-- Copy the updated version file into the staging directory -->
+    <copy todir="${dist.srcdir}" file="${versionreport}" />
 
-    <!-- Zip up all the files specified in the dist.sources list into
+    <!-- Zip up all the files specified in the staging directory into
       	 the sources zip -->
     <zip zipfile="${dist.srczip}">
-      <fileset refid="dist.sources" />
+      <fileset basedir="${dist.srcdir}">
+        <includes name="**/*" />
+      </fileset>
     </zip>
   </target>
 
