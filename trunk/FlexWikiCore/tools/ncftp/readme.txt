@@ -1,1 +1,0 @@
-The NCFTP tools are available from http://www.ncftp.com/ncftp/
