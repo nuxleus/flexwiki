@@ -1,0 +1,19 @@
+Here's the list of what I had to do to get the CCNET server working: 
+
+	* Installed TortoiseCVS 
+	* Added cvs.exe to the system PATH
+	* Copied over the CCNET configuration I came up with. This was just a CVS checkout, since I have it all in source control. 
+	* Set up a virtual directory called "builds" that points to C:\flexwiki\ccnet\webdashboard
+	* Created a virtual directory called "FlexWikiCore" that points to C:\flexwiki\ccnet\server\flexwikicore\web
+	* Created another virtual directory _under FlexWikiCore_ called "download" that points to C:\flexwiki\ccnet\server\flexwikicore\download
+	* Enabled browse directory and disabled run scripts permission on the download vdir
+	* Checked the FlexWikiCore sources out into the C:\flexwiki\ccnet\server\flexwikicore\build directory
+	* Had to install the .NET SDK (not just the runtime)
+	* Ran C:\flexwiki\ccnet\server\ccnet.exe to make sure everything was working. This is the command-line version of the build service, so it's convenient for seeing what's going on. 
+	* Created a new user (fwbuild) to run the build service under
+	* Removed fwbuild from the "users" group and added it to the "guests" group
+	* Installed the build service with @sc create ccnet-flexwiki binPath= C:\flexwiki\ccnet\server\ccservice.exe start= auto@
+	* Used the Control Panel to change the service to run as fwbuild. 
+	* Gave the fwbuild user "Full Control" on C:\flexwiki
+	* Started the service with "net start ccnet-flexwiki"
+

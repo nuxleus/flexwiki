@@ -1,0 +1,499 @@
+<!--
+#region License Statement
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+//
+// The use and distribution terms for this software are covered by the 
+// Common Public License 1.0 (http://opensource.org/licenses/cpl.php)
+// which can be found in the file CPL.TXT at the root of this distribution.
+// By using this software in any fashion, you are agreeing to be bound by 
+// the terms of this license.
+//
+// You must not remove this notice, or any other, from this software.
+#endregion
+-->
+<project name="FlexWikiCore" default="test">
+
+  <!-- Where on disk the source tree is rooted. Defaults to the
+       directory where this build file lives. -->
+  <ifnot propertyexists="basedir">
+    <property name="basedir" 
+	      value="${nant.project.basedir}" />
+  </ifnot>
+
+  <echo message="Running from directory ${basedir}" />
+
+  <!-- Define the various project directories that we need to visit if
+       any steps require a project-by-project operation -->
+  <fileset id="project.dirs" basedir="${basedir}">
+    <includes name="EngineSource" />
+    <includes name="FlexWikiBehaviorDebugger" />
+    <includes name="FlexWiki.UnitTests" />
+    <includes name="FlexWiki.Web" />
+    <includes name="FlexWiki.Web.Service" />
+    <includes name="FlexWikiEditor" />
+    <includes name="FlexWikiSecurity" />
+    <includes name="PrintTopic" />
+    <includes name="wikiadmin" />
+    <includes name="wikidpad2flexwiki" />
+  </fileset>
+
+  <!-- If a file called personal.properties exists, read it in and use
+       the properties defined there to override this build file's
+       settings -->
+  <available property="personalprops.available"
+	     resource="${basedir}/personal.properties"
+	     type="File" />
+
+  <include buildfile="${basedir}/personal.properties" 
+	   if="${personalprops.available}" />
+  
+  <!-- Read in things like environment variables into nant properties -->
+  <sysinfo />
+
+  <!-- Create a property called sys.version that has a version number
+       based on the number of days since 2002-10-01 (which I picked
+       arbitrarily as the FlexWiki birthday). The build number is
+       as major.minor.build.revision. Major and minor are read from
+       the build.number file, and build and revision are calculated
+       based on the amount of time elapsed from this date. -->
+  <version startDate="2002-10-01" />
+  
+  <!-- Extract the various parts of the build number into properties
+       using a regular expression -->
+  <regex input="${sys.version}"
+	 pattern="(?'basevermajor'\d+).(?'baseverminor'\d+).(?'baseverbuild'\d+).(?'baseverrevision'\d+)" />
+
+  <!-- This next section defines a bunch of defaults. If the property
+       has been defined (typically in the personal.properties file or
+       from the command line), then the default is ignored and the
+       specified value is uesd. -->
+
+  <!-- If any of the version number parts have been overridden, use
+       those. Otherwise, use the ones we just generated. -->
+  <ifnot propertyexists="vermajor">
+    <property name="vermajor" value="${basevermajor}" />
+  </ifnot>
+
+  <ifnot propertyexists="verminor">
+    <property name="verminor" value="${baseverminor}" />
+  </ifnot>
+
+  <ifnot propertyexists="verbuild">
+    <property name="verbuild" value="${baseverbuild}" />
+  </ifnot>
+
+  <ifnot propertyexists="verrevision">
+    <property name="verrevision" value="${baseverrevision}" />
+  </ifnot>
+
+  <echo message="Building version ${vermajor}.${verminor}.${verbuild}.${verrevision}" />
+
+  <!-- The type of build to do (generally Release or Debug). Default
+       to a Debug build. --> 
+  <ifnot propertyexists="configuration">
+    <property name="configuration"
+	      value="Debug" />
+  </ifnot>
+
+  <!-- The directory we build everything into. Defaults to bin/Debug
+       or bin/Release, depending on the configuration specified above.
+       Note: this is a subdirectory off of the basedir, which means
+       that the nant build builds to a *different* directory than the
+       individual projects, which each build to their own subdirectory -->
+  <ifnot propertyexists="targetdir">
+    <property name="targetdir" 
+	      value="${basedir}/bin/${configuration}" />
+  </ifnot>
+
+  <!-- The directory where various report files wind up. This includes
+       things like the report that NUnit spits out. Default to
+       "reports" off of the base directory. -->
+  <ifnot propertyexists="reportdir">
+    <property name="reportdir"
+	      value="${basedir}\reports" />
+  </ifnot>
+  
+  <!-- The directory where we build the zip files for distribution.
+       Defaults to "dist" off of the base directory. --> 
+  <ifnot propertyexists="distdir">
+    <property name="distdir"
+	      value="${basedir}/dist" />
+  </ifnot>
+
+  <!-- The directory we check the source out to when doing a diff.
+       Defaults to "diff" off of the base directory -->
+  <ifnot propertyexists="diffdir">
+    <property name="diffdir" value="${basedir}\diff" />
+  </ifnot>
+
+  <!-- The directory we check out into when doing a build from CVS.
+       Defaults to "cvsbuild" off of the base directory. -->
+  <ifnot propertyexists="cvsbuilddir">
+    <property name="cvsbuilddir" value="${basedir}\cvsbld" />
+  </ifnot>
+
+  <!-- Set this property to true here (or override elsewhere) to skip
+       the actual compilation stage of the build. -->
+  <ifnot propertyexists="build.skip">
+    <property name="build.skip" value="false" />
+  </ifnot>
+
+  <!-- Set this property to true here (or override elsewhere) to skip
+       the test stage of the build. -->
+  <ifnot propertyexists="test.skip">
+    <property name="test.skip" value="false" />
+  </ifnot>
+
+  <!-- Set this property to true here (or override elsewhere) to skip
+       the stage of the build that builds the distribution files. -->
+  <ifnot propertyexists="dist.skip">
+    <property name="dist.skip" value="false" />
+  </ifnot>
+
+  <!-- Set this property to true here (or override elsewhere) to skip
+       the stage of the build that uploads the distribution files. -->
+  <ifnot propertyexists="upload.skip">
+    <property name="upload.skip" value="false" />
+  </ifnot>
+
+  <!-- The CVS connection string to use to connect to the repository
+       for diff and release tasks. Generally, you'll want to set this
+       in your personal.properties file. Defaults to anonymous access,
+       which allows you to get files (for diff), but not to check them
+       in. --> 
+  <ifnot propertyexists="cvs.root">
+    <property name="cvs.root" value=":pserver:anonymous@cvs.sourceforge.net:/cvsroot/flexwiki" />
+  </ifnot>
+
+  <!-- The name of the CVS module where this code is stored. Defaults
+       to "FlexWikiCore" -->
+  <ifnot propertyexists="cvs.module">
+    <property name="cvs.module" value="FlexWikiCore" />
+  </ifnot>
+
+  <!-- The name of the .sln file used to compile the project. Defaults
+       to having the same name as the NAnt project -->
+  <ifnot propertyexists="buildfile.name">
+    <property name="buildfile.name" value="${nant.project.name}" />
+  </ifnot>
+
+  <!-- If you want to be able to do a batch diff using the diff target
+       below, you'll need a program with which to do it. Set this
+       variable to change the program from the default of winmerge.exe
+       -->
+  <ifnot propertyexists="diff.program">
+    <property name="diff.program" value="winmerge.exe" />
+  </ifnot>
+
+  <!-- NAnt build targets appear after this point. To build a
+       particular target, run "nant targetname" from the command line.
+       For example, to build the init target, run "nant init". -->
+  
+  <!-- The init target does initial setup of the project -->
+  <target name="init">
+
+    <!-- Create the target directory. This is where everything will
+	 get built into. Note: not the same as the directory that
+	 things get built into when doing a build from VS.NET. --> 
+    <mkdir dir="${targetdir}" />
+
+    <!-- Create the reports directory if it doesn't exist. -->
+    <mkdir dir="${reportdir}" />
+
+    <!-- Set up the XML version number so external tools can use it to
+	 know what version we built. -->
+
+    <!-- Copy the template file to the reports directory -->
+    <property name="versionfile" value="${reportdir}\version.xml" />
+    <copy file="${basedir}\tools\version.xml" tofile="${versionfile}" />
+
+    <!-- Now store the various build numbers in the xml file -->
+    <xmlpoke file="${versionfile}" 
+	     value="${vermajor}"
+	     xpath="/version/major" />
+    <xmlpoke file="${versionfile}" 
+	     value="${verminor}"
+	     xpath="/version/minor" />
+    <xmlpoke file="${versionfile}" 
+	     value="${verbuild}"
+	     xpath="/version/build" />
+    <xmlpoke file="${versionfile}" 
+	     value="${verrevision}"
+	     xpath="/version/revision" />
+    
+    <!-- For each one of the project directories, we loop through and
+	 create an AssemblyInfo.cs file with the version number that
+	 we calculated at the beginning of the build script -->
+    <foreach item="Folder" property="project.dir">
+      <in>
+	<items refid="project.dirs" />
+      </in>
+      <do>
+	<asminfo output="${project.dir}\AssemblyInfo.cs"
+		 language="CSharp">
+	  <imports>
+	    <import name="System" />
+	    <import name="System.Reflection" />
+	  </imports>
+	  <attributes>
+	    <attribute type="AssemblyVersionAttribute"
+		       value="${vermajor}.${verminor}.${verbuild}.${verrevision}"
+		       />
+	  </attributes>
+	</asminfo>
+      </do>
+    </foreach>
+    
+  </target>
+
+  <!-- The build target simply compiles the projects listed in the
+       .sln file into the target directory -->
+  <target name="build" depends="init" unless="${build.skip}">
+    <solution configuration="${configuration}" 
+	      outputdir="${targetdir}"
+	      solutionfile="${nant.project.name}.sln">
+    </solution>
+  </target>
+  
+  <!-- The test target runs nunit on any assemblies that have NUnit
+       tests in them. --> 
+  <target name="test" depends="build" unless="${test.skip}">
+
+    <!-- Much as I would like to use this next bit of code, it simply
+	 doesn't work. There's a problem with using the nunit2 task
+	 when a config file is present. This is a problem even when
+	 using the latest nightly build (2004-07-05) of NAnt. This
+	 problem is documented at
+	 http://blog.iceglue.com/archive/2004/05/12/168.aspx 
+	 So instead we invoke nunit-console explicitly. Yuk, but oh
+	 well. --> 
+    <!-- 
+      This code commented out intentionally
+    <nunit2>
+      <formatter type="Plain" />
+      <test>
+	<assemblies basedir="${targetdir}">
+	  <includes name="*.dll" />
+	  <includes name="*.exe" />
+	</assemblies>
+      </test>
+    </nunit2>
+	 -->
+
+    <!-- This command runs nunit-console and directs the XML report to
+	 the reports directory. -->
+    <exec program="nunit-console.exe"
+	  basedir="${basedir}\tools\nunit\bin"
+	  workingdir="${targetdir}">
+      <arg value="FlexWiki.UnitTests.dll" />
+      <arg value="/xml=${reportdir}\nunit.xml"/>
+    </exec>
+  </target> 
+
+  <!-- The dist target builds the distribution zipfiles from the files
+       in the target directory. -->
+  <target name="dist" depends="test" unless="${dist.skip}">
+    <mkdir dir="${distdir}" />
+
+
+    <!-- We create an empty staging directory (by deleting it if it's
+	 present and then creating it anew) where we set up the files
+	 we want to go into the binaries zip in the arrangement we
+	 want them in. -->
+    <property name="dist.stagingdir" value="${distdir}\staging" />
+    <property name="clean.dir.to.clean" value="${dist.stagingdir}" />
+    <call target="clean.dir" />
+    <mkdir dir="${dist.stagingdir}" />
+
+    <!-- Next we create a web and a bin directory underneath it -->
+    <property name="dist.webdir" value="${dist.stagingdir}\web" />
+    <property name="dist.bindir" value="${dist.stagingdir}\bin" />
+    <mkdir dir="${dist.webdir}" />
+    <mkdir dir="${dist.bindir}" />
+
+    <!-- Define the web content files -->
+    <fileset id="dist.web.content"
+	     basedir="${basedir}\FlexWiki.Web">
+      <includes name="**\*" />
+      <excludes name="**\*.resx" />
+      <excludes name="**\*.cs" />
+      <excludes name="**\*.csproj" />
+      <excludes name="bin\**\*" />
+      <excludes name="obj\**\*" />
+    </fileset>
+
+    <!-- Define the web binary files -->
+    <fileset id="dist.web.binaries"
+	     basedir="${targetdir}">
+      <includes name="*.dll" />
+      <includes name="*.pdb" />
+    </fileset>
+
+    <!-- Define the files that go in the "other binaries" zip
+	 directory -->
+    <fileset id="dist.all.binaries"
+	     basedir="${targetdir}">
+      <includes name="*.dll" />
+      <includes name="*.pdb" />
+      <includes name="*.exe" />
+    </fileset>
+
+    <!-- Define the files that go right in the base directory of the
+	 zipfile --> 
+    <fileset id="dist.root"
+	     basedir="${basedir}">
+      <includes name="*.txt" />
+    </fileset>
+
+    <!-- Then we copy the appropriate files into each directory -->
+    <copy todir="${dist.webdir}">
+      <fileset refid="dist.web.content" />
+    </copy>
+
+    <copy todir="${dist.webdir}\bin">
+      <fileset refid="dist.web.binaries" />
+    </copy>
+
+    <copy todir="${dist.bindir}">
+      <fileset refid="dist.all.binaries" />
+    </copy>
+
+    <copy todir="${dist.stagingdir}">
+      <fileset refid="dist.root" />
+    </copy>
+
+    <!-- We build three zipfiles: a source zip containing the source
+	 files, a full binary zip containing all the files necessary
+	 to install and run FlexWiki, and an upgrade binary zip, which
+	 contains files you can unzip into an existing FlexWiki
+	 install to upgrade it. -->
+
+    <!-- Cook up names for the zipfiles based on the project name,
+	 version number, and configuration. --> 
+    <property name="dist.full.binzip" 
+	      value="${distdir}/${nant.project.name}-${vermajor}.${verminor}.${verbuild}.${verrevision}-full-${configuration}.zip" />
+    <property name="dist.upgrade.binzip" 
+	      value="${distdir}/${nant.project.name}-${vermajor}.${verminor}.${verbuild}.${verrevision}-upgrade-${configuration}.zip" />
+    <property name="dist.srczip" 
+	      value="${distdir}/${nant.project.name}-${vermajor}.${verminor}.${verbuild}.${verrevision}-src.zip" />
+
+    <!-- Zip up all the files that we just put in the staging
+	 directory into the full binaries zip -->
+    <zip zipfile="${dist.full.binzip}">
+      <fileset basedir="${dist.stagingdir}">
+	<includes name="**/*" />
+      </fileset>
+    </zip>
+
+    <!-- Make a copy of the new web.config file as web.config.version
+	 so people can easily see what's new in the config file even
+	 though we don't overwrite their old one -->
+    <copy file="${dist.webdir}\web.config" 
+	  tofile="${dist.webdir}\web.config.${vermajor}.${verminor}.${verbuild}.${verrevision}" />
+
+    <!-- Zip up all files, except those that we shouldn't overwrite in
+	 an upgrade install -->
+    <zip zipfile="${dist.upgrade.binzip}">
+      <fileset basedir="${dist.stagingdir}">
+	<includes name="**/*" />
+	<excludes name="${dist.webdir}\web.config" />
+	<excludes name="**/WikiBases/**" />
+	<excludes name="${dist.webdir}\**\NamespaceMap.xml" />
+      </fileset>
+    </zip>
+
+    <!-- Define the files that wind up in the zip of all source code -->
+    <fileset id="dist.sources" basedir="${basedir}">
+      <includes name="**/*" />
+      <excludes name="dist/**" />
+      <excludes name="diff/**" />
+      <excludes name="release/**" />
+      <excludes name="reports/**" />
+      <excludes name="**/bin/Debug/**" />
+      <excludes name="**/bin/Release/**" />
+      <excludes name="**/obj/**" />
+      <excludes name="**/*.suo" />
+      <excludes name="**/*.user" />
+      <excludes name="**/*~" />
+      <excludes name="**/*.projdata" />
+      <excludes name="**/*.bak" />
+      <excludes name="personal.properties" />
+      <excludes name="**/CVS" />
+      <includes name="tools/nant/bin" />
+      <includes name="tools/nunit/bin" />
+    </fileset>
+
+    <!-- Zip up all the files specified in the dist.sources list into
+	 the sources zip -->
+    <zip zipfile="${dist.srczip}">
+      <fileset refid="dist.sources" />
+    </zip>
+  </target>
+
+  <!-- The upload target uploads the dist files to SourceForge so they
+       can be included as part of a release -->
+  <target name="upload" depends="dist" unless="${upload.skip}">
+    <echo message="Uploading ${dist.binzip} and ${dist.srczip} to SourceForge" />
+    <exec program="ncftpput" 
+	  basedir="${basedir}\tools\ncftp\bin"
+	  workingdir="${distdir}">
+      <arg value="-p" />
+      <arg value="flexwiki-admins@users.sourceforge.net" />
+      <arg value="upload.sourceforge.net" />
+      <arg value="incoming" />
+      <arg value="${dist.binzip}" />
+      <arg value="${dist.srczip}" />
+    </exec>
+  </target>
+
+  <!-- The clean target cleans out any files that are created as part
+       of the build process --> 
+  <target name="clean">
+    <property name="clean.dir.to.clean" value="${targetdir}" />
+    <call target="clean.dir" />
+    <property name="clean.dir.to.clean" value="${distdir}" />
+    <call target="clean.dir" />
+    <property name="clean.dir.to.clean" value="${diffdir}" />
+    <call target="clean.dir" />
+    <property name="clean.dir.to.clean" value="${cvsbuilddir}" />
+    <call target="clean.dir" />
+    <property name="clean.dir.to.clean" value="${reportdir}" />
+    <call target="clean.dir" />
+  </target>
+
+  <!-- This is a little helper target that deletes a directory only if
+       it is present. Otherwise the <delete> task will fail when
+       deleting a directory that doesn't exist. --> 
+  <target name="clean.dir">
+    <available property="clean.dir.is.present"
+	       resource="${clean.dir.to.clean}"
+	       type="Directory" />
+    <delete dir="${clean.dir.to.clean}" if="${clean.dir.is.present}" />
+  </target>
+
+  <!-- The diff target is a convenience for developers: gets a fresh
+       copy of the source from CVS and runs winmerge so you can see
+       all the differences between what's in CVS and what's on your
+       hard drive. -->
+  <target name="diff">
+    <delete dir="${diffdir}" failonerror="false" />
+    <mkdir dir="${diffdir}" />
+
+    <exec program="cvs.exe">
+      <arg value="-d" />
+      <arg value="${cvs.root}" />
+      <arg value="co" />
+      <arg value="-R" />
+      <arg value="-d" />
+      <arg value="${diffdir}" />
+      <arg value="${cvs.module}" />
+    </exec>
+
+    <exec program="${diff.program}">
+      <arg value="${diffdir}" />
+      <arg value="${basedir}" />
+    </exec>
+	  
+  </target>
+
+</project>

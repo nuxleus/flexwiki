@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FederationConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <DefaultNamespace>MyWiki</DefaultNamespace>
+  <About>If you're new to Wiki, read OneMinuteWiki or VisitorWelcome.</About>
+  <WikiTalkVersion>1</WikiTalkVersion>
+  <DefaultDirectoryForNewNamespaces>.</DefaultDirectoryForNewNamespaces>
+  <Namespaces>
+    <Namespace Root=".\MyWiki" Secure="false" Namespace="MyWiki" />
+  </Namespaces>
+</FederationConfiguration>

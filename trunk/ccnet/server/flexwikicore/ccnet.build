@@ -1,0 +1,51 @@
+<project name="ccnet" default="go">
+  <target name="go">
+    
+    <!-- Update the build directory with the latest sources -->
+    <exec program="cvs.exe"
+	  workingdir="build">
+      <arg value="update" /> <!-- Command -->
+      <arg value="-P" /> <!-- Prune empty dirs -->
+      <arg value="-R" /> <!-- Recursive -->
+      <arg value="-C" /> <!-- Overwrite modified files -->
+      <arg value="-d" /> <!-- Create new repository directories -->
+    </exec>
+
+    <!-- Override the version numbers when building from CCNet -->
+    <property name="verbuild" value="${label-to-apply}" />
+    <property name="verrevision" value="0" />
+
+    <!-- Build the project --> 
+    <nant buildfile="build\flexwikicore.build"
+	  inheritall="true"
+	  target="clean dist" />
+
+    <!-- Figure out what version just got built -->
+    <property name="versionfile" value="build\reports\version.xml" />
+    <xmlpeek file="${versionfile}" 
+	     property="vermajor"
+	     xpath="/version/major" />
+    <xmlpeek file="${versionfile}" 
+	     property="verminor"
+	     xpath="/version/minor" />
+    <xmlpeek file="${versionfile}" 
+	     property="verbuild"
+	     xpath="/version/build" />
+    <xmlpeek file="${versionfile}" 
+	     property="verrevision"
+	     xpath="/version/revision" />
+    
+    <!-- Move the zips to the directory where they can be downloaded
+    -->
+    <property name="downloaddir" 
+	      value="download\${vermajor}.${verminor}.${verbuild}.${verrevision}" />
+    <mkdir dir="${downloaddir}" />
+    <copy todir="${downloaddir}">
+      <fileset basedir="build\dist">
+	<includes
+	  name="*${vermajor}.${verminor}.${verbuild}.${verrevision}*.zip" />
+      </fileset>
+    </copy>
+
+  </target>
+</project>

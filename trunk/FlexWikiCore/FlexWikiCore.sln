@@ -1,0 +1,82 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexWikiEngine", "EngineSource\FlexWikiEngine.csproj", "{7362F597-DAB3-437E-8A07-37D8D2FE6E56}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexWiki.Web.Services", "FlexWiki.Web.Service\FlexWiki.Web.Services.csproj", "{374C1AEF-4BE6-41AA-9100-9BA48AEEBEF8}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexWiki.UnitTests", "FlexWiki.UnitTests\FlexWiki.UnitTests.csproj", "{8CDE54DE-515A-4896-9772-EDDD13DDBF9B}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexWiki.Web", "FlexWiki.Web\FlexWiki.Web.csproj", "{0EE80D53-C65E-4AFE-953A-AB9160521890}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wikidpad2flexwiki", "wikidpad2flexwiki\wikidpad2flexwiki.csproj", "{1A5B0074-9DF7-41B8-9857-F5A11A641F5B}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexWikiSecurity", "FlexWikiSecurity\FlexWikiSecurity.csproj", "{F0146D3C-71FB-4C1F-B9E3-DA4B5FEC4AB9}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexBehaviorDebugger", "FlexBehaviorDebugger\FlexBehaviorDebugger.csproj", "{3452C68D-ED7B-4976-94B1-D6DBF3F7B723}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrintTopic", "PrintTopic\PrintTopic.csproj", "{D9BCD915-BA03-48C7-89C9-0B542BE76FDB}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{7362F597-DAB3-437E-8A07-37D8D2FE6E56}.Debug.ActiveCfg = Debug|.NET
+		{7362F597-DAB3-437E-8A07-37D8D2FE6E56}.Debug.Build.0 = Debug|.NET
+		{7362F597-DAB3-437E-8A07-37D8D2FE6E56}.Release.ActiveCfg = Release|.NET
+		{7362F597-DAB3-437E-8A07-37D8D2FE6E56}.Release.Build.0 = Release|.NET
+		{374C1AEF-4BE6-41AA-9100-9BA48AEEBEF8}.Debug.ActiveCfg = Debug|.NET
+		{374C1AEF-4BE6-41AA-9100-9BA48AEEBEF8}.Debug.Build.0 = Debug|.NET
+		{374C1AEF-4BE6-41AA-9100-9BA48AEEBEF8}.Release.ActiveCfg = Release|.NET
+		{374C1AEF-4BE6-41AA-9100-9BA48AEEBEF8}.Release.Build.0 = Release|.NET
+		{8CDE54DE-515A-4896-9772-EDDD13DDBF9B}.Debug.ActiveCfg = Debug|.NET
+		{8CDE54DE-515A-4896-9772-EDDD13DDBF9B}.Debug.Build.0 = Debug|.NET
+		{8CDE54DE-515A-4896-9772-EDDD13DDBF9B}.Release.ActiveCfg = Release|.NET
+		{8CDE54DE-515A-4896-9772-EDDD13DDBF9B}.Release.Build.0 = Release|.NET
+		{0EE80D53-C65E-4AFE-953A-AB9160521890}.Debug.ActiveCfg = Debug|.NET
+		{0EE80D53-C65E-4AFE-953A-AB9160521890}.Debug.Build.0 = Debug|.NET
+		{0EE80D53-C65E-4AFE-953A-AB9160521890}.Release.ActiveCfg = Release|.NET
+		{0EE80D53-C65E-4AFE-953A-AB9160521890}.Release.Build.0 = Release|.NET
+		{1A5B0074-9DF7-41B8-9857-F5A11A641F5B}.Debug.ActiveCfg = Debug|.NET
+		{1A5B0074-9DF7-41B8-9857-F5A11A641F5B}.Debug.Build.0 = Debug|.NET
+		{1A5B0074-9DF7-41B8-9857-F5A11A641F5B}.Release.ActiveCfg = Release|.NET
+		{1A5B0074-9DF7-41B8-9857-F5A11A641F5B}.Release.Build.0 = Release|.NET
+		{F0146D3C-71FB-4C1F-B9E3-DA4B5FEC4AB9}.Debug.ActiveCfg = Debug|.NET
+		{F0146D3C-71FB-4C1F-B9E3-DA4B5FEC4AB9}.Debug.Build.0 = Debug|.NET
+		{F0146D3C-71FB-4C1F-B9E3-DA4B5FEC4AB9}.Release.ActiveCfg = Release|.NET
+		{F0146D3C-71FB-4C1F-B9E3-DA4B5FEC4AB9}.Release.Build.0 = Release|.NET
+		{3452C68D-ED7B-4976-94B1-D6DBF3F7B723}.Debug.ActiveCfg = Debug|.NET
+		{3452C68D-ED7B-4976-94B1-D6DBF3F7B723}.Debug.Build.0 = Debug|.NET
+		{3452C68D-ED7B-4976-94B1-D6DBF3F7B723}.Release.ActiveCfg = Release|.NET
+		{3452C68D-ED7B-4976-94B1-D6DBF3F7B723}.Release.Build.0 = Release|.NET
+		{D9BCD915-BA03-48C7-89C9-0B542BE76FDB}.Debug.ActiveCfg = Debug|.NET
+		{D9BCD915-BA03-48C7-89C9-0B542BE76FDB}.Debug.Build.0 = Debug|.NET
+		{D9BCD915-BA03-48C7-89C9-0B542BE76FDB}.Release.ActiveCfg = Release|.NET
+		{D9BCD915-BA03-48C7-89C9-0B542BE76FDB}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(SolutionItems) = postSolution
+		Download NUnit.url = Download NUnit.url
+		FlexWiki.UnitTests.nunit = FlexWiki.UnitTests.nunit
+		LocalProjectItems.vsdir = LocalProjectItems.vsdir
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

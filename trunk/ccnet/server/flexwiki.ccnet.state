@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-16"?>
+<IntegrationResult xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ProjectName>FlexWikiCore</ProjectName>
+  <BuildCondition>IfModificationExists</BuildCondition>
+  <Status>Success</Status>
+  <LastIntegrationStatus>Success</LastIntegrationStatus>
+  <Label>19</Label>
+  <StartTime>2004-07-10T13:19:40.9682512-04:00</StartTime>
+  <EndTime>2004-07-10T13:20:49.2664592-04:00</EndTime>
+</IntegrationResult>
