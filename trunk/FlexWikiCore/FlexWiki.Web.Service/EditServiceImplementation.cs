@@ -89,19 +89,19 @@ namespace FlexWiki.Web.Services
 			return contentBases;
 		}
 
-#if false
 		/// <summary>
 		/// Returns the default namespace in the Federation. 
 		/// </summary>
 		/// <returns>A ContentBase of the default namespace.</returns>
 		[WebMethod]
-		public ContentBase GetDefaultNamespace()
+		public ContentBaseWireFormat GetDefaultNamespace()
 		{
 			if (TheFederation.DefaultContentBase == null)
 				throw new Exception("No default namespace defined in configuration file: " + TheFederation.FederationNamespaceMapFilename);
 
-			return TheFederation.DefaultContentBase;
+			return new ContentBaseWireFormat(TheFederation.DefaultContentBase);
 		}
+#if false
 
 		/// <summary>
 		/// Returns the AbsoluteTopicNames for a given Namespace.

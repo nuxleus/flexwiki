@@ -53,6 +53,59 @@ namespace FlexWiki.BuildVerificationTests
       return new WikiState(backupPath); 
     }
 
+
+    internal static Federation CreateFederation(string root, TestContent content)
+    {
+      string contentDir = Path.Combine(Path.GetFullPath(root), "WikiBases"); 
+      if (Directory.Exists(contentDir))
+      {
+        Directory.Delete(contentDir, true); 
+      }
+
+      Directory.CreateDirectory(contentDir); 
+
+      FederationConfiguration configuration = new FederationConfiguration(); 
+
+      FileSystemNamespaceProvider provider = new FileSystemNamespaceProvider(); 
+      bool defaultNamespaceSpecified = false; 
+      foreach (TestNamespace ns in content.Namespaces)
+      {
+        provider.Root = Path.Combine(contentDir, ns.Name); 
+        provider.Namespace = ns.Name; 
+        NamespaceProviderDefinition definition = new NamespaceProviderDefinition(); 
+        provider.SavePersistentParametersToDefinition(definition); 
+        definition.Type = provider.GetType().FullName; 
+        definition.AssemblyName = provider.GetType().Assembly.FullName; 
+        configuration.NamespaceMappings.Add(definition); 
+
+        // We always set the first namespace to be the default one
+        if (defaultNamespaceSpecified == false)
+        {
+          configuration.DefaultNamespace = ns.Name; 
+          defaultNamespaceSpecified = true; 
+        }
+      }
+
+      string configFilePath = TestUtilities.ReadConfigFilePath(); 
+      configuration.WriteToFile(configFilePath); 
+    
+      Federation federation = new Federation(OutputFormat.HTML, new LinkMaker(TestUtilities.BaseUrl)); 
+      federation.LoadFromConfiguration(configuration); 
+      
+      foreach (TestNamespace ns in content.Namespaces)
+      {
+        ContentBase contentBase = federation.ContentBaseForNamespace(ns.Name); 
+        foreach (TestTopic topic in ns.Topics)
+        {
+          LocalTopicName name = new LocalTopicName(topic.Name); 
+          contentBase.WriteTopic(name, topic.Content); 
+        }
+      }
+
+      return federation; 
+
+    }
+
     internal static string ReadConfigFilePath()
     {
       string installationPath = ConfigurationSettings.AppSettings["InstallationPath"];
@@ -78,50 +131,6 @@ namespace FlexWiki.BuildVerificationTests
 
     }
 
-
-    internal static Federation CreateFederation(string root, TestContent content)
-    {
-      string contentDir = Path.Combine(Path.GetFullPath(root), "WikiBases"); 
-      if (Directory.Exists(contentDir))
-      {
-        Directory.Delete(contentDir, true); 
-      }
-
-      Directory.CreateDirectory(contentDir); 
-
-      FederationConfiguration configuration = new FederationConfiguration(); 
-
-      FileSystemNamespaceProvider provider = new FileSystemNamespaceProvider(); 
-      foreach (TestNamespace ns in content.Namespaces)
-      {
-        provider.Root = Path.Combine(contentDir, ns.Name); 
-        provider.Namespace = ns.Name; 
-        NamespaceProviderDefinition definition = new NamespaceProviderDefinition(); 
-        provider.SavePersistentParametersToDefinition(definition); 
-        definition.Type = provider.GetType().FullName; 
-        definition.AssemblyName = provider.GetType().Assembly.FullName; 
-        configuration.NamespaceMappings.Add(definition); 
-      }
-
-      string configFilePath = TestUtilities.ReadConfigFilePath(); 
-      configuration.WriteToFile(configFilePath); 
-    
-      Federation federation = new Federation(OutputFormat.HTML, new LinkMaker(TestUtilities.BaseUrl)); 
-      federation.LoadFromConfiguration(configuration); 
-      
-      foreach (TestNamespace ns in content.Namespaces)
-      {
-        ContentBase contentBase = federation.ContentBaseForNamespace(ns.Name); 
-        foreach (TestTopic topic in ns.Topics)
-        {
-          LocalTopicName name = new LocalTopicName(topic.Name); 
-          contentBase.WriteTopic(name, topic.Content); 
-        }
-      }
-
-      return federation; 
-
-    }
 
     internal static void RestoreWikiState(WikiState state)
     {

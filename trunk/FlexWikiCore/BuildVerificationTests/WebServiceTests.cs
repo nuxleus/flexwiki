@@ -78,6 +78,15 @@ namespace FlexWiki.BuildVerificationTests
       }
     }
 
+    [Test]
+    public void GetDefaultNamespace()
+    {
+      ContentBaseWireFormat contentBase = proxy.GetDefaultNamespace(); 
+
+      Assert.AreEqual(testContent.Namespaces[0].Name, contentBase.Namespace, 
+        "Checking that the correct default namespace was returned"); 
+    }
+
     private bool HasNamespace(ContentBaseWireFormat[] bases, string name)
     {
       foreach (ContentBaseWireFormat contentBase in bases)
