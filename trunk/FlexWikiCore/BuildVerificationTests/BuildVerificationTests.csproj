@@ -89,6 +89,11 @@
                     AssemblyName = "nunit.framework"
                     HintPath = "..\tools\nunit\bin\nunit.framework.dll"
                 />
+                <Reference
+                    Name = "FlexWikiEngine"
+                    Project = "{7362F597-DAB3-437E-8A07-37D8D2FE6E56}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
             </References>
         </Build>
         <Files>
@@ -118,7 +123,32 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "TestContent.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "TestNamespace.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "TestTopic.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "TestUtilities.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "WebServiceTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "WikiState.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

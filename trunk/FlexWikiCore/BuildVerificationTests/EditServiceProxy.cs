@@ -25,8 +25,8 @@ namespace FlexWiki.BuildVerificationTests
   [System.Diagnostics.DebuggerStepThroughAttribute()]
   [System.ComponentModel.DesignerCategoryAttribute("code")]
   [System.Web.Services.WebServiceBindingAttribute(Name="EditServiceSoap", Namespace="http://www.flexwiki.com/webservices/")]
-  [System.Xml.Serialization.XmlIncludeAttribute(typeof(TopicName))]
-  [System.Xml.Serialization.XmlIncludeAttribute(typeof(ReflectedValueSource))]
+  [System.Xml.Serialization.XmlIncludeAttribute(typeof(TopicNameWireFormat))]
+  [System.Xml.Serialization.XmlIncludeAttribute(typeof(ReflectedValueSourceWireFormat))]
   public class EditServiceProxy : System.Web.Services.Protocols.SoapHttpClientProtocol 
   {
     
@@ -58,10 +58,10 @@ namespace FlexWiki.BuildVerificationTests
     
     /// <remarks/>
     [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://www.flexwiki.com/webservices/GetAllNamespaces", RequestNamespace="http://www.flexwiki.com/webservices/", ResponseNamespace="http://www.flexwiki.com/webservices/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-    public ContentBase[] GetAllNamespaces() 
+    public ContentBaseWireFormat[] GetAllNamespaces() 
     {
       object[] results = this.Invoke("GetAllNamespaces", new object[0]);
-      return ((ContentBase[])(results[0]));
+      return ((ContentBaseWireFormat[])(results[0]));
     }
     
     /// <remarks/>
@@ -71,18 +71,18 @@ namespace FlexWiki.BuildVerificationTests
     }
     
     /// <remarks/>
-    public ContentBase[] EndGetAllNamespaces(System.IAsyncResult asyncResult) 
+    public ContentBaseWireFormat[] EndGetAllNamespaces(System.IAsyncResult asyncResult) 
     {
       object[] results = this.EndInvoke(asyncResult);
-      return ((ContentBase[])(results[0]));
+      return ((ContentBaseWireFormat[])(results[0]));
     }
     
     /// <remarks/>
     [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://www.flexwiki.com/webservices/GetDefaultNamespace", RequestNamespace="http://www.flexwiki.com/webservices/", ResponseNamespace="http://www.flexwiki.com/webservices/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-    public ContentBase GetDefaultNamespace() 
+    public ContentBaseWireFormat GetDefaultNamespace() 
     {
       object[] results = this.Invoke("GetDefaultNamespace", new object[0]);
-      return ((ContentBase)(results[0]));
+      return ((ContentBaseWireFormat)(results[0]));
     }
     
     /// <remarks/>
@@ -92,38 +92,38 @@ namespace FlexWiki.BuildVerificationTests
     }
     
     /// <remarks/>
-    public ContentBase EndGetDefaultNamespace(System.IAsyncResult asyncResult) 
+    public ContentBaseWireFormat EndGetDefaultNamespace(System.IAsyncResult asyncResult) 
     {
       object[] results = this.EndInvoke(asyncResult);
-      return ((ContentBase)(results[0]));
+      return ((ContentBaseWireFormat)(results[0]));
     }
     
     /// <remarks/>
     [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://www.flexwiki.com/webservices/GetAllTopics", RequestNamespace="http://www.flexwiki.com/webservices/", ResponseNamespace="http://www.flexwiki.com/webservices/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-    public AbsoluteTopicName[] GetAllTopics(ContentBase cb) 
+    public AbsoluteTopicNameWireFormat[] GetAllTopics(ContentBaseWireFormat cb) 
     {
       object[] results = this.Invoke("GetAllTopics", new object[] {
                                                                     cb});
-      return ((AbsoluteTopicName[])(results[0]));
+      return ((AbsoluteTopicNameWireFormat[])(results[0]));
     }
     
     /// <remarks/>
-    public System.IAsyncResult BeginGetAllTopics(ContentBase cb, System.AsyncCallback callback, object asyncState) 
+    public System.IAsyncResult BeginGetAllTopics(ContentBaseWireFormat cb, System.AsyncCallback callback, object asyncState) 
     {
       return this.BeginInvoke("GetAllTopics", new object[] {
                                                              cb}, callback, asyncState);
     }
     
     /// <remarks/>
-    public AbsoluteTopicName[] EndGetAllTopics(System.IAsyncResult asyncResult) 
+    public AbsoluteTopicNameWireFormat[] EndGetAllTopics(System.IAsyncResult asyncResult) 
     {
       object[] results = this.EndInvoke(asyncResult);
-      return ((AbsoluteTopicName[])(results[0]));
+      return ((AbsoluteTopicNameWireFormat[])(results[0]));
     }
     
     /// <remarks/>
     [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://www.flexwiki.com/webservices/GetHtmlForTopic", RequestNamespace="http://www.flexwiki.com/webservices/", ResponseNamespace="http://www.flexwiki.com/webservices/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-    public string GetHtmlForTopic(AbsoluteTopicName topicName) 
+    public string GetHtmlForTopic(AbsoluteTopicNameWireFormat topicName) 
     {
       object[] results = this.Invoke("GetHtmlForTopic", new object[] {
                                                                        topicName});
@@ -131,7 +131,7 @@ namespace FlexWiki.BuildVerificationTests
     }
     
     /// <remarks/>
-    public System.IAsyncResult BeginGetHtmlForTopic(AbsoluteTopicName topicName, System.AsyncCallback callback, object asyncState) 
+    public System.IAsyncResult BeginGetHtmlForTopic(AbsoluteTopicNameWireFormat topicName, System.AsyncCallback callback, object asyncState) 
     {
       return this.BeginInvoke("GetHtmlForTopic", new object[] {
                                                                 topicName}, callback, asyncState);
@@ -146,7 +146,7 @@ namespace FlexWiki.BuildVerificationTests
     
     /// <remarks/>
     [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://www.flexwiki.com/webservices/GetHtmlForTopicVersion", RequestNamespace="http://www.flexwiki.com/webservices/", ResponseNamespace="http://www.flexwiki.com/webservices/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-    public string GetHtmlForTopicVersion(AbsoluteTopicName topicName, string version) 
+    public string GetHtmlForTopicVersion(AbsoluteTopicNameWireFormat topicName, string version) 
     {
       object[] results = this.Invoke("GetHtmlForTopicVersion", new object[] {
                                                                               topicName,
@@ -155,7 +155,7 @@ namespace FlexWiki.BuildVerificationTests
     }
     
     /// <remarks/>
-    public System.IAsyncResult BeginGetHtmlForTopicVersion(AbsoluteTopicName topicName, string version, System.AsyncCallback callback, object asyncState) 
+    public System.IAsyncResult BeginGetHtmlForTopicVersion(AbsoluteTopicNameWireFormat topicName, string version, System.AsyncCallback callback, object asyncState) 
     {
       return this.BeginInvoke("GetHtmlForTopicVersion", new object[] {
                                                                        topicName,
@@ -171,7 +171,7 @@ namespace FlexWiki.BuildVerificationTests
     
     /// <remarks/>
     [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://www.flexwiki.com/webservices/GetTextForTopic", RequestNamespace="http://www.flexwiki.com/webservices/", ResponseNamespace="http://www.flexwiki.com/webservices/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-    public string GetTextForTopic(AbsoluteTopicName topicName) 
+    public string GetTextForTopic(AbsoluteTopicNameWireFormat topicName) 
     {
       object[] results = this.Invoke("GetTextForTopic", new object[] {
                                                                        topicName});
@@ -179,7 +179,7 @@ namespace FlexWiki.BuildVerificationTests
     }
     
     /// <remarks/>
-    public System.IAsyncResult BeginGetTextForTopic(AbsoluteTopicName topicName, System.AsyncCallback callback, object asyncState) 
+    public System.IAsyncResult BeginGetTextForTopic(AbsoluteTopicNameWireFormat topicName, System.AsyncCallback callback, object asyncState) 
     {
       return this.BeginInvoke("GetTextForTopic", new object[] {
                                                                 topicName}, callback, asyncState);
@@ -194,7 +194,7 @@ namespace FlexWiki.BuildVerificationTests
     
     /// <remarks/>
     [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://www.flexwiki.com/webservices/SetTextForTopic", RequestNamespace="http://www.flexwiki.com/webservices/", ResponseNamespace="http://www.flexwiki.com/webservices/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-    public void SetTextForTopic(AbsoluteTopicName topicName, string postedTopicText, string visitorIdentityString) 
+    public void SetTextForTopic(AbsoluteTopicNameWireFormat topicName, string postedTopicText, string visitorIdentityString) 
     {
       this.Invoke("SetTextForTopic", new object[] {
                                                     topicName,
@@ -203,7 +203,7 @@ namespace FlexWiki.BuildVerificationTests
     }
     
     /// <remarks/>
-    public System.IAsyncResult BeginSetTextForTopic(AbsoluteTopicName topicName, string postedTopicText, string visitorIdentityString, System.AsyncCallback callback, object asyncState) 
+    public System.IAsyncResult BeginSetTextForTopic(AbsoluteTopicNameWireFormat topicName, string postedTopicText, string visitorIdentityString, System.AsyncCallback callback, object asyncState) 
     {
       return this.BeginInvoke("SetTextForTopic", new object[] {
                                                                 topicName,
@@ -219,7 +219,7 @@ namespace FlexWiki.BuildVerificationTests
     
     /// <remarks/>
     [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://www.flexwiki.com/webservices/GetVersionsForTopic", RequestNamespace="http://www.flexwiki.com/webservices/", ResponseNamespace="http://www.flexwiki.com/webservices/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-    public string[] GetVersionsForTopic(AbsoluteTopicName topicName) 
+    public string[] GetVersionsForTopic(AbsoluteTopicNameWireFormat topicName) 
     {
       object[] results = this.Invoke("GetVersionsForTopic", new object[] {
                                                                            topicName});
@@ -227,7 +227,7 @@ namespace FlexWiki.BuildVerificationTests
     }
     
     /// <remarks/>
-    public System.IAsyncResult BeginGetVersionsForTopic(AbsoluteTopicName topicName, System.AsyncCallback callback, object asyncState) 
+    public System.IAsyncResult BeginGetVersionsForTopic(AbsoluteTopicNameWireFormat topicName, System.AsyncCallback callback, object asyncState) 
     {
       return this.BeginInvoke("GetVersionsForTopic", new object[] {
                                                                     topicName}, callback, asyncState);
@@ -242,7 +242,7 @@ namespace FlexWiki.BuildVerificationTests
     
     /// <remarks/>
     [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://www.flexwiki.com/webservices/GetPreviewForTopic", RequestNamespace="http://www.flexwiki.com/webservices/", ResponseNamespace="http://www.flexwiki.com/webservices/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-    public string GetPreviewForTopic(AbsoluteTopicName topicName, string textToFormat) 
+    public string GetPreviewForTopic(AbsoluteTopicNameWireFormat topicName, string textToFormat) 
     {
       object[] results = this.Invoke("GetPreviewForTopic", new object[] {
                                                                           topicName,
@@ -251,7 +251,7 @@ namespace FlexWiki.BuildVerificationTests
     }
     
     /// <remarks/>
-    public System.IAsyncResult BeginGetPreviewForTopic(AbsoluteTopicName topicName, string textToFormat, System.AsyncCallback callback, object asyncState) 
+    public System.IAsyncResult BeginGetPreviewForTopic(AbsoluteTopicNameWireFormat topicName, string textToFormat, System.AsyncCallback callback, object asyncState) 
     {
       return this.BeginInvoke("GetPreviewForTopic", new object[] {
                                                                    topicName,
@@ -267,7 +267,7 @@ namespace FlexWiki.BuildVerificationTests
     
     /// <remarks/>
     [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://www.flexwiki.com/webservices/RestoreTopic", RequestNamespace="http://www.flexwiki.com/webservices/", ResponseNamespace="http://www.flexwiki.com/webservices/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-    public void RestoreTopic(AbsoluteTopicName topicName, string visitorIdentityString, string version) 
+    public void RestoreTopic(AbsoluteTopicNameWireFormat topicName, string visitorIdentityString, string version) 
     {
       this.Invoke("RestoreTopic", new object[] {
                                                  topicName,
@@ -276,7 +276,7 @@ namespace FlexWiki.BuildVerificationTests
     }
     
     /// <remarks/>
-    public System.IAsyncResult BeginRestoreTopic(AbsoluteTopicName topicName, string visitorIdentityString, string version, System.AsyncCallback callback, object asyncState) 
+    public System.IAsyncResult BeginRestoreTopic(AbsoluteTopicNameWireFormat topicName, string visitorIdentityString, string version, System.AsyncCallback callback, object asyncState) 
     {
       return this.BeginInvoke("RestoreTopic", new object[] {
                                                              topicName,
@@ -293,7 +293,7 @@ namespace FlexWiki.BuildVerificationTests
 
   /// <remarks/>
   [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.flexwiki.com/webservices/")]
-  public class ContentBase : BELObject 
+  public class ContentBaseWireFormat : BELObjectWireFormat 
   {
     
     /// <remarks/>
@@ -329,23 +329,23 @@ namespace FlexWiki.BuildVerificationTests
 
   /// <remarks/>
   [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.flexwiki.com/webservices/")]
-  [System.Xml.Serialization.XmlIncludeAttribute(typeof(ContentBase))]
-  public abstract class BELObject : ReflectedValueSource 
+  [System.Xml.Serialization.XmlIncludeAttribute(typeof(ContentBaseWireFormat))]
+  public abstract class BELObjectWireFormat : ReflectedValueSourceWireFormat 
   {
   }
 
   /// <remarks/>
   [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.flexwiki.com/webservices/")]
-  [System.Xml.Serialization.XmlIncludeAttribute(typeof(BELObject))]
-  [System.Xml.Serialization.XmlIncludeAttribute(typeof(ContentBase))]
-  public abstract class ReflectedValueSource 
+  [System.Xml.Serialization.XmlIncludeAttribute(typeof(BELObjectWireFormat))]
+  [System.Xml.Serialization.XmlIncludeAttribute(typeof(ContentBaseWireFormat))]
+  public abstract class ReflectedValueSourceWireFormat 
   {
   }
 
   /// <remarks/>
   [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.flexwiki.com/webservices/")]
-  [System.Xml.Serialization.XmlIncludeAttribute(typeof(AbsoluteTopicName))]
-  public abstract class TopicName 
+  [System.Xml.Serialization.XmlIncludeAttribute(typeof(AbsoluteTopicNameWireFormat))]
+  public abstract class TopicNameWireFormat 
   {
     
     /// <remarks/>
@@ -366,7 +366,7 @@ namespace FlexWiki.BuildVerificationTests
 
   /// <remarks/>
   [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.flexwiki.com/webservices/")]
-  public class AbsoluteTopicName : TopicName 
+  public class AbsoluteTopicNameWireFormat : TopicNameWireFormat 
   {
   }
 }

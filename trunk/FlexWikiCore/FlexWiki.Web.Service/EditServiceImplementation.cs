@@ -30,9 +30,14 @@ namespace FlexWiki.Web.Services
 	[WebService(Namespace="http://www.flexwiki.com/webservices/")]
 	public class EditServiceImplementation : System.Web.Services.WebService
 	{
-#if false
     private LinkMaker _linkMaker;
 
+    public EditServiceImplementation()
+    {
+      EstablishFederation();
+    }
+
+    
 		protected Federation TheFederation
 		{
 			get
@@ -53,14 +58,7 @@ namespace FlexWiki.Web.Services
 			}
 		}
 
-		public EditServiceImplementation()
-		{
-			//CODEGEN: This call is required by the ASP.NET Web Services Designer
-			InitializeComponent();
-
-			EstablishFederation();
-		}
-#endif
+		
     /// <summary>
 		/// CanEdit checks to see if the user is Authenticated using supplied credentials in the Web Service proxy.
 		/// </summary>
@@ -73,24 +71,25 @@ namespace FlexWiki.Web.Services
 			
 			return GetVisitorIdentity(visitorIdentityString);
 		}
-#if false
 		/// <summary>
 		/// Returns all the namespaces in the Federation.
 		/// </summary>
 		/// <returns>A ContentBaseCollection of all the ContentBases for the Federation.</returns>
 		[WebMethod]
-		public ContentBaseCollection GetAllNamespaces()
+		public ContentBaseWireFormatCollection GetAllNamespaces()
 		{
-			ContentBaseCollection contentBases = new ContentBaseCollection();
+			ContentBaseWireFormatCollection contentBases = new ContentBaseWireFormatCollection();
 
 			foreach (ContentBase cb in TheFederation.ContentBases)
 			{
-				contentBases.Add(cb);
+        ContentBaseWireFormat wireFormat = new ContentBaseWireFormat(cb); 
+				contentBases.Add(wireFormat);
 			}
 
 			return contentBases;
 		}
 
+#if false
 		/// <summary>
 		/// Returns the default namespace in the Federation. 
 		/// </summary>
@@ -284,40 +283,26 @@ namespace FlexWiki.Web.Services
 			newVersionName.Version = TopicName.NewVersionStringForUser(visitorIdentityString);
 			TheFederation.ContentBaseForTopic(newVersionName).WriteTopicAndNewVersion(newVersionName, postedTopicText);
 		}
-
-		private string RootUrl(HttpRequest req)
-		{
-			string full = req.Url.ToString();
-			if (req.Url.Query != null && req.Url.Query.Length > 0)
-			{
-				full = full.Substring(0, full.Length - req.Url.Query.Length);
-			}
-			if (req.PathInfo != null && req.PathInfo.Length > 0)
-			{
-				full = full.Substring(0, full.Length - (req.PathInfo.Length + 1));
-			}
-			full = full.Substring(0, full.LastIndexOf('/') + 1);
-			return full;
-		}
-
-		private void EstablishFederation()
-		{
-			if (TheFederation != null)
-			{
-				// If we have one, just make sure it's valid
-				TheFederation.Validate();
-				return;
-			}
-
-			// nope - need a new one
-			string federationNamespaceMap = ConfigurationSettings.AppSettings["FederationNamespaceMapFile"];
-			if (federationNamespaceMap == null)
-				throw new Exception("No namespace map file defined.  Please set the FederationNamespaceMapFile key in <appSettings> in web.config to point to a namespace map file.");
-			string fsPath = Context.Request.MapPath(federationNamespaceMap);
-			TheFederation = new Federation(fsPath, FlexWiki.Formatting.OutputFormat.HTML, new LinkMaker(RootUrl(Context.Request)));
-		}
 #endif
     
+    private void EstablishFederation()
+    {
+      if (TheFederation != null)
+      {
+        // If we have one, just make sure it's valid
+        TheFederation.Validate();
+        return;
+      }
+
+      // nope - need a new one
+      string federationNamespaceMap = ConfigurationSettings.AppSettings["FederationNamespaceMapFile"];
+      if (federationNamespaceMap == null)
+      {
+        throw new Exception("No namespace map file defined.  Please set the FederationNamespaceMapFile key in <appSettings> in web.config to point to a namespace map file.");
+      }
+      string fsPath = Context.Request.MapPath(federationNamespaceMap);
+      TheFederation = new Federation(fsPath, FlexWiki.Formatting.OutputFormat.HTML, new LinkMaker(RootUrl(Context.Request)));
+    }
     private string GetVisitorIdentity(string visitorIdentityString)
 		{
 			// if we are using Windows Authenticaiton, override the attribution with the Windows domain/username
@@ -334,5 +319,22 @@ namespace FlexWiki.Web.Services
         return visitorIdentityString;
       }
 		}
-	}
+
+    private string RootUrl(HttpRequest req)
+    {
+      string full = req.Url.ToString();
+      if (req.Url.Query != null && req.Url.Query.Length > 0)
+      {
+        full = full.Substring(0, full.Length - req.Url.Query.Length);
+      }
+      if (req.PathInfo != null && req.PathInfo.Length > 0)
+      {
+        full = full.Substring(0, full.Length - (req.PathInfo.Length + 1));
+      }
+      full = full.Substring(0, full.LastIndexOf('/') + 1);
+      return full;
+    }
+
+
+  }
 }

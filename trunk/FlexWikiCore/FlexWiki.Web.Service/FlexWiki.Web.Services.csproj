@@ -99,7 +99,12 @@
         <Files>
             <Include>
                 <File
-                    RelPath = "AbsoluteTopicNameCollection.cs"
+                    RelPath = "AbsoluteTopicNameWireFormat.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "AbsoluteTopicNameWireFormatCollection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -109,7 +114,17 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ContentBaseCollection.cs"
+                    RelPath = "BELObjectWireFormat.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ContentBaseWireFormat.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ContentBaseWireFormatCollection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -124,13 +139,23 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "ReflectedValueSourceWireFormat.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "SharedAssemblyInfo.cs"
                     Link = "..\SharedAssemblyInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "TopicNameCollection.cs"
+                    RelPath = "TopicNameWireFormat.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "TopicNameWireFormatCollection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
