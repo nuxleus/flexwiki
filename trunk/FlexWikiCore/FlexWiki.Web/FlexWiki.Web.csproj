@@ -563,22 +563,6 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "admin\Dump.aspx"
-                    SubType = "Form"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "admin\Dump.aspx.cs"
-                    DependentUpon = "Dump.aspx"
-                    SubType = "ASPXCodeBehind"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "admin\Dump.aspx.resx"
-                    DependentUpon = "Dump.aspx.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
                     RelPath = "admin\EditProvider.aspx"
                     BuildAction = "Content"
                 />
