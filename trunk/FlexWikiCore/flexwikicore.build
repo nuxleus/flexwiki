@@ -109,32 +109,51 @@
        the install target. The actual virtual directory will be a
        combination of the base name and the version number -->
   <property name="install.vdir.basename" value="FlexWikiBuild" 
-      unless="${property::exists('install')}" />
+      unless="${property::exists('install.vdir.basename')}" />
 
   <!-- Set this property to true here (or override elsewhere) to skip
        the actual compilation stage of the build. -->
   <property name="build.skip" value="false" 
-      unless="${property::exists('build')}" />
+      unless="${property::exists('build.skip')}" />
 
   <!-- Set this property to true here (or override elsewhere) to skip
        the test stage of the build. -->
   <property name="test.skip" value="false" 
-      unless="${property::exists('test')}" />
+      unless="${property::exists('test.skip')}" />
 
   <!-- Set this property to true here (or override elsewhere) to skip
        the stage of the build that builds the distribution files. -->
   <property name="dist.skip" value="false" 
-      unless="${property::exists('dist')}" />
+      unless="${property::exists('dist.skip')}" />
 
   <!-- Set this property to true here (or override elsewhere) to skip
        the stage of the build that uploads the distribution files. -->
   <property name="upload.skip" value="false" 
-      unless="${property::exists('upload')}" />
+      unless="${property::exists('upload.skip')}" />
+
+  <!-- Set this property to true here (or override elsewhere) to skip
+       the stage of the build that installs the build locally. -->
+  <property name="install.skip" value="false"
+      unless="${property::exists('install.skip')}" />
+
+  <!-- Set this property to true here (or override elsewhere) to skip
+       the stage of the build that runs verification tests against the 
+       locally installed build. -->
+  <property name="verify.skip" value="false"
+      unless="${property::exists('verify.skip')}" />
 
   <!-- The name of the .sln file used to compile the project. Defaults
        to having the same name as the NAnt project -->
   <property name="buildfile.name" value="${nant.project.name}" 
-      unless="${property::exists('buildfile')}" />
+      unless="${property::exists('buildfile.name')}" />
+
+  <!-- Set this property false here (or override elsewhere) to prevent
+        unit test failures from breaking the build. This can be useful
+        when debugging complex build problems. -->
+  <property name="nunit.breaks.build" value="true" 
+      unless="${property::exists('nunit.breaks.build')}" />
+      
+      
 
   <!-- NAnt build targets appear after this point. To build a
        particular target, run "nant targetname" from the command line.
@@ -247,7 +266,8 @@
 	 the reports directory. -->
     <exec program="nunit-console.exe"
     	  basedir="${basedir}\tools\nunit\bin"
-	      workingdir="${targetdir}">
+	      workingdir="${targetdir}"
+	      failonerror="${nunit.breaks.build}">
       <arg value="FlexWiki.UnitTests.dll" />
       <arg value="/xml=${reportdir}\nunit.xml"/>
     </exec>
@@ -424,8 +444,8 @@
     </zip>
   </target>
 
-  <!-- The install target installs the web part of the build -->
-  <target name="install" depends="dist">
+  <!-- The install target installs the web part of the build locally. -->
+  <target name="install" depends="dist" unless="${install.skip}">
     <property name="install.versiondir.name"
 	      value="${vermajor}.${verminor}.${verbuild}.${verrevision}" />
     <property name="install.versiondir"
@@ -460,13 +480,25 @@
 	   todir="${install.versiondir}" />
 
     <!-- Give the anonymous user read/write access -->
+    <!-- Under IIS6 -->
     <exec program="xcacls.exe"
-	  basedir="${basedir}/tools/reskit" 
-	  workingdir="${install.versiondir}">
+	      basedir="${basedir}/tools/reskit" 
+	      workingdir="${install.versiondir}">
       <arg value="." />
       <arg value="/E" />
       <arg value="/G" />
       <arg value="NETWORK SERVICE:F" />
+      <arg value="/Y" />
+    </exec>
+
+    <!-- Under IIS5 -->
+    <exec program="xcacls.exe"
+	      basedir="${basedir}/tools/reskit" 
+	      workingdir="${install.versiondir}">
+      <arg value="." />
+      <arg value="/E" />
+      <arg value="/G" />
+      <arg value="IUSR_${sys.env.COMPUTERNAME}:F" /> 
       <arg value="/Y" />
     </exec>
 
@@ -476,7 +508,20 @@
 
   <!-- The verify target verifies the build by running tests against 
         an installed version -->
-  <target name="verify" depends="install">
+  <target name="verify" depends="install" unless="${verify.skip}">
+  
+    <!-- Update the config file with the right base URL so the tests are pointed 
+          at the right place -->
+    <xmlpoke file="${path::combine(targetdir, 'BuildVerificationTests.dll.config')}"
+      xpath="/configuration/appSettings/add[@key='InstallationUri']/@value"
+      value="http://localhost/${install.vdir.name}/" />
+  
+    <!-- Use NUnit to run the verification tests -->
+    <exec program="nunit-console.exe"
+    	  basedir="${basedir}\tools\nunit\bin">
+      <arg value="${path::combine(targetdir, 'BuildVerificationTests.dll')}" />
+      <arg value="/xml=${reportdir}\verify.xml"/>
+    </exec>
     
   </target>
 

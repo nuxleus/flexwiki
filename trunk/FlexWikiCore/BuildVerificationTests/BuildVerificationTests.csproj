@@ -17,7 +17,7 @@
                 DelaySign = "false"
                 OutputType = "Library"
                 PreBuildEvent = ""
-                PostBuildEvent = "cmd.exe /c "
+                PostBuildEvent = "cmd.exe /c $(ProjectDir)postbuild.cmd $(ProjectDir) $(TargetDir) $(TargetPath)"
                 RootNamespace = "BuildVerificationTests"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
