@@ -28,19 +28,20 @@ private void Page_Load(object sender, System.EventArgs e)
         bool isEven = true; 
         foreach (string logfile in logfiles)
         {
-            if (LogFileUtil.IsSuccessful(logfile))
-            {
-                string number = LogFileUtil.ParseBuildNumber(logfile); 
-                builder.AppendFormat("<br/><div class='modifications-sectionheader'>Build {0}</div>", 
-                  number); 
-                isEven = true; 
-            }
 
             XPathDocument doc = new XPathDocument(Path.Combine(path, logfile)); 
             XPathNavigator navigator = doc.CreateNavigator(); 
-            XPathNodeIterator iterator = 
- 
-navigator.Select("/cruisecontrol/modifications/modification");
+            if (LogFileUtil.IsSuccessful(logfile))
+            {
+                string vermajor = (string) navigator.Evaluate("string(/cruisecontrol/version/major)"); 
+                string verminor = (string) navigator.Evaluate("string(/cruisecontrol/version/minor)"); 
+                string verbuild = (string) navigator.Evaluate("string(/cruisecontrol/version/build)"); 
+                string verrevision = (string) navigator.Evaluate("string(/cruisecontrol/version/revision)"); 
+                builder.AppendFormat("<br/><div class='modifications-sectionheader'>Build {0}.{1}.{2}.{3}</div>", 
+                  vermajor, verminor, verbuild, verrevision); 
+                isEven = true; 
+            }
+            XPathNodeIterator iterator = navigator.Select("/cruisecontrol/modifications/modification");
 
             Hashtable modifications = new Hashtable(); 
   
@@ -57,7 +58,7 @@ iterator.Current.Evaluate("string(user)");
             {
                 builder.AppendFormat("<div class='modifications-{0}row'><pre>{1}</pre></div>", 
                   isEven ? "even" : "odd", comment);
-                //isEven = !isEven; 
+                isEven = !isEven; 
             }
           
         }
