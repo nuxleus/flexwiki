@@ -46,7 +46,7 @@ namespace FlexWiki
 
 		string Description { get; }
 		IList ParameterDescriptors { get; }
-		string ValidateParameter(Federation aFed, string paramID, string proposedValue);
+		string ValidateParameter(Federation aFed, string paramID, string proposedValue, bool isCreate);
 		void SetParameter(string paramID, string proposedValue);
 		string GetParameter(string paramID);
 		bool CanParameterBeEdited(string paramID);

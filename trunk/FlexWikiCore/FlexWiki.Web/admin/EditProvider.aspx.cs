@@ -134,7 +134,7 @@ namespace FlexWiki.Web.Admin
 				{
 					if (!isCreate && !each.IsPersistent)
 						continue;	// skip create only parms for non-create scenario
-					if (provider.ValidateParameter(TheFederation, each.ID, GetParm(each.ID)) != null)
+					if (provider.ValidateParameter(TheFederation, each.ID, GetParm(each.ID), isCreate) != null)
 					{
 						err = true;
 						break;
@@ -224,7 +224,7 @@ namespace FlexWiki.Web.Admin
 				}
 				bool readOnly = !isCreate && !provider.CanParameterBeEdited(each.ID);
 				UIResponse.WriteInputField(each.ID, each.Title, each.Description, val, readOnly);
-				string error = provider.ValidateParameter(TheFederation, each.ID, val);
+				string error = provider.ValidateParameter(TheFederation, each.ID, val, isCreate);
 				if (error != null)
 					UIResponse.WriteFieldError(UIResponse.Escape(error));
 			}

@@ -115,7 +115,7 @@ namespace CalendarProvider
 			return ArrayList.ReadOnly(answer);
 		}
 
-		public string ValidateParameter(Federation aFed, string paramID, string proposedValue)
+		public string ValidateParameter(Federation aFed, string paramID, string proposedValue, bool isCreate)
 		{
 			if (paramID != "Year")
 				throw new Exception("Only parameter is 'Year'.");

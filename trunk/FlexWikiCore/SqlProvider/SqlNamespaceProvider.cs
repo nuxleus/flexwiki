@@ -206,17 +206,16 @@ namespace SqlProvider
 		/// <param name="val">Parameter value to validate.</param>
 		/// <returns>returns null to indicate success otherwise returns 
 		/// the error message to be displayed.</returns>
-		public string ValidateParameter(Federation aFed, string param, string val)
+		public string ValidateParameter(Federation aFed, string param, string val, bool isCreate)
 		{
 			if (param == ConfigurationParameterNames.Namespace)
 			{
 				// Would need to be consistent with the namespace 
 				// names for the FileSystemNameSpaceProvider
-				if (val == "")
-					return "Namespace can not be null or blank";
-				if (aFed.ContentBaseForNamespace(val) != null)
+				if (val == "" || val == null)
+					return "Namespace can not be blank";
+				if (isCreate && aFed.ContentBaseForNamespace(val) != null)
 					return "Namespace already exists";
-
 			}
 			else if (param == ConfigurationParameterNames.ConnectionString)
 			{

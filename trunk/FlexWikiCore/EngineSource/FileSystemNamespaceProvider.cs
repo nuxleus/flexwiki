@@ -169,13 +169,13 @@ namespace FlexWiki
 				throw new Exception("Unknown parameter: " + param);
 		}
 
-		public string ValidateParameter(Federation aFed, string param, string val)
+		public string ValidateParameter(Federation aFed, string param, string val, bool isCreate)
 		{
 			if (param == Names.Namespace)
 			{
-				if (val == "")
+				if (val == "" || val == null)
 					return "Namespace can not be blank";
-				if (aFed.ContentBaseForNamespace(val) != null)
+				if (isCreate && aFed.ContentBaseForNamespace(val) != null)
 					return "Namespace already exists";
 				// TODO -- check other constraints (valid chars) for namespaces
 			}
