@@ -729,6 +729,8 @@ namespace FlexWiki.Formatting
 			bool inMultilineProperty = false;
 			bool currentMultilinePropertyIsHidden = false;
 			string multiLinePropertyDelim = null;
+            bool inPreBlock=false;
+            string preBlockKey=null;
 
 			_Output.Begin();
 
@@ -738,6 +740,35 @@ namespace FlexWiki.Formatting
 				string each = eachLine.Text;
 				_Output.Style = eachLine.Style;
 
+                each = StripHTMLSpecialCharacters(each);
+
+                if ( inPreBlock )
+                {
+                    if ( each.StartsWith("}@") && each.Substring(2).Trim() == preBlockKey )
+                    {
+                        Ensure(typeof(NeutralState));
+                        inPreBlock = false;
+                        preBlockKey = null;
+                    }
+                    else
+                    {
+                        _Output.Write(Regex.Replace(each, "\t", "        "));
+                        _Output.WriteEndLine();
+                        _CurrentLineIndex++;
+                    }
+                    continue;
+                }
+                else if ( !inMultilineProperty && each.StartsWith("{@") )
+                {
+                    Ensure(typeof(PreState));
+                    inPreBlock = true;
+                    preBlockKey = each.Substring(2).Trim();
+                    continue;
+                }
+
+                // Make all the 8-space sequences into tabs
+                each = Regex.Replace(each, " {8}", "\t");
+        
 				// See if this is the first line of a multiline property.
 				if (!inMultilineProperty && ContentBase.MultilinePropertyRegex.IsMatch(each))
 				{
@@ -795,14 +826,9 @@ namespace FlexWiki.Formatting
 				}
 
 
-				// Make all the 8-space sequences into tabs
-				each = Regex.Replace(each, " {8}", "\t");
-        
 				if (Formatter.StripExternalWikiDef(_ExternalWikiMap, each)) 
 					continue;
             
-				each = StripHTMLSpecialCharacters(each);
-
 				// empty line resets everything (except pre)
 				if (each.Trim().Length == 0)
 				{
@@ -847,8 +873,7 @@ namespace FlexWiki.Formatting
 						EnsureParaClose();
 					}
 				}
-				
-					// line begins with a space, it's PRE time!
+				// line begins with a space, it's PRE time!
 				else if (each.StartsWith(" ") || Regex.IsMatch(each, "^[ \t]+[^ \t*1]"))
 				{
 					Ensure(typeof(PreState));
@@ -1142,7 +1167,8 @@ namespace FlexWiki.Formatting
 			answer = ConvertEmoticons(answer);	// needs to come before textile because of precedence in overlappign formatting rules
 			answer = SentencePairedDelimiters(answer);
 			answer = TextileFormat(answer);
-			answer = LinkHyperLinks(answer);
+            answer = ColorsEtcFormat(answer);
+            answer = LinkHyperLinks(answer);
 			answer = LinkWikiNames(answer);
 			answer = ProcessWikiLinks(answer);
 			return answer;
@@ -1363,6 +1389,114 @@ namespace FlexWiki.Formatting
 			str = Regex.Replace (str, "\"([^\"(]+)( \\(([^\\)]+)\\))?\":" + urlPattern, "<a href=\"$4\" title=\"$3\">$1</a>");
 
 			return str;
+		}
+
+		static string	ColorsEtcFormat( string	input	)
+		{
+			string str = input;
+			// "%([a-zA-Z]+)(	*([a-zA-Z]+))*%"
+			bool insideSpan=false;
+			int	insideBig=0;
+			int	insideSmall=0;
+
+			string elem="([a-zA-Z]*|#[a-fA-F0-9]{6})";
+			Regex	style=new	Regex( "%"+elem+"( +"+elem+")*%" );
+			Match	match;
+			int	lastMatchedPosition=0;
+			string debugString="";
+			while	(	(match=style.Match(	str, lastMatchedPosition )).Success	)
+			{
+				for	(	int	i=0; i < match.Groups.Count; ++i )
+				{
+					debugString	+= string.Format(	"<br/>Group[{0}] = '{1}'", i,	match.Groups[i].Value	);
+				}
+
+				string newValue="";
+
+				// terminate previous	<big>	first	(if	any)
+				for	(	;	insideBig	>	0; --insideBig )
+				{
+					newValue +=	"</big>";
+				}
+
+				// terminate previous	<small>	first	(if	any)
+				for	(	;	insideSmall	>	0; --insideSmall )
+				{
+					newValue +=	"</small>";
+				}
+
+				// terminate previous	<span> first (if any)
+				if ( insideSpan	)
+				{
+					newValue +=	"</span>";
+					insideSpan = false;
+				}
+
+				if ( match.Groups[1].Length	>	0	)	// start new block
+				{
+					for	(	int	i=1; i < match.Groups.Count; i +=	2	)
+					{
+						string param=match.Groups[i].Value;
+						if ( string.Compare( param,	"big", true	)	== 0 )
+						{
+							++insideBig;
+							newValue +=	"<big>";
+						}
+						else if	(	string.Compare(	param, "small",	true ) ==	0	)
+						{
+							++insideSmall;
+							newValue +=	"<small>";
+						}
+						else if	(	param	!= string.Empty	)
+						{
+							if ( insideSpan	)
+							{
+								newValue
+									=	"<span class='errormessage'>"
+									+		"<span class='errormessagetitle'>	Style	Format Error:</span>"
+									+		"<span class='errormessagebody'>"	+	"	More than	one	color	in \"" + match.Groups[0].Value + "\" " + "</span>"
+									+	"</span>"
+									;
+							}
+							else
+							{
+								insideSpan = true;
+								newValue +=	"<span style='color:"	+	match.Groups[i].Value.ToLower()	+	"'>";
+							}
+						}
+					}
+				}
+
+				// Just	leave	%% alone if	it is	on the line	by itself
+				if ( newValue	!= string.Empty	)
+				{
+					lastMatchedPosition	=	match.Groups[0].Index;
+					str	=	str.Remove(	lastMatchedPosition, match.Groups[0].Length	);
+					str	=	str.Insert(	lastMatchedPosition, newValue	);
+					lastMatchedPosition	+= newValue.Length;
+				}
+				else
+				{
+					lastMatchedPosition	+= 2;
+				}
+			}
+
+			for	(	;	insideBig	>	0; --insideBig )
+			{
+				str	+= "</big>";
+			}
+
+			for	(	;	insideSmall	>	0; --insideSmall )
+			{
+				str	+= "</small>";
+			}
+
+			if ( insideSpan	)
+			{
+				str	+= "</span>";
+			}
+
+			return str;	//	+	debugString;
 		}
 
 		static string urlPattern = @"((https?|ftp|gopher|telnet|file|mailto|news):(//)?[a-zA-Z0-9:#@%/;$()~_?\+-=\\\.&]*)";

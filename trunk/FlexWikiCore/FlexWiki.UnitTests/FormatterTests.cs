@@ -1195,6 +1195,91 @@ And the text in the parens and brackets should be code formatted:
 			}
 			Assertion.AssertEquals(o2, o1);
 		}			
+
+		[Test] public void PreFormattedBlockTests()
+		{
+			FormatTest(
+@"
+{@KeyWord
+Some pre
+forma-
+ted
+ text
+  goes
+   here
+*non bold* ''etc''
+} is allowed
+}@ is allowed
+}@non-key is allowed
+}@ KeyWord 
+{@
+No key case
+}@WrongKey
+}@
+Normal text here
+ Regular preformated text
+Normal again
+",
+@"
+
+<pre>
+Some pre
+forma-
+ted
+ text
+  goes
+   here
+*non bold* ''etc''
+} is allowed
+}@ is allowed
+}@non-key is allowed
+</pre>
+<pre>
+No key case
+}@WrongKey
+</pre>
+<p>Normal text here</p>
+<pre>
+ Regular preformated text
+</pre>
+<p>Normal again</p>
+");
+        }
+
+		[Test] public void ColorAndTextSizeTests()
+		{
+			FormatTest(
+				@"%% by itself %% and again %%",
+				@"<p>%% by itself %% and again %%</p>
+");
+			FormatTest(
+				@"%red% red %% and now %% by itself",
+				@"<p><span style='color:red'> red </span> and now %% by itself</p>
+");
+			FormatTest(
+				@"%red%red %blue%blue%% but this text is normal.",
+				@"<p><span style='color:red'>red </span><span style='color:blue'>blue</span> but this text is normal.</p>
+");
+			FormatTest(
+				@"%red%Red and no %big%closing %small%percentpercent
+Normal again
+",
+				@"<p><span style='color:red'>Red and no </span><big>closing </big><small>percentpercent</small></p>
+<p>Normal again</p>
+");
+			FormatTest(
+				@"Strange %#13579B%Color %dima% non-color",
+				@"<p>Strange <span style='color:#13579b'>Color </span><span style='color:dima'> non-color</span></p>
+");
+			FormatTest(
+				@"'''%red big%Big bold red text''' %small green%''Small green italic''%%normal",
+				@"<p><strong><span style='color:red'><big>Big bold red text</strong> </big></span><small><span style='color:green'><em>Small green italic</em></small></span>normal</p>
+");
+			FormatTest(
+				@"normal %big big%Very big %% normal %small small% very small %blue% normal size blue",
+				@"<p>normal <big><big>Very big </big></big> normal <small><small> very small </small></small><span style='color:blue'> normal size blue</span></p>
+");
+		}
 	}
 
 	[TestFixture] public class NameMatches
