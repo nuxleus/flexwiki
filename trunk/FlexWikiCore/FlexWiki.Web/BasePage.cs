@@ -101,6 +101,13 @@ namespace FlexWiki.Web
 			}
 		}
 
+		protected string SendRequestsTo
+		{
+			get
+			{
+				return System.Configuration.ConfigurationSettings.AppSettings["SendNamespaceCreationRequestsTo"];
+			}
+		}
 
 		protected AbsoluteTopicName GetTopicName()
 		{
@@ -378,6 +385,18 @@ namespace FlexWiki.Web
 			ProcessUnauthenticatedUserName();
 		}
 
+		protected string SendMail(System.Web.Mail.MailMessage message)
+		{
+			SmtpMail mailer = new SmtpMail();
+			try
+			{
+				return mailer.Send(message, ConfigurationSettings.AppSettings["SMTPServer"], ConfigurationSettings.AppSettings["SMTPUser"], ConfigurationSettings.AppSettings["SMTPPassword"]);
+			}
+			catch (Exception e)
+			{
+				return "An exception occurred trying to send mail. " + e.ToString();
+			}
+		}
 
 		protected static void OpenPane(TextWriter w, string title)
 		{

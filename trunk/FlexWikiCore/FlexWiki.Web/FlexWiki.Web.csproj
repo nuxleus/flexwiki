@@ -349,6 +349,21 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "RequestNamespace.aspx"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "RequestNamespace.aspx.cs"
+                    DependentUpon = "RequestNamespace.aspx"
+                    SubType = "ASPXCodeBehind"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "RequestNamespace.aspx.resx"
+                    DependentUpon = "RequestNamespace.aspx.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Rss.aspx"
                     SubType = "Form"
                     BuildAction = "Content"

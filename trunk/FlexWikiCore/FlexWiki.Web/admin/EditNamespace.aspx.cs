@@ -117,7 +117,8 @@ namespace FlexWiki.Web.Admin
 		void SaveChanges(FormValues values)
 		{
 			// Three possible operations: rename, create, edit
-			bool isRename = values.OriginalNamespace != null && values.OriginalNamespace != "" && (values.OriginalNamespace != values.Namespace);
+			bool isRename = values.OriginalNamespace != null && values.OriginalNamespace != "" && (values.OriginalNamespace != values.Namespace) && 
+				TheFederation.ContentBaseForNamespace(values.OriginalNamespace) != null;
 			if (isRename)
 				DoRename(values);
 			else 
@@ -151,16 +152,46 @@ namespace FlexWiki.Web.Admin
 			TheFederation.SetTopicProperty(defTopic, "Title", values.Title, false);
 			TheFederation.SetTopicProperty(defTopic, "Description", values.Description, false);
 
+			// Set imported namespaces, if any
+			string defaultImportedNamespaces = System.Configuration.ConfigurationSettings.AppSettings["DefaultImportedNamespaces"];
+			if (defaultImportedNamespaces != null)
+				TheFederation.SetTopicProperty(defTopic, "Import", defaultImportedNamespaces, false);
+
 			SetConfiguredDirectoryForNamespace(values.Namespace, dir);
 			
 			cb.WriteTopic(new AbsoluteTopicName("HomePage", values.Namespace), "!Welcome to Wiki..." + Environment.NewLine);
 			
 			Response.Write("<p>Namespace created (content stored in " + EscapeHTML(dir) + ").</p>");
-
-
-			Response.Write("<p>Visit the <a href='" + TheLinkMaker.LinkToTopic(new AbsoluteTopicName(cb.HomePage, cb.Namespace)) + "'>" + EscapeHTML(cb.HomePage) + "</a></p>");
-
 			Response.Write("<p>Back to <a href='namespaces.aspx'>namespace list</a>.</p>");
+
+			string link = TheLinkMaker.LinkToTopic(new AbsoluteTopicName(cb.HomePage, cb.Namespace));
+			Uri uri = new Uri(link);
+			link = uri.ToString();
+
+			System.Web.Mail.MailMessage msg = new System.Web.Mail.MailMessage();
+			msg.To = values.Contact;
+			if (SendRequestsTo != null)
+				msg.Cc = SendRequestsTo;
+			msg.BodyFormat = System.Web.Mail.MailFormat.Html;
+			msg.From = SendRequestsTo;
+			msg.Subject = "FlexWiki namespace created - " + values.Namespace;
+			msg.Body = @"<p>Your FlexWiki namespace (" + EscapeHTML(values.Namespace) + @") has been created.
+<p>You may visit the home page for your namespace at <a href='" + link + "'>" + EscapeHTML(link) + "</a>";
+
+			string fail = SendMail(msg);
+			if (fail == null)
+				Response.Write(@"<p>Mail has been sent notifying the contact that their namespace has been created.</p>");
+			else
+			{
+				Response.Write(@"<p>Mail could not be sent notifying the contact about the creation of their namespace.</p>");
+				Response.Write(@"<p>The error that occurred is: <pre>
+" + EscapeHTML(fail) 
+					+ "</pre>");
+			}
+
+			Response.Write(@"<p>Your FlexWiki namespace (" + EscapeHTML(values.Namespace) + @") has been created.
+<p>You may visit the home page for your namespace at <a href='" + link + "'>" + EscapeHTML(link) + "</a>");
+
 		}
 
 		void DoEdit(FormValues values)
@@ -208,7 +239,18 @@ namespace FlexWiki.Web.Admin
 			}
 			else
 			{
-				values = ReadValuesForNamespace(ns);
+				values = new FormValues();
+
+				// Fill in any supplied values from the query string if we're creating one fresh
+				if (TheFederation.ContentBaseForNamespace(ns) == null)
+				{
+					values.Namespace = Namespace;
+					values.Title = Request.QueryString["title"];
+					values.Description = Request.QueryString["description"];
+					values.Contact = Request.QueryString["contact"];
+				}
+				else
+					values = ReadValuesForNamespace(ns);
 			}
 			WriteForm(values);
 		}
@@ -217,6 +259,7 @@ namespace FlexWiki.Web.Admin
 		{
 			FormValues answer = new FormValues();
 			answer.Namespace = Namespace;
+
 			return answer;
 		}
 		
@@ -289,6 +332,7 @@ namespace FlexWiki.Web.Admin
 			WriteInputField("title", "Title", "A short title for this namespace", values.Title);
 			WriteTextAreaField("description", "Description", "A description for the namespace (use Wiki formatting)", values.Description);
 			WriteInputField("contact", "Contact", "Specify a contact for this namespace (usually an email address, but not necessarily)", values.Contact);
+
 			string def = "";
 			if (IsCreate)
 			{
@@ -337,6 +381,12 @@ namespace FlexWiki.Web.Admin
 		{	
 			WriteFieldHTML(fieldLabel, help, 
 				"<input type='text' size='50' value='" + EscapeHTML(value) + "' name='" + fieldName + "'>");
+		}
+
+		void WriteCheckbox(string fieldName, string fieldLabel, string help, bool value)
+		{	
+			WriteFieldHTML(fieldLabel, help, 
+				"<input type='checkbox' value='yes' " + (value ? "checked" : "") + " name='" + fieldName + "'>");
 		}
 
 		void WriteTextAreaField(string fieldName, string fieldLabel, string help, string value)
