@@ -80,11 +80,6 @@
                     HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
                 />
                 <Reference
-                    Name = "FlexWikiEngine"
-                    Project = "{7362F597-DAB3-437E-8A07-37D8D2FE6E56}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
                     Name = "nunit.framework"
                     AssemblyName = "nunit.framework"
                     HintPath = "Assemblies\nunit.framework.dll"
@@ -92,6 +87,11 @@
                 <Reference
                     Name = "FlexWikiSecurity"
                     Project = "{F0146D3C-71FB-4C1F-B9E3-DA4B5FEC4AB9}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "FlexWikiEngine"
+                    Project = "{7362F597-DAB3-437E-8A07-37D8D2FE6E56}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
             </References>

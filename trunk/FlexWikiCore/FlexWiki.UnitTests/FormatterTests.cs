@@ -515,7 +515,7 @@ Test for case-insensitivity, such as CAPS@BAF, or some such nonsense.",
 
 			FormatTest(
 				@"Please send ""person"":mailto:person@domain.com some email!",
-				@"<p>Please send <a href=""mailto:person@domain.com"" title="""">person</a> some email!</p>
+				@"<p>Please send <a href=""mailto:person@domain.com"">person</a> some email!</p>
 ");
 		}
 
@@ -718,7 +718,7 @@ And the text in the parens and brackets should be code formatted:
       string xslPath = testRssXslPath.Replace(@"\", @"\\");
 
 			FormatTest("@@XmlTransform(\"" + xmlPath + "\", \"" + xslPath + "\")@@",
-				"<p><h1>Weblogs @ ASP.NET</h1>\n\n<table cellpadding='2' cellspacing='1' class='TableClass'>\n<tr>\n<td  class='TableCell'><strong>Published Date</strong></td>\n<td  class='TableCell'><strong>Title</strong></td>\n</tr>\n<tr>\n<td  class='TableCell'>Wed, 07 Jan 2004 05:45:00 GMT</td>\n<td  class='TableCell'><a href=\"http://weblogs.asp.net/aconrad/archive/2004/01/06/48205.aspx\" title=\"\">Fast Chicken</a></td>\n</tr>\n<tr>\n<td  class='TableCell'>Wed, 07 Jan 2004 03:36:00 GMT</td>\n<td  class='TableCell'><a href=\"http://weblogs.asp.net/CSchittko/archive/2004/01/06/48178.aspx\" title=\"\">Are You Linked In?</a></td>\n</tr>\n<tr>\n<td  class='TableCell'>Wed, 07 Jan 2004 03:27:00 GMT</td>\n<td  class='TableCell'><a href=\"http://weblogs.asp.net/francip/archive/2004/01/06/48172.aspx\" title=\"\">Whidbey configuration APIs</a></td>\n</tr>\n</table></p>\n");
+				"<p><h1>Weblogs @ ASP.NET</h1>\n\n<table cellpadding='2' cellspacing='1' class='TableClass'>\n<tr>\n<td  class='TableCell'><strong>Published Date</strong></td>\n<td  class='TableCell'><strong>Title</strong></td>\n</tr>\n<tr>\n<td  class='TableCell'>Wed, 07 Jan 2004 05:45:00 GMT</td>\n<td  class='TableCell'><a href=\"http://weblogs.asp.net/aconrad/archive/2004/01/06/48205.aspx\">Fast Chicken</a></td>\n</tr>\n<tr>\n<td  class='TableCell'>Wed, 07 Jan 2004 03:36:00 GMT</td>\n<td  class='TableCell'><a href=\"http://weblogs.asp.net/CSchittko/archive/2004/01/06/48178.aspx\">Are You Linked In?</a></td>\n</tr>\n<tr>\n<td  class='TableCell'>Wed, 07 Jan 2004 03:27:00 GMT</td>\n<td  class='TableCell'><a href=\"http://weblogs.asp.net/francip/archive/2004/01/06/48172.aspx\">Whidbey configuration APIs</a></td>\n</tr>\n</table></p>\n");
 		}
 
 		[Test] public void XmlTransformBehaviorXmlParamNotFoundTest() 
@@ -788,31 +788,31 @@ And the text in the parens and brackets should be code formatted:
 		{
 			FormatTest(
 				@"""msn"":http://www.msn.com ""yahoo"":http://www.yahoo.com",
-				@"<p><a href=""http://www.msn.com"" title="""">msn</a> <a href=""http://www.yahoo.com"" title="""">yahoo</a></p>
+				@"<p><a href=""http://www.msn.com"">msn</a> <a href=""http://www.yahoo.com"">yahoo</a></p>
 ");
 			FormatTest(
 				@"""ftp link"":ftp://feeds.scripting.com",
-				@"<p><a href=""ftp://feeds.scripting.com"" title="""">ftp link</a></p>
+				@"<p><a href=""ftp://feeds.scripting.com"">ftp link</a></p>
 ");
 			FormatTest(
 				@"""gopher link"":gopher://feeds.scripting.com",
-				@"<p><a href=""gopher://feeds.scripting.com"" title="""">gopher link</a></p>
+				@"<p><a href=""gopher://feeds.scripting.com"">gopher link</a></p>
 ");
 			FormatTest(
 				@"""telnet link"":telnet://melvyl.ucop.edu/",
-				@"<p><a href=""telnet://melvyl.ucop.edu/"" title="""">telnet link</a></p>
+				@"<p><a href=""telnet://melvyl.ucop.edu/"">telnet link</a></p>
 ");
 			FormatTest(
 				@"""news group link"":news:comp.infosystems.www.servers.unix",
-				@"<p><a href=""news:comp.infosystems.www.servers.unix"" title="""">news group link</a></p>
+				@"<p><a href=""news:comp.infosystems.www.servers.unix"">news group link</a></p>
 ");
 			FormatTest(
 				@"""secure link"":https://server/directory",
-				@"<p><a href=""https://server/directory"" title="""">secure link</a></p>
+				@"<p><a href=""https://server/directory"">secure link</a></p>
 ");
 			FormatTest(
 				@"""port link"":http://www.msn:8080/ ""port link"":http://www.msn:8080",
-				@"<p><a href=""http://www.msn:8080/"" title="""">port link</a> <a href=""http://www.msn:8080"" title="""">port link</a></p>
+				@"<p><a href=""http://www.msn:8080/"">port link</a> <a href=""http://www.msn:8080"">port link</a></p>
 ");
 		}
 		[Test] public void PoundHyperLinks()
@@ -841,7 +841,7 @@ And the text in the parens and brackets should be code formatted:
 ");
 			FormatTest(
 				@"""Sales 20% Markup"":file://server/directory/sales%2020%%20Markup.doc",
-				@"<p><a href=""file://server/directory/sales%2020%%20Markup.doc"" title="""">Sales 20% Markup</a></p>
+				@"<p><a href=""file://server/directory/sales%2020%%20Markup.doc"">Sales 20% Markup</a></p>
 ");
 		}
 		[Test][Ignore("Not Functional yet")] public void DoNotConvertIntoLinks()
@@ -929,7 +929,7 @@ And the text in the parens and brackets should be code formatted:
 			// Collides with textile subscript markup
 			FormatTest(
 				@"""TildeLink"":http://servername/~mike",
-				@"<p><a href=""http://servername/~mike"" title="""">TildeLink</a></p>
+				@"<p><a href=""http://servername/~mike"">TildeLink</a></p>
 ");
 			FormatTest(
 				@"http://servername/~mike",

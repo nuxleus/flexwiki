@@ -816,6 +816,7 @@ namespace FlexWiki
 				Borders = config.Borders;
 				AboutWikiString = config.AboutWikiString;
 				WikiTalkVersion = config.WikiTalkVersion;
+				ObfuscateExternalHyperlinks = config.ObfuscateExternalHyperlinks != 0;
 				DefaultDirectoryForNewNamespaces = config.DefaultDirectoryForNewNamespaces;
 				FederationNamespaceMapLastRead = config.FederationNamespaceMapLastRead;
 				UpdateGenerator.RecordNamespaceListChanged();
@@ -824,6 +825,22 @@ namespace FlexWiki
 			finally
 			{
 				UpdateGenerator.Pop();
+			}
+		}
+
+		bool _ObfuscateExternalHyperlinks = false;
+		public bool ObfuscateExternalHyperlinks
+		{
+			get
+			{
+				return _ObfuscateExternalHyperlinks;
+			}
+			set
+			{
+				if (value == _ObfuscateExternalHyperlinks)
+					return;
+				_ObfuscateExternalHyperlinks = value;
+				RecordFederationPropertiesChanged();
 			}
 		}
 

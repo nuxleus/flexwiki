@@ -26,6 +26,7 @@ namespace FlexWiki.Newsletters
 	/// Summary description for NewsletterManager.
 	/// </summary>
 
+
 	public class NewsletterManager
 	{
 		IDeliveryBoy _DeliveryBoy;

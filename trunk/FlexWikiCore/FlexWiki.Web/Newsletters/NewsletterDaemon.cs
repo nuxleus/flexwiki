@@ -76,7 +76,7 @@ namespace FlexWiki.Newsletters
 		}
 
 		const int CheckinInterval = 5000;
-		const int WorkInterval = 10000;
+		const int WorkInterval = 60000;
 
 		public DateTime NextWorkDue = DateTime.MinValue;
 
@@ -153,6 +153,7 @@ namespace FlexWiki.Newsletters
 			LogEvent ev = TheFederation.LogEventFactory.CreateAndStartEvent(null, null, null, LogEvent.LogEventType.NewsletterGeneration);
 			LogResult(sb);
 			sw.WriteLine("Begin: " + DateTime.Now.ToString());
+			sw.WriteLine("Thread: " + Thread.CurrentThread.Name);
 			try
 			{
 				manager.Notify(sw);
@@ -172,7 +173,7 @@ namespace FlexWiki.Newsletters
 			}
 		}
 
-		const int MaxResults = 20;
+		const int MaxResults = 30;
 
 		void LogResult(StringBuilder b)
 		{
@@ -272,7 +273,7 @@ namespace FlexWiki.Newsletters
 			if (newslettersDisabled)
 				return;
 			MonitorThread = new Thread(new ThreadStart(ThreadProc));
-			MonitorThread.Name = "Newsletter";
+			MonitorThread.Name = "Newsletter " + DateTime.Now;
 			MonitorThread.Priority = ThreadPriority.BelowNormal;	// be kind
 			MonitorThread.Start();
 			Started = DateTime.Now;

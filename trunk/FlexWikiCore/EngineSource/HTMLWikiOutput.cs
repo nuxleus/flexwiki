@@ -166,6 +166,23 @@ Write(@"
 				var menu = document.getElementById(""LinkMenu"");
 				menu.style.display = 'none';
 			}
+
+			function cleanObfuscatedLink(obj, text, URL)
+			{
+				obj.innerText = text;
+				obj.href = URL;
+			}
+
+			function ShowObfuscatedLink(link)
+			{
+				var i = 0;
+				for (i = 0; i < link.length; i++)
+				{
+					document.write(link.substr(i, 1));
+					if (i < 10)
+						document.write('..');
+				}
+			}
 			
 			function MenuItemIn(obj)
 			{

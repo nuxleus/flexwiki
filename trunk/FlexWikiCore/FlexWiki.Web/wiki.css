@@ -1021,6 +1021,12 @@ a:hover {
    text-decoration:underline;
 }
 
+.extLink
+{
+   color: royalblue;
+   text-decoration:none;
+}
+
 a.create {
    color: black;
    text-decoration:none;

@@ -1387,7 +1387,7 @@ namespace FlexWiki.Formatting
 			return str;
 		}
     
-		static string TextileFormat(string input)
+		string TextileFormat(string input)
 		{
 			string str = input;
 			// _emphasis_
@@ -1410,7 +1410,7 @@ namespace FlexWiki.Formatting
 			// need to be sure we don't consume WikiBehaviors @@Whatever@@
 			str = Regex.Replace (str, "(^|\\s|\\(|\\[)@([^@]+)@", "$1<code>$2</code>") ;
 			// "link text":url 
-			str = Regex.Replace (str, "\"([^\"(]+)( \\(([^\\)]+)\\))?\":" + urlPattern, "<a href=\"$4\" title=\"$3\">$1</a>");
+			str = Regex.Replace (str, "\"([^\"(]+)( \\(([^\\)]+)\\))?\":" + urlPattern, ObfuscatableLinkReplacementPattern("$1", "$4"));
 
 			return str;
 		}
@@ -1530,13 +1530,31 @@ namespace FlexWiki.Formatting
 				"$1<img src=\"FILEIMAGESOURCE:$2\">") ;
 
 			// web links (including those surrounded by parens, brackets and curlies
-			str = Regex.Replace (str, @"[(]" + urlPattern + "[)]", "(<a href=\"$1\">$1</a>)") ;
-			str = Regex.Replace (str, @"[{]" + urlPattern + "[}]", "{<a href=\"$1\">$1</a>}") ;
-			str = Regex.Replace (str, @"[\\[]" + urlPattern + "[\\]]", "[<a href=\"$1\">$1</a>]") ;
-			str = Regex.Replace (str, @"(^|\s)" + urlPattern, "$1<a href=\"$2\">$2</a>") ;
+			str = Regex.Replace (str, @"[(]" + urlPattern + "[)]", "(" + ObfuscatableLinkReplacementPattern("$1", "$1") + ")") ;
+			str = Regex.Replace (str, @"[{]" + urlPattern + "[}]", "{" + ObfuscatableLinkReplacementPattern("$1", "$1") + "}") ;
+			str = Regex.Replace (str, @"[\\[]" + urlPattern + "[\\]]", "[" + ObfuscatableLinkReplacementPattern("$1", "$1") + "]") ;
+			str = Regex.Replace (str, @"(^|\s)" + urlPattern, "$1" + ObfuscatableLinkReplacementPattern("$2", "$2"));
 
 			str = FinalizeImageLinks(str);
 			return str;
+		}
+
+		string ObfuscatableLinkReplacementPattern(string replacementText, string replacementURL)
+		{
+			if (TheFederation.ObfuscateExternalHyperlinks)
+				return @"<a 
+onmouseover='javascript:cleanObfuscatedLink(this, """ + replacementText + @""", """ + replacementURL + @""")' 
+tabindex=0 
+class='extLink' 
+title='Link to <" + replacementURL + @"> (obfuscated for anti-spam reasons)' 
+onfocus='javascript:cleanObfuscatedLink(this,""" + replacementText + @""", """ + replacementURL + @""")'><script language=javascript>
+<!-- 
+ShowObfuscatedLink(""" + replacementText + @""");
+//--> 
+</script>
+</a>";
+			else
+				return @"<a href=""" + replacementURL + @""">" + replacementText + @"</a>";
 		}
 
 		static string wikiURIPattern = @"(^|\s+)(?<uri>wiki://(?<authority>" + unbracketedWikiName + @")(?<path>/[a-zA-Z0-9:@%/~_?\-=\\\.]*)?(#(?<fragment>[a-zA-Z0-9:@%/~_?\-=\\\.]*))?)";
