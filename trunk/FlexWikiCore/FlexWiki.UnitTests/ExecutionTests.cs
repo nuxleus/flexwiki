@@ -410,7 +410,19 @@ with(""short"")
 		}
 
 
+		[Test] public void TestTypeForNameExists()
+		{
+			BELType belType = new BELType();
+			BELType result = belType.TypeForName("NamespaceInfo");
+			Assertion.AssertEquals("Type NamespaceInfo", result.ToString());
+		}
 
+		[Test] public void TestTypeForNameDoesNotExist()
+		{
+			BELType belType = new BELType();
+			BELType result = belType.TypeForName("WardInfo");
+			Assertion.AssertEquals(null, result);
+		}
 
 
 		class Dummy : BELObject

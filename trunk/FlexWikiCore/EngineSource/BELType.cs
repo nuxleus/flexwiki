@@ -286,5 +286,11 @@ namespace FlexWiki
 			return null;
 		}
 
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the type given a name.")]
+		public BELType TypeForName(string typeName)
+		{
+			return (BELType)(new TypeRegistry().Registry[typeName]);
+		}
+
 	}
 }
