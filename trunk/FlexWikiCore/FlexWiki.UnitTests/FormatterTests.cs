@@ -82,6 +82,32 @@ namespace FlexWiki.UnitTests
 			Assert.AreEqual(info.RowSpan, 5);
 		}
 
+		public void TestWidths()
+		{
+			TableCellInfo info = new TableCellInfo();
+			info.Parse("");
+			Assert.IsTrue(info.TableWidth == TableCellInfo.UnspecifiedWidth);
+			Assert.IsTrue(info.CellWidth == TableCellInfo.UnspecifiedWidth);
+			info.Parse("TW1");
+			Assert.AreEqual(1, info.TableWidth);
+			info.Parse("TW100");
+			Assert.AreEqual(100, info.TableWidth);
+			info.Parse("TW100C2");
+			Assert.AreEqual(100, info.TableWidth);
+			info.Parse("W1");
+			Assert.AreEqual(1, info.CellWidth);
+			info.Parse("W100");
+			Assert.AreEqual(100, info.CellWidth);
+			info.Parse("W100C2");
+			Assert.AreEqual(100, info.CellWidth);
+			info.Parse("W100TW200C2");
+			Assert.AreEqual(100, info.CellWidth);
+			Assert.AreEqual(200, info.TableWidth);
+
+
+		}
+
+
 	}
 
 	[TestFixture] public class FormattingTests : WikiTests

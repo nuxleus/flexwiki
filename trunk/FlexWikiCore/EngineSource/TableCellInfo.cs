@@ -39,6 +39,10 @@ namespace FlexWiki.Formatting
 		public int ColSpan = 1;
 		public int RowSpan = 1;
 		public bool AllowBreaks = true;
+		public int CellWidth = UnspecifiedWidth;
+		public int TableWidth = UnspecifiedWidth;
+
+		static public int UnspecifiedWidth = -1;
 
 		/// <summary>
 		/// Parse the given options and change the options of this object as a side-effect.  Answer null if the parse goes OK or an error message if not.
@@ -97,9 +101,31 @@ namespace FlexWiki.Formatting
 								TableAlignment = AlignOption.Center;
 								continue;
 
+							case 'W':
+								num = "";
+								if (p + 1 >= format.Length)
+									return "Missing number for table width percentage option 'TW' in table format";
+								p++;
+								while (p < format.Length && Char.IsDigit(format[p]))
+									num += format[p++];
+								TableWidth = Int32.Parse(num);
+								p--;
+								continue;
+
 							default:
 								return "Unknown table formatting option: T" + ch2;
 						}
+
+					case 'W':
+						num = "";
+						if (p + 1 >= format.Length)
+							return "Missing number for cell width percentage option 'W' in table format";
+						p++;
+						while (p < format.Length && Char.IsDigit(format[p]))
+							num += format[p++];
+						CellWidth = Int32.Parse(num);
+						p--;
+						continue;
 
 					case 'R':
 						num = "";

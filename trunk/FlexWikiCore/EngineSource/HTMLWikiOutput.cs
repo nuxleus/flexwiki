@@ -232,7 +232,7 @@ Write(@"
 			Write("<div " + css() + ">" + Formatter.EscapeHTML(each)  + "</div>");
 		}
 
-		override public void WriteOpenTable(TableCellInfo.AlignOption alignment, bool hasBorder)
+		override public void WriteOpenTable(TableCellInfo.AlignOption alignment, bool hasBorder, int width)
 		{
 			string styles = "";
 			Write("<table ");
@@ -255,6 +255,8 @@ Write(@"
 					Write(" align='center' ");
 					break;
 			}
+			if (width > 0)
+				Write(" width='" + width + "%' ");
 			string cls = "TableClass";
 			if (!hasBorder)
 				cls = "TableWithoutBorderClass";
@@ -328,7 +330,7 @@ Write(@"
 		}
 
 
-		override public void WriteTableCell(string s,  bool isHighlighted, TableCellInfo.AlignOption alignment, int colSpan, int rowSpan, bool hasBorder, bool allowBreaks)
+		override public void WriteTableCell(string s,  bool isHighlighted, TableCellInfo.AlignOption alignment, int colSpan, int rowSpan, bool hasBorder, bool allowBreaks, int width)
 		{
 			Write("<td  ");
 			if (isHighlighted)
@@ -348,6 +350,8 @@ Write(@"
 
 			if (!allowBreaks)
 				Write(" nowrap ");
+			if (width > 0)
+				Write(" width='" + width + "%' ");
 
 			switch (alignment)
 			{

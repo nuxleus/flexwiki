@@ -965,11 +965,11 @@ namespace FlexWiki.Formatting
 								if (firstRow)
 								{
 									ts.HasBorder = info.HasBorder;
-									Output.WriteOpenTable(info.TableAlignment, info.HasBorder);
+									Output.WriteOpenTable(info.TableAlignment, info.HasBorder, info.TableWidth);
 								}
 								_Output.WriteOpenTableRow();
 							}
-							_Output.WriteTableCell(ProcessLineElements(cellContent), info.IsHighlighted, info.CellAlignment, info.ColSpan, info.RowSpan, ts.HasBorder, info.AllowBreaks);
+							_Output.WriteTableCell(ProcessLineElements(cellContent), info.IsHighlighted, info.CellAlignment, info.ColSpan, info.RowSpan, ts.HasBorder, info.AllowBreaks, info.CellWidth);
 							firstCell = false;
 						}
 						_Output.WriteCloseTableRow();
