@@ -139,32 +139,75 @@ namespace FlexWiki.Web
 		{
 			string topic;
 			
-			string topicFromQueryString = Request.QueryString["topic"];
-			if (topicFromQueryString != null)
-				topic = topicFromQueryString;
-			else
-			{
-				topic = Request.PathInfo;
-				if (topic.StartsWith("/"))
-					topic = topic.Substring(1);
-			}
+			topic = Request.PathInfo;
+			if (topic.StartsWith("/"))
+				topic = topic.Substring(1);
 
-			RelativeTopicName rel;
+			// See if we're dealign with old style references or new ones
+			// OLD: My.Name.Space.Topic
+			// NEW: My.Name.Space/Topic.html
+			bool isNewStyle = topic.IndexOf("/") != -1;	// if we have a slash, it's new
+
+			// OK, we've got the namespace and the name now
+			AbsoluteTopicName abs;
 			if (topic == null || topic.Length == 0)
-				rel = new RelativeTopicName(DefaultContentBase.HomePage, DefaultContentBase.Namespace);
-			else
-				rel = new RelativeTopicName(topic);
-			IList topics = DefaultContentBase.AllAbsoluteTopicNamesThatExist(rel);
-			if (topics.Count == 0)
-				return rel.AsAbsoluteTopicName(DefaultContentBase.Namespace);		// topic doesn't exist, assume in the wiki's home content base
-			if (topics.Count > 1)
 			{
-				throw TopicIsAmbiguousException.ForTopic(rel);
+				abs = new AbsoluteTopicName(DefaultContentBase.HomePage, DefaultContentBase.Namespace);
 			}
-			AbsoluteTopicName answer = (AbsoluteTopicName)topics[0];
-			answer.Version = rel.Version;
-			return answer;
+			else
+			{
+				if (isNewStyle)
+				{
+					string ns, top;
+					int slash = topic.IndexOf("/");
+					ns = topic.Substring(0, slash);
+					top = topic.Substring(slash + 1);
+
+					int tailDot = top.LastIndexOf(".");
+					if (tailDot != -1)
+						top = top.Substring(0, tailDot);	// trim of the extension (e.g., ".html")
+
+					abs = new AbsoluteTopicName(ns + "." + top);
+				}
+				else
+				{
+					abs = new AbsoluteTopicName(topic);
+				}
+			}
+			return abs;
 		}
+
+//		protected AbsoluteTopicName GetTopicName()
+//		{
+//			string topic;
+//			
+//			string topicFromQueryString = Request.QueryString["topic"];
+//			if (topicFromQueryString != null)
+//				topic = topicFromQueryString;
+//			else
+//			{
+//				topic = Request.PathInfo;
+//				if (topic.StartsWith("/"))
+//					topic = topic.Substring(1);
+//			}
+//
+//			RelativeTopicName rel;
+//			if (topic == null || topic.Length == 0)
+//				rel = new RelativeTopicName(DefaultContentBase.HomePage, DefaultContentBase.Namespace);
+//			else
+//				rel = new RelativeTopicName(topic);
+//			IList topics = DefaultContentBase.AllAbsoluteTopicNamesThatExist(rel);
+//			if (topics.Count == 0)
+//				return rel.AsAbsoluteTopicName(DefaultContentBase.Namespace);		// topic doesn't exist, assume in the wiki's home content base
+//			if (topics.Count > 1)
+//			{
+//				throw TopicIsAmbiguousException.ForTopic(rel);
+//			}
+//			AbsoluteTopicName answer = (AbsoluteTopicName)topics[0];
+//			answer.Version = rel.Version;
+//			return answer;
+//		}
+
 
 		/// <summary>
 		/// Add a visitor event to the session state VisitorEvents

@@ -223,7 +223,14 @@ namespace FlexWiki.Newsletters
 				
 				builder.AppendFormat("<div class='NewsletterTopicChangers'>{0}</div>",  Formatter.EscapeHTML(changedBy));
 				builder.Append("<div class='NewsletterTopicBody'>");
-				builder.Append(Formatter.FormattedTopicWithSpecificDiffs(newestChange.Topic, OutputFormat.HTML, oldestChange.Topic, TheFederation, lm, null));
+				try
+				{
+					builder.Append(Formatter.FormattedTopicWithSpecificDiffs(newestChange.Topic, OutputFormat.HTML, oldestChange.Topic, TheFederation, lm, null));
+				}
+				catch (Exception ex)
+				{
+					builder.Append(@"<p><b>An exception occurred while formatting this topic:</b> " + HTMLWriter.Escape(ex.ToString(), true) + "</p>");
+				}
 				builder.Append("</div>");
 			}
 

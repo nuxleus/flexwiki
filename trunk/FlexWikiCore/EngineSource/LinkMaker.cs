@@ -153,21 +153,29 @@ namespace FlexWiki
 		string TopicLink(string top, bool showDiffs, NameValueCollection extraQueryParms)
 		{
 			StringBuilder builder = new StringBuilder();
+			RelativeTopicName topic = new RelativeTopicName(top);
 			builder.Append(SiteURL());
-			builder.Append("default.aspx?");
-			builder.Append("topic=" + HttpUtility.UrlEncode(top));
+			builder.Append("default.aspx/");
+			if (topic.Namespace != null && topic.Namespace != "")
+				builder.Append(HttpUtility.UrlEncode(topic.Namespace) + "/");
+			builder.Append(topic.Name);
+			if (topic.Version != null)
+				builder.Append("(" + HttpUtility.UrlEncode(topic.Version) + ")");
+			builder.Append(".html");		// hard coded for now -- later we'll be cooler!
+			StringBuilder query = new StringBuilder();
 			if (showDiffs)
-				builder.Append("&diff=y");
+				query.Append("diff=y");
 			if (extraQueryParms != null)
 			{
 				foreach (string each in extraQueryParms)
 				{
-					if (((string)(each)) != "topic" && ((string)(each)) != "diff")
-					{
-						builder.Append("&" + each + "=" + HttpUtility.UrlEncode((string)(extraQueryParms[each])));
-					}
+					if (query.Length != 0)
+						query.Append("&");
+					query.Append(each + "=" + HttpUtility.UrlEncode((string)(extraQueryParms[each])));
 				}
 			}
+			if (query.Length != 0)
+				builder.Append("?" + query.ToString());
 			return builder.ToString();
 		}
 	
@@ -263,12 +271,9 @@ namespace FlexWiki
 		/// <returns></returns>
 		string RestoreLink(string top)
 		{
-			StringBuilder builder = new StringBuilder();
-			builder.Append(SiteURL());
-			builder.Append("default.aspx?");
-			builder.Append("topic=" + HttpUtility.UrlEncode(top));
-			builder.Append("&restore=y");
-			return builder.ToString();
+			NameValueCollection extras = new NameValueCollection();
+			extras.Add("restore","y");
+			return TopicLink(top, false, extras);
 		}
 		/// <summary>
 		/// Creates the Change User Profile link

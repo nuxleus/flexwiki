@@ -272,6 +272,8 @@ namespace FlexWiki.Newsletters
 			if (newslettersDisabled)
 				return;
 			MonitorThread = new Thread(new ThreadStart(ThreadProc));
+			MonitorThread.Name = "Newsletter";
+			MonitorThread.Priority = ThreadPriority.BelowNormal;	// be kind
 			MonitorThread.Start();
 			Started = DateTime.Now;
 		}
