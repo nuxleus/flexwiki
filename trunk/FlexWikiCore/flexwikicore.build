@@ -213,7 +213,7 @@
     <property name="sqltest.skip"  value="true" />
     
     <!-- We also want to run FxCop -->
-    <property name="fxcop.skip" value="true" />
+    <property name="fxcop.skip" value="false" />
   </if>
 
   <!-- NAnt build targets appear after this point. To build a
