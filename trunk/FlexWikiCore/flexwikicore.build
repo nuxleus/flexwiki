@@ -15,6 +15,9 @@
 <!-- Please do not modify this file -->
 <project name="FlexWikiCore" default="test">
 
+  <!-- Make sure we use the 1.1 version of the framework -->
+  <property name="nant.settings.currentframework" value="net-1.1" />
+  
   <!-- Where on disk the source tree is rooted. Defaults to the
        directory where this build file lives. -->
   <property name="basedir" 
