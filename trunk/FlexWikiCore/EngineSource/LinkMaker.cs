@@ -11,6 +11,8 @@
 #endregion
 
 using System;
+using System.Collections;
+using System.Collections.Specialized;
 using System.Text;
 using System.Web;
 
@@ -124,13 +126,13 @@ namespace FlexWiki
 		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a link to the given topic")]
 		public string LinkToTopic(string topic)
 		{
-			return TopicLink(topic, false);
+			return TopicLink(topic, false, null);
 		}
 
 		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a link to display the given topic with diffs highlighted")]
 		public string LinkToTopicWithDiffs(string topic)
 		{
-			return TopicLink(topic, true);
+			return TopicLink(topic, true, null);
 		}
 
 		public string LinkToTopic(TopicName topic)
@@ -140,10 +142,15 @@ namespace FlexWiki
 
 		public string LinkToTopic(TopicName topic, bool showDiffs)
 		{
-			return TopicLink(topic.FullnameWithVersion, showDiffs);
+			return TopicLink(topic.FullnameWithVersion, showDiffs, null);
 		}
 
-		string TopicLink(string top, bool showDiffs)
+		public string LinkToTopic(TopicName topic, bool showDiffs, NameValueCollection extraQueryParms)
+		{
+			return TopicLink(topic.FullnameWithVersion, showDiffs, extraQueryParms);
+		}
+
+		string TopicLink(string top, bool showDiffs, NameValueCollection extraQueryParms)
 		{
 			StringBuilder builder = new StringBuilder();
 			builder.Append(SiteURL());
@@ -151,6 +158,16 @@ namespace FlexWiki
 			builder.Append("topic=" + HttpUtility.UrlEncode(top));
 			if (showDiffs)
 				builder.Append("&diff=y");
+			if (extraQueryParms != null)
+			{
+				foreach (string each in extraQueryParms)
+				{
+					if (((string)(each)) != "topic" && ((string)(each)) != "diff")
+					{
+						builder.Append("&" + each + "=" + HttpUtility.UrlEncode((string)(extraQueryParms[each])));
+					}
+				}
+			}
 			return builder.ToString();
 		}
 	
@@ -160,7 +177,7 @@ namespace FlexWiki
 		{
 			StringBuilder builder = new StringBuilder();
 			builder.Append(SiteURL());
-			builder.Append("login.aspx?ReturnURL=" + HttpUtility.UrlEncode(TopicLink(topic, false)));
+			builder.Append("login.aspx?ReturnURL=" + HttpUtility.UrlEncode(TopicLink(topic, false, null)));
 			return builder.ToString();
 		}
 
