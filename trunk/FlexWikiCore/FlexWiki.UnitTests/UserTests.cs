@@ -124,5 +124,198 @@ namespace FlexWiki.UnitTests
 			DataSet dataSet = User.GetUsers();
 			Assert.IsTrue(dataSet.Tables["Users"].Rows.Count>5,"Multiple users where not retrieved");
 		}
+		#region MaxLengthString tests
+		#region Default suffix ("...").
+		[Test]
+		public void MaxLengthStringNormalDefaultSuffixTest()
+		{
+			// 'Normal' use.
+			int stringLength = 20;
+			string testString = "This is a really long string used to test the MaxLengthString method";
+			string resultString = BELString.MaxLengthString2(testString, stringLength);
+			Assert.AreEqual(stringLength, resultString.Length, "Checking that the result string is the same length as the requested length.");
+		}
+		[Test]
+		public void MaxLengthStringZeroLengthSourceDefaultSuffixTest()
+		{
+			// Zero length source string.
+			int stringLength = 20;
+			string testString = string.Empty;
+			string resultString = BELString.MaxLengthString2(testString, stringLength);
+			Assert.AreEqual(testString, resultString, "Checking that the resultString is the same as the source string for a supplied empty string.");
+		}
+		[Test]
+		public void MaxLengthStringZeroLengthRequestDefaultSuffixTest()
+		{
+			// Requested length of 0.
+			string testString = "Test String";
+			string resultString = BELString.MaxLengthString2(testString, 0);
+			Assert.AreEqual(string.Empty, resultString, "Checking that the resultString is empty when a 0 length is requested.");
+		}
+		[Test]
+		public void MaxLengthStringShorterSourceDefaultSuffixTest()
+		{
+			// Shorter source string than suffix.
+			int stringLength = 20;
+			string testString = "12";
+			string resultString = BELString.MaxLengthString2(testString, stringLength);
+			Assert.AreEqual(resultString, testString, "Checking that the resultString is the same as the source string when the source is shorter than the default suffix.");
+		}
+		[Test]
+		public void MaxLengthStringSameLengthSourceAsSuffixDefaultSuffixTest()
+		{
+			// Source string same length as suffix.
+			int stringLength = 20;
+			string testString = "123";
+			string resultString = BELString.MaxLengthString2(testString, stringLength);
+			Assert.AreEqual(resultString, testString, "Checking that the resultString is the same as the source string when the source is the same length as the default suffix.");
+		}
+		[Test]
+		public void MaxLengthStringJustLargerSourceThanSuffixDefaultSuffixTest()
+		{
+			// Source string just larger than suffix.
+			string suffix = "...";
+			int stringLength = suffix.Length;
+			string testString = "1234";
+			string resultString = BELString.MaxLengthString2(testString, stringLength);
+			Assert.AreEqual(stringLength, resultString.Length, "Checking that the result string is the same length as the requested length.");
+			Assert.IsFalse(testString.EndsWith(suffix));
+		}
+		[Test]
+		public void MaxLengthStringSameRequestedLengthSourceAsSuffixLengthDefaultSuffixTest()
+		{
+			// Requested length same length as suffix.
+			string suffix = "...";
+			int stringLength = 3;
+			string testString = "123";
+			string resultString = BELString.MaxLengthString2(testString, stringLength);
+			Assert.IsFalse(testString.EndsWith(suffix));
+		}
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void MaxLengthStringNegativeLengthDefaultSuffixTest()
+		{
+			int stringLength = -5;
+			string testString = "Test String";
+			string resultString = BELString.MaxLengthString2(testString, stringLength);
+		}
+		#endregion
+		#region Custom Suffix
+		[Test]
+		public void MaxLengthStringNormalCustomSuffixTest()
+		{
+			// 'Normal' use.
+			string suffix = "----";
+			int stringLength = 20;
+			string testString = "This is a really long string used to test the MaxLengthString method";
+			string resultString = BELString.MaxLengthString2(testString, stringLength, suffix);
+			Assert.AreEqual(stringLength, resultString.Length, "Checking that the result string is the same length as the requested length.");
+		}
+		[Test]
+		public void MaxLengthStringZeroLengthSourceCustomSuffixTest()
+		{
+			// Zero length source string.
+			string suffix = "----";
+			int stringLength = 20;
+			string testString = string.Empty;
+			string resultString = BELString.MaxLengthString2(testString, stringLength, suffix);
+			Assert.AreEqual(testString, resultString, "Checking that the resultString is the same as the source string for a supplied empty string.");
+		}
+		[Test]
+		public void MaxLengthStringZeroLengthRequestCustomSuffixTest()
+		{
+			// Requested length of 0.
+			string suffix = "----";
+			string testString = "Test String";
+			string resultString = BELString.MaxLengthString2(testString, 0, suffix);
+			Assert.AreEqual(string.Empty, resultString, "Checking that the resultString is empty when a 0 length is requested.");
+		}
+		[Test]
+		public void MaxLengthStringShorterSourceCustomSuffixTest()
+		{
+			// Shorter source string than suffix.
+			int stringLength = 20;
+			string testString = "12";
+			string resultString = BELString.MaxLengthString2(testString, stringLength);
+			Assert.AreEqual(resultString, testString, "Checking that the resultString is the same as the source string when the source is shorter than the Custom suffix.");
+		}
+		[Test]
+		public void MaxLengthStringSameLengthSourceAsSuffixCustomSuffixTest()
+		{
+			// Source string same length as suffix.
+			string suffix = "----";
+			int stringLength = 20;
+			string testString = "1234";
+			string resultString = BELString.MaxLengthString2(testString, stringLength, suffix);
+			Assert.AreEqual(resultString, testString, "Checking that the resultString is the same as the source string when the source is the same length as the Custom suffix.");
+		}
+		[Test]
+		public void MaxLengthStringJustLargerSourceThanSuffixCustomSuffixTest()
+		{
+			// Source string just larger than suffix.
+			string suffix = "----";
+			int stringLength = suffix.Length;
+			string testString = "12345";
+			string resultString = BELString.MaxLengthString2(testString, stringLength, suffix);
+			Assert.AreEqual(stringLength, resultString.Length, "Checking that the result string is the same length as the requested length.");
+			Assert.IsFalse(testString.EndsWith(suffix));
+		}
+		[Test]
+		public void MaxLengthStringSameRequestLengthAsSuffixLengthCustomSuffixTest()
+		{
+			// Requested length same length as suffix.
+			string suffix = "----";
+			int stringLength = suffix.Length;
+			string testString = "12345";
+			string resultString = BELString.MaxLengthString2(testString, stringLength, suffix);
+			Assert.IsFalse(testString.EndsWith(suffix));
+		}
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void MaxLengthStringNegativeLengthCustomSuffixTest()
+		{
+			string suffix = "---";
+			int stringLength = -5;
+			string testString = "Test String";
+			string resultString = BELString.MaxLengthString2(testString, stringLength, suffix);
+		}
+//		[Test]
+//		public void MaxLengthStringCustomSuffixTest()
+//		{
+//			// 'Normal' use.
+//			int stringLength = 20;
+//			string suffix = "----";
+//			string testString = "This is a really long string used to test the MaxLengthString method";
+//			string resultString = BELString.MaxLengthString2(testString, stringLength, suffix);
+//			Assert.AreEqual(stringLength, resultString.Length, "Checking that the result string is the same length as the requested length.");
+//			// Zero length source string.
+//			testString = string.Empty;
+//			resultString = BELString.MaxLengthString2(testString, stringLength, suffix);
+//			Assert.AreEqual(testString, resultString, "Checking that the resultString is the same as the source string for a supplied empty string.");
+//			// Requested length of 0.
+//			testString = "Test String";
+//			resultString = BELString.MaxLengthString2(testString, 0, suffix);
+//			Assert.AreEqual(string.Empty, resultString, "Checking that the resultString is empty when a 0 length is requested.");
+//			// Shorter source string than suffix.
+//			testString = "12";
+//			resultString = BELString.MaxLengthString2(testString, stringLength, suffix);
+//			Assert.AreEqual(resultString, testString, "Checking that the resultString is the same as the source string when the source is shorter than the default suffix.");
+//			// Source string same length as suffix.
+//			testString = "1234";
+//			resultString = BELString.MaxLengthString2(testString, stringLength, suffix);
+//			Assert.AreEqual(resultString, testString, "Checking that the resultString is the same as the source string when the source is the same length as the default suffix.");
+//			// Source string just larger than suffix.
+//			stringLength = 3;
+//			testString = "12345";
+//			resultString = BELString.MaxLengthString2(testString, stringLength, suffix);
+//			Assert.AreEqual(stringLength, resultString.Length, "Checking that the result string is the same length as the requested length.");
+//			Assert.IsFalse(testString.EndsWith(suffix));
+//			// Requested length same length as suffix.
+//			stringLength = suffix.Length;
+//			resultString = BELString.MaxLengthString2(testString, stringLength, suffix);
+//			Assert.IsFalse(testString.EndsWith(suffix));
+//		}
+		#endregion
+		#endregion
 	}
 }

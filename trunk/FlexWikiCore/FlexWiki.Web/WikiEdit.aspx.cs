@@ -241,6 +241,57 @@ namespace FlexWiki.Web
 				content = TheFederation.Read(TheTopic);
 			if (IsPost && IsBanned)
 				content = PostedTopicText;		// preserve what they asked for, even though we won't let them save
+
+			#region Build up the list of templates and set the content accordingly
+			string templateSelect = string.Empty;
+			ContentBase currentContentBase = TheFederation.ContentBaseForNamespace(TheTopic.Namespace);
+
+			// Process the topics looking for topics beginning with '_Template'.
+			ArrayList templates = new ArrayList();
+			foreach (AbsoluteTopicName topic in currentContentBase.AllTopics(false))
+			{
+				if (topic.Name.StartsWith("_Template"))
+				{
+					templates.Add(topic);
+
+					if ((null == content ) && ("_templatedefault" == topic.Name.ToLower()))
+					{
+						content = TheFederation.Read(topic);
+					}
+				}
+			}
+
+			if (0 != templates.Count)
+			{
+				// Build up a combo box for selecting the template.
+				StringBuilder builder = new StringBuilder("<select name=\"templateSelect\" id=\"templateSelect\">\n");
+				foreach (AbsoluteTopicName topic in templates)
+				{
+					builder.Append("\t<option value=\"");
+					builder.Append(Formatter.EscapeHTML(TheFederation.Read(topic)));
+					builder.Append("\">");
+					string topicStart = "_ Template";
+					string name = topic.FormattedName;
+					builder.Append(name.Substring(topicStart.Length));
+					builder.Append("</option>\n");
+				}
+				builder.Append("</select>\n");
+
+				templateSelect = builder.ToString();
+
+				// Check to see if a template was specified in the request.
+				if (null != this.Request.QueryString["template"])
+				{
+					string templateName = this.Request["template"];
+					AbsoluteTopicName topicName = new AbsoluteTopicName(templateName, currentContentBase.Namespace);
+					if ((null == content) && (true == currentContentBase.TopicExists(topicName)))
+					{
+						content = TheFederation.Read(topicName);
+					}
+				}
+			}
+			#endregion
+
 			if (content == null)
 				content = @"
 Check out the formatting tips on the right for help formatting and making links.
@@ -277,7 +328,7 @@ Add your wiki text here.
 			Response.Write("<table style='height: 100%'><tr><td height='100%' valign='top'>");
 
 			/////////////////////////////
-			OpenPane(Response.Output, "Edit&nbsp;" + Formatter.EscapeHTML(TheTopic.ToString()));
+			OpenPane(Response.Output, "Edit&nbsp;" + BELString.MaxLengthString2(Formatter.EscapeHTML(TheTopic.ToString()), 20, "..."));
 			if (IsWritable)
 			{
 				ContentBase cb = TheFederation.ContentBaseForTopic(TheTopic);
@@ -448,6 +499,17 @@ Add your wiki text here.
 
 			//////////////////////////////
 
+			if (templateSelect.Length > 0)
+			{
+				// Render the template selection dropdown.
+				OpenPane(Response.Output, "Topic Templates");
+				Response.Write("Select a new template:<br/>\n");
+				Response.Write(templateSelect);
+				Response.Write("&nbsp;<input type=\"image\" src=\"" + TheLinkMaker.LinkToImage("images/go-dark.gif") + "\" title=\"Change Template\" onclick=\"javascript:ChangeTemplate('templateSelect');\">");
+				ClosePane(Response.Output);
+			}
+
+			//////////////////////////////
 
 			if (IsWritable)
 			{

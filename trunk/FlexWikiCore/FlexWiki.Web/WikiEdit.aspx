@@ -118,6 +118,28 @@ function MainWidth()
 }
 
 
+function ChangeTemplate(selectId)
+{
+	var templateCombo = document.getElementById(selectId);
+	if ((templateCombo) && (templateCombo.selectedIndex > -1))
+	{
+		var strInsertText = templateCombo.options[templateCombo.selectedIndex].value;
+		
+		var objTextArea = document.forms['Form1'].Text1;
+		if (document.selection && document.selection.createRange)
+		{
+			objTextArea.focus();
+			var objSelectedTextRange = document.selection.createRange();
+			var strSelectedText = objSelectedTextRange.text;
+			objSelectedTextRange.text = strInsertText + strSelectedText;
+		}
+		else
+		{
+			objTextArea.value += strInsertText;
+			objTextArea.focus();
+		}
+	}
+}
 		</script>
 		<style>
 

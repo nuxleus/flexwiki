@@ -135,6 +135,60 @@ namespace FlexWiki
 			return Value.GetHashCode();
 		}
 
+		[ExposedMethod(ExposedMethodFlags.NeedContext, "Limit a string to a particular length.")]
+		public static string MaxLengthString(ExecutionContext ctx, string s, int length, 
+			[ExposedParameter(true)] string suffix)
+		{
+			// Check to see if a suffix parameter was supplied. Default to "...".
+			if (false == ctx.TopFrame.WasParameterSupplied(3))
+			{
+				suffix = "...";
+			}
+
+			return MaxLengthString2(s, length, suffix);
+		}
+
+		public static string MaxLengthString2(string s, int length, string suffix)
+		{
+			// Make sure we haven't been given a negative length.
+			if (length < 0)
+			{
+				throw new ArgumentException("Requested length may not be negative", "length");
+			}
+
+			if (null == suffix)
+			{
+				suffix = "...";
+			}
+
+			// Only return the requested length if length is less than or equal to suffix.Length.
+			if (length <= suffix.Length)
+			{
+				// Return the string if it's shorter than or equal to the requested length.
+				if (s.Length <= length)
+				{
+					return s;
+				}
+
+				// Otherwise return the string without the suffix.
+				return s.Substring(0, length);
+			}
+
+			// Return the string if it's shorter than or equal to the requested length.
+			if (s.Length <= length)
+			{
+				return s;
+			}
+
+			// Otherwise return the string with the suffix.
+			return s.Substring(0, length - suffix.Length) + suffix;
+		}
+
+		public static string MaxLengthString2(string s, int length)
+		{
+			return MaxLengthString2(s, length, "...");
+		}
+
 		#region IComparable Members
 
 		public int CompareTo(object obj)
