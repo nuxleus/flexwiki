@@ -8,13 +8,14 @@
 		<meta name="Robots" content="NOINDEX, NOFOLLOW">
 		<%= InsertStylesheetReferences() %>
 	</HEAD>
-	<body class='Dialog'>
-		<fieldset>
-			<legend class='DialogTitle'>
-				<%
+	<body>
+	<table width='100%' height='100%' border='0' cellpadding='7' cellspacing='0' ><tr>
+<%	DoLeftBorder(); %>
+	<td valign='top'><fieldset>
+<%
 	if (Request.HttpMethod == "POST")
 	{
-		Response.Write("Rename <b>" + FlexWiki.Web.HTMLWriter.Escape(OldName)  + "</b></legend>");
+		Response.Write("<legend class='DialogTitle'>Rename <b>" + FlexWiki.Web.HTMLWriter.Escape(OldName)  + "</b></legend>");
 		PerformRename();
 	}
 	else
@@ -22,20 +23,20 @@
 			// See if the topic is read only
 			if (IsTopicReadOnly)
 			{
-				Response.Write("<b>Topic (" + AbsTopicName + ") can non be changed.</b>");
+				Response.Write("<legend class='DialogTitle'><b>Topic (" + AbsTopicName + ") can non be changed.</b></legend>");
 			}
 			else
 			{
-
-	%>
+%>
+				<legend class='DialogTitle'>
 				Rename <b>
 					<%= FlexWiki.Web.HTMLWriter.Escape(AbsTopicName.Name)  %>
 				</b>
-			</legend>
-			<p><b>Important guidelines</b> (rename is not always straightforward!):
+				</legend>
+			<p><b>&nbsp;Important guidelines</b> (rename is not always straightforward!):
 				<ul>
 					<li>
-						When you rename a topic, you may be able to ask (depending on how this site is configuration) to have references to the topic 
+						When you rename a topic, you may be able to ask (depending on how this site is configured) to have references to the topic 
 						automatically updated.
 						<ul>
 							<li>
@@ -45,21 +46,21 @@
 						</ul>
 					<li>
 					Because not all references can be reliably found (e.g., because a topic has 
-					been bookmarked by someone, referenced from another namespace), a page will be 
+					been bookmarked by someone, or is referenced from another namespace), a page will be 
 					automatically generated that tells people where the new page is.
 					<li>
 						Often when you rename a topic you are changing its meaning. As a result, you 
 						might want to change the text surrounding the references to the topic; please 
-						consider reviewing the current references when you're done renaming to be sure 
+						consider reviewing the current references when you are done renaming to be sure 
 						they still make sense.</li>
 				</ul>
 				<hr noshade size='1'>
 				<form id="RenameForm" method="post" ACTION="rename.aspx">
 					<input style='DISPLAY: none' type="text"  name="oldName" value ="<%= FlexWiki.Web.HTMLWriter.Escape(AbsTopicName.Name)  %>">
-					<b>Old</b> name:
+					<b>&nbsp;Old</b> name:
 					<%= FlexWiki.Web.HTMLWriter.Escape(AbsTopicName.Name)  %>
 					<br>
-					<b>New</b> name: <input style='FONT-SIZE: x-small' type="text"  name="newName" value ="<%= FlexWiki.Web.HTMLWriter.Escape(AbsTopicName.Name)  %>">
+					<b>&nbsp;New</b> name: <input style='FONT-SIZE: x-small' type="text"  name="newName" value ="<%= FlexWiki.Web.HTMLWriter.Escape(AbsTopicName.Name)  %>">
 					<p>
 					<%
 					{
@@ -100,7 +101,8 @@
 			}
 	}
 	%>
-				<DIV></DIV>
-		</fieldset>
+	</fieldset></td>
+<%  DoRightBorder(); %>
+	</tr></table>
 	</body>
 </HTML>

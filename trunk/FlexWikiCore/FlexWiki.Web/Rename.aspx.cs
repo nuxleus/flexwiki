@@ -165,5 +165,16 @@ This page was automatically generated when this topic (" + oldName.Name + ") was
 			}
 
 		}
+
+		protected void DoLeftBorder()
+		{
+			Response.Write("<td width='140' valign='top' class='BorderLeft'></td>");
+		}
+		protected void DoRightBorder()
+		{
+			string rightBorder = TheFederation.GetTopicFormattedBorder(GetTopicName(), Border.Right); // topic, Border.Right);
+			rightBorder = "<td width='140' valign='top' class='BorderRight'>" + rightBorder + "</td>";
+			Response.Write(rightBorder);
+		}
 	}
 }
