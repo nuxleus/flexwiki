@@ -1,0 +1,21 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fwsync", "fwsync.csproj", "{5EF5029C-7F05-4CDE-8662-8BE3C3845A22}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{5EF5029C-7F05-4CDE-8662-8BE3C3845A22}.Debug.ActiveCfg = Debug|.NET
+		{5EF5029C-7F05-4CDE-8662-8BE3C3845A22}.Debug.Build.0 = Debug|.NET
+		{5EF5029C-7F05-4CDE-8662-8BE3C3845A22}.Release.ActiveCfg = Release|.NET
+		{5EF5029C-7F05-4CDE-8662-8BE3C3845A22}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,43 @@
+﻿! Release 1.0
+!! 2004-05-31
+	* Added distinguished return code for "failed to commit due to conflict" condition
+	* Added supprt for FWSOPTIONS environment variable - contents will be prepended to command line when present, allowing for things like defaulting to /defcred credentials
+	* Added support for /show option on status command to limit display to only files with a certain status
+	* Refactored help messages into many smaller topics rather than one giant one
+	* Added support for resolve command - can now resolve InConflict topics
+	* Fixed formatting of status command so topic names align vertically
+	* Bumped version number to 1.0
+	* Added ReadContents/WriteContents methods to LocalTopic for convenience
+	* Added support for /y switch to confirm all questions fwsync asks
+	* Added /ignoreconflict switch to allow commit when conflicts exist
+	* Added try/finally blocks to flush synchronizer state to disk in the event of an exception. Should make fwsync more robust when problems with web service are encountered partway through an operation. 
+	* Added progress notification for "interesting" events so user has some feedback during long operations. 
+	* Fixed bug where running fwsync with an option but no command resulted in IndexInvalidException
+	* Added support for /noauth switch, which overrides /defcred and /user. Primarily intended for use when FWSOPTIONS environment variable includes /defcred. 
+	* Added corresponding unit tests for core functionality.
+
+! Release 0.90
+!! 2004-05-20
+	* Added UnsafeAuthenticatedConnectionSharing switch to proxy - major reduction in network traffic
+	* Bumped version to 0.90
+
+! Release 0.8
+!! 2004-05-17
+	* Got rid of annoying status printout after every command
+	* Added real-time feedback to update and commit so you can see individual files commit/update
+	* Update/commit prints only list of files that were moved
+	* Added /localonly switch for help and status to suppress connection to web server
+	* Bumped version to 0.8
+	* Added extra exception handling to ensure file handles are closed properly
+	* Refactored test code
+	* Changed encoding of local files from ASCII to UTF8
+	* Fixed bug in UpdateRemoteAdded() unit test - was not reading second character correctly
+	* Fixed unit tests to remove dependency on hardcoded test path
+	* Fixed unit tests to remove issue with current working directory getting changed inappropriately
+	* Updated unit tests in places to use Assert instead of deprecated Assertion class
+	* Updated helpstring to document new switches and options
+   
+!! 2004-05-13
+	* Added global exception handler so JIT debugging dialog never pops up
+	* Added separate help command, and changed usage to smaller printout that references help command
+	* Factored build script into common and project-specific pieces. 

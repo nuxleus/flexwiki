@@ -1,0 +1,20 @@
+<project name="fwsync" default="test">
+
+  <include buildfile="common/common.build" />
+  
+  <fileset id="dist.files" basedir="${targetdir}">
+    <includes name="fwsync.exe" />
+    <includes name="fwsync.pdb" />
+  </fileset>
+
+  <fileset id="dist.sources" basedir="${nant.project.basedir}">
+    <includes name="**/*" />
+    <excludes name="dist/**" />
+    <excludes name="bin/**" />
+    <excludes name="obj/**" />
+    <excludes name="*.suo" />
+    <excludes name="*.user" />
+    <excludes name="*~" />
+  </fileset>
+
+</project>
