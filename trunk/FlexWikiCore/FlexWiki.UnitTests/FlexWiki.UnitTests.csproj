@@ -80,11 +80,6 @@
                     HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
                 />
                 <Reference
-                    Name = "nunit.framework"
-                    AssemblyName = "nunit.framework"
-                    HintPath = "Assemblies\nunit.framework.dll"
-                />
-                <Reference
                     Name = "FlexWikiSecurity"
                     Project = "{F0146D3C-71FB-4C1F-B9E3-DA4B5FEC4AB9}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
@@ -98,6 +93,11 @@
                     Name = "SqlProvider"
                     Project = "{216838B1-BDE9-45C6-B6BF-F9D7F10882DB}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "nunit.framework"
+                    AssemblyName = "nunit.framework"
+                    HintPath = "..\tools\nunit\bin\nunit.framework.dll"
                 />
             </References>
         </Build>
@@ -229,14 +229,6 @@
                     RelPath = "WikiTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Assemblies\nunit.framework.dll"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Assemblies\nunit.framework.xml"
-                    BuildAction = "Content"
                 />
                 <File
                     RelPath = "TestContent\meerkat.rss.xml"

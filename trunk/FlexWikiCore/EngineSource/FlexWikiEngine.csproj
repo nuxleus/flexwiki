@@ -85,11 +85,6 @@
                     HintPath = "..\..\..\..\WINXP\Microsoft.NET\Framework\v1.0.3705\System.Web.dll"
                 />
                 <Reference
-                    Name = "nunit.framework"
-                    AssemblyName = "nunit.framework"
-                    HintPath = "..\FlexWiki.UnitTests\Assemblies\nunit.framework.dll"
-                />
-                <Reference
                     Name = "System.Drawing"
                     AssemblyName = "System.Drawing"
                     HintPath = "..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Drawing.dll"
