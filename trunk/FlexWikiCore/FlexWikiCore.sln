@@ -44,6 +44,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildVerificationTests", "B
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlProvider", "SqlProvider\SqlProvider.csproj", "{216838B1-BDE9-45C6-B6BF-F9D7F10882DB}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlProvider.UnitTests", "SqlProvider.UnitTests\SqlProvider.UnitTests.csproj", "{2D24D9A9-884E-42AD-A643-2A988993ECE8}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlStoreDatabaseCreationTool", "SqlStoreDatabaseCreationTool\SqlStoreDatabaseCreationTool.csproj", "{2D3D6848-3BCF-4FAB-B73D-859692867616}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -94,6 +106,18 @@ Global
 		{98161BF9-0C24-4E74-AE7B-B6E0FB70700D}.Debug.Build.0 = Debug|.NET
 		{98161BF9-0C24-4E74-AE7B-B6E0FB70700D}.Release.ActiveCfg = Release|.NET
 		{98161BF9-0C24-4E74-AE7B-B6E0FB70700D}.Release.Build.0 = Release|.NET
+		{216838B1-BDE9-45C6-B6BF-F9D7F10882DB}.Debug.ActiveCfg = Debug|.NET
+		{216838B1-BDE9-45C6-B6BF-F9D7F10882DB}.Debug.Build.0 = Debug|.NET
+		{216838B1-BDE9-45C6-B6BF-F9D7F10882DB}.Release.ActiveCfg = Release|.NET
+		{216838B1-BDE9-45C6-B6BF-F9D7F10882DB}.Release.Build.0 = Release|.NET
+		{2D24D9A9-884E-42AD-A643-2A988993ECE8}.Debug.ActiveCfg = Debug|.NET
+		{2D24D9A9-884E-42AD-A643-2A988993ECE8}.Debug.Build.0 = Debug|.NET
+		{2D24D9A9-884E-42AD-A643-2A988993ECE8}.Release.ActiveCfg = Release|.NET
+		{2D24D9A9-884E-42AD-A643-2A988993ECE8}.Release.Build.0 = Release|.NET
+		{2D3D6848-3BCF-4FAB-B73D-859692867616}.Debug.ActiveCfg = Debug|.NET
+		{2D3D6848-3BCF-4FAB-B73D-859692867616}.Debug.Build.0 = Debug|.NET
+		{2D3D6848-3BCF-4FAB-B73D-859692867616}.Release.ActiveCfg = Release|.NET
+		{2D3D6848-3BCF-4FAB-B73D-859692867616}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
 		Download NUnit.url = Download NUnit.url

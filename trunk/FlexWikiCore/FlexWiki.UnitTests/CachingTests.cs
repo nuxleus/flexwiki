@@ -40,8 +40,8 @@ namespace FlexWiki.UnitTests
 			string ns = "FlexWiki";
 			string ns2 = "FlexWiki2";
 
-			_cb = CreateFileSystemStore(ns);
-			_cb2 = CreateFileSystemStore(ns2);
+			_cb = CreateStore(ns);
+			_cb2 = CreateStore(ns2);
 
 			WriteTestTopicAndNewVersion(_cb, _cb.DefinitionTopicName.Name, "Import: FlexWiki2", user);
 			WriteTestTopicAndNewVersion(_cb, "HomePage", "This is a simple topic RefOne plus PluralWords reference to wiki://PresentIncluder wiki://TestLibrary/foo.gif", user);

@@ -32,7 +32,7 @@ namespace FlexWiki.UnitTests
 			TheFederation = new Federation(OutputFormat.HTML, new LinkMaker("http://boobar"));
 			string author = "tester-joebob";
 
-			_base = CreateFileSystemStore("FlexWiki.Base"); 
+			_base = CreateStore("FlexWiki.Base"); 
 
 			WriteTestTopicAndNewVersion(_base, "TopicOne", @"Hello there", author);
 			WriteTestTopicAndNewVersion(_base, "Versioned", "v1", "tester-bob");

@@ -114,6 +114,11 @@
                     Project = "{374C1AEF-4BE6-41AA-9100-9BA48AEEBEF8}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
+                <Reference
+                    Name = "SqlProvider"
+                    Project = "{216838B1-BDE9-45C6-B6BF-F9D7F10882DB}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
             </References>
         </Build>
         <Files>
@@ -203,7 +208,7 @@
                 <File
                     RelPath = "EditService.asmx.cs"
                     DependentUpon = "EditService.asmx"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File

@@ -11,8 +11,10 @@
 #endregion
 
 using System;
+using System.Configuration;
 using System.IO; 
-using System.Reflection; 
+using System.Reflection;
+using SqlProvider;
 
 namespace FlexWiki.UnitTests
 {
@@ -89,11 +91,32 @@ namespace FlexWiki.UnitTests
 			//return new AbsoluteTopicName(localName, cb.Namespace);
 		}
 
-		protected FileSystemStore CreateFileSystemStore(string ns)
+		protected string storeType = string.Empty;
+
+		protected ReadWriteStore CreateStore(string ns)
+		{
+			switch(storeType.ToLower())
+			{
+				case "sql":
+					return CreateSqlStore(ns);
+				default:
+					return CreateFileSystemStore(ns);
+			}
+		}
+
+		private ReadWriteStore CreateFileSystemStore(string ns)
 		{
 			string currentDir = System.IO.Directory.GetCurrentDirectory();
 			string path = currentDir + "\\" + ns;
 			FileSystemStore store = new FileSystemStore(TheFederation, ns, path);
+			TheFederation.RegisterNamespace(store);
+			return store;
+
+		}
+
+		protected ReadWriteStore CreateSqlStore(string ns)
+		{
+			SqlStore store = new SqlStore(TheFederation, ns, ConfigurationSettings.AppSettings["SqlStoreConnectionString"]);
 			TheFederation.RegisterNamespace(store);
 			return store;
 		}

@@ -39,11 +39,11 @@ namespace FlexWiki.UnitTests
 			_lm = new LinkMaker(_bh);
 			TheFederation = new Federation(OutputFormat.HTML, _lm);
 
-			_base = CreateFileSystemStore("FlexWiki.Base");
-			_other1 = CreateFileSystemStore("FlexWiki.Other1");
-			_other2 = CreateFileSystemStore("Other2");
-			_other3 = CreateFileSystemStore("Other3");
-			_cb5 = CreateFileSystemStore("Space5");
+			_base = CreateStore("FlexWiki.Base");
+			_other1 = CreateStore("FlexWiki.Other1");
+			_other2 = CreateStore("Other2");
+			_other3 = CreateStore("Other3");
+			_cb5 = CreateStore("Space5");
 
 			WriteTestTopicAndNewVersion(_base, _base.DefinitionTopicName.Name, @"Import: FlexWiki.Other1, Other2", author);
 			WriteTestTopicAndNewVersion(_base, "TopicOne", @"OtherOneHello", author);
@@ -243,14 +243,14 @@ Role:Developer", author);
 
 	[TestFixture] public class ContentBaseTests : WikiTests
 	{
-		ContentBase	_base;
+		protected ContentBase	_base;
 
 		[SetUp] public void Init()
 		{
 			TheFederation = new Federation(OutputFormat.HTML, new LinkMaker("http://boobar"));
 			string author = "tester-joebob";
 
-			_base = CreateFileSystemStore("FlexWiki.Base");
+			_base = CreateStore("FlexWiki.Base");
 
 			WriteTestTopicAndNewVersion(_base, "TopicOne", @"Hello there", author);
 			System.Threading.Thread.Sleep(100); // need the newer one to be newer enough!
@@ -348,7 +348,7 @@ more stuff
 
 		[Test] public void TestTopicDeleteEventsForNamespaceDelete()
 		{
-			ContentBase cb = CreateFileSystemStore("FlexWiki.Delete");
+			ContentBase cb = CreateStore("FlexWiki.Delete");
 			AbsoluteTopicName tn1 = new AbsoluteTopicName("EventTest1", cb.Namespace);
 			cb.WriteTopicAndNewVersion(tn1.LocalName, "topic 1");
 			AbsoluteTopicName tn2 = new AbsoluteTopicName("EventTest2", cb.Namespace);
@@ -622,7 +622,7 @@ Change2: new value
 		}
 
 
-		[Test] public void TestSerialization()
+		[Test] public virtual void TestSerialization()
 		{
 			MemoryStream ms = new MemoryStream(); 
 			XmlWriter wtr = new XmlTextWriter(ms, System.Text.Encoding.UTF8); 
@@ -889,9 +889,9 @@ There";
 		[SetUp] public void Init()
 		{
 			TheFederation = new Federation(OutputFormat.HTML, new LinkMaker("http://boobar"));
-			_base = CreateFileSystemStore("FlexWiki.Projects.Wiki");
-			_imp1 = CreateFileSystemStore("FlexWiki.Projects.Wiki1");
-			_imp2 = CreateFileSystemStore("FlexWiki.Projects.Wiki2");
+			_base = CreateStore("FlexWiki.Projects.Wiki");
+			_imp1 = CreateStore("FlexWiki.Projects.Wiki1");
+			_imp2 = CreateStore("FlexWiki.Projects.Wiki2");
 
 			string author = "tester-joebob";
 			WriteTestTopicAndNewVersion(_base, _base.DefinitionTopicName.Name, @"
@@ -931,9 +931,9 @@ Import: FlexWiki.Projects.Wiki", author);
 		[SetUp] public void Init()
 		{
 			TheFederation = new Federation(OutputFormat.HTML, new LinkMaker("http://boobar"));
-			_base = CreateFileSystemStore("FlexWiki.Projects.Wiki");
-			_imp1 = CreateFileSystemStore("FlexWiki.Projects.Wiki1");
-			_imp2 = CreateFileSystemStore("FlexWiki.Projects.Wiki2");
+			_base = CreateStore("FlexWiki.Projects.Wiki");
+			_imp1 = CreateStore("FlexWiki.Projects.Wiki1");
+			_imp2 = CreateStore("FlexWiki.Projects.Wiki2");
 
 			string author = "tester-joebob";
 			WriteTestTopicAndNewVersion(_base, _base.DefinitionTopicName.Name, @"

@@ -3,13 +3,13 @@
         ProjectType = "Local"
         ProductVersion = "7.10.3077"
         SchemaVersion = "2.0"
-        ProjectGuid = "{8CDE54DE-515A-4896-9772-EDDD13DDBF9B}"
+        ProjectGuid = "{2D24D9A9-884E-42AD-A643-2A988993ECE8}"
     >
         <Build>
             <Settings
                 ApplicationIcon = ""
                 AssemblyKeyContainerName = ""
-                AssemblyName = "FlexWiki.UnitTests"
+                AssemblyName = "SqlProvider.UnitTests"
                 AssemblyOriginatorKeyFile = ""
                 DefaultClientScript = "JScript"
                 DefaultHTMLPageLayout = "Grid"
@@ -17,8 +17,8 @@
                 DelaySign = "false"
                 OutputType = "Library"
                 PreBuildEvent = ""
-                PostBuildEvent = "cmd.exe /c $(ProjectDir)postbuild.cmd $(ProjectDir) $(TargetDir) $(TargetPath)"
-                RootNamespace = "FlexWiki.UnitTests"
+                PostBuildEvent = "copy $(ProjectDir)NamespaceMap.xml $(TargetDir)NamespaceMap.xml&#xd;&#xa;copy $(ProjectDir)app.config $(TargetDir)SqlProvider.UnitTests.dll.config"
+                RootNamespace = "SqlProvider.UnitTests"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
             >
@@ -50,7 +50,7 @@
                     ConfigurationOverrideFile = ""
                     DefineConstants = "TRACE"
                     DocumentationFile = ""
-                    DebugSymbols = "true"
+                    DebugSymbols = "false"
                     FileAlignment = "4096"
                     IncrementalBuild = "false"
                     NoStdLib = "false"
@@ -59,7 +59,7 @@
                     OutputPath = "bin\Release\"
                     RegisterForComInterop = "false"
                     RemoveIntegerChecks = "false"
-                    TreatWarningsAsErrors = "true"
+                    TreatWarningsAsErrors = "false"
                     WarningLevel = "4"
                 />
             </Settings>
@@ -82,11 +82,11 @@
                 <Reference
                     Name = "nunit.framework"
                     AssemblyName = "nunit.framework"
-                    HintPath = "Assemblies\nunit.framework.dll"
+                    HintPath = "..\FlexWiki.UnitTests\Assemblies\nunit.framework.dll"
                 />
                 <Reference
-                    Name = "FlexWikiSecurity"
-                    Project = "{F0146D3C-71FB-4C1F-B9E3-DA4B5FEC4AB9}"
+                    Name = "SqlProvider"
+                    Project = "{216838B1-BDE9-45C6-B6BF-F9D7F10882DB}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
                 <Reference
@@ -95,8 +95,8 @@
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
                 <Reference
-                    Name = "SqlProvider"
-                    Project = "{216838B1-BDE9-45C6-B6BF-F9D7F10882DB}"
+                    Name = "FlexWiki.UnitTests"
+                    Project = "{8CDE54DE-515A-4896-9772-EDDD13DDBF9B}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
             </References>
@@ -113,142 +113,39 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "CachingTests.cs"
+                    RelPath = "SqlCachingTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ConfiguredDataProviderTests.cs"
+                    RelPath = "SqlContentBaseTest.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ContentBaseTest.cs"
+                    RelPath = "SqlFederationTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ExecutionTests.cs"
+                    RelPath = "SqlFormatterTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "FederationTests.cs"
+                    RelPath = "SqlInfiniteRecursionTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "FormatterTests.cs"
+                    RelPath = "SqlRegistryTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "postbuild.cmd"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "RoleTests.cs"
+                    RelPath = "SqlScopeTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ScannerTests.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ScopeTests.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "SharedAssemblyInfo.cs"
-                    Link = "..\SharedAssemblyInfo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "SimplePermissionsDataProviderTests.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "SimpleRoleDataProviderTests.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "SimpleUserDataProviderTests.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "SitePrincipalTests.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TestPermissions.xml"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "TestUser.xml"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "TestUtilities.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TopicChangeTest.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TopicInfoArrayTests.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TopicNameTest.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "UserTests.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "WikiTalkTests.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "WikiTests.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Assemblies\nunit.framework.dll"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Assemblies\nunit.framework.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "TestContent\meerkat.rss.xml"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "TestContent\rsstest.xml"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "TestContent\rsstest.xsl"
-                    BuildAction = "EmbeddedResource"
                 />
             </Include>
         </Files>

@@ -116,7 +116,7 @@ namespace FlexWiki.UnitTests
 			TheFederation = new Federation(OutputFormat.HTML, _lm);
 			TheFederation.WikiTalkVersion = 1;
 
-			_cb = CreateFileSystemStore("FlexWiki");
+			_cb = CreateStore("FlexWiki");
 			_cb.Title  = "Friendly Title";
 
 			WriteTestTopicAndNewVersion(_cb, "HomePage", "Home is where the heart is", user);
@@ -1381,7 +1381,7 @@ Parameter name: values</span></span></p>
 			TheFederation = new Federation(OutputFormat.HTML, _lm);
 
 			_versions = new ArrayList();
-			_base = CreateFileSystemStore("FlexWiki.Base");
+			_base = CreateStore("FlexWiki.Base");
 
 			WriteTestTopicAndNewVersion(_base, "TopicOne", @"1
 2
