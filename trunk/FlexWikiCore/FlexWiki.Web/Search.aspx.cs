@@ -64,7 +64,7 @@ namespace FlexWiki.Web
 <div id='TopicTip' class='TopicTip' ></div>
 <fieldset><legend class='DialogTitle'>Search</legend>
 <form id='SearchForm'>
-<p>Search:<br /><input type='text'  name='search' value ='" + (search == null ? "[enter regular expression]" : HttpUtility.HtmlEncode(search)) + @"'>
+<p>Search:<br /><input type='text'  name='search' value='" + (search == null ? "[enter regular expression]" : FlexWiki.Web.HTMLWriter.Escape(search)) + @"'>
 <input type='submit' ID=Search Value='Go' />
 </p>");
 

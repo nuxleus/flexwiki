@@ -119,10 +119,11 @@ namespace FlexWiki.Web
 			// replace HTML special characters with character entities
 			// this has the side-effect of stripping all markup from text
 			string str = input;
-			str = str.Replace ("&", "&amp;") ;
-			str = str.Replace ("\"", "&quot;") ;
-			str = str.Replace ("<", "&lt;") ;
-			str = str.Replace (">", "&gt;") ;
+			str = str.Replace ("&", "&amp;");
+			str = str.Replace ("\"", "&quot;");
+			str = str.Replace ("<", "&lt;");
+			str = str.Replace (">", "&gt;");
+			str = str.Replace ("'", "&#39;");
 			if (includeLineBreaks)
 				str = str.Replace ("\n", "<br />") ;
 			return str;
