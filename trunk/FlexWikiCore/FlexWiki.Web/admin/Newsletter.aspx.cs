@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Text;
 using System.Collections;
 using System.ComponentModel;
 using System.Data;
@@ -79,9 +80,9 @@ namespace FlexWiki.Web.Admin
 
 			Response.Write("<p>Work last completed at <b>" + FancyTime(TheNewsletterDaemon.WorkLastCompleted) + " </b></p>");
 			
-			foreach (string s in TheNewsletterDaemon.Results)
+			foreach (StringBuilder b in TheNewsletterDaemon.Results)
 			{
-				Response.Write("<div style='margin: .25in; border 1px solid silver'>" + HTMLWriter.Escape(s, true) + "</div>");
+				Response.Write("<div style='margin: .25in; border 1px solid blue'>" + HTMLWriter.Escape(b.ToString(), true) + "</div>");
 			}
 
 		}

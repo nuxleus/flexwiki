@@ -151,6 +151,7 @@ namespace FlexWiki.Newsletters
 			StringWriter sw = new StringWriter(sb);
 			boy.Log = sw;
 			LogEvent ev = TheFederation.LogEventFactory.CreateAndStartEvent(null, null, null, LogEvent.LogEventType.NewsletterGeneration);
+			LogResult(sb);
 			sw.WriteLine("Begin: " + DateTime.Now.ToString());
 			try
 			{
@@ -160,7 +161,6 @@ namespace FlexWiki.Newsletters
 			{
 				ev.Record();
 				sw.WriteLine("End: " + DateTime.Now.ToString());
-				LogResult(sb.ToString());
 			}
 		}
 
@@ -172,11 +172,11 @@ namespace FlexWiki.Newsletters
 			}
 		}
 
-		const int MaxResults = 10;
+		const int MaxResults = 20;
 
-		void LogResult(string s)
+		void LogResult(StringBuilder b)
 		{
-			_Results.Insert(0, s);
+			_Results.Insert(0, b);
 			while (_Results.Count > MaxResults)
 				_Results.RemoveAt(_Results.Count - 1);
 		}
