@@ -384,39 +384,52 @@ Add your wiki text here.
 			///////////////////////////////
 			if (IsWritable)
 			{
-				OpenPane(Response.Output, "Change Attribution");
+				OpenPane(Response.Output, "Attribution");
 				if (User.Identity.IsAuthenticated)
 				{
-					Response.Write("Changed will be attributed to: <b>" + Formatter.EscapeHTML(VisitorIdentityString) + "</b>.");
+					Response.Write("Your edit will be attributed to: <b>" + Formatter.EscapeHTML(VisitorIdentityString) + "</b>.");
 				}
 				else
 				{
-					Response.Write("Changed will be attributed to: <b>" + Formatter.EscapeHTML(VisitorIdentityString) + "</b>.<br>&nbsp;<br>");
+					Response.Write("Your edit will be attributed to: <b>" + Formatter.EscapeHTML(VisitorIdentityString) + "</b>.<br>");
+
+					Response.Write("<div id='ShowAttribution' style='display: block'><a onclick=\"javascript:Swap('ShowAttribution', 'HideAttribution')\">Change this...</a></div>");
+					Response.Write("<div id='HideAttribution' style='display: none'>");
+					Response.Write("<a onclick=\"javascript:Swap('ShowAttribution', 'HideAttribution')\">Hide this...</a><br>");
+
 					Response.Write("You can change part of this by entering your preferred user identity here (e.g., an email address):<br>");
 					Response.Write(@"<input style='font-size: x-small' type='text' id='UserNameEntryField' value ='" +
 						(UserPrefix == null ? "" : Formatter.EscapeHTML(UserPrefix)) + "'>");
+					Response.Write("</div>");
+
 				}
 				ClosePane(Response.Output);
 			}
 
 			///////////////////////////////
 
-			OpenPane(Response.Output, "Formatting Tips");
-			Response.Write("Click on a subject for more information about formatting rules: ");
-			WriteTip("tip_boldtip", "Bold");
-			WriteTip("tip_italicstip", "Italics");
-			WriteTip("tip_headingtip", "Headings");
-			WriteTip("tip_hypertip", "Hyperlinks");
-			WriteTip("tip_linestip", "Lines");
-			WriteTip("tip_liststip", "Lists");
-			WriteTip("tip_tablestip", "Tables");
-			WriteTip("tip_emoticonstip", "Emoticons");
-			WriteTip("tip_pretip", "Preformatted");
-			WriteTip("tip_imagetip", "Images");
-			WriteTip("tip_proptip", "Properties");
-			Response.Write("<br><div class='TipArea' id='TipArea'></div>");
+			if (IsWritable)
+			{
+				OpenPane(Response.Output, "Formatting Tips");
+				Response.Write("<div id='ShowTips' style='display: block'><a onclick=\"javascript:Swap('ShowTips', 'HideTips')\">Show tips...</a></div>");
+				Response.Write("<div id='HideTips' style='display: none'>");
+				Response.Write("<a onclick=\"javascript:Swap('ShowTips', 'HideTips')\">Hide tips...</a><br>");
 
-			Response.Write(@"
+				Response.Write("Click on a subject for more information about formatting rules: ");
+				WriteTip("tip_boldtip", "Bold");
+				WriteTip("tip_italicstip", "Italics");
+				WriteTip("tip_headingtip", "Headings");
+				WriteTip("tip_hypertip", "Hyperlinks");
+				WriteTip("tip_linestip", "Lines");
+				WriteTip("tip_liststip", "Lists");
+				WriteTip("tip_tablestip", "Tables");
+				WriteTip("tip_emoticonstip", "Emoticons");
+				WriteTip("tip_pretip", "Preformatted");
+				WriteTip("tip_imagetip", "Images");
+				WriteTip("tip_proptip", "Properties");
+				Response.Write("<br><div class='TipArea' id='TipArea'></div>");
+
+				Response.Write(@"
 <div style='display: none'>
 		<div id='tip_proptip'>
 			<div class='tipBody'>
@@ -495,12 +508,13 @@ Add your wiki text here.
 </div>
 ");
 
-
-			ClosePane(Response.Output);
+				Response.Write("</div>");
+				ClosePane(Response.Output);
+			}
 
 			//////////////////////////////
 
-			if (templateSelect.Length > 0)
+			if (IsWritable && templateSelect.Length > 0)
 			{
 				// Render the template selection dropdown.
 				OpenPane(Response.Output, "Topic Templates");

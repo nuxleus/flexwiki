@@ -107,6 +107,16 @@ namespace FlexWiki.UnitTests
 
 		}
 
+		public void TestErrorOnMissingIntegers()
+		{
+			TableCellInfo info = new TableCellInfo();
+			string missing = "Missing";
+			Assert.IsTrue(info.Parse("TW").StartsWith(missing));
+			Assert.IsTrue(info.Parse("R").StartsWith(missing));
+			Assert.IsTrue(info.Parse("C").StartsWith(missing));
+			Assert.IsTrue(info.Parse("W").StartsWith(missing));
+		}
+
 
 	}
 

@@ -1,13 +1,11 @@
 <%@ Page language="c#" Codebehind="WikiEdit.aspx.cs" AutoEventWireup="false" Inherits="FlexWiki.Web.WikiEdit" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >
 <HTML>
-	<HEAD>
-		<title>
-			<%= TheTopic.ToString() %>
-			(edit)</title>
+  <HEAD><TITLE> <%= TheTopic.ToString() %>  (edit)</TITLE>
+</HEAD>
 		<meta name="Robots" content="NOINDEX, NOFOLLOW">
 		<%= InsertStylesheetReferences() %>
-		<script  type=""text/javascript"" language="javascript">
+		<script  type=""textjavascriptlanguage="javascript"??>
 
 function textArea_OnFocus(event)
 {
@@ -64,6 +62,22 @@ function preview()
 	document.forms["Form2"].body.value = s;
 	window.open('about:blank', 'previewWindow');
 	document.forms["Form2"].submit();
+}
+
+function Swap(alpha, beta)
+{
+	var a = document.getElementById(alpha);
+	var b = document.getElementById(beta);
+	if (a.style.display == 'block')
+	{
+		a.style.display = 'none';
+		b.style.display = 'block';
+	}
+	else
+	{
+		b.style.display = 'none';
+		a.style.display = 'block';
+	}	
 }
 
 function SetUserName()
@@ -141,51 +155,12 @@ function ChangeTemplate(selectId)
 	}
 }
 		</script>
-		<style>
-
-@media all
-{
-    tool\:tip   {
-                behavior: url(tooltip_js.htc)
-                }
-}
-
-.EditZone {
-	background: lemonchiffon;
-	overflow: hidden;
-	height: 100%;
-	height: expression(CalcEditZoneHeight());  /* IE only, other browsers ignore expression */
-	width: 100%;
-}
-
-.tip
-{
-    font-weight: bold;
-}
-
-.tipBody
-{
-	font: 8pt Verdana;
-}
-
-.TipArea
-{
-	margin: 3px;
-	display: none;
-	border: 1px solid #ffcc00;
-	font: 8pt Verdana;
-	padding: 4px;
-}
-
-.EditBox {
-    font: 9pt Courier New;
-    background: whitesmoke;
-    height: 100%;
-	height: expression(CalcEditBoxHeight());
-	width: 100%;
-}
-
-		</style>
-	</HEAD>
+		<style> @media all { tool\:tip { behavior: url(tooltip_js.htc) }}
+	.EditZone { background: lemonchiffon; overflow: hidden; height: 100%; height: expression(CalcEditZoneHeight()); /* IE only, other browsers ignore expression */ width: 100%; }
+	.tip { font-weight: bold; }
+	.tipBody { font: 8pt Verdana; }
+	.TipArea { margin: 3px; display: none; border: 1px solid #ffcc00; font: 8pt Verdana; padding: 4px; }
+	.EditBox { font: 9pt Courier New; background: whitesmoke; height: 100%; height: expression(CalcEditBoxHeight()); width: 100%; }
+	</style>
 	<% DoPage(); %>
 </HTML>

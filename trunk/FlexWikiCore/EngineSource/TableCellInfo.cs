@@ -103,7 +103,7 @@ namespace FlexWiki.Formatting
 
 							case 'W':
 								num = "";
-								if (p + 1 >= format.Length)
+								if (p + 1 >= format.Length  || !Char.IsDigit(format[p + 1]))
 									return "Missing number for table width percentage option 'TW' in table format";
 								p++;
 								while (p < format.Length && Char.IsDigit(format[p]))
@@ -118,7 +118,7 @@ namespace FlexWiki.Formatting
 
 					case 'W':
 						num = "";
-						if (p + 1 >= format.Length)
+						if (p + 1 >= format.Length  || !Char.IsDigit(format[p + 1]))
 							return "Missing number for cell width percentage option 'W' in table format";
 						p++;
 						while (p < format.Length && Char.IsDigit(format[p]))
@@ -126,10 +126,10 @@ namespace FlexWiki.Formatting
 						CellWidth = Int32.Parse(num);
 						p--;
 						continue;
-
+  
 					case 'R':
 						num = "";
-						if (p + 1 >= format.Length)
+						if (p + 1 >= format.Length || !Char.IsDigit(format[p + 1]))
 							return "Missing number for row span option 'R' in table format";
 						p++;
 						while (p < format.Length && Char.IsDigit(format[p]))
@@ -140,8 +140,8 @@ namespace FlexWiki.Formatting
 
 					case 'C':
 						num = "";
-						if (p + 1 >= format.Length)
-							return "Missing number for coloum span option 'C' in table format";
+						if (p + 1 >= format.Length || !Char.IsDigit(format[p + 1]))
+							return "Missing number for column span option 'C' in table format";
 						p++;
 						while (p < format.Length && Char.IsDigit(format[p]))
 							num += format[p++];
