@@ -72,7 +72,7 @@ namespace FlexWiki
 		}
 
 		[ExposedMethod(ExposedMethodFlags.CachePolicyNever, "Answer an Array of VisitorEvents describing the current user's visits during the session")]
-		public ArrayList VisitorEvents
+		public ArrayList VisitorEvents   
 		{
 			get
 			{
@@ -80,6 +80,26 @@ namespace FlexWiki
 				IEnumerable events = (IEnumerable)(System.Web.HttpContext.Current.Session["VisitorEvents"]);
 				foreach (VisitorEvent each in events)
 					answer.Add(each);
+				return answer;
+			}
+		}
+
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNever, "Answer an Array of Unique VisitorEvents describing the current user's visits during the session")]
+		public ArrayList UniqueVisitorEvents
+		{
+			get
+			{
+				VisitorEvent previousEvent = new VisitorEvent(new AbsoluteTopicName(""),"",System.DateTime.Now);
+				ArrayList answer = new ArrayList();
+				IEnumerable events = (IEnumerable)(System.Web.HttpContext.Current.Session["VisitorEvents"]);
+				foreach (VisitorEvent currentEvent in events)
+				{
+					if ( previousEvent.Name != currentEvent.Name )
+					{
+						previousEvent = currentEvent;
+						answer.Add(currentEvent);
+					}
+				}
 				return answer;
 			}
 		}

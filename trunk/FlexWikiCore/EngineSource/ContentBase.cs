@@ -2084,7 +2084,7 @@ aTopic|
 	Newline, ""----"", Newline,
 	""*Recent Topics*"",
 	Newline,
-	request.VisitorEvents.Snip(15).Collect
+	request.UniqueVisitorEvents.Snip(15).Collect
 	{ each |
 		[
 		Tab, 
