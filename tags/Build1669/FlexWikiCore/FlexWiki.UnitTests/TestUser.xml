@@ -1,0 +1,57 @@
+<?xml version="1.0" standalone="yes"?>
+<Users>
+  <xs:schema id="Users" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xs:element name="Users" msdata:IsDataSet="true">
+      <xs:complexType>
+        <xs:choice maxOccurs="unbounded">
+          <xs:element name="Users">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="UserID" type="xs:int" minOccurs="0" />
+                <xs:element name="UserEmail" type="xs:string" minOccurs="0" />
+                <xs:element name="UserPassword" type="xs:string" minOccurs="0" />
+                <xs:element name="UserName" type="xs:string" minOccurs="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+    </xs:element>
+  </xs:schema>
+  <Users>
+    <UserID>1</UserID>
+    <UserEmail>test@cox.net</UserEmail>
+    <UserPassword>password</UserPassword>
+    <UserName>test</UserName>
+  </Users>
+  <Users>
+    <UserID>2</UserID>
+    <UserEmail>test2@cox.net</UserEmail>
+    <UserPassword>password</UserPassword>
+    <UserName>test 2</UserName>
+  </Users>
+  <Users>
+    <UserID>3</UserID>
+    <UserEmail>test3@cox.net</UserEmail>
+    <UserPassword>password</UserPassword>
+    <UserName>test 3</UserName>
+  </Users>
+  <Users>
+    <UserID>4</UserID>
+    <UserEmail>test4@cox.net</UserEmail>
+    <UserPassword>password</UserPassword>
+    <UserName>test 4</UserName>
+  </Users>
+  <Users>
+    <UserID>5</UserID>
+    <UserEmail>test5@cox.net</UserEmail>
+    <UserPassword>password</UserPassword>
+    <UserName>test 5</UserName>
+  </Users>
+  <Users>
+    <UserID>6</UserID>
+    <UserEmail>test6@cox.net</UserEmail>
+    <UserPassword>password</UserPassword>
+    <UserName>test 6</UserName>
+  </Users>
+</Users>
