@@ -36,7 +36,7 @@
             <p>Supported builds (binaries and source) are available on the <a href="http://sourceforge.net/projects/flexwiki/">
             FlexWiki project site</a>.</p>
             <p>
-            Download binaries and source for interim build <xsl:value-of select="concat($verbuild, ' ')" />
+            Download binaries and source for interim build <xsl:value-of select="concat($vermajor, '.', $verminor, '.', $verbuild, '.', $verrevision, ' ')" />
             <a href="{$projectURL}/download/{$vermajor}.{$verminor}.{$verbuild}.{$verrevision}/">here</a></p>
           </td>
         </tr>
