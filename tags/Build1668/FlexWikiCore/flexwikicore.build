@@ -1,0 +1,648 @@
+<!--
+#region License Statement
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+//
+// The use and distribution terms for this software are covered by the 
+// Common Public License 1.0 (http://opensource.org/licenses/cpl.php)
+// which can be found in the file CPL.TXT at the root of this distribution.
+// By using this software in any fashion, you are agreeing to be bound by 
+// the terms of this license.
+//
+// You must not remove this notice, or any other, from this software.
+#endregion
+-->
+
+<!-- Please do not modify this file -->
+<project name="FlexWikiCore" default="test">
+
+  <!-- Make sure we use the 1.1 version of the framework -->
+  <property name="nant.settings.currentframework" value="net-1.1" />
+  
+  <!-- Where on disk the source tree is rooted. Defaults to the
+       directory where this build file lives. -->
+  <property name="basedir" 
+	    value="${nant.project.basedir}" 
+	    unless="${property::exists('basedir')}" />
+  
+  <echo message="Running from directory ${basedir}" />
+
+  <!-- If a file called personal.properties exists, read it in and use
+       the properties defined there to override this build file's
+       settings -->
+  <property name="personalpropspath"
+      value="${path::combine(basedir, 'personal.properties')}" />
+
+  <include buildfile="${personalpropspath}" 
+	   if="${file::exists(personalpropspath)}" />
+
+  <!-- Read in things like environment variables into nant properties -->
+  <sysinfo />
+
+  <!-- Read the base version numbers from the version.xml file -->
+  <property name="versionfile" value="${basedir}/version.xml" />
+  
+  <!-- Extract the various parts of the build number into properties -->
+  <xmlpeek file="${versionfile}"
+      xpath="/version/major" 
+      property="basevermajor" />
+
+  <xmlpeek file="${versionfile}"
+      xpath="/version/minor" 
+      property="baseverminor" />
+
+  <xmlpeek file="${versionfile}"
+      xpath="/version/build" 
+      property="baseverbuild" />
+
+  <xmlpeek file="${versionfile}"
+      xpath="/version/revision" 
+      property="baseverrevision" />
+
+  <!-- This next section defines a bunch of defaults. If the property
+       has been defined (typically in the personal.properties file or
+       from the command line), then the default is ignored and the
+       specified value is uesd. -->
+
+  <!-- If any of the version number parts have been overridden, use
+       those. Otherwise, use the ones we just generated. -->
+  <property name="vermajor" value="${basevermajor}" 
+      unless="${property::exists('vermajor')}" />
+
+  <property name="verminor" value="${baseverminor}" 
+      unless="${property::exists('verminor')}" />
+
+  <property name="verbuild" value="${baseverbuild}" 
+      unless="${property::exists('verbuild')}" />
+
+  <property name="verrevision" value="${baseverrevision}" 
+      unless="${property::exists('verrevision')}" />
+
+  <echo message="Building version ${vermajor}.${verminor}.${verbuild}.${verrevision}" />
+
+  <!-- The type of build to do (generally Release or Debug). Default
+       to a Debug build. --> 
+  <property name="configuration" value="Debug" 
+      unless="${property::exists('configuration')}" />
+  
+  <!-- The directory we build everything into. Defaults to bin/Debug
+       or bin/Release, depending on the configuration specified above.
+       Note: this is a subdirectory off of the basedir, which means
+       that the nant build builds to a *different* directory than the
+       individual projects, which each build to their own subdirectory -->
+  <property name="targetdir" value="${path::combine(path::combine(basedir, 'bin'), configuration)}" 
+      unless="${property::exists('targetdir')}" />
+
+  <!-- This is the directory where SQL Server database files will be created.
+        Defaults to "sqlstore" off the base directory -->
+  <property name="sqldir" value="${path::combine(basedir, 'sqlstore')}"
+      unless="${property::exists('sqldir')}" />
+
+  <!-- This is the name of the SQL Server database that will be created.
+        Defaults to "FlexWikiTestSqlStore". -->
+  <property name="sqldatabase" value="FlexWikiTestSqlStore"
+      unless="${property::exists('sqldatabase')}" />
+
+  <!-- This is the name of the SQL Server instance that will be used when
+        creating a new database. Defaults to ".", which is the default 
+        instance on the local machine. -->
+  <property name="sqlinstance" value="."
+      unless="${property::exists('sqlinstance')}" />
+
+  <!-- The directory where various report files wind up. This includes
+       things like the report that NUnit spits out. Default to
+       "reports" off of the base directory. -->
+  <property name="reportdir" value="${basedir}\reports" 
+      unless="${property::exists('reportdir')}" />
+  
+  <!-- The directory where we build the zip files for distribution.
+       Defaults to "dist" off of the base directory. --> 
+  <property name="distdir" value="${basedir}/dist" 
+      unless="${property::exists('distdir')}" />
+
+  <!-- The directory where we install temporarily to allow us to 
+       test the build -->
+  <property name="installdir" value="${basedir}\install" 
+      unless="${property::exists('installdir')}" />
+
+  <!-- The name for the virtual directory that gets created in
+       the install target. -->
+  <property name="install.vdir.name" value="${nant.project.name}TestBuild" 
+      unless="${property::exists('install.vdir.name')}" />
+
+  <!-- Set this property to true here (or override elsewhere) to skip
+       the actual compilation stage of the build. -->
+  <property name="build.skip" value="false" 
+      unless="${property::exists('build.skip')}" />
+
+  <!-- Set this property to true here (or override elsewhere) to skip
+       the test stage (nunit, fxcop) of the build. -->
+  <property name="test.skip" value="false" 
+      unless="${property::exists('test.skip')}" />
+
+  <!-- Set this property to true here (or override elsewhere) to skip
+       running nunit as part of the build. -->
+  <property name="nunit.skip" value="false"
+      unless="${property::exists('nunit.skip')}" />
+
+  <!-- Set this property to true here (or override elsewhere) to skip
+       running fxcop as part of the build. -->
+  <property name="fxcop.skip" value="false"
+      unless="${property::exists('fxcop.skip')}" />
+
+  <!-- Set this property to true here (or override elsewhere) to skip
+        setting up a test SqlStore database as part of the build. -->
+  <property name="sqlsetup.skip" value="true"
+      unless="${property::exists('sqlsetup.skip')}" />
+
+  <!-- Set this property to true here (or override elsewhere) to skip
+        testing the SqlStore provider as part of the build. -->
+  <property name="sqltest.skip" value="true"
+      unless="${property::exists('sqltest.skip')}" />
+
+  <!-- Set this property to true here (or override elsewhere) to skip
+       the stage of the build that builds the distribution files. -->
+  <property name="dist.skip" value="false" 
+      unless="${property::exists('dist.skip')}" />
+
+  <!-- Set this property to true here (or override elsewhere) to skip
+       the stage of the build that uploads the distribution files. -->
+  <property name="upload.skip" value="false" 
+      unless="${property::exists('upload.skip')}" />
+
+  <!-- Set this property to true here (or override elsewhere) to skip
+       the stage of the build that installs the build locally. -->
+  <property name="install.skip" value="false"
+      unless="${property::exists('install.skip')}" />
+
+  <!-- Set this property to true here (or override elsewhere) to skip
+       the stage of the build that runs verification tests against the 
+       locally installed build. -->
+  <property name="verify.skip" value="false"
+      unless="${property::exists('verify.skip')}" />
+
+  <!-- The name of the .sln file used to compile the project. Defaults
+       to having the same name as the NAnt project -->
+  <property name="buildfile.name" value="${nant.project.name}" 
+      unless="${property::exists('buildfile.name')}" />
+
+  <!-- Set this property false here (or override elsewhere) to prevent
+        unit test failures from breaking the build. This can be useful
+        when debugging complex build problems. -->
+  <property name="nunit.breaks.build" value="true" 
+      unless="${property::exists('nunit.breaks.build')}" />
+
+  <!-- Set this property false here (or override elsewhere) to prevent
+        FxCop failures from breaking the build. This can be useful
+        when debugging complex build problems. -->
+  <property name="fxcop.breaks.build" value="false" 
+      unless="${property::exists('fxcop.breaks.build')}" />
+
+  <!-- This property is set to true when this script is invoked by the
+        automated build. --> 
+  <property name="automated.build" value="false"
+      unless="${property::exists('automated.build')}" />      
+
+  <echo message="This script is being run as part of an automated build"
+      if="${automated.build}" />
+
+  <!-- Set default values for when we're running under an automated build -->
+  <if test="${automated.build}">
+    <!-- As part of the automated build, we want to both set up and test
+          the SqlStore stuff -->
+    <property name="sqlsetup.skip" value="false" />
+    <property name="sqltest.skip"  value="false" />
+    
+    <!-- We also want to run FxCop -->
+    <property name="fxcop.skip" value="false" />
+  </if>
+
+  <!-- NAnt build targets appear after this point. To build a
+       particular target, run "nant targetname" from the command line.
+       For example, to build the init target, run "nant init". -->
+  
+  <!-- The init target does initial setup of the project -->
+  <target name="init">
+
+    <!-- Create the target directory. This is where everything will
+	        get built into. Note: not the same as the directory that
+	        things get built into when doing a build from VS.NET. --> 
+    <mkdir dir="${targetdir}" />
+
+    <!-- Create the reports directory if it doesn't exist. -->
+    <mkdir dir="${reportdir}" />
+    
+    <!-- Create the SQL Server data directory if it doens't exist -->
+    <mkdir dir="${sqldir}" />
+
+    <!-- Set up the XML version number so external tools can use it to
+        	 know what version we built. -->
+
+    <!-- Copy the version file to the reports directory -->
+    <property name="versionreport" value="${reportdir}/version.xml" />
+    <copy file="${versionfile}" tofile="${versionreport}" />
+
+    <!-- Now store the various build numbers in the xml file -->
+    <xmlpoke file="${versionreport}" 
+	     value="${vermajor}"
+	     xpath="/version/major" />
+    <xmlpoke file="${versionreport}" 
+	     value="${verminor}"
+	     xpath="/version/minor" />
+    <xmlpoke file="${versionreport}" 
+	     value="${verbuild}"
+	     xpath="/version/build" />
+    <xmlpoke file="${versionreport}" 
+	     value="${verrevision}"
+	     xpath="/version/revision" />
+    
+    <!-- Create a SharedAssemblyInfo.cs file with the version number that
+	        we calculated at the beginning of the build script -->
+    <asminfo output="${basedir}/SharedAssemblyInfo.cs"
+		      language="CSharp">
+	    <imports>
+	      <import name="System" />
+	      <import name="System.Reflection" />
+	    </imports>
+	    <attributes>
+	      <attribute type="AssemblyVersionAttribute"
+		        value="${vermajor}.${verminor}.${verbuild}.${verrevision}" />
+		    <attribute type="AssemblyCopyrightAttribute"
+		        value="Copyright (c) 2005 Microsoft Corporation" />
+	    </attributes>
+	  </asminfo>
+
+    <!-- Analyze the solution file to figure out what projects are there -->
+    
+    <!-- Start by deleting the file that lists all the projects -->
+    <property name="init.projectlistpath" value="${reportdir}/projectlist.txt" />
+    
+    <delete file="${init.projectlistpath}" if="${file::exists(init.projectlistpath)}" />
+    
+    <foreach item="Line" 
+        in="${basedir}/${nant.project.name}.sln"
+        property="init.line" >
+      <do>
+        <if test="${string::starts-with(init.line, 'Project(')}">
+          <regex pattern="(?:=\s)*&quot;(?'proj'.*?)&quot;,\s&quot;(?'path'.*?)&quot;,\s&quot;(?'guid'.*?)&quot;"
+            input="${init.line}" />
+          <echo file="${init.projectlistpath}" append="true" 
+            message="${path}" />
+        </if>
+      </do>
+    </foreach>
+    
+  </target>
+
+  <!-- The build target simply compiles the projects listed in the
+       .sln file into the target directory -->
+  <target name="build" depends="init" unless="${build.skip}">
+    <solution configuration="${configuration}" 
+	      outputdir="${targetdir}"
+	      solutionfile="${nant.project.name}.sln" />
+  </target>
+  
+  <!-- The test target runs nunit on any assemblies that have NUnit
+       tests in them. --> 
+  <target name="test" depends="build" unless="${test.skip}">
+
+    <!-- Set nunit.skip to true to skip NUnit testing -->
+    <ifnot test="${nunit.skip}">
+      <!-- This command runs nunit-console and directs the XML report to
+	          the reports directory. -->
+      <exec program="nunit-console.exe"
+    	    basedir="${basedir}\tools\nunit\bin"
+	        workingdir="${targetdir}"
+	        failonerror="${nunit.breaks.build}">
+        <arg value="FlexWiki.UnitTests.dll" />
+        <arg value="/xml=${reportdir}\nunit.xml"/>
+      </exec>
+    </ifnot>
+    
+    <!-- Here's where we run FxCop analysis of the project assemblies. 
+          Set fxcop.skip to true to skip FxCop testing. -->
+    <ifnot test="${fxcop.skip}">
+      <exec program="fxcopcmd"
+          basedir="${basedir}/tools/fxcop"
+          workingdir="${basedir}"
+          failonerror="${fxcop.breaks.build}">
+        <arg value="/project:${nant.project.name}.fxcop" />
+        <arg value="/out:${path::combine(reportdir, 'fxcop.xml')}" />
+      </exec>
+    </ifnot>
+    
+    <!-- Here's where we set up the SQL Server database to prepare for
+          SqlProvider testing -->
+    <ifnot test="${sqlsetup.skip}">
+      <!-- We're creating a new database (and dropping the one that's there, 
+            if there is one), specifying a directory for the data files, and 
+            a database name to create. -->
+      <exec program="fwsqlmgr.exe"
+          basedir="${targetdir}">
+        <arg value="create" />        
+        <arg value="${sqlinstance}" />
+        <arg value="${sqldatabase}" />
+        <arg value="${sqldir}" />
+      </exec>
+      
+      <!-- Grant the current user permission to access the database 
+      <exec program="fwsqlmgr.exe"
+          basedir="${targetdir}">
+        <arg value="grant" />
+        <arg value="${sqlinstance}" />
+        <arg value="${sqldatabase}" />
+        <arg value="${sys.env.USERDOMAIN}\${sys.env.USERNAME}" />
+      </exec>
+      -->
+
+    </ifnot>
+    
+    <!-- Here's where we test the SqlProvider against the database -->
+    <ifnot test="${sqltest.skip}">
+    
+      <property name="sqltest.assembly" value="FlexWiki.SqlProvider.UnitTests.dll" />
+      <property name="sqltest.configfile" value="${sqltest.assembly}.config" />
+    
+      <!-- Update the config file with the right connection string. -->
+      <xmlpoke file="${path::combine(targetdir, sqltest.configfile)}" 
+          value="server=${sqlinstance};database=${sqldatabase};Integrated Security=true" 
+          xpath="/configuration/appSettings/add[@key = 'SqlStoreConnectionString']/@value" />
+    
+      <!-- Run the SqlProvider tests -->
+      <exec program="nunit-console.exe"
+    	    basedir="${basedir}\tools\nunit\bin"
+	        workingdir="${targetdir}"
+	        failonerror="${nunit.breaks.build}">
+        <arg value="${sqltest.assembly}" />
+        <arg value="/xml=${reportdir}\sqltest.xml"/>
+      </exec>
+    </ifnot>
+    
+  </target> 
+
+  <!-- The dist target builds the distribution zipfiles from the files
+       in the target directory. -->
+  <target name="dist" depends="test" unless="${dist.skip}">
+    <mkdir dir="${distdir}" />
+
+
+    <!-- We create an empty staging directory (by deleting it if it's
+	        present and then creating it anew) where we set up the files
+	        we want to go into the binaries zip in the arrangement we
+	        want them in. -->
+    <property name="dist.stagingdir" value="${path::combine(distdir, 'staging')}" />
+    <delete dir="${dist.stagingdir}" if="${directory::exists(dist.stagingdir)}"/>
+    <mkdir dir="${dist.stagingdir}" />
+
+    <!-- Next we create a web and a bin directory underneath it -->
+    <property name="dist.webdir" value="${dist.stagingdir}\web" />
+    <property name="dist.toolsdir" value="${dist.stagingdir}\tools" />
+    <mkdir dir="${dist.webdir}" />
+    <mkdir dir="${dist.toolsdir}" />
+
+    <!-- Define the web content files -->
+    <fileset id="dist.web.content"
+	     basedir="${basedir}\FlexWiki.Web">
+      <include name="**\*" />
+      <exclude name="**\*.resx" />
+      <exclude name="**\*.cs" />
+      <exclude name="**\*.csproj" />
+      <exclude name="bin\**\*" />
+      <exclude name="obj\**\*" />
+    </fileset>
+
+    <!-- Define the web binary files -->
+    <fileset id="dist.web.binaries"
+	     basedir="${targetdir}">
+      <include name="*.dll" />
+      <include name="*.pdb" />
+    </fileset>
+
+    <!-- Define the files that go in the "other binaries" zip
+	 directory -->
+    <fileset id="dist.all.binaries"
+	     basedir="${targetdir}">
+      <include name="*.dll" />
+      <include name="*.pdb" />
+      <include name="*.exe" />
+    </fileset>
+
+    <!-- Define the files that go right in the base directory of the
+	       zipfile --> 
+    <fileset id="dist.root"
+	     basedir="${basedir}">
+      <include name="*.txt" />
+    </fileset>
+
+    <!-- Then we copy the appropriate files into each directory -->
+    <copy todir="${dist.webdir}">
+      <fileset refid="dist.web.content" />
+    </copy>
+
+    <copy todir="${dist.webdir}\bin">
+      <fileset refid="dist.web.binaries" />
+    </copy>
+
+    <copy todir="${dist.toolsdir}">
+      <fileset refid="dist.all.binaries" />
+    </copy>
+
+    <copy todir="${dist.stagingdir}">
+      <fileset refid="dist.root" />
+    </copy>
+
+    <!-- We build four zipfiles: 
+          * a source zip containing the source files, 
+          * a full web binary zip containing all the files necessary
+	          to install and run the web parts of FlexWiki, 
+	        * an upgrade web binary zip, which contains files you can 
+	          unzip into an existing FlexWiki web install to upgrade it
+	        * a tools zip containing all the binaries for all the non-web 
+	          of FlexWiki -->
+
+    <!-- Cook up names for the zipfiles based on the project name,
+      	 version number, and configuration. --> 
+    <property name="dist.web.full.binzip" 
+	      value="${distdir}/${nant.project.name}-${vermajor}.${verminor}.${verbuild}.${verrevision}-web-full-${configuration}.zip" />
+    <property name="dist.web.upgrade.binzip" 
+	      value="${distdir}/${nant.project.name}-${vermajor}.${verminor}.${verbuild}.${verrevision}-web-upgrade-${configuration}.zip" />
+    <property name="dist.tools.binzip" 
+	      value="${distdir}/${nant.project.name}-${vermajor}.${verminor}.${verbuild}.${verrevision}-tools-${configuration}.zip" />
+    <property name="dist.srczip" 
+	      value="${distdir}/${nant.project.name}-${vermajor}.${verminor}.${verbuild}.${verrevision}-src.zip" />
+
+    <!-- Zip up all the files that we just put in the staging
+	        directory into the web full binaries zip -->
+    <zip zipfile="${dist.web.full.binzip}">
+      <fileset basedir="${dist.webdir}">
+	      <include name="**/*" />
+      </fileset>
+    </zip>
+
+    <!-- Make a copy of the new web.config file as web.config.version
+	        so people can easily see what's new in the config file even
+	        though we don't overwrite their old one -->
+    <copy file="${dist.webdir}\web.config" 
+	      tofile="${dist.webdir}\web.config.${vermajor}.${verminor}.${verbuild}.${verrevision}" />
+
+    <!-- Zip up all files, except those that we shouldn't overwrite in
+	      an upgrade install -->
+    <zip zipfile="${dist.web.upgrade.binzip}">
+      <fileset basedir="${dist.webdir}">
+	      <include name="**/*" />
+	      <exclude name="web.config" />
+	      <exclude name="**/WikiBases/**" />
+	      <exclude name="${dist.webdir}\**\NamespaceMap.xml" />
+      </fileset>
+    </zip>
+
+    <!-- Zip up all the non-web files into the tools zip -->
+    <zip zipfile="${dist.tools.binzip}">
+      <fileset basedir="${dist.toolsdir}">
+        <include name="**/*" />
+      </fileset>
+    </zip>    
+  
+    <!-- Define the files that wind up in the zip of all source code -->
+    <fileset id="dist.sources" basedir="${basedir}">
+      <include name="**/*" />
+      <exclude name="dist/**" />
+      <exclude name="diff/**" />
+      <exclude name="release/**" />
+      <exclude name="reports/**" />
+      <exclude name="**/bin/Debug/**" />
+      <exclude name="**/bin/Release/**" />
+      <exclude name="**/obj/**" />
+      <exclude name="**/*.suo" />
+      <exclude name="**/*.user" />
+      <exclude name="**/*~" />
+      <exclude name="**/*.projdata" />
+      <exclude name="**/*.bak" />
+      <exclude name="personal.properties" />
+      <exclude name="**/CVS" />
+      <exclude name="${sqldir}/**" />
+      <exclude name="${targetdir}/**" />
+      <include name="tools/nant/bin" />
+      <include name="tools/nunit/bin" />
+    </fileset>
+    
+    <!-- We'll stage all the sources in a directory because we want to modify 
+          them slightly before zipping them up -->
+    <property name="dist.srcdir" value="${path::combine(dist.stagingdir, 'src')}" />
+    
+    <!-- Delete the contents of the staging directory if it's present and recreate it -->
+    <delete dir="${dist.srcdir}" if="${directory::exists(dist.srcdir)}"/>
+    <mkdir dir="${dist.srcdir}" />    
+      
+    <!-- Copy the sources into the staging directory -->
+    <copy todir="${dist.srcdir}">
+      <fileset refid="dist.sources" />
+    </copy>
+    
+    <!-- Copy the updated version file into the staging directory -->
+    <copy todir="${dist.srcdir}" file="${versionreport}" />
+
+    <!-- Zip up all the files specified in the staging directory into
+      	 the sources zip -->
+    <zip zipfile="${dist.srczip}">
+      <fileset basedir="${dist.srcdir}">
+        <include name="**/*" />
+      </fileset>
+    </zip>
+  </target>
+
+  <!-- The install target installs the web part of the build locally. -->
+  <target name="install" depends="dist" unless="${install.skip}">
+
+    <!-- Destroy the existing physical directory if present -->
+    <delete dir="${installdir}" if="${directory::exists(installdir)}"/>
+
+    <!-- Create the physical directory -->
+    <mkdir dir="${installdir}" />
+
+    <!-- Create the virtual directory and point it to the physical
+      	 directory, unless we're running in the automated build, which 
+      	 doesn't have permission to create virtual directories. -->
+    <exec program="cscript.exe"
+	      workingdir="${basedir}"
+	      unless="${automated.build}">
+      <arg value="tools\scripts\makevdir.js" />
+      <arg value="localhost" />               <!-- Machine name -->
+      <arg value="${install.vdir.name}" />    <!-- Virtual directory name -->
+      <arg value="${installdir}" />   <!-- Physical path -->
+    </exec>
+
+    <!-- Unzip the web dist zip we created as part of the dist target -->
+    <unzip zipfile="${dist.web.full.binzip}" 
+	   todir="${installdir}" />
+
+    <!-- Give the anonymous user read/write access -->
+    <!-- Under IIS6 -->
+    <exec program="xcacls.exe"
+	      basedir="${basedir}/tools/reskit" 
+	      workingdir="${installdir}">
+      <arg value="." />
+      <arg value="/E" />
+      <arg value="/G" />
+      <arg value="NETWORK SERVICE:F" />
+      <arg value="/Y" />
+    </exec>
+
+    <!-- Under IIS5 -->
+    <!-- The automated build runs under W2K3, and so doesn't need this step. 
+          Plus, it was breaking the build, since the anonymous account
+          is named something else. -->
+    <exec program="xcacls.exe"
+	      basedir="${basedir}/tools/reskit" 
+	      workingdir="${installdir}"
+	      unless="${automated.build}">
+      <arg value="." />
+      <arg value="/E" />
+      <arg value="/G" />
+      <arg value="IUSR_${sys.env.COMPUTERNAME}:F" /> 
+      <arg value="/Y" />
+    </exec>
+
+    <!-- And that should be all we need to do -->
+    
+  </target>
+
+  <!-- The verify target verifies the build by running tests against 
+        an installed version -->
+  <target name="verify" depends="install" unless="${verify.skip}">
+    
+    <property name="verify.config.path" 
+        value="${path::combine(targetdir, 'BuildVerificationTests.dll.config')}" />
+  
+    <!-- Update the config file with the right base URL so the tests are pointed 
+          at the right place -->
+    <xmlpoke file="${verify.config.path}"
+      xpath="/configuration/appSettings/add[@key='InstallationUri']/@value"
+      value="http://localhost/${install.vdir.name}/" />
+      
+    <!-- Update the config file with the location of the install so the verification 
+          tests can find it -->
+    <xmlpoke file="${verify.config.path}"
+        xpath="/configuration/appSettings/add[@key='InstallationPath']/@value"
+        value="${installdir}" />
+  
+    <!-- Use NUnit to run the verification tests -->
+    <exec program="nunit-console.exe"
+    	  basedir="${basedir}\tools\nunit\bin">
+      <arg value="${path::combine(targetdir, 'BuildVerificationTests.dll')}" />
+      <arg value="/xml=${reportdir}\verify.xml"/>
+    </exec>
+    
+  </target>
+
+
+  <!-- The clean target cleans out any files that are created as part
+       of the build process --> 
+  <target name="clean">
+    <delete dir="${targetdir}"  if="${directory::exists(targetdir)}" />
+    <delete dir="${distdir}"    if="${directory::exists(distdir)}" />
+    <delete dir="${reportdir}"  if="${directory::exists(reportdir)}"/>
+    <delete dir="${installdir}" if="${directory::exists(installdir)}"/>
+  </target>
+
+
+</project>
