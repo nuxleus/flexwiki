@@ -3,6 +3,7 @@
     <xsl:output method="html"/>
 
     <xsl:template match="/">
+	<div>
 		<xsl:variable name="buildresults" select="//buildresults" />
 		<xsl:choose>
 			<xsl:when test="count($buildresults) > 0">
@@ -21,6 +22,7 @@
 				<p>Please make sure that NAnt is executed using the XmlLogger (use the argument: <b>-logger:NAnt.Core.XmlLogger</b>).  </p>
 			</xsl:otherwise>
 		</xsl:choose>
+	</div>
 	</xsl:template>
 	
 	<xsl:template match="buildresults">
