@@ -341,16 +341,8 @@ Add your wiki text here.
 					Response.Write(@"
 			<div class='CreateTopicWarning'>
 				You are about to create a new topic called <b>" + TheTopic.Name + @"</b> in the <b>" +
-						cb.FriendlyTitle + @"</b> WikiBase.");
-					if (cb.Description == null)
-					{
-						Response.Write("<P>Please be sure you are creating this topic where you want to.</p>");
-					}
-					else
-					{
-						Response.Write(@"<P>Please review the description of this namespace to be sure you are creating this topic where you want to: </p>
-					<blockquote>" + cb.Description + @"</blockquote>");
-					}
+						cb.FriendlyTitle + @"</b> namespace.");
+					Response.Write("<P>Please be sure you are creating this topic in the desired namespace.</p>");
 					Response.Write(@"</div>");
 				}
 			}
@@ -383,8 +375,7 @@ Add your wiki text here.
 			if (TheFederation.NoFollowExternalHyperlinks)
 			{
 				OpenPane(Response.Output, "External Hyperlinks");
-				Response.Write("<div class='BannedChange'>Your change can not be saved.</div>");
-				Response.Write("The changes you are trying to save include banned URLs.");
+				Response.Write("<img src='" + TheLinkMaker.LinkToImage("images/NoFollowNoSpam.gif") + "' align='right'>External hyperlinks will not be indexed by search engines.");
 				ClosePane(Response.Output);
 				LogBannedAttempt();
 			}
