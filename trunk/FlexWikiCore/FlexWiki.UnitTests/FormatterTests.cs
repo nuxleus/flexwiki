@@ -1225,6 +1225,106 @@ Normal again
 				@"<p>normal <big><big>Very big </big></big> normal <small><small> very small </small></small><span style='color:blue'> normal size blue</span></p>
 ");
 		}
+
+		#region FormSelectFieldPresentation tests
+		#region Single-line (combo) tests
+		[Test] public void SelectFieldTest()
+		{
+			FormatTest(
+				@"@@Presentations.ComboSelectField(""selectTest"", [""one"", ""two"", ""three""])@@",
+				@"<p><select name=""selectTest"" id=""selectTest"" size=""1""><option>one</option><option>two</option><option>three</option></select></p>
+");
+		}
+		[Test] public void SelectFieldWithValuesTest()
+		{
+			FormatTest(
+				@"@@Presentations.ComboSelectField(""selectTest"", [""one"", ""two"", ""three""], null, [1, 2, 3])@@",
+				@"<p><select name=""selectTest"" id=""selectTest"" size=""1""><option value=""1"">one</option><option value=""2"">two</option><option value=""3"">three</option></select></p>
+");
+		}
+		[Test] public void SelectFieldWithMismatchedValuesTest()
+		{
+			FormatTest(
+				@"@@Presentations.ComboSelectField(""selectTest"", [""one"", ""two"", ""three""], null, [1, 2])@@",
+				@"<p><span class='ErrorMessage'><span class='ErrorMessageBody'>Error evaluating expression: The values array does not contain the same number of items as the options array
+Parameter name: values</span></span></p>
+");
+		}
+		[Test] public void SelectFieldEmptyOptionsTest()
+		{
+			FormatTest(
+				@"@@Presentations.ComboSelectField(""selectTest"", [])@@",
+				@"<p><select name=""selectTest"" id=""selectTest"" size=""1""></select></p>
+");
+		}
+		[Test] public void SelectFieldSelectedOptionTest()
+		{
+			FormatTest(
+				@"@@Presentations.ComboSelectField(""selectTest"", [""one"", ""two"", ""three""], ""two"")@@",
+				@"<p><select name=""selectTest"" id=""selectTest"" size=""1""><option>one</option><option selected=""selected"">two</option><option>three</option></select></p>
+");
+		}
+		[Test] public void SelectFieldSelectedValueTest()
+		{
+			FormatTest(
+				@"@@Presentations.ComboSelectField(""selectTest"", [""one"", ""two"", ""three""], null, [1, 2, 3], 2)@@",
+				@"<p><select name=""selectTest"" id=""selectTest"" size=""1""><option value=""1"">one</option><option value=""2"" selected=""selected"">two</option><option value=""3"">three</option></select></p>
+");
+		}
+		#endregion
+		#region Multi-line (listbox) tests
+		[Test] public void SelectFieldMultilineTest()
+		{
+			FormatTest(
+				@"@@Presentations.ListSelectField(""selectTest"", 2, false, [""one"", ""two"", ""three""])@@",
+				@"<p><select name=""selectTest"" id=""selectTest"" size=""2""><option>one</option><option>two</option><option>three</option></select></p>
+");
+		}
+		[Test] public void SelectFieldMultilineMultiSelectTest()
+		{
+			FormatTest(
+				@"@@Presentations.ListSelectField(""selectTest"", 2, true, [""one"", ""two"", ""three""])@@",
+				@"<p><select name=""selectTest"" id=""selectTest"" size=""2"" multiple=""multiple""><option>one</option><option>two</option><option>three</option></select></p>
+");
+		}
+		[Test] public void SelectFieldMultilineWithValuesTest()
+		{
+			FormatTest(
+				@"@@Presentations.ListSelectField(""selectTest"", 2, true, [""one"", ""two"", ""three""], null, [1, 2, 3])@@",
+				@"<p><select name=""selectTest"" id=""selectTest"" size=""2"" multiple=""multiple""><option value=""1"">one</option><option value=""2"">two</option><option value=""3"">three</option></select></p>
+");
+		}
+		[Test] public void SelectFieldMultilineWithMismatchedValuesTest()
+		{
+			FormatTest(
+				@"@@Presentations.ListSelectField(""selectTest"", 2, true, [""one"", ""two"", ""three""], null, [1, 2])@@",
+				@"<p><span class='ErrorMessage'><span class='ErrorMessageBody'>Error evaluating expression: The values array does not contain the same number of items as the options array
+Parameter name: values</span></span></p>
+");
+		}
+		[Test] public void SelectFieldMultilineEmptyOptionsTest()
+		{
+			FormatTest(
+				@"@@Presentations.ListSelectField(""selectTest"", 2, true, [])@@",
+				@"<p><select name=""selectTest"" id=""selectTest"" size=""2"" multiple=""multiple""></select></p>
+");
+		}
+		[Test] public void SelectFieldMultilineSelectedOptionTest()
+		{
+			FormatTest(
+				@"@@Presentations.ListSelectField(""selectTest"", 2, true, [""one"", ""two"", ""three""], ""two"")@@",
+				@"<p><select name=""selectTest"" id=""selectTest"" size=""2"" multiple=""multiple""><option>one</option><option selected=""selected"">two</option><option>three</option></select></p>
+");
+		}
+		[Test] public void SelectFieldMultilineSelectedValueTest()
+		{
+			FormatTest(
+				@"@@Presentations.ListSelectField(""selectTest"", 2, true, [""one"", ""two"", ""three""], null, [1, 2, 3], 2)@@",
+				@"<p><select name=""selectTest"" id=""selectTest"" size=""2"" multiple=""multiple""><option value=""1"">one</option><option value=""2"" selected=""selected"">two</option><option value=""3"">three</option></select></p>
+");
+		}
+		#endregion
+		#endregion
 	}
 
 	[TestFixture] public class NameMatches

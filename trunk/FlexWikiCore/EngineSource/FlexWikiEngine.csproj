@@ -409,6 +409,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "FormSelectFieldPresentation.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "FormStartPresentation.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

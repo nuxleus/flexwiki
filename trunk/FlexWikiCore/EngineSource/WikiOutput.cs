@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.IO;
 using System.Text;
 using FlexWiki;
@@ -133,7 +134,7 @@ namespace FlexWiki.Formatting
 		abstract public void FormSubmitButton(string FieldName, string label);
 		abstract public void FormInputBox(string FieldName, string fieldValue, int fieldLength);
 		abstract public void FormHiddenField(string FieldName, string fieldValue);
-
+		abstract public void FormSelectField(string fieldName, int size, bool multiple, ArrayList options, string selectedOption, ArrayList values, object selectedValue);
 
 
 		private TextWriter	_TextWriter;

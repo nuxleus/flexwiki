@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Collections;
 
 namespace FlexWiki
 {
@@ -72,5 +73,34 @@ namespace FlexWiki
 			return new FormImageButtonPresentation(fieldName, imageURI, tipString);
 		}
 
+		[ExposedMethod(ExposedMethodFlags.NeedContext, "Present a combobox select field")]
+		public static FormSelectFieldPresentation ComboSelectField(ExecutionContext context, string fieldName, ArrayList options,
+			[ExposedParameter(true)] string selectedOption, [ExposedParameter(true)] ArrayList values,
+			[ExposedParameter(true)] object selectedValue)
+		{
+			if (true == context.TopFrame.WasParameterSupplied(4))
+			{
+				if (options.Count != values.Count)
+				{
+					throw new ArgumentException("The values array does not contain the same number of items as the options array", "values");
+				}
+			}
+			return new FormSelectFieldPresentation(fieldName, 1, false, options, selectedOption, values, selectedValue);
+		}
+
+		[ExposedMethod(ExposedMethodFlags.NeedContext, "Present a listbox select field")]
+		public static FormSelectFieldPresentation ListSelectField(ExecutionContext context, string fieldName,  
+			int size, bool multiple, ArrayList options, [ExposedParameter(true)] string selectedOption,	 
+			[ExposedParameter(true)] ArrayList values, [ExposedParameter(true)] object selectedValue)
+		{
+			if (true == context.TopFrame.WasParameterSupplied(6))
+			{
+				if (options.Count != values.Count)
+				{
+					throw new ArgumentException("The values array does not contain the same number of items as the options array", "values");
+				}
+			}
+			return new FormSelectFieldPresentation(fieldName, size, multiple, options, selectedOption, values, selectedValue);
+		}
 	}
 }

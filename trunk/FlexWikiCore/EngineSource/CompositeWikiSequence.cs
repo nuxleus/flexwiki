@@ -87,7 +87,7 @@ namespace FlexWiki
 					part = pres.Substring(0, mark);
 					pres = pres.Substring(mark + marker.Length, pres.Length - mark - marker.Length);
 				}
-				answer.Add(new StringPresenation(part));
+				answer.Add(new StringPresentation(part));
 				if (pidx < presentations.Count)
 					answer.Add((IPresentation)presentations[pidx++]);
 			}

@@ -114,7 +114,7 @@ namespace FlexWiki
 
 		public override IOutputSequence ToOutputSequence()
 		{
-			return new StringPresenation("types");
+			return new StringPresentation("types");
 		}
 
 

@@ -345,7 +345,7 @@ namespace FlexWiki
 				result = result.Replace("$" + (p + 1).ToString(), replacementArg);
 			}
 
-			return new StringPresenation(result);
+			return new StringPresentation(result);
 		}
 
 

@@ -40,7 +40,7 @@ namespace FlexWiki
 
 		public IPresentation ToPresentation(IWikiToPresentation p)
 		{
-			return new StringPresenation(p.WikiToPresentation(_Value.ToString()));
+			return new StringPresentation(p.WikiToPresentation(_Value.ToString()));
 		}
 
 		public void AddAllTo(ArrayList list)

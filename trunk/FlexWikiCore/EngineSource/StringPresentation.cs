@@ -19,12 +19,12 @@ namespace FlexWiki
 	/// Summary description for StringPresenation.
 	/// </summary>
 	[ExposedClass("StringPresentation", "Presents a string")]
-	public class StringPresenation : PresentationPrimitive
+	public class StringPresentation : PresentationPrimitive
 	{
 
 		string _Value;
 
-		public StringPresenation(string output)
+		public StringPresentation(string output)
 		{
 			_Value = output;
 		}

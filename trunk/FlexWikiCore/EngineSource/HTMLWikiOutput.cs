@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.IO;
 using FlexWiki;
 using System.Text;
@@ -485,6 +486,49 @@ Write(@"
 			WriteLine("<input style='display: none' type='text'  name='" + FieldName + "' value ='" + Formatter.EscapeHTML(fieldValue) + @"'>");
 		}
 
+		public override void FormSelectField(string fieldName, int size, bool multiple, ArrayList options, string selectedOption, ArrayList values, object selectedValue)
+		{
+			StringBuilder stringBuilder = new StringBuilder();
+			// Start the select field.
+			stringBuilder.Append(string.Format("<select name=\"{0}\" id=\"{0}\" size=\"{1}\"", fieldName, size));
+			// Add the multiple attribute if required.
+			if (true == multiple)
+			{
+				stringBuilder.Append(" multiple=\"multiple\"");
+			}
+			stringBuilder.Append(">"); // End the select element.
+			// Add the options.
+			if (null != values)
+			{
+				for (int i = 0; i < options.Count; i++)
+				{
+					stringBuilder.Append(string.Format("<option value=\"{0}\"",
+						values[i].ToString()));
+					if ((null != selectedValue) && (selectedValue.ToString().Length > 0) && (selectedValue.ToString() == values[i].ToString()))
+					{
+						stringBuilder.Append(" selected=\"selected\"");
+					}
+					stringBuilder.Append(string.Format(">{0}</option>",
+						options[i].ToString()));
+				}
+			}
+			else
+			{
+				foreach (object option in options)
+				{
+					stringBuilder.Append("<option");
+					if ((null != selectedOption) && (selectedOption.Length > 0) && (selectedOption == option.ToString()))
+					{
+						stringBuilder.Append(" selected=\"selected\"");
+					}
+					stringBuilder.Append(string.Format(">{0}</option>", option.ToString()));
+				}
+			}
+			// Close the select element.
+			stringBuilder.Append("</select>");
+			string selectField = stringBuilder.ToString();
+			Write(selectField);
+		}
 
 
 	}
