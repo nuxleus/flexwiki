@@ -209,8 +209,8 @@
   <if test="${automated.build}">
     <!-- As part of the automated build, we want to both set up and test
           the SqlStore stuff -->
-    <property name="sqlsetup.skip" value="true" />
-    <property name="sqltest.skip"  value="true" />
+    <property name="sqlsetup.skip" value="false" />
+    <property name="sqltest.skip"  value="false" />
     
     <!-- We also want to run FxCop -->
     <property name="fxcop.skip" value="false" />
