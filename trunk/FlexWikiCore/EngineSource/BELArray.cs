@@ -181,6 +181,15 @@ namespace FlexWiki
 			return new BELArray(answer);
 		}
 
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer true if this object is empty, else false")]
+		public bool IsEmpty
+		{
+			get
+			{
+				return Count == 0;
+			}
+		}
+
 		class DefaultSorter : IComparer
 		{
 			#region IComparer Members
