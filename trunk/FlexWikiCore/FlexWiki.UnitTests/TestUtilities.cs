@@ -20,7 +20,7 @@ namespace FlexWiki.UnitTests
   {
     public static void WriteConfigFile()
     {
-      WriteFromResource("FlexWiki.UnitTests.dll.config");
+      //WriteFromResource("FlexWiki.UnitTests.dll.config");
     }
 
     public static void WritePermissionsFile()

@@ -17,7 +17,7 @@
                 DelaySign = "false"
                 OutputType = "Library"
                 PreBuildEvent = ""
-                PostBuildEvent = ""
+                PostBuildEvent = "cmd.exe /c $(ProjectDir)postbuild.cmd $(ProjectDir) $(TargetDir) $(TargetPath)"
                 RootNamespace = "FlexWiki.UnitTests"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
@@ -99,6 +99,10 @@
         <Files>
             <Include>
                 <File
+                    RelPath = "app.config"
+                    BuildAction = "None"
+                />
+                <File
                     RelPath = "AssemblyInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -129,13 +133,13 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "FlexWiki.UnitTests.dll.config"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
                     RelPath = "FormatterTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "postbuild.cmd"
+                    BuildAction = "None"
                 />
                 <File
                     RelPath = "RoleTests.cs"
