@@ -1,7 +1,7 @@
 obj
 bin
 dist
-fwsync.csproj.user
-fwsync.suo
+*.user
+*.suo
 diff
 release
