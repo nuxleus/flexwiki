@@ -1,0 +1,269 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>NAnt.SourceControlTasks</name>
+    </assembly>
+    <members>
+        <member name="T:NAnt.SourceControl.Tasks.AbstractCvsTask">
+            <summary>
+            A base class for creating tasks for executing CVS client commands on a 
+            CVS repository.
+            </summary>
+        </member>
+        <member name="M:NAnt.SourceControl.Tasks.AbstractCvsTask.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:NAnt.SourceControl.Tasks.AbstractCvsTask"/> 
+            class.
+            </summary>
+        </member>
+        <member name="M:NAnt.SourceControl.Tasks.AbstractCvsTask.ExecuteTask">
+            <summary>
+            Executes the CVS command.
+            </summary>
+        </member>
+        <member name="M:NAnt.SourceControl.Tasks.AbstractCvsTask.CreateCommand">
+            <summary>
+            Creates the CVS command object to execute against the specified 
+            CVS repository.
+            </summary>
+            <returns>
+            The <see cref="T:ICSharpCode.SharpCvsLib.Commands.ICommand"/> to execute against the CVS repository.
+            </returns>
+        </member>
+        <member name="M:NAnt.SourceControl.Tasks.AbstractCvsTask.Validate">
+            <summary>
+            Validates that all required information is available.
+            </summary>
+            <exception cref="T:System.ArgumentNullException">
+                <para><see cref="P:NAnt.SourceControl.Tasks.AbstractCvsTask.CvsRoot"/> is <see langword="null"/></para>
+                <para>-or-</para>
+                <para><see cref="P:NAnt.SourceControl.Tasks.AbstractCvsTask.WorkingDirectory"/> is <see langword="null"/></para>
+                <para>-or-</para>
+                <para><see cref="P:NAnt.SourceControl.Tasks.AbstractCvsTask.Connection"/> is <see langword="null"/></para>
+                <para>-or-</para>
+                <para><see cref="P:NAnt.SourceControl.Tasks.AbstractCvsTask.Command"/> is <see langword="null"/></para>
+            </exception>
+        </member>
+        <member name="M:NAnt.SourceControl.Tasks.AbstractCvsTask.SetOptions(ICSharpCode.SharpCvsLib.Misc.WorkingDirectory)">
+            <summary>
+            Set the checkout/ update options.
+            </summary>
+            <param name="workingDirectory">Information about the cvs repository
+                and local sandbox.</param>
+        </member>
+        <member name="P:NAnt.SourceControl.Tasks.AbstractCvsTask.CvsRoot">
+            <summary>
+            Cvsroot Variable.
+            </summary>
+        </member>
+        <member name="P:NAnt.SourceControl.Tasks.AbstractCvsTask.Module">
+            <summary>
+            The module to perform an operation on.
+            </summary>
+            <value>The module to perform an operation on.</value>
+        </member>
+        <member name="P:NAnt.SourceControl.Tasks.AbstractCvsTask.Destination">
+            <summary>
+            Destination directory for the checked out / updated files.
+            </summary>
+            <value>
+            The destination directory for the checked out or updated files.
+            </value>
+        </member>
+        <member name="P:NAnt.SourceControl.Tasks.AbstractCvsTask.Password">
+            <summary>
+            The password for logging in to the CVS repository.
+            </summary>
+            <value>
+            The password for logging in to the CVS repository.
+            </value>
+        </member>
+        <member name="P:NAnt.SourceControl.Tasks.AbstractCvsTask.Options">
+            <summary>
+            A collection of options that can be used to modify cvs 
+            checkouts/updates.
+            </summary>
+            <remarks>
+            <para>
+            Valid options include:
+            </para>
+            <list type="table">
+                <listheader>
+                    <term>Name</term>
+                    <description>Description</description>
+                </listheader>
+                <item>
+                    <term>sticky-tag</term>
+                    <description>TO-DO</description>
+                </item>
+                <item>
+                    <term>override-directory</term>
+                    <description>TO-DO</description>
+                </item>
+            </list>
+            </remarks>
+        </member>
+        <member name="P:NAnt.SourceControl.Tasks.AbstractCvsTask.Root">
+            <summary>
+            Gets or sets the root of the CVS repository.
+            </summary>
+            <value>The root of the CVS repository.</value>
+        </member>
+        <member name="P:NAnt.SourceControl.Tasks.AbstractCvsTask.WorkingDirectory">
+            <summary>
+            Gets or sets the directory where checked out sources are placed.
+            </summary>
+            <value>the directory where checked out sources are placed.</value>
+        </member>
+        <member name="P:NAnt.SourceControl.Tasks.AbstractCvsTask.Connection">
+            <summary>
+            Gets or sets the connection used to connect to the CVS repository.
+            </summary>
+            <value>The connection used to connect to the CVS repository.</value>
+        </member>
+        <member name="P:NAnt.SourceControl.Tasks.AbstractCvsTask.Command">
+            <summary>
+            Gets or sets the <see cref="T:ICSharpCode.SharpCvsLib.Commands.ICommand"/> to execute.
+            </summary>
+            <value>The <see cref="T:ICSharpCode.SharpCvsLib.Commands.ICommand"/> to execute.</value>
+        </member>
+        <member name="T:NAnt.SourceControl.Tasks.CheckoutTask">
+            <summary>
+            Checks out a CVS module to the required directory.
+            </summary>
+            <example>
+              <para>Checkout NAnt.</para>
+              <code>
+                <![CDATA[
+            <cvs-checkout 
+                destination="c:\src\nant\" 
+                cvsroot=":pserver:anonymous@cvs.sourceforge.net:/cvsroot/nant" 
+                password="" 
+                module="nant" />
+                ]]>
+              </code>
+            </example>
+            
+            <example>
+              <para>Checkout NAnt Revision named: "your_favorite_revision_here"
+                to the folder "c:\src\nant\replacement_for_module_directory_name".</para>
+              <code>
+                <![CDATA[
+            <cvs-checkout 
+                destination="c:\src\nant\" 
+                cvsroot=":pserver:anonymous@cvs.sourceforge.net:/cvsroot/nant" 
+                password="" 
+                module="nant">
+                <options>
+                    <option name="sticky-tag" value="your_favorite_revision_here" />
+                    <option name="override-directory" value="replacement_for_module_directory_name" />
+                </options>
+            </cvs-checkout>
+                ]]>
+              </code>
+            </example>
+            
+            <example>
+              <para>Checkout NAnt Revision named: "your_favorite_revision_here"
+                to the folder "c:\src\nant\replacement_for_module_directory_name".</para>
+              <code>
+                <![CDATA[
+            <cvs-checkout 
+                destination="c:\src\nant\" 
+                cvsroot=":pserver:anonymous@cvs.sourceforge.net:/cvsroot/nant" 
+                password="" 
+                module="nant">
+                <options>
+                    <option name="-r" value="your_favorite_revision_here" />
+                    <option name="-d" value="replacement_for_module_directory_name" />
+                </options>
+            </cvs-checkout>
+                ]]>
+              </code>
+            </example>
+        </member>
+        <member name="M:NAnt.SourceControl.Tasks.CheckoutTask.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:NAnt.SourceControl.Tasks.CheckoutTask"/> class.
+            </summary>
+        </member>
+        <member name="M:NAnt.SourceControl.Tasks.CheckoutTask.CreateCommand">
+            <summary>
+            Creates the checkout command.
+            </summary>
+            <returns>An instance of the checkout command.</returns>
+        </member>
+        <member name="T:NAnt.SourceControl.Tasks.UpdateTask">
+            <summary>
+            Updates a CVS module in a local working directory.
+            </summary>
+            <example>
+              <para>Update nant.</para>
+              <code>
+                <![CDATA[
+            <cvs-update 
+                destination="c:\src\nant\" 
+                cvsroot=":pserver:anonymous@cvs.sourceforge.net:/cvsroot/nant" 
+                password="" 
+                module="nant" />
+                ]]>
+              </code>
+            </example>
+            <example>
+              <para>Update your nant revision named: "your_favorite_revision_here"
+                in the folder "c:\src\nant\replacement_for_module_directory_name".</para>
+              <code>
+                <![CDATA[
+            <cvs-update 
+                destination="c:\src\nant\" 
+                cvsroot=":pserver:anonymous@cvs.sourceforge.net:/cvsroot/nant" 
+                password="" 
+                module="nant">
+                <options>
+                    <option name="sticky-tag" value="your_favorite_revision_here" />
+                    <option name="override-directory" value="replacement_for_module_directory_name" />
+                </options>
+            </cvs-update>
+                ]]>
+              </code>
+            </example>
+            <example>
+              <para>Update your nant revision named: "your_favorite_revision_here"
+                in the folder "c:\src\nant\replacement_for_module_directory_name".</para>
+              <code>
+                <![CDATA[
+            <cvs-update 
+                destination="c:\src\nant\" 
+                cvsroot=":pserver:anonymous@cvs.sourceforge.net:/cvsroot/nant" 
+                password="" 
+                module="nant">
+                <options>
+                    <option name="-r" value="your_favorite_revision_here" />
+                    <option name="-d" value="replacement_for_module_directory_name" />
+                </options>
+            </cvs-update>
+                ]]>
+              </code>
+            </example>
+        </member>
+        <member name="M:NAnt.SourceControl.Tasks.UpdateTask.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:NAnt.SourceControl.Tasks.UpdateTask"/> 
+            class.
+            </summary>
+        </member>
+        <member name="M:NAnt.SourceControl.Tasks.UpdateTask.CreateCommand">
+            <summary>
+            Creates an instance of the update command.
+            </summary>
+            <returns>An instance of the update command.</returns>
+        </member>
+        <member name="M:NAnt.SourceControl.Tasks.UpdateTask.PopulateFolders(ICSharpCode.SharpCvsLib.Misc.WorkingDirectory)">
+            <summary>
+            Creates a list of files that need to be compared against the server 
+            and updated if necessary.
+            </summary>
+            <param name="workingDirectory">The directory to use in the comparison.</param>
+        </member>
+    </members>
+</doc>
