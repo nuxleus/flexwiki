@@ -236,6 +236,18 @@ namespace FlexWiki.Web
 			<form id='Form1' method='post'>
 			<textarea class='EditBox' onkeydown='if (document.all && event.keyCode == 9) {  event.returnValue= false; document.selection.createRange().text = String.fromCharCode(9)} ' rows='20' cols='50' name='Text1' onfocus='textArea_OnFocus(event)' onblur='textArea_OnBlur(event)'>");
 
+			string defaultContent = @"
+Check out the formatting tips on the right for help formatting and making links.
+
+Use the template below:
+
+----
+
+Summary: add a one or paragraph summary or description of what's discussed here;  put yours after 'Summary:'
+
+Add your wiki text here.
+
+";
 			string content = null;
 			if (TheFederation.TopicExists(TheTopic))
 				content = TheFederation.Read(TheTopic);
@@ -254,9 +266,9 @@ namespace FlexWiki.Web
 				{
 					templates.Add(topic);
 
-					if ((null == content ) && ("_templatedefault" == topic.Name.ToLower()))
+					if ("_templatedefault" == topic.Name.ToLower())
 					{
-						content = TheFederation.Read(topic);
+						defaultContent = TheFederation.Read(topic);
 					}
 				}
 			}
@@ -284,7 +296,7 @@ namespace FlexWiki.Web
 				{
 					string templateName = this.Request["template"];
 					AbsoluteTopicName topicName = new AbsoluteTopicName(templateName, currentContentBase.Namespace);
-					if ((null == content) && (true == currentContentBase.TopicExists(topicName)))
+					if ((content == null) && (true == currentContentBase.TopicExists(topicName)))
 					{
 						content = TheFederation.Read(topicName);
 					}
@@ -293,18 +305,9 @@ namespace FlexWiki.Web
 			#endregion
 
 			if (content == null)
-				content = @"
-Check out the formatting tips on the right for help formatting and making links.
-
-Use the template below:
-
-----
-
-Summary: add a one or paragraph summary or description of what's discussed here;  put yours after 'Summary:'
-
-Add your wiki text here.
-
-";
+			{
+				content = defaultContent;
+			}
 
 			Response.Write(Formatter.EscapeHTML(content));
 			Response.Write(@"</textarea>");
