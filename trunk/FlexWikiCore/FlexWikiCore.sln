@@ -137,8 +137,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
 		Download NUnit.url = Download NUnit.url
-		FlexWiki.UnitTests.nunit = FlexWiki.UnitTests.nunit
-		LocalProjectItems.vsdir = LocalProjectItems.vsdir
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
