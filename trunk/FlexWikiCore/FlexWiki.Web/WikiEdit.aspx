@@ -39,7 +39,9 @@ function preview()
 
 function SetUserName()
 {
-	document.all("UserSuppliedName").value = document.all("UserNameEntryField").value;
+	var r = document.getElementById("UserNameEntryField");
+	if (r != null)
+		document.getElementById("UserSuppliedName").value = r.value;
 }
 
 function Save()
