@@ -485,9 +485,13 @@
     </exec>
 
     <!-- Under IIS5 -->
+    <!-- The automated build runs under W2K3, and so doesn't need this step. 
+          Plus, it was breaking the build, since the anonymous account
+          is named something else. -->
     <exec program="xcacls.exe"
 	      basedir="${basedir}/tools/reskit" 
-	      workingdir="${installdir}">
+	      workingdir="${installdir}"
+	      unless="${automated.build}">
       <arg value="." />
       <arg value="/E" />
       <arg value="/G" />
