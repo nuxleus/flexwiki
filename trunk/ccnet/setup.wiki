@@ -21,4 +21,5 @@ Here's the list of what I had to do to get the CCNET server working:
 	* Installed the build service with @sc create ccnet-flexwiki binPath= C:\builds\ccnet\server\ccservice.exe start= auto@
 	* Used the Control Panel to change the service to run as fwbuild. 
 	* Installed MailEnable and configured it to allow SMTP relaying for localhost
+	* Created a virtual directory called FlexWikiCoreTestBuild and pointed it to C:\builds\ccnet\server\flexwikicore\build\install, even if that directory doesn't exist yet
 	* Started the service with "net start ccnet-flexwiki"
