@@ -786,7 +786,7 @@ namespace FlexWiki
 		}
 
 
-		/// Delete a content base (kills everything inside recursively)
+		/// Delete a content base (kills all .wiki and .awiki files; removed the dir if empty)
 		/// </summary>
 		override public void Delete()
 		{
@@ -796,7 +796,12 @@ namespace FlexWiki
 					update.RecordDeletedTopic(topic);
 
 			DirectoryInfo dir = new DirectoryInfo(Root);
-			dir.Delete(true);
+			foreach (FileInfo each in dir.GetFiles("*.wiki"))
+				each.Delete();
+			foreach (FileInfo each in dir.GetFiles("*.awiki"))
+				each.Delete();
+			if (dir.GetFiles().Length == 0)
+				dir.Delete(true);
 
 			OnFederationUpdated(new FederationUpdateEventArgs(update));
 		}

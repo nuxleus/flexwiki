@@ -91,7 +91,8 @@ namespace FlexWiki.UnitTests
 
 		protected FileSystemStore CreateFileSystemStore(string ns)
 		{
-			string path = "\\" + ns;	
+			string currentDir = System.IO.Directory.GetCurrentDirectory();
+			string path = currentDir + "\\" + ns;
 			FileSystemStore store = new FileSystemStore(TheFederation, ns, path);
 			TheFederation.RegisterNamespace(store);
 			return store;
