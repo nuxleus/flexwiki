@@ -89,16 +89,15 @@ namespace FlexWiki
 		{
 			get
 			{
-				VisitorEvent previousEvent = new VisitorEvent(new AbsoluteTopicName(""),"",System.DateTime.Now);
 				ArrayList answer = new ArrayList();
 				IEnumerable events = (IEnumerable)(System.Web.HttpContext.Current.Session["VisitorEvents"]);
+				Set seen = new Set();
 				foreach (VisitorEvent currentEvent in events)
 				{
-					if ( previousEvent.Name != currentEvent.Name )
-					{
-						previousEvent = currentEvent;
-						answer.Add(currentEvent);
-					}
+					if (seen.Contains(currentEvent.Topic))
+						continue;
+					seen.Add(currentEvent.Topic);
+					answer.Add(currentEvent);
 				}
 				return answer;
 			}

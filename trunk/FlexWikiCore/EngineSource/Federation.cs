@@ -315,10 +315,25 @@ namespace FlexWiki
 		{
 			return (PerformanceCounter)(_PerformanceCounterHash[name]);
 		}
+
+		static bool PerformanceCounterCategoryExists
+		{
+			get
+			{
+				try
+				{
+					return PerformanceCounterCategory.Exists(PerformanceCounterCategoryName);
+				}
+				catch (Exception)
+				{
+					return false;
+				}
+			}
+		}
 			
 		public static bool CreatePerformanceCounters()
 		{        
-			if ( !PerformanceCounterCategory.Exists(PerformanceCounterCategoryName) ) 
+			if (!PerformanceCounterCategoryExists)
 			{
 				CounterCreationDataCollection CCDC = new CounterCreationDataCollection();
 
@@ -357,7 +372,7 @@ namespace FlexWiki
 		private static void SetupPerformanceCounters()
 		{
 			// If the counters exist, use them
-			if (!PerformanceCounterCategory.Exists(PerformanceCounterCategoryName)) 
+			if (!PerformanceCounterCategoryExists) 
 				return;
 			SetupCounter(PerformanceCounterNames.TopicReads);
 			SetupCounter(PerformanceCounterNames.TopicWrite);
