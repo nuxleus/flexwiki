@@ -23,8 +23,7 @@ private void Page_Load(object sender, System.EventArgs e)
 
         System.Text.StringBuilder builder = new System.Text.StringBuilder(); 
 
-        builder.Append("<div class='modifications-sectionheader'>Pending
-a successful build</div>");
+        builder.Append("<div class='modifications-sectionheader'>Pending a successful build</div>");
 
         bool isEven = true; 
         foreach (string logfile in logfiles)
