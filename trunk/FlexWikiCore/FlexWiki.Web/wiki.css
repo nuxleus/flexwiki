@@ -956,13 +956,13 @@ a.Anchor, a.Anchor:hover, a.Anchor:active
 .PropertyName
 {
 	font-weight: bold;
-	font-size: small;
+	font-size: .82em;
 	line-height: 1.2em;
 }
 
 .PropertyValue
 {
-	font-size: small;
+	font-size: .82em;
 	color: #cc6600;
 	background-color: white;
 }
@@ -1029,7 +1029,8 @@ td {
 
 p
 {
-	font-size: small;
+	font-size: 0.76em;
+	line-height: 1.35em;
 	font-family: Arial, Sans-Serif;
 }
 a {
