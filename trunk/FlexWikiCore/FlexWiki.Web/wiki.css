@@ -731,13 +731,13 @@
 .PropertyName
 {
 	font-weight: bold;
-	font-size: .8em;
+	font-size: .82em;
 	line-height: 1.2em;
 }
 
 .PropertyValue
 {
-	font-size: .8em;
+	font-size: .82em;
 	color: #cc6600;
 	background-color: white;
 }
@@ -759,17 +759,17 @@
 	border-collapse: collapse;
 }
 
-.CellHighlighted
+.TableCellHighlighted
 {
 	background-color: #e0e0e0;
-	font-size: .8em;
+	font-size: .72em;
 	border-collapse: collapse;
 	border: #909090 1px solid;
 }
 
 .TableCell
 {
-	font-size: .8em;
+	font-size: .72em;
 	border-collapse: collapse;
 	border: #909090 1px solid;
 }
@@ -777,12 +777,12 @@
 .TableCellHighlightedNoBorder
 {
 	background-color: #e0e0e0;
-	font-size: .8em;
+	font-size: .72em;
 }
 
 .TableCellNoBorder
 {
-	font-size: .8em;
+	font-size: .72em;
 }
 
 
@@ -826,13 +826,11 @@ a.create:hover {
    text-decoration:underline;
    border-bottom: 0px;
 }
-ol ol {
-   list-style: lower-alpha;
-}
 pre {
    font-family: lucida console;
    margin-left: .35in;
-   line-height: 1.25em;
+   line-height: 1.2em;
+   font-size: .7em;
    background: #f7f7f7;
    border: 3px double #999999
 }
@@ -954,5 +952,19 @@ li
    padding-top: 2px;
    padding-bottom: 2px;
    margin-bottom: 1px;
+}
+
+li li
+{
+   margin-left: .05in;
+   line-height: 1.2em;
+   margin-top: 1px;
+   font-size: 1em;
+   padding-top: 2px;
+   padding-bottom: 2px;
+   margin-bottom: 1px;
+}
+ol ol {
+   list-style: lower-alpha;
 }
 
