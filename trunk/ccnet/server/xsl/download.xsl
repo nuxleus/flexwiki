@@ -31,7 +31,13 @@
         </tr>
         <tr>
           <td>
-            Download binaries and source <a href="{$projectURL}/download/{$vermajor}.{$verminor}.{$verbuild}.{$verrevision}/">here</a>
+	    <p><b>NOTE!</b> This build is an interim build meant for FlexWiki developer use only. It is unsupported, and may 
+            not even work at all. Any problems you experience, you will be on your own to solve.</p>
+            <p>Supported builds (binaries and source) are available on the <a href="http://sourceforge.net/projects/flexwiki/">
+            FlexWiki project site</a>.</p>
+            <p>
+            Download binaries and source for interim build <xsl:value-of select="concat($verbuild, ' ')" />
+            <a href="{$projectURL}/download/{$vermajor}.{$verminor}.{$verbuild}.{$verrevision}/">here</a></p>
           </td>
         </tr>
       </table>
