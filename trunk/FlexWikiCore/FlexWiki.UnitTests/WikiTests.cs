@@ -36,7 +36,32 @@ namespace FlexWiki.UnitTests
         byte[] buf = new byte[bufsize]; 
         int read = 0; 
 
-        Stream output = File.Open(path, FileMode.Create, FileAccess.Write); 
+        // Having weird intermittant problems trying to write the file to disk. Looks
+        // like it might be a race condition with someone else trying to close the file. 
+        // So if we can't open the file, we sleep and try again a few times. 
+        Stream output = null;
+        int errorCount = 0; 
+        bool done = false;
+        while (!done)
+        {
+          try
+          {
+            output = File.Open(path, FileMode.Create, FileAccess.Write); 
+            done = true; 
+          }
+          catch (Exception e)
+          {
+            ++errorCount; 
+            if (errorCount > 5)
+            {
+              throw e; 
+            }
+
+            System.Threading.Thread.Sleep(250);
+          }
+
+        }
+
         try
         {
           while ((read = input.Read(buf, 0, bufsize)) > 0)

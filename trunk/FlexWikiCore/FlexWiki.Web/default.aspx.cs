@@ -90,9 +90,11 @@ namespace FlexWiki.Web
 				string redir = TheFederation.GetTopicProperty(GetTopicName(), "Redirect");
 				if (redir != "")
 				{
-					string URI = null;
-					if (IsAbsoluteURL(redir))
-						URI = redir;
+					UriBuilder URI = null;
+					if (IsAbsoluteURL(redir)) 
+					{
+						URI = new UriBuilder(redir);
+					}
 					else
 					{
 						// Might be a topic
@@ -102,8 +104,12 @@ namespace FlexWiki.Web
 						{
 							RelativeTopicName rel = new RelativeTopicName(trimmed);
 							IList all = TheFederation.ContentBaseForTopic(GetTopicName()).AllAbsoluteTopicNamesThatExist(rel);
-							if (all.Count == 1)
-								URI = lm.LinkToTopic((TopicName)(all[0]));
+
+							if (all.Count == 1) 
+							{
+								URI = new UriBuilder(lm.LinkToTopic((TopicName)(all[0])));
+								URI.Query = Request.QueryString.ToString();
+							}
 							else
 							{
 								if (all.Count == 0)
@@ -118,7 +124,7 @@ namespace FlexWiki.Web
 						if (Request.QueryString["DelayRedirect"] == "1")
 							Response.Write(@"<meta http-equiv='refresh' content='10;URL=" + URI + "'>\n");
 						else
-							Response.Redirect(URI);
+							Response.Redirect(URI.Uri.ToString());
 					}
 				}
 
