@@ -1,0 +1,6 @@
+! 2004-07-22
+!! Checkin 1
+	* Added ability to override build numbers for use from CCNet
+	* Changed build to produce both full and upgrade zipfiles
+	* Removed background watermark from wiki.css - it had an absolute path in it
+	* Updated and added .cvsignore files
