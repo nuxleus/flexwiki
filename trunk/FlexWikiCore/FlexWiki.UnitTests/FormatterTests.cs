@@ -92,25 +92,25 @@ namespace FlexWiki.UnitTests
 		LinkMaker _lm;
 		string user = "joe";
 
-    // At runtime we dump the contents of the embedded resources to a directory so 
-    // we don't have to rely on an Internet connection or a hardcoded path to 
-    // retrieve the XML when testing behaviors that pull it in. These variables hold
-    // the paths to the XML that we write to disk at Init time. 
-    string testRssXmlPath; 
-    string testRssXslPath; 
-    string meerkatRssPath; 
+		// At runtime we dump the contents of the embedded resources to a directory so 
+		// we don't have to rely on an Internet connection or a hardcoded path to 
+		// retrieve the XML when testing behaviors that pull it in. These variables hold
+		// the paths to the XML that we write to disk at Init time. 
+		string testRssXmlPath; 
+		string testRssXslPath; 
+		string meerkatRssPath; 
 
 		[SetUp] public void Init()
 		{
-      // Dump the contents of the embedded resources to a file so we can read them 
-      // in during the tests. 
-      meerkatRssPath = Path.GetFullPath("meerkat.rss.xml"); 
-      testRssXmlPath = Path.GetFullPath("rsstest.xml"); 
-      testRssXslPath = Path.GetFullPath("rsstest.xsl"); 
-      Assembly a = Assembly.GetExecutingAssembly(); 
-      WriteResourceToFile(a, "FlexWiki.UnitTests.TestContent.meerkat.rss.xml", meerkatRssPath); 
-      WriteResourceToFile(a, "FlexWiki.UnitTests.TestContent.rsstest.xml", testRssXmlPath); 
-      WriteResourceToFile(a, "FlexWiki.UnitTests.TestContent.rsstest.xsl", testRssXslPath); 
+			// Dump the contents of the embedded resources to a file so we can read them 
+			// in during the tests. 
+			meerkatRssPath = Path.GetFullPath("meerkat.rss.xml"); 
+			testRssXmlPath = Path.GetFullPath("rsstest.xml"); 
+			testRssXslPath = Path.GetFullPath("rsstest.xsl"); 
+			Assembly a = Assembly.GetExecutingAssembly(); 
+			WriteResourceToFile(a, "FlexWiki.UnitTests.TestContent.meerkat.rss.xml", meerkatRssPath); 
+			WriteResourceToFile(a, "FlexWiki.UnitTests.TestContent.rsstest.xml", testRssXmlPath); 
+			WriteResourceToFile(a, "FlexWiki.UnitTests.TestContent.rsstest.xsl", testRssXslPath); 
 
 			_lm = new LinkMaker(_base);
 			TheFederation = new Federation(OutputFormat.HTML, _lm);
@@ -331,13 +331,13 @@ lenSpanning=@@topics.TopicWithBehaviorProperties.FaceSpanningLines(""parsing is 
 ");
 		}
 
-//  commented out - david ornstein; 2/24/2004 need to figure out a better way to make this work that doesn't cause massive strikethrough bug
-//		[Test] public void FormattedLinkTests()
-//		{
-//			FormatTestContains(
-//				@"''BigBox''",
-//				@"href=""" + _lm.LinkToTopic(_cb.TopicNameFor("BigBox")) + @""">BigBox</a>");
-//		}
+		//  commented out - david ornstein; 2/24/2004 need to figure out a better way to make this work that doesn't cause massive strikethrough bug
+		//		[Test] public void FormattedLinkTests()
+		//		{
+		//			FormatTestContains(
+		//				@"''BigBox''",
+		//				@"href=""" + _lm.LinkToTopic(_cb.TopicNameFor("BigBox")) + @""">BigBox</a>");
+		//		}
 
 
 		[Test] public void SimpleLinkTests()
@@ -503,6 +503,60 @@ Let's test one that comes at the end of a sentence, such as EOSTest@baf.",
 				@"@baf=http://www.baf.com/$$$
 Test for case-insensitivity, such as CAPS@BAF, or some such nonsense.",
 				@"<p>Test for case-insensitivity, such as <a class=ExternalLink title=""External link to BAF"" target=""ExternalLinks"" href=""http://www.baf.com/CAPS"">CAPS</a>, or some such nonsense.</p>
+");
+		}
+
+		[Test] public void UnusualCharactersInLinkTest()
+		{
+			FormatTest(
+				@"some leading text http://www.lemonde.fr/web/article/0,1-0@2-3212,36-358279,0.htm some trailing text",
+				@"<p>some leading text <a href=""http://www.lemonde.fr/web/article/0,1-0@2-3212,36-358279,0.htm"">http://www.lemonde.fr/web/article/0,1-0@2-3212,36-358279,0.htm</a> some trailing text</p>
+");
+		}
+
+		[Test] public void HyphensInImageLinkTest()
+		{
+			FormatTest(
+				@"some leading text http://msdn.microsoft.com/library/en-us/dnpag/html/ch01---engineering-for-perf.gif some trailing text",
+				@"<p>some leading text <img src=""http://msdn.microsoft.com/library/en-us/dnpag/html/ch01---engineering-for-perf.gif""> some trailing text</p>
+");
+		}
+
+		[Test] public void TextileHyphesnInLinkTest()
+		{
+			FormatTest(
+				@"some leading text ""textile"":http://www.amazon.com/exec/obidos/tg/detail/-/0735617228/qid=1080277573/sr=8-1/ref=pd_ka_1/102-9825269-6457731?v=glance&s=books&n=50784 some trailing text",
+				@"<p>some leading text <a href=""http://www.amazon.com/exec/obidos/tg/detail/-/0735617228/qid=1080277573/sr=8-1/ref=pd_ka_1/102-9825269-6457731?v=glance&s=books&n=50784"">textile</a> some trailing text</p>
+");
+		}
+
+		[Test] public void DollarInLinkTest()
+		{
+			FormatTest(
+				@"""Main directory"":file://servername/umuff$/folder%20name/file.txt
+file://servername/umuff$/folder%20name/file.txt",
+				@"<p><a href=""file://servername/umuff$/folder%20name/file.txt"">Main directory</a></p>
+<p><a href=""file://servername/umuff$/folder%20name/file.txt"">file://servername/umuff$/folder%20name/file.txt</a></p>
+");
+		}
+
+		[Test] public void TildeInLinkTest()
+		{
+			FormatTest(
+				@"""Main directory"":file://servername/umuff~/folder%20name/file.txt
+file://servername/umuff~/folder%20name/file.txt",
+				@"<p><a href=""file://servername/umuff~/folder%20name/file.txt"">Main directory</a></p>
+<p><a href=""file://servername/umuff~/folder%20name/file.txt"">file://servername/umuff~/folder%20name/file.txt</a></p>
+");
+		}
+
+		[Test] public void Hash126InLink()
+		{
+			FormatTest(
+				@"""Main directory"":file://servername/umuff&#126;/folder%20name/file.txt
+file://servername/umuff&#126;/folder%20name/file.txt",
+				@"<p><a href=""file://servername/umuff&#126;/folder%20name/file.txt"">Main directory</a></p>
+<p><a href=""file://servername/umuff&#126;/folder%20name/file.txt"">file://servername/umuff&#126;/folder%20name/file.txt</a></p>
 ");
 		}
 
@@ -713,9 +767,9 @@ And the text in the parens and brackets should be code formatted:
 
 		[Test] public void XmlTransformBehaviorTwoParamTest() 
 		{
-      // Need to escape all the backslashes in the path
-      string xmlPath = testRssXmlPath.Replace(@"\", @"\\");
-      string xslPath = testRssXslPath.Replace(@"\", @"\\");
+			// Need to escape all the backslashes in the path
+			string xmlPath = testRssXmlPath.Replace(@"\", @"\\");
+			string xslPath = testRssXslPath.Replace(@"\", @"\\");
 
 			FormatTest("@@XmlTransform(\"" + xmlPath + "\", \"" + xslPath + "\")@@",
 				"<p><h1>Weblogs @ ASP.NET</h1>\n\n<table cellpadding='2' cellspacing='1' class='TableClass'>\n<tr>\n<td  class='TableCell'><strong>Published Date</strong></td>\n<td  class='TableCell'><strong>Title</strong></td>\n</tr>\n<tr>\n<td  class='TableCell'>Wed, 07 Jan 2004 05:45:00 GMT</td>\n<td  class='TableCell'><a href=\"http://weblogs.asp.net/aconrad/archive/2004/01/06/48205.aspx\">Fast Chicken</a></td>\n</tr>\n<tr>\n<td  class='TableCell'>Wed, 07 Jan 2004 03:36:00 GMT</td>\n<td  class='TableCell'><a href=\"http://weblogs.asp.net/CSchittko/archive/2004/01/06/48178.aspx\">Are You Linked In?</a></td>\n</tr>\n<tr>\n<td  class='TableCell'>Wed, 07 Jan 2004 03:27:00 GMT</td>\n<td  class='TableCell'><a href=\"http://weblogs.asp.net/francip/archive/2004/01/06/48172.aspx\">Whidbey configuration APIs</a></td>\n</tr>\n</table></p>\n");
@@ -726,13 +780,13 @@ And the text in the parens and brackets should be code formatted:
 			FormatTestContains("@@XmlTransform(\"file://noWayThisExists\", \"Alternative text\")@@",
 				"Failed to load XML parameter");
 		}
-    [Ignore("This test fails on the build machine. Not sure why, but it's blocking deployment of CruiseControl, so I'll come back to it later. --CraigAndera")]
+		[Ignore("This test fails on the build machine. Not sure why, but it's blocking deployment of CruiseControl, so I'll come back to it later. --CraigAndera")]
 		[Test] public void XmlTransformBehaviorXslParamNotFoundTest() 
 		{
-      // Go against just the filename: the full path screws up the build machine
-      string xmlPath = Path.GetFileName(meerkatRssPath);
+			// Go against just the filename: the full path screws up the build machine
+			string xmlPath = Path.GetFileName(meerkatRssPath);
 
-      FormatTestContains("@@XmlTransform(\"" + xmlPath + "\", \"file://noWayThisExists\")@@",
+			FormatTestContains("@@XmlTransform(\"" + xmlPath + "\", \"file://noWayThisExists\")@@",
 				"Failed to load XSL parameter");
 		}
 
@@ -1083,7 +1137,7 @@ And the text in the parens and brackets should be code formatted:
 		[Test] public void PreFormattedBlockTests()
 		{
 			FormatTest(
-@"
+				@"
 {@KeyWord
 Some pre
 forma-
@@ -1104,7 +1158,7 @@ Normal text here
  Regular preformated text
 Normal again
 ",
-@"
+				@"
 
 <pre>
 Some pre
@@ -1128,7 +1182,7 @@ No key case
 </pre>
 <p>Normal again</p>
 ");
-        }
+		}
 
 		[Test] public void ColorAndTextSizeTests()
 		{

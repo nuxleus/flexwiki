@@ -265,7 +265,12 @@ namespace FlexWiki.Web
 		
 		protected void ResetFederation()
 		{
-			TheFederation = null;
+			SetFederation(null);
+		}
+
+		private void SetFederation(Federation fed)
+		{
+			Application[FederationCacheKey] = fed;
 		}
 
 		protected Federation TheFederation
@@ -273,10 +278,6 @@ namespace FlexWiki.Web
 			get
 			{
 				return (Federation)(Application[FederationCacheKey]);
-			}
-			set
-			{
-				Application[FederationCacheKey] = value;
 			}
 		}
 
@@ -323,9 +324,10 @@ namespace FlexWiki.Web
 			if (federationNamespaceMap == null)
 				throw new Exception("No namespace map file defined.  Please set the FederationNamespaceMapFile key in <appSettings> in web.config to point to a namespace map file.");
 			string fsPath = MapPath(federationNamespaceMap);
-			TheFederation = new Federation(fsPath, OutputFormat.HTML, TheLinkMaker);
-			// Give the federation a cache to work with 
-			TheFederation.EnableCaching(CacheManager);
+			Federation fed = new Federation(fsPath, OutputFormat.HTML, TheLinkMaker);
+			fed.EnableCaching(CacheManager); // Give the federation a cache to work with 
+			SetFederation(fed);
+			
 			// Setup event monitoring
 			SetupUpdateMonitoring();
 		}

@@ -878,6 +878,7 @@ namespace FlexWiki
 				Borders = config.Borders;
 				AboutWikiString = config.AboutWikiString;
 				WikiTalkVersion = config.WikiTalkVersion;
+				NoFollowExternalHyperlinks = config.NoFollowExternalHyperlinks != 0;
 				foreach (string link in config.BlacklistedExternalLinks)
 					AddBlacklistedExternalLinkPrefix(link);
 				DefaultDirectoryForNewNamespaces = config.DefaultDirectoryForNewNamespaces;
@@ -891,18 +892,18 @@ namespace FlexWiki
 			}
 		}
 
-		bool _ObfuscateExternalHyperlinks = false;
-		public bool ObfuscateExternalHyperlinks
+		bool _NoFollowExternalHyperlinks = false;
+		public bool NoFollowExternalHyperlinks
 		{
 			get
 			{
-				return _ObfuscateExternalHyperlinks;
+				return _NoFollowExternalHyperlinks;
 			}
 			set
 			{
-				if (value == _ObfuscateExternalHyperlinks)
+				if (value == _NoFollowExternalHyperlinks)
 					return;
-				_ObfuscateExternalHyperlinks = value;
+				_NoFollowExternalHyperlinks = value;
 				RecordFederationPropertiesChanged();
 			}
 		}

@@ -10,6 +10,7 @@
 // You must not remove this notice, or any other, from this software.
 #endregion
 
+
 using System;
 
 namespace FlexWiki
@@ -58,6 +59,32 @@ namespace FlexWiki
 		{
 			return new WikiSequence(ToString());
 		}
+
+		#region Instance methods for TimeSpan construction.
+		[ExposedMethod(ExposedMethodFlags.NeedContext, "Answer an instance of TimeSpan")]
+		public static TimeSpan Instance(ExecutionContext ctx, [ExposedParameter(true)] int days, 
+			[ExposedParameter(true)] int hours, [ExposedParameter(true)] int minutes, 
+			[ExposedParameter(true)] int seconds, [ExposedParameter(true)]int milliseconds)
+		{
+			if (false == ctx.TopFrame.WasParameterSupplied(1))
+				days = 0;
+			if (false == ctx.TopFrame.WasParameterSupplied(2))
+				hours = 0;
+			if (false == ctx.TopFrame.WasParameterSupplied(3))
+				minutes = 0;
+			if (false == ctx.TopFrame.WasParameterSupplied(4))
+				seconds = 0;
+			if (false == ctx.TopFrame.WasParameterSupplied(5))
+				milliseconds = 0;
+
+			return Instance2(days, hours, minutes, seconds, milliseconds);
+		}
+
+		public static TimeSpan Instance2(int days, int hours, int minutes, int seconds, int milliseconds)
+		{
+			return new TimeSpan(days, hours, minutes, seconds, milliseconds);
+		}
+		#endregion
 
 		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the number of days represented by this TimeSpan")]
 		public int Days

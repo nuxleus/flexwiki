@@ -380,6 +380,16 @@ Add your wiki text here.
 				LogBannedAttempt();
 			}
 
+			if (TheFederation.NoFollowExternalHyperlinks)
+			{
+				OpenPane(Response.Output, "External Hyperlinks");
+				Response.Write("<div class='BannedChange'>Your change can not be saved.</div>");
+				Response.Write("The changes you are trying to save include banned URLs.");
+				ClosePane(Response.Output);
+				LogBannedAttempt();
+			}
+
+
 			///////////////////////////////
 			if (IsWritable)
 			{

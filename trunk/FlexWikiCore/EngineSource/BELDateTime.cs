@@ -45,6 +45,30 @@ namespace FlexWiki
 			return new WikiSequence(ToString());
 		}
 
+		#region Static Instance methods for DateTime construction.
+		[ExposedMethod(ExposedMethodFlags.NeedContext, "Answer an instance of a DateTime")]
+		public static DateTime Instance(ExecutionContext ctx, int year, int month, int day, 
+			[ExposedParameter(true)] int hour, [ExposedParameter(true)] int minute, 
+			[ExposedParameter(true)] int second, [ExposedParameter(true)] int millisecond)
+		{
+			if (false == ctx.TopFrame.WasParameterSupplied(4))
+				hour = 0;
+			if (false == ctx.TopFrame.WasParameterSupplied(5))
+				minute = 0;
+			if (false == ctx.TopFrame.WasParameterSupplied(6))
+				second = 0;
+			if (false == ctx.TopFrame.WasParameterSupplied(7))
+				millisecond = 0;
+			return Instance2(year, month, day, hour, minute, second, millisecond);
+		}
+
+		public static DateTime Instance2(int year, int month, int day, 
+			int hour, int minute, int second, int millisecond)
+		{
+			return new DateTime(year, month, day, hour, minute, second, millisecond);
+		}
+		#endregion
+
 		[ExposedMethod(ExposedMethodFlags.CachePolicyForever, "Answer the earliest date that can be represented")]
 		public static DateTime MinValue
 		{
@@ -334,6 +358,30 @@ namespace FlexWiki
 			return this.DateTime.GetHashCode();
 		}
 
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the number of days in the specified month of the specified year")]
+		public static int DaysInMonth(int year, int month)
+		{
+			return DateTime.DaysInMonth(year, month);
+		}
 
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the number of calendar weeks in the specified month of the specified year including incomplete weeks")]
+		public static int WeeksInMonth(int year, int month, int firstDayOfWeek)
+		{
+			int numberOfWeeks = 1;
+			DateTime firstOfMonth = new DateTime(year, month, 1);
+			int daysInMonth = DateTime.DaysInMonth(year, month);
+			//Calculate the number of days in the first calendar week.
+			int daysInFirstWeek = (7 - ((int)firstOfMonth.DayOfWeek - firstDayOfWeek)) % 7;
+			if (0 == daysInFirstWeek)
+				daysInFirstWeek = 7;
+			int remainingDays = 0;
+			int wholeWeeks = Math.DivRem(daysInMonth - daysInFirstWeek, 7, out remainingDays);
+			numberOfWeeks += wholeWeeks;
+			if (remainingDays > 0)
+			{
+				numberOfWeeks++;
+			}
+			return numberOfWeeks;
+		}
 	}
 }

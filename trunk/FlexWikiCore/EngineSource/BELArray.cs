@@ -160,7 +160,7 @@ namespace FlexWiki
 			{
 				throw e.InnerException;
 			}
-
+	
 			return new BELArray(answer);
 		}
 
@@ -188,6 +188,26 @@ namespace FlexWiki
 			{
 				return Count == 0;
 			}
+		}
+
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the unique elements in this array")]
+		public ArrayList Unique()
+		{
+			Hashtable hashTable = new Hashtable();
+			ArrayList uniqueElements = new ArrayList();
+			foreach (object element in Array)
+			{
+				try
+				{
+					hashTable.Add(element.GetHashCode(), element);
+					uniqueElements.Add(element);
+				}
+				catch (ArgumentException)
+				{
+					// This is expected when a non-unique element is added for the second or subsequent times.
+				}
+			}
+			return uniqueElements;
 		}
 
 		class DefaultSorter : IComparer

@@ -62,6 +62,30 @@ namespace FlexWiki
 			return Value.ToString();
 		}
 
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the addition of this integer to the supplied integer")]
+		public int Add(int val)
+		{
+			return Value + val;
+		}
+
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the subtract of the supplied integer from this integer")]
+		public int Subtract(int val)
+		{
+			return Value - val;
+		}
+
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the integer division of this integer by the supplied integer")]
+		public int Divide(int val)
+		{
+			return Value / val;
+		}
+
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the multiplication of this integer with the supplied integer")]
+		public int Multiply(int val)
+		{
+			return Value * val;
+		}
+
 
 		#region IWikiSequenceProducer Members
 

@@ -109,9 +109,33 @@ namespace FlexWiki.BuildVerificationTests
         }
       }
 
-      return federation; 
+	
+    	RestartWebApplication();
+
+    	return federation; 
 
     }
+
+  	// Touch the web.config file to force the web app to restart and get back to a known state
+	 private static void RestartWebApplication()
+  	{
+  		StreamReader i = File.OpenText(WebConfigPath);
+  		string text = i.ReadToEnd();
+  		i.Close();
+  		StreamWriter o = new StreamWriter(WebConfigPath, false);
+  		o.Write(text);
+  		o.Close();
+  	}
+
+  	internal static string WebConfigPath
+  {
+	  get
+	  {
+		  string installationPath = ConfigurationSettings.AppSettings["InstallationPath"];
+		  installationPath = Path.GetFullPath(installationPath);        
+		  return Path.Combine(installationPath, "web.config");
+	  }
+  }
 
     internal static string ReadConfigFilePath()
     {

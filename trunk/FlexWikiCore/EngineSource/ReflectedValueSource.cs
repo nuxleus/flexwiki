@@ -165,6 +165,8 @@ namespace FlexWiki
 				return int.MinValue;
 			if (pi.ParameterType == typeof(DateTime))
 				return DateTime.MinValue;
+			if (pi.ParameterType == typeof(bool))
+				return false;
 
 			throw new ExecutionException("Unsupported type (" + pi.ParameterType.FullName + ") for optional parameter " + pi.Name + " in method " + pi.Member.Name);
 		}

@@ -216,6 +216,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "WikiTalkTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "WikiTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

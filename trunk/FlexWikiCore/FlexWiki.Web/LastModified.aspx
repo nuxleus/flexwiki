@@ -1,6 +1,6 @@
 <%@ Page language="c#" Codebehind="LastModified.aspx.cs" AutoEventWireup="false" Inherits="FlexWiki.Web.LastModified" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >
-<html>
+<HTML>
 	<HEAD>
 		<title>Last Modified</title>
 		<meta name="GENERATOR" Content="Microsoft Visual Studio .NET 7.1">
@@ -13,4 +13,4 @@
 	<body class='Dialog'>
 		<% DoSearch(); %>
 	</body>
-</html>
+</HTML>

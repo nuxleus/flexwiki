@@ -31,7 +31,6 @@ namespace FlexWiki.Web
 	{
 		private void Page_Load(object sender, System.EventArgs e)
 		{
-			// Put user code to initialize the page here
 		}
 
 		#region Web Form Designer generated code

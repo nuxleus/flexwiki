@@ -1180,15 +1180,15 @@ namespace FlexWiki.Formatting
 			string answer = line;
 			answer = ConvertEmoticons(answer);	// needs to come before textile because of precedence in overlappign formatting rules
 			answer = SentencePairedDelimiters(answer);
+			answer = LinkHyperLinks(answer);
 			answer = TextileFormat(answer);
             answer = ColorsEtcFormat(answer);
-            answer = LinkHyperLinks(answer);
 			answer = LinkWikiNames(answer);
 			answer = ProcessWikiLinks(answer);
 			return answer;
 		}
 
-		static Regex externalWikiRef = new Regex(@"(?<param>[\w\.\-]+)@(?<behavior>[a-zA-Z0-9\-]+)(((\.[a-zA-Z0-9\-]{1,})*(\.[a-zA-Z]{2,3}){1,2})|(\.*?\b*?))");
+		static Regex externalWikiRef = new Regex(@"(\s)*(?<param>[\w\d\.]+)@(?<behavior>[\w\d]+([\w\d]{1,})+)([\w\d\.])*(\s)*");
 
 		public string ErrorMessage(string title, string body)
 		{
@@ -1200,10 +1200,15 @@ namespace FlexWiki.Formatting
 
 		private string externalWikiRefMatch(Match match)
 		{
+			// match.Value may contain some additional leading and/or trailing white space that we don't want to lose.
 			string result = match.Value;
-			if(!emailAddress.IsMatch(match.Value))
+			if (!emailAddress.IsMatch(result))
 			{
-				result = "@@InterWiki(\"$behavior\", \"$param\", \"$param\")@@";
+				// Build a string containing the actual match.
+				string noSpace = match.Groups["param"].Value + "@" + match.Groups["behavior"].Value;
+				// Replace that in the whole match with the external wiki ref macro.
+				result = result.Replace(noSpace, "@@InterWiki(\"$behavior\", \"$param\", \"$param\")@@");
+				// Replace the parameters with the regex matches.
 				result = result.Replace("$behavior", match.Groups["behavior"].Value).Replace("$param", match.Groups["param"].Value);
 			}
 			return result;
@@ -1397,7 +1402,9 @@ namespace FlexWiki.Formatting
 			// ??citation?? 
 			str = Regex.Replace (str, "(^|\\W)\\?\\?([^ ].*?)\\?\\?", "$1<cite>$2</cite>") ;
 			// -deleted text- 
-			str = Regex.Replace (str, "(^|\\W)-([^ -].*?)-", "$1<del>$2</del>") ;
+//			str = Regex.Replace (str, "(^|\\W)-([^ -].*?)-", "$1<del>$2</del>") ;
+			// Special care needs to be taken with this expression so that the - in URLs and images does not get replaced.
+			str = Regex.Replace (str, "(^|\\s+)-([^ <a ]|[^ <img ].*)-", "$1<del>$2</del>");
 			// +inserted text+ 
 			str = Regex.Replace (str, "(^|\\W)\\+(.*?)\\+", "$1<ins>$2</ins>") ;
 			// ^superscript^ 
@@ -1541,20 +1548,10 @@ namespace FlexWiki.Formatting
 
 		string ObfuscatableLinkReplacementPattern(string replacementText, string replacementURL)
 		{
-			if (TheFederation.ObfuscateExternalHyperlinks)
-				return @"<a 
-onmouseover='javascript:cleanObfuscatedLink(this, """ + replacementText + @""", """ + replacementURL + @""")' 
-tabindex=0 
-class='extLink' 
-title='Link to <" + replacementURL + @"> (obfuscated for anti-spam reasons)' 
-onfocus='javascript:cleanObfuscatedLink(this,""" + replacementText + @""", """ + replacementURL + @""")'><script language=javascript>
-<!-- 
-ShowObfuscatedLink(""" + replacementText + @""");
-//--> 
-</script>
-</a>";
-			else
-				return @"<a href=""" + replacementURL + @""">" + replacementText + @"</a>";
+			string noFollow = "";
+			if (TheFederation.NoFollowExternalHyperlinks)
+				noFollow = " rel='nofollow' ";
+			return @"<a " + noFollow + @"href=""" + replacementURL + @""">" + replacementText + @"</a>";
 		}
 
 		static string wikiURIPattern = @"(^|\s+)(?<uri>wiki://(?<authority>" + unbracketedWikiName + @")(?<path>/[a-zA-Z0-9:@%/~_?\-=\\\.]*)?(#(?<fragment>[a-zA-Z0-9:@%/~_?\-=\\\.]*))?)";

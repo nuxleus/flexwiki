@@ -77,8 +77,8 @@ namespace FlexWiki
 		[XmlElement(ElementName = "WikiTalkVersion")]
 		public int WikiTalkVersion;
 
-		[XmlElement(ElementName = "ObfuscateExternalHyperlinks")]
-		public int ObfuscateExternalHyperlinks = 0;
+		[XmlElement(ElementName = "NoFollowExternalHyperlinks")]
+		public int NoFollowExternalHyperlinks = 0;
 
 		[XmlElement(ElementName = "DefaultDirectoryForNewNamespaces")]
 		public string DefaultDirectoryForNewNamespaces;
