@@ -654,7 +654,27 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "TopicPropertiesUpdateEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "TopicPropertyUpdateBatch.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "TopicScope.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "TopicsUpdateEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "TopicUpdateBatch.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

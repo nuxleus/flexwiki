@@ -39,14 +39,12 @@ namespace FlexWiki.UnitTests
 			_lm = new LinkMaker(_bh);
 			TheFederation = new Federation(OutputFormat.HTML, _lm);
 
-      string testroot = Path.GetFullPath(Path.Combine("TestContent", "RegistryTests")); 
-
-      if (Directory.Exists(testroot))
-      {
-        Directory.Delete(testroot, true); 
-      }
-
-      Directory.CreateDirectory(testroot); 
+			string testroot = Path.GetFullPath(Path.Combine("TestContent", "RegistryTests")); 
+			if (Directory.Exists(testroot))
+			{
+			Directory.Delete(testroot, true); 
+			}
+			Directory.CreateDirectory(testroot); 
 
 			string _tempPath = Path.Combine(testroot, @"temp-wikitests");
 			string _other1Path = Path.Combine(testroot, @"temp-wikitests1");
@@ -164,10 +162,10 @@ Role:Developer", author);
 		{
 			TheFederation.FederationCache = new MockFederationCache();
 
-			Assert.AreEqual(1,_base.TopicsWith("Role","Developer").Count,"TopicsWith Role:Developer");
-			Assert.AreEqual(1,_base.TopicsWith("Role","Designer").Count,"TopicsWith Role:Designer");
-			Assert.AreEqual(2,_base.AllTopicsWith("Role","Developer").Count,"AllTopicsWith Role:Developer");
-			Assert.AreEqual(1,_base.AllTopicsWith("Role","Designer").Count,"AllTopicsWith Role:Designer");
+			Assert.AreEqual(1,_base.TopicsWith(new ExecutionContext(), "Role","Developer").Count,"TopicsWith Role:Developer");
+			Assert.AreEqual(1,_base.TopicsWith(new ExecutionContext(), "Role","Designer").Count,"TopicsWith Role:Designer");
+			Assert.AreEqual(2,_base.AllTopicsWith(new ExecutionContext(), "Role","Developer").Count,"AllTopicsWith Role:Developer");
+			Assert.AreEqual(1,_base.AllTopicsWith(new ExecutionContext(), "Role","Designer").Count,"AllTopicsWith Role:Designer");
 		}
 
 		[Test] public void AllTopicsInfo()
@@ -291,7 +289,7 @@ Role:Developer", author);
 
 			TheFederation.Register("FlexWiki.Base", _tempPath);
 			_base = TheFederation.ContentBaseForRoot(_tempPath);
-      _base.Namespace = "FlexWiki.Base"; 
+		    _base.Namespace = "FlexWiki.Base"; 
 
 			WriteTestTopicAndNewVersion(_base, _base.DefinitionTopicName.Name, @"Namespace: FlexWiki.Base", author);
 
@@ -329,6 +327,303 @@ more stuff
 		{
 			_base.Delete();
 		}
+
+		[Test] public void TestTopicCreateEvent()
+		{
+			AbsoluteTopicName tn = new AbsoluteTopicName("EventTest", _base.Namespace);
+
+			TopicUpdateBatch expected = new TopicUpdateBatch();
+			expected.AddCreatedTopic(tn);
+			
+			StartMonitoringEvents();
+			_base.TopicsUpdated += new TopicsUpdateEventHandler(TopicBatchMonitor);
+			_base.WriteTopic(tn, "hello");
+			_base.TopicsUpdated -= new TopicsUpdateEventHandler(TopicBatchMonitor);
+
+			Assertion.AssertEquals("Got wrong number of topic update events", 1, _Events.Count);
+			CompareTopicUpdates(expected, (TopicUpdateBatch)(_Events[0]));
+		}
+
+
+		[Test] public void TestTopicRenameEventWithoutReferenceUpdating()
+		{
+			AbsoluteTopicName tn = new AbsoluteTopicName("EventTest", _base.Namespace);
+			_base.WriteTopic(tn, "hello");
+
+			AbsoluteTopicName newName = new AbsoluteTopicName("EventTestAfter", _base.Namespace);
+
+			TopicUpdateBatch expected = new TopicUpdateBatch();
+			expected.AddDeletedTopic(tn);
+			expected.AddCreatedTopic(newName);
+			
+			StartMonitoringEvents();
+			_base.TopicsUpdated += new TopicsUpdateEventHandler(TopicBatchMonitor);
+			_base.RenameTopic(tn, newName.Name, false);
+			_base.TopicsUpdated -= new TopicsUpdateEventHandler(TopicBatchMonitor);
+
+			Assertion.AssertEquals("Got wrong number of topic update events", 1, _Events.Count);
+			CompareTopicUpdates(expected, (TopicUpdateBatch)(_Events[0]));
+		}
+
+		[Test] public void TestTopicRenameEventWithReferenceUpdating()
+		{
+			AbsoluteTopicName tn = new AbsoluteTopicName("EventTest", _base.Namespace);
+			_base.WriteTopic(tn, "hello");
+
+			AbsoluteTopicName tn2 = new AbsoluteTopicName("EventTest2", _base.Namespace);
+			_base.WriteTopic(tn2, "hello and reference to EventTest");
+			AbsoluteTopicName tn3 = new AbsoluteTopicName("EventTest3", _base.Namespace);
+			_base.WriteTopic(tn3, "hello and reference to EventTest");
+
+			AbsoluteTopicName newName = new AbsoluteTopicName("EventTestAfter", _base.Namespace);
+
+			TopicUpdateBatch expected = new TopicUpdateBatch();
+			expected.AddDeletedTopic(tn);
+			expected.AddCreatedTopic(newName);
+			expected.AddUpdatedTopic(tn2);
+			expected.AddUpdatedTopic(tn3);
+			
+			StartMonitoringEvents();
+			_base.TopicsUpdated += new TopicsUpdateEventHandler(TopicBatchMonitor);
+			_base.RenameTopic(tn, newName.Name, true);
+			_base.TopicsUpdated -= new TopicsUpdateEventHandler(TopicBatchMonitor);
+
+			Assertion.AssertEquals("Got wrong number of topic update events", 1, _Events.Count);
+			CompareTopicUpdates(expected, (TopicUpdateBatch)(_Events[0]));
+		}
+
+
+		[Test] public void TestTopicDeleteEventsForNamespaceDelete()
+		{
+			string _tempPath = @"\temp-wikideltests";
+			TheFederation.Register("FlexWiki.Delete", _tempPath);
+			ContentBase cb = TheFederation.ContentBaseForRoot(_tempPath);
+			cb.Namespace = "FlexWiki.Delete"; 
+			WriteTestTopicAndNewVersion(cb, cb.DefinitionTopicName.Name, @"Namespace: FlexWiki.Delete", "bubba");
+			AbsoluteTopicName tn1 = new AbsoluteTopicName("EventTest1", cb.Namespace);
+			cb.WriteTopicAndNewVersion(tn1, "topic 1");
+			AbsoluteTopicName tn2 = new AbsoluteTopicName("EventTest2", cb.Namespace);
+			cb.WriteTopicAndNewVersion(tn2, "topic 2");
+			AbsoluteTopicName tn3 = new AbsoluteTopicName("EventTest3", cb.Namespace);
+			cb.WriteTopicAndNewVersion(tn3, "topic 3");
+
+			TopicUpdateBatch expected = new TopicUpdateBatch();
+			expected.AddDeletedTopic(cb.DefinitionTopicName);
+			expected.AddDeletedTopic(tn1);
+			expected.AddDeletedTopic(tn2);
+			expected.AddDeletedTopic(tn3);			
+
+			StartMonitoringEvents();
+			cb.TopicsUpdated += new TopicsUpdateEventHandler(TopicBatchMonitor);
+			cb.Delete();
+			cb.TopicsUpdated -= new TopicsUpdateEventHandler(TopicBatchMonitor);
+
+			Assertion.AssertEquals("Got wrong number of topic update events", 1, _Events.Count);
+			CompareTopicUpdates(expected, (TopicUpdateBatch)(_Events[0]));
+
+		}
+
+		[Test] public void TestTopicCreateEventWhenCreatingWithNewVersion()
+		{
+			AbsoluteTopicName tnWithoutVersion = new AbsoluteTopicName("EventTest", _base.Namespace);
+			AbsoluteTopicName tnWithVersion = new AbsoluteTopicName(tnWithoutVersion.Name,  tnWithoutVersion.Namespace);
+			tnWithVersion.Version = "1.2.3.4.5.6";
+
+			TopicUpdateBatch expected = new TopicUpdateBatch();
+			expected.AddCreatedTopic(tnWithVersion);
+			expected.AddCreatedTopic(tnWithoutVersion);
+			
+			StartMonitoringEvents();
+			_base.TopicsUpdated += new TopicsUpdateEventHandler(TopicBatchMonitor);
+			_base.WriteTopicAndNewVersion(tnWithVersion, "hello");
+			_base.TopicsUpdated -= new TopicsUpdateEventHandler(TopicBatchMonitor);
+
+			Assertion.AssertEquals("Got wrong number of topic update events", 1, _Events.Count);
+			CompareTopicUpdates(expected, (TopicUpdateBatch)(_Events[0]));
+		}
+
+		[Test] public void TestTopicUpdateEvent()
+		{
+			AbsoluteTopicName tn = new AbsoluteTopicName("EventTest", _base.Namespace);
+
+			TopicUpdateBatch expected = new TopicUpdateBatch();
+			expected.AddUpdatedTopic(tn);
+			
+			StartMonitoringEvents();
+			_base.WriteTopic(tn, "hello");
+			_base.TopicsUpdated += new TopicsUpdateEventHandler(TopicBatchMonitor);
+			_base.WriteTopic(tn, "second should be an update");
+			_base.TopicsUpdated -= new TopicsUpdateEventHandler(TopicBatchMonitor);
+
+			Assertion.AssertEquals("Got wrong number of topic update events", 1, _Events.Count);
+			CompareTopicUpdates(expected, (TopicUpdateBatch)(_Events[0]));
+		}
+
+		[Test] public void TestTopicDeleteEvent()
+		{
+			AbsoluteTopicName tn = new AbsoluteTopicName("EventTest", _base.Namespace);
+
+			TopicUpdateBatch expected = new TopicUpdateBatch();
+			expected.AddDeletedTopic(tn);
+			
+			StartMonitoringEvents();
+			_base.WriteTopic(tn, "hello");
+			_base.TopicsUpdated += new TopicsUpdateEventHandler(TopicBatchMonitor);
+			_base.DeleteTopic(tn);
+			_base.TopicsUpdated -= new TopicsUpdateEventHandler(TopicBatchMonitor);
+
+			Assertion.AssertEquals("Got wrong number of topic update events", 1, _Events.Count);
+			CompareTopicUpdates(expected, (TopicUpdateBatch)(_Events[0]));
+		}
+
+		[Test] public void TestTopicPropertyCreateEvent()
+		{
+			AbsoluteTopicName tn = new AbsoluteTopicName("EventTest", _base.Namespace);
+
+			TopicPropertyUpdateBatch expected = new TopicPropertyUpdateBatch();
+			expected.RecordChange(tn, "Prop1", TopicPropertyUpdateBatch.ChangeType.PropertyAdd);
+			expected.RecordChange(tn, "Prop2", TopicPropertyUpdateBatch.ChangeType.PropertyAdd);
+			expected.RecordChange(tn, "Prop3", TopicPropertyUpdateBatch.ChangeType.PropertyAdd);
+			expected.RecordChange(tn, "_Body", TopicPropertyUpdateBatch.ChangeType.PropertyAdd);
+			expected.RecordChange(tn, "_TopicName", TopicPropertyUpdateBatch.ChangeType.PropertyAdd);
+			expected.RecordChange(tn, "_TopicFullName", TopicPropertyUpdateBatch.ChangeType.PropertyAdd);
+			expected.RecordChange(tn, "_LastModifiedBy", TopicPropertyUpdateBatch.ChangeType.PropertyAdd);
+			expected.RecordChange(tn, "_CreationTime", TopicPropertyUpdateBatch.ChangeType.PropertyAdd);
+			expected.RecordChange(tn, "_ModificationTime", TopicPropertyUpdateBatch.ChangeType.PropertyAdd);
+			
+			StartMonitoringEvents();
+			_base.TopicPropertiesUpdated += new TopicPropertiesUpdateEventHandler(TopicPropertyBatchMonitor);
+			_base.WriteTopic(tn, @"Prop1: hello
+Prop2: goobye
+Prop3: yellow submarine
+");
+			_base.TopicPropertiesUpdated -= new TopicPropertiesUpdateEventHandler(TopicPropertyBatchMonitor);
+
+			Assertion.AssertEquals("Got wrong number of topic property update events", 1, _Events.Count);
+			CompareTopicPropertyUpdates(expected, (TopicPropertyUpdateBatch)(_Events[0]));
+		}
+
+		[Test] public void TestTopicPropertyBodyPropertyDoesNotChangeIfBodyNotChanged()
+		{
+			AbsoluteTopicName tn = new AbsoluteTopicName("EventTest", _base.Namespace);
+			string body = @"Prop1: hello
+Prop2: goobye
+Prop3: yellow submarine
+";
+			_base.WriteTopic(tn, body);
+
+			TopicPropertyUpdateBatch expected = new TopicPropertyUpdateBatch();
+			expected.RecordChange(tn, "_ModificationTime", TopicPropertyUpdateBatch.ChangeType.PropertyUpdate);
+			
+			StartMonitoringEvents();
+			_base.TopicPropertiesUpdated += new TopicPropertiesUpdateEventHandler(TopicPropertyBatchMonitor);
+			_base.WriteTopic(tn, body);
+
+			Assertion.AssertEquals("Got wrong number of topic property update events", 1, _Events.Count);
+			CompareTopicPropertyUpdates(expected, (TopicPropertyUpdateBatch)(_Events[0]));
+		}
+
+		[Test] public void TestTopicPropertyUpdatesAndRemoves()
+		{
+			AbsoluteTopicName tn = new AbsoluteTopicName("EventTest", _base.Namespace);
+			_base.WriteTopic(tn, @"Stay1: hello
+Stay2: foo
+Go1: foo
+Go2: foo
+Change1: blag
+Change2: blag
+");
+
+			TopicPropertyUpdateBatch expected = new TopicPropertyUpdateBatch();
+			expected.RecordChange(tn, "_ModificationTime", TopicPropertyUpdateBatch.ChangeType.PropertyUpdate);
+			expected.RecordChange(tn, "_Body", TopicPropertyUpdateBatch.ChangeType.PropertyUpdate);
+			expected.RecordChange(tn, "Go1", TopicPropertyUpdateBatch.ChangeType.PropertyRemove);
+			expected.RecordChange(tn, "Go2", TopicPropertyUpdateBatch.ChangeType.PropertyRemove);
+			expected.RecordChange(tn, "Change1", TopicPropertyUpdateBatch.ChangeType.PropertyUpdate);
+			expected.RecordChange(tn, "Change2", TopicPropertyUpdateBatch.ChangeType.PropertyUpdate);
+			
+			StartMonitoringEvents();
+			_base.TopicPropertiesUpdated += new TopicPropertiesUpdateEventHandler(TopicPropertyBatchMonitor);
+			_base.WriteTopic(tn, @"Stay1: hello
+Stay2: foo
+Change1: new value
+Change2: new value
+");
+
+			Assertion.AssertEquals("Got wrong number of topic property update events", 1, _Events.Count);
+			CompareTopicPropertyUpdates(expected, (TopicPropertyUpdateBatch)(_Events[0]));
+		}
+
+		void CompareTopicPropertyUpdates(TopicPropertyUpdateBatch expected, TopicPropertyUpdateBatch got)
+		{
+			// Start by looking through the topics to be sure it's the expected set
+			foreach (AbsoluteTopicName t in expected.AllTopics)
+				Assertion.Assert("Missing created topic (" + t.FullnameWithVersion + ") from fired event(s)", got.AllTopics.Contains(t));
+			Assertion.AssertEquals("Non-matching number of created topics from fired event(s)", expected.AllTopics.Count, got.AllTopics.Count);
+
+			// OK, we have the right topics; let's check each one for the right set of properties and the right kind of changes
+			foreach (AbsoluteTopicName t in expected.AllTopics)
+			{
+				// check added properties for the topic
+				ComparePropertyUpdatesForVerb(t, expected.AddedPropertiesForTopic(t), got.AddedPropertiesForTopic(t), "added");
+				ComparePropertyUpdatesForVerb(t, expected.ChangedPropertiesForTopic(t), got.ChangedPropertiesForTopic(t), "changed");
+				ComparePropertyUpdatesForVerb(t, expected.RemovedPropertiesForTopic(t), got.RemovedPropertiesForTopic(t), "removed");
+			}
+		}
+
+		void ComparePropertyUpdatesForVerb(AbsoluteTopicName t, IList expectedProperties, IList gotProperties, string verb)
+		{
+			foreach (string propertyName in expectedProperties)
+			{
+				Assertion.Assert("Missing " + verb + " property (" + propertyName + " in " + t.FullnameWithVersion + ") from fired event(s)", gotProperties.Contains(propertyName));
+				gotProperties.Remove(propertyName);
+			}
+			if (gotProperties.Count == 0)
+				return;	// good -- there should be none left
+			string s = "";
+			foreach (string p in gotProperties)
+			{
+				if (s != "")
+					s += ", ";
+				s += p;
+			}
+			Assertion.Fail("Unexpected " + verb + " property notifications for: " + s);
+		}
+
+		void TopicPropertyBatchMonitor(object sender, TopicPropertiesUpdateEventArgs e) 
+		{
+			_Events.Add(e.Updates);
+		}
+
+
+		void TopicBatchMonitor(object sender, TopicsUpdateEventArgs e) 
+		{
+			_Events.Add(e.Updates);
+		}
+
+		void StartMonitoringEvents()
+		{
+			_Events = new ArrayList();
+		}
+
+		void CompareTopicUpdates(TopicUpdateBatch expected, TopicUpdateBatch got)
+		{
+			// OK, look to see if/where got and expected are different; assert that they're the same
+			foreach (AbsoluteTopicName t in expected.CreatedTopics)
+				Assertion.Assert("Missing created topic (" + t.FullnameWithVersion + ") from fired event(s)", got.CreatedTopics.Contains(t));
+			Assertion.AssertEquals("Non-matching number of created topics from fired event(s)", expected.CreatedTopics.Count, got.CreatedTopics.Count);
+
+			foreach (AbsoluteTopicName t in expected.UpdatedTopics)
+				Assertion.Assert("Missing updated topic (" + t.FullnameWithVersion + ") from fired event(s)", got.UpdatedTopics.Contains(t));
+			Assertion.AssertEquals("Non-matching number of updated topics from fired event(s)", expected.UpdatedTopics.Count, got.UpdatedTopics.Count);
+
+			foreach (AbsoluteTopicName t in expected.DeletedTopics)
+				Assertion.Assert("Missing deleted topic (" + t.FullnameWithVersion + ") from fired event(s)", got.DeletedTopics.Contains(t));
+			Assertion.AssertEquals("Non-matching number of deleted topics from fired event(s)", expected.DeletedTopics.Count, got.DeletedTopics.Count);
+		}
+
+		ArrayList _Events;
+
 
 		[Test] public void TestSerialization()
 		{
@@ -444,6 +739,7 @@ more stuff
 
 		[Test] public void GetFieldsTest()
 		{
+
 			Hashtable t = ContentBase().GetFieldsForTopic(ContentBase().TopicNameFor("Props"));
 			Assertion.AssertEquals(t["First"], "one");
 			Assertion.AssertEquals(t["Second"], "two");

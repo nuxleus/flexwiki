@@ -24,6 +24,10 @@ using FlexWiki.Formatting;
 
 namespace FlexWiki
 {
+
+	public delegate void TopicsUpdateEventHandler(object sender, TopicsUpdateEventArgs e);
+	public delegate void TopicPropertiesUpdateEventHandler(object sender, TopicPropertiesUpdateEventArgs e);
+
 	/// <summary>
 	/// A ContentBase is the interface to all the wiki topics in a namespace.  It shields the rest of the 
 	/// wiki system from worrying about where the topics are stored.  It exposes operations
@@ -48,6 +52,23 @@ namespace FlexWiki
 		/// </summary>
 		public ContentBase()
 		{
+		}
+
+		public event TopicsUpdateEventHandler TopicsUpdated;
+		public event TopicPropertiesUpdateEventHandler TopicPropertiesUpdated;
+
+		// Invoke the TopicsChanged event; called whenever topics change
+		protected virtual void OnTopicsUpdated(TopicsUpdateEventArgs e) 
+		{
+			if (TopicsUpdated != null)
+				TopicsUpdated(this, e);
+		}
+
+		// Invoke the TopicsUpdated event; called whenever topics change
+		protected virtual void OnTopicPropertiesUpdated(TopicPropertiesUpdateEventArgs e) 
+		{
+			if (TopicPropertiesUpdated != null)
+				TopicPropertiesUpdated(this, e);
 		}
 
 		/// <summary>
@@ -93,14 +114,14 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Gets the topics with the specified property and value (excluding those in the imported namespaces).")]
-		public TopicInfoArray TopicsWith(string property, string desiredValue)
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Gets the topics with the specified property and value (excluding those in the imported namespaces).  If desiredValue is omitted, all topics with the property are answered.")]
+		public TopicInfoArray TopicsWith(ExecutionContext ctx, string property, [ExposedParameter(true)] string desiredValue)
 		{
 			return this.RetrieveAllTopicsWith(property, desiredValue, false);
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Gets the topics with the specified property and value (including those in the imported namespaces).")]
-		public TopicInfoArray AllTopicsWith(string property, string desiredValue)
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Gets the topics with the specified property and value (including those in the imported namespaces).  If desiredValue is omitted, all topics with the property are answered.")]
+		public TopicInfoArray AllTopicsWith(ExecutionContext ctx, string property, [ExposedParameter(true)] string desiredValue)
 		{
 			return this.RetrieveAllTopicsWith(property, desiredValue, true);
 		}
@@ -124,13 +145,14 @@ namespace FlexWiki
 
 				string propertyValue = Federation.GetTopicProperty(topic, property);
 
-				if( propertyValue.ToLower() == desiredValue.ToLower() )
+				if(desiredValue == null ||  propertyValue.ToLower() == desiredValue.ToLower() )
 				{
 					ContentBase contentBaseForTopic = Federation.ContentBaseForTopic(topic);
 					answer.Add(new TopicInfo(Federation, topic));
+					// TODO!!!  -- THIS ONLY MAKES A DEP ON TOPICS ACTUALLY HIT -- WE NEED THEM ALL!!!!
 					compositeCacheRule.Add(contentBaseForTopic.CacheRuleForAllPossibleInstancesOfTopic(topic));
 				}
-			}
+			}    
 
 			this.UpdateTopicInfoCache(this.CreateTopicInfoCacheKey(property,  desiredValue, includeImports), answer, compositeCacheRule);
 
@@ -139,7 +161,7 @@ namespace FlexWiki
 
 		private string CreateTopicInfoCacheKey(string property, string desiredValue, bool includeImports)
 		{
-			return (this.Namespace + "_" + property + "_" + desiredValue + "_" + ((includeImports) ? Boolean.TrueString: Boolean.FalseString));
+			return ("PropertyCache." + this.Namespace + "_" + property + "_" +  (desiredValue == null ? "" : desiredValue + "_") + ((includeImports) ? Boolean.TrueString: Boolean.FalseString));
 		}
 
 		private TopicInfoArray TopicInfoCacheContains(string key)
@@ -176,6 +198,13 @@ namespace FlexWiki
 				_BackingTopics = new Hashtable();
 				return _BackingTopics;
 			}
+		}
+
+		private bool IsBackingTopic(AbsoluteTopicName top)
+		{
+			if (top.Namespace != Namespace)
+				return Federation.ContentBaseForTopic(top).IsBackingTopic(top);
+			return BackingTopics.ContainsKey(top.Name);
 		}
 
 		enum State
@@ -1024,6 +1053,8 @@ namespace FlexWiki
 
 		public static void AddImplicitPropertiesToHash(Hashtable hash, AbsoluteTopicName topic, string lastModBy, DateTime creation, DateTime modification, string content)
 		{
+			// Remember that this list is closely bound to some implicit knowledge of what these properties are in the logic in WriteTopic that send change notifications for properties
+			// If you add/change these properties, you need to carefully revie wthat code too to be sure it fires the right changed events
 			hash["_TopicName"] = topic.Name;
 			hash["_TopicFullName"] = topic.FullnameWithVersion;
 			hash["_LastModifiedBy"] = lastModBy;
@@ -1147,7 +1178,6 @@ namespace FlexWiki
 				else
 					update += field + ":[ " + repWithLineEnd + "]\n";
 			}
-	
 			if (writeNewVersion)
 				WriteTopicAndNewVersion(topic, update);
 			else
@@ -1180,8 +1210,16 @@ namespace FlexWiki
 		public void DeleteTopic(AbsoluteTopicName topic)
 		{
 			string path = TopicPath(topic);
-			if (File.Exists(path))
-				File.Delete(path);
+			if (!File.Exists(path))
+				return;
+
+			// Delete the sucker!
+			File.Delete(path);
+
+			// Fire the event
+			TopicUpdateBatch batch = new TopicUpdateBatch();
+			batch.AddDeletedTopic(topic);
+			OnTopicsUpdated(new TopicsUpdateEventArgs(batch));
 		}
 
 		/// <summary>
@@ -1482,16 +1520,43 @@ namespace FlexWiki
 			}
 			return null;
 		}
-		
+
 		/// <summary>
-		/// Write a new version of the topic (doesn't write a new version)
+		/// Write a new version of the topic (doesn't write a new version).
 		/// </summary>
 		/// <param name="topic">Topic to write</param>
 		/// <param name="content">New content</param>
 		public void WriteTopic(AbsoluteTopicName  topic, string content)
 		{
+			WriteTopic(topic, content , true);
+		}
+
+		/// <summary>
+		/// Write a new version of the topic (doesn't write a new version)
+		/// </summary>
+		/// <param name="topic">Topic to write</param>
+		/// <param name="content">New content</param>
+		/// <param name="shouldFireUpdateEvents">True to fire appropriate update events</param>
+		protected void WriteTopic(AbsoluteTopicName  topic, string content, bool shouldFireUpdateEvents)
+		{
 			string root = this.RootForNamespace(topic.Namespace);
 			string fullpath = MakePath(root, topic);
+			bool isNew = !(File.Exists(fullpath));
+
+			// Get old topic so we can analyze it for properties to compare with the new one
+			string oldText = null;
+			Hashtable oldProperties = null;
+			if (!isNew && shouldFireUpdateEvents)
+			{
+				using (StreamReader sr = new StreamReader(new FileStream(fullpath, FileMode.Open, FileAccess.Read, FileShare.Read)))
+				{
+					oldText = sr.ReadToEnd();
+				}
+				oldProperties = ExtractExplicitFieldsFromTopicBody(oldText);	
+			}
+			string oldLastAuthor = GetTopicLastAuthor(topic);
+
+			// Change it
 			using (StreamWriter sw = new StreamWriter(fullpath))
 			{
 				sw.Write(content);
@@ -1502,7 +1567,75 @@ namespace FlexWiki
 			string pathToDefinitionTopic = MakePath(Root, DefinitionTopicName);
 			if (fullpath == pathToDefinitionTopic)
 				this.Federation.InvalidateRoot(Root);
+
+			if (!shouldFireUpdateEvents)
+				return;
+
+			// Fire update event(s)
+
+			// Fire the topic-level event
+			TopicUpdateBatch batch = new TopicUpdateBatch();
+			if (isNew)
+				batch.AddCreatedTopic(topic);
+			else
+				batch.AddUpdatedTopic(topic);
+			OnTopicsUpdated(new TopicsUpdateEventArgs(batch));
+
+			//	Now process the properties
+			TopicPropertyUpdateBatch pbatch = new TopicPropertyUpdateBatch();
+			Hashtable newProperties = ExtractExplicitFieldsFromTopicBody(content);
+			if (isNew)
+			{
+				foreach (string pName in newProperties.Keys)
+					pbatch.RecordChange(topic, pName, TopicPropertyUpdateBatch.ChangeType.PropertyAdd);
+				pbatch.RecordChange(topic, "_Body", TopicPropertyUpdateBatch.ChangeType.PropertyAdd);
+				pbatch.RecordChange(topic, "_TopicName", TopicPropertyUpdateBatch.ChangeType.PropertyAdd);
+				pbatch.RecordChange(topic, "_TopicFullName", TopicPropertyUpdateBatch.ChangeType.PropertyAdd);
+				pbatch.RecordChange(topic, "_LastModifiedBy", TopicPropertyUpdateBatch.ChangeType.PropertyAdd);
+				pbatch.RecordChange(topic, "_CreationTime", TopicPropertyUpdateBatch.ChangeType.PropertyAdd);
+				pbatch.RecordChange(topic, "_ModificationTime", TopicPropertyUpdateBatch.ChangeType.PropertyAdd);
+			}
+			else
+			{
+				FillPropertyUpdateBatchByComparingToPropertyHashes(pbatch, topic, oldProperties, newProperties);
+				if (content != oldText)
+					pbatch.RecordChange(topic, "_Body", TopicPropertyUpdateBatch.ChangeType.PropertyUpdate);
+				pbatch.RecordChange(topic, "_ModificationTime", TopicPropertyUpdateBatch.ChangeType.PropertyUpdate);
+				
+				//See if the last modified by has changed
+				string newLastAuthor = GetTopicLastAuthor(topic);
+				if (oldLastAuthor != newLastAuthor)
+					pbatch.RecordChange(topic, "_LastModifiedBy", TopicPropertyUpdateBatch.ChangeType.PropertyAdd);
+			}
+			if (!pbatch.IsEmpty)
+				OnTopicPropertiesUpdated(new TopicPropertiesUpdateEventArgs(pbatch));
 		}
+
+		void FillPropertyUpdateBatchByComparingToPropertyHashes(TopicPropertyUpdateBatch batch, AbsoluteTopicName topic, Hashtable oldProps, Hashtable newProps)
+		{
+			// Loop through the old ones to find any that are changed or removed in the new
+			foreach (DictionaryEntry e in oldProps)
+			{
+				if (newProps.ContainsKey(e.Key))
+				{
+					object newValue = newProps[e.Key];
+					if (newValue.ToString()  != e.Value.ToString())
+					{
+						batch.RecordChange(topic, e.Key.ToString(), TopicPropertyUpdateBatch.ChangeType.PropertyUpdate);
+					}
+				}
+				else
+					batch.RecordChange(topic, e.Key.ToString(), TopicPropertyUpdateBatch.ChangeType.PropertyRemove);
+			}
+
+			// And also find the added ones by identifying those that are in the new set, but not the old
+			foreach (DictionaryEntry e in newProps)
+			{
+				if (!oldProps.ContainsKey(e.Key))
+					batch.RecordChange(topic, e.Key.ToString(), TopicPropertyUpdateBatch.ChangeType.PropertyAdd);
+			}
+		}
+
 
 		/// <summary>
 		/// Rename the given topic.  If requested, find references and fix them up.  Answer a report of what was fixed up.  Throw a DuplicationTopicException
@@ -1514,6 +1647,7 @@ namespace FlexWiki
 		/// <returns>ArrayList of strings that can be reported back to the user of what happened during the fixup process</returns>
 		public ArrayList RenameTopic(AbsoluteTopicName oldName, string newName, bool fixup)
 		{
+			// TRIGGER
 			ArrayList answer = new ArrayList();
 			string root = RootForNamespace(oldName.Namespace);
 			string pathToTopicFile =  root + "\\" + oldName.Name + ".wiki";
@@ -1547,10 +1681,17 @@ namespace FlexWiki
 			// Rename the topic file
 			File.Move(pathToTopicFile, newNameForTopicFile);
 
+			// Build events (a delete for the old one and an add for the new one)
+			TopicUpdateBatch batch = new TopicUpdateBatch();
+			batch.AddCreatedTopic(newFullName);
+			batch.AddDeletedTopic(oldName);
 
 			// Now get ready to do fixups
 			if (!fixup)
+			{
+				OnTopicsUpdated(new TopicsUpdateEventArgs(batch));		
 				return answer;
+			}
 
 			// OK, we need to do the hard work
 			AbsoluteTopicName oldabs = oldName;
@@ -1559,9 +1700,13 @@ namespace FlexWiki
 			// Now the master loop
 			ContentBase holder = Federation.ContentBaseForNamespace(oldName.Namespace);
 			foreach (AbsoluteTopicName topic in holder.AllTopics(false))
-				if (holder.RenameTopicReferences(topic, oldabs, newabs))
+				if (holder.RenameTopicReferences(topic, oldabs, newabs, batch))
 					answer.Add("Found and replaced references in " + topic);
+
+			OnTopicsUpdated(new TopicsUpdateEventArgs(batch));		
+
 			return answer;
+
 		}
 
 		/// <summary>
@@ -1637,7 +1782,7 @@ namespace FlexWiki
 		/// <param name="oldName"></param>
 		/// <param name="newName"></param>
 		/// <returns></returns>
-		bool RenameTopicReferences(AbsoluteTopicName topicToLookIn, AbsoluteTopicName oldName, AbsoluteTopicName newName)
+		bool RenameTopicReferences(AbsoluteTopicName topicToLookIn, AbsoluteTopicName oldName, AbsoluteTopicName newName, TopicUpdateBatch batch)
 		{
 			string current = Read(topicToLookIn);
 			MatchCollection wikiNames = Formatter.extractWikiNames.Matches(current);
@@ -1669,7 +1814,9 @@ namespace FlexWiki
 			}
 
 			if (any)
-				WriteTopicAndNewVersion(topicToLookIn, current);
+			{
+				WriteTopicAndNewVersion(topicToLookIn, current, batch);
+			}
 
 			return any;
 		}
@@ -1681,18 +1828,56 @@ namespace FlexWiki
 		/// <param name="content">The content</param>
 		public void WriteTopicAndNewVersion(AbsoluteTopicName topic, string content)
 		{
-			AbsoluteTopicName versionless = new AbsoluteTopicName(topic.Name, topic.Namespace);
-			WriteTopic(versionless, content);
-			WriteTopic(topic, content);
+			WriteTopicAndNewVersion(topic, content, null);
 		}
 
 		/// <summary>
+		/// Write a topic (and create a historical version)
+		/// </summary>
+		/// <param name="topic">The topic to write</param>
+		/// <param name="content">The content</param>
+		void WriteTopicAndNewVersion(AbsoluteTopicName topic, string content, TopicUpdateBatch updates)
+		{
+			AbsoluteTopicName versionless = new AbsoluteTopicName(topic.Name, topic.Namespace);
+			bool isVersionlessNew = !TopicExists(versionless);
+			bool isVersionedNew = !TopicExists(topic);
+
+			// Write it
+			WriteTopic(versionless, content, false);
+			WriteTopic(topic, content, false);	
+
+			// Generate appropriate events (Add or Update for both the versioned and non-versioned names)
+			TopicUpdateBatch batch = updates;
+			if (batch == null)
+				batch = new TopicUpdateBatch();
+			if (isVersionedNew)
+				batch.AddCreatedTopic(topic);
+			else
+				batch.AddUpdatedTopic(topic);
+			if (isVersionlessNew)
+				batch.AddCreatedTopic(versionless);
+			else
+				batch.AddUpdatedTopic(versionless);
+
+			// Fire the event if we we're asked to accumulate in a higher-level batch
+			if (updates != batch)
+				OnTopicsUpdated(new TopicsUpdateEventArgs(batch));
+		}
+
+
 		/// Delete a content base (kills everything inside recursively)
 		/// </summary>
 		public void Delete()
 		{
+			TopicUpdateBatch batch = new TopicUpdateBatch();
+			foreach (AbsoluteTopicName topic in AllTopics(false))
+				if (!IsBackingTopic(topic))
+	                batch.AddDeletedTopic(topic);
+
 			DirectoryInfo dir = new DirectoryInfo(Root);
 			dir.Delete(true);
+
+			OnTopicsUpdated(new TopicsUpdateEventArgs(batch));
 		}
 		#region IComparable Members
 

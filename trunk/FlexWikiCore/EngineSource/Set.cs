@@ -26,6 +26,12 @@ namespace FlexWiki
 			hash[obj] = null;
 		}
 
+		public void AddRange(ICollection c)
+		{
+			foreach (object obj in c)
+				Add(obj);
+		}
+
 		public bool Contains(object obj)
 		{
 			return hash.ContainsKey(obj);
