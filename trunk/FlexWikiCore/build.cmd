@@ -1,1 +1,1 @@
-tools\nant\bin\nant 
+tools\nant\bin\nant %*

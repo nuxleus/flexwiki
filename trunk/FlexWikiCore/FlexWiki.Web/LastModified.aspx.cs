@@ -113,7 +113,7 @@ namespace FlexWiki.Web
 			uniqueAuthors.Sort();
 
 			Response.Write(@"
-<script  type=""text/jscript"" language='jscript'>
+<script  type=""text/javascript"" language='javascript'>
 
 function filter()
 {

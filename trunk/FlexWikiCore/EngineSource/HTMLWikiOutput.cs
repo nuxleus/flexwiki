@@ -68,7 +68,7 @@ namespace FlexWiki.Formatting
 		void WriteScripts()
 		{
 Write(@"
-<script type=""text/jscript"" language='jscript'>
+<script type=""text/javascript"" language='javascript'>
 			function LinkMenu(anArray)
 			{
 				var src = """";
@@ -102,8 +102,8 @@ Write(@"
 					h += item.offsetHeight;
 				}
 				menu.innerHTML = '<div onmouseover=""MenuIn(this);"" onmouseout=""MenuOut(this);"">' + menu.innerHTML + '</div>';
-				menu.style.left = window.event.clientX;
-				menu.style.top = window.event.clientY;
+				menu.style.left = event.clientX;
+				menu.style.top = event.clientY;
 				menu.style.height = h;
 				menu.style.width = w;
 				timeout = null;
@@ -113,10 +113,10 @@ Write(@"
 			var timeout = null;
 			var tipOffTimeout = null;
 
-			function TopicTipOn(anchor, id)
+			function TopicTipOn(anchor, id, event)
 			{
-				var targetY = document.body.scrollTop + window.event.clientY + 18;
-				var targetX = document.body.scrollLeft + window.event.clientX + 12;
+				var targetY = document.body.scrollTop + event.clientY + 18;
+				var targetX = document.body.scrollLeft + event.clientX + 12;
 				
 				TopicTip.style.left = targetX;
 				TopicTip.style.top = targetY;
@@ -125,7 +125,7 @@ Write(@"
 				TopicTip.style.display = 'block';
 				if (tipOffTimeout != null)
 					window.clearTimeout(tipOffTimeout);
-				tipOffTimeout = window.setTimeout(""TopicTipOff()"", 4000, ""JScript"");
+				tipOffTimeout = window.setTimeout(""TopicTipOff()"", 4000, ""JavaScript"");
 			}
 
 			function TopicTipOff()
@@ -153,7 +153,7 @@ Write(@"
 			
 			function MenuOut(obj)
 			{
-				timeout = window.setTimeout(""MenuTimeout()"", 1000, ""JScript"");
+				timeout = window.setTimeout(""MenuTimeout()"", 1000, ""JavaScript"");
 			}
 			
 			function MenuTimeout()
@@ -449,7 +449,7 @@ Write(@"
 
 		override public void FormImageButton(string FieldName, string ImageURI, string TipString)
 		{
-			WriteLine("<INPUT type='image' hspace='2' src='" + ImageURI + @"' title='" + Formatter.EscapeHTML(TipString) + "'>");
+			WriteLine("<INPUT type='image' src='" + ImageURI + @"' title='" + Formatter.EscapeHTML(TipString) + "'>");
 		}
 
 		override public void FormSubmitButton(string FieldName, string label)

@@ -23,25 +23,24 @@ function CalcEditZoneHeight()
 
 function ShowTip(tipid)
 {
-	var s = document.all(tipid);
+	var s = document.getElementById(tipid);
 	TipArea.innerHTML = s.innerHTML;
 	TipArea.style.display = 'block';
 }
 
 function preview()
 {
-	var s = document.all("Text1").value;
-	document.all("body").value = s;
-	// window.open('preview.aspx', document.all("form2").target, '');
+	var s = document.forms["Form1"].Text1.value;
+	document.forms["Form2"].body.value = s;
 	window.open('about:blank', 'previewWindow');
-	document.getElementById("Form2").submit();
+	document.forms["Form2"].submit();
 }
 
 function SetUserName()
 {
 	var r = document.getElementById("UserNameEntryField");
 	if (r != null)
-		document.getElementById("UserSuppliedName").value = r.value;
+		document.forms["Form1"].UserSuppliedName.value = r.value;
 }
 
 function Cancel()
@@ -52,16 +51,16 @@ function Cancel()
 function Save()
 {
 	SetUserName();
-	var r = document.all("ReturnTopic");
+	var r = document.getElementById("ReturnTopic");
 	if (r != null)
 		r.value = ""; // prevent return action by emptying this out
-	document.all("Form1").submit();
+	document.getElementById("Form1").submit();
 }
 
 function SaveAndReturn()
 {
 	SetUserName();
-	document.all("Form1").submit();
+	document.getElementById("Form1").submit();
 }
 
 function search()

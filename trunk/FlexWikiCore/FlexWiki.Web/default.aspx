@@ -2,22 +2,16 @@
 <%
 	StartPage();
 %>
-
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >
 <HTML>
 	<HEAD>
 		<TITLE>
 			<%= GetTopicName().Name %>
 		</TITLE>
-	</HEAD>
-	<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5">
-	<% DoHead(); %>
-	<%= InsertStylesheetReferences() %>
-	<script type="text/jscript" language="jscript">
-			
-
-			/////////////////////////////////////////////////////////////////////////
-
+		<META name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5">
+		<% DoHead(); %>
+		<%= InsertStylesheetReferences() %>
+		<SCRIPT type="text/javascript" language="javascript">
 			function MainHeight()
 			{
 				var answer = document.body.clientHeight;
@@ -53,18 +47,18 @@
 			
 			function diffToggle()
 			{
-					if (showDiffs.checked)
-						showChanges();
-					else
-						hideChanges();
+				if (showDiffs.checked)
+					showChanges();
+				else
+					hideChanges();
 			}
 
 			function showVersion()
 			{
 				nav(VersionList.value);
 			}
-						
-	</script>
+		</SCRIPT>
+	</HEAD>
 	<% DoPage(); %>
 </HTML>
 <%

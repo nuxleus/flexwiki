@@ -15,7 +15,7 @@
 	.HistoryHeader a:hover { color: gold; text-decoration:underline; }
 	.Hist { padding: 3px; height: expression(document.body.clientHeight - 22 - 28 - 20 - 15 - 18); overflow: auto; }
 	</style>
-	<script  type="text/jscript"  language="jscript">
+	<script  type="text/javascript"  language="javascript">
 			
 
 			/////////////////////////////////////////////////////////////////////////

@@ -145,7 +145,7 @@ namespace FlexWiki.Web
 		{
 
 			string script = @"
-<script  type=""text/jscript"" language='jscript'>
+<script  type=""text/javascript"" language='javascript'>
 
 function TopicBarMouseOver()
 {
@@ -185,9 +185,9 @@ function BodyClick()
 	SetEditing(false);
 }
 
-function TopicBarClick()
+function TopicBarClick(event)
 {
-	window.event.cancelBubble = 'true';
+	event.cancelBubble = 'true';
 	if (IsEditing())
 		return;
 
@@ -214,7 +214,7 @@ function TopicBarClick()
 
 function tbinput()
 {
-	return 	document.all('TopicBarInputBox');
+	return 	document.getElementById('TopicBarInputBox');
 }
 
 </script>
@@ -237,7 +237,7 @@ function tbinput()
 				return;
 			}
 
-			Response.Write("<body onclick='jscript: BodyClick()' ondblclick=\"location.href='" + this.TheLinkMaker.LinkToEditTopic(topic) + "'\">");
+			Response.Write("<body onclick='javascript: BodyClick()' ondblclick=\"location.href='" + this.TheLinkMaker.LinkToEditTopic(topic) + "'\">");
 			Response.Write(script);
 			Response.Write(@"<div id='TopicTip' class='TopicTip' ></div>");
 
@@ -277,7 +277,7 @@ function tbinput()
 			Response.Write("<td valign='top' width='100%'>");
 			Response.Write(@"<div id='MainRegion' class='TopicBody'>
 <form method='post' action='" + lm.LinkToQuicklink() + @"?QuickLinkNamespace=" + topic.Namespace + @"' name='QuickLinkForm'>
-<div id='TopicBar' title='Click here to quickly jump to or create a topic' class='TopicBar' onmouseover='jscript:TopicBarMouseOver()'  onclick='jscript:TopicBarClick()'  onmouseout='jscript:TopicBarMouseOut()'>
+<div id='TopicBar' title='Click here to quickly jump to or create a topic' class='TopicBar' onmouseover='javascript:TopicBarMouseOver()'  onclick='javascript:TopicBarClick(event)'  onmouseout='javascript:TopicBarMouseOut()'>
 <div  id='StaticTopicBar'  class='StaticTopicBar' style='display: block'>" + topic.FormattedName + @"
 </div>
 <div id='DynamicTopicBar' class='DynamicTopicBar' style='display: none'>

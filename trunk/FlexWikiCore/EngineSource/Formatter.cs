@@ -1602,7 +1602,7 @@ namespace FlexWiki.Formatting
 						Output.AddToFooter(tipHTML);
 						string replacement = "<a ";
 						if (tip != null)
-							replacement += "onmouseover='TopicTipOn(this, \"" + tipid + "\");' onmouseout='TopicTipOff();' ";
+							replacement += "onmouseover='TopicTipOn(this, \"" + tipid + "\", event);' onmouseout='TopicTipOff();' ";
 						replacement += "href=\"" + LinkMaker().LinkToTopic(abs) + "\">" + displayname + "</a>";
 						str = ReplaceMatch(answer, str, m, before + replacement + after) ;
 					}
@@ -1610,7 +1610,7 @@ namespace FlexWiki.Formatting
 					{
 						// There's more than one; we need to generate a dynamic menu
 						string clickEvent;
-						clickEvent = "onclick='jscript:LinkMenu(new Array(";
+						clickEvent = "onclick='javascript:LinkMenu(new Array(";
 						bool first = true;
 						foreach (AbsoluteTopicName eachAbs in absoluteNames)
 						{	

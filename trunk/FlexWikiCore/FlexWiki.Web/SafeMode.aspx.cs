@@ -144,7 +144,7 @@ namespace FlexWiki.Web
 				return;
 			}
 
-			Response.Write("<body onclick='jscript: BodyClick()' ondblclick=\"location.href='" + this.TheLinkMaker.LinkToEditTopic(topic) + "'\" scroll='no'>");
+			Response.Write("<body onclick='javascript: BodyClick()' ondblclick=\"location.href='" + this.TheLinkMaker.LinkToEditTopic(topic) + "'\" scroll='no'>");
 			Response.Write(@"<div id='TopicTip' class='TopicTip' ></div>");
 
 			bool first = true;
@@ -200,7 +200,7 @@ namespace FlexWiki.Web
 			Response.Write("<div id='MainRegion' class='Main'>");
 
 			string script = @"
-<script  type=""text/jscript"" language='jscript'>
+<script  type=""text/javascript"" language='javascript'>
 
 function TopicBarMouseOver()
 {
@@ -240,9 +240,9 @@ function BodyClick()
 	SetEditing(false);
 }
 
-function TopicBarClick()
+function TopicBarClick(event)
 {
-	window.event.cancelBubble = 'true';
+	event.cancelBubble = 'true';
 	if (IsEditing())
 		return;
 
@@ -269,12 +269,12 @@ function TopicBarClick()
 
 function tbinput()
 {
-	return 	document.all('TopicBarInputBox');
+	return 	document.getElementById('TopicBarInputBox');
 }
 
 </script>
 <form method='post' action='" + lm.LinkToQuicklink() + @"?QuickLinkNamespace=" + topic.Namespace + @"' name='QuickLinkForm'>
-<div id='TopicBar' title='Click here to quickly jump to or create a topic' class='TopicBar' onmouseover='jscript:TopicBarMouseOver()'  onclick='jscript:TopicBarClick()'  onmouseout='jscript:TopicBarMouseOut()'>
+<div id='TopicBar' title='Click here to quickly jump to or create a topic' class='TopicBar' onmouseover='javascript:TopicBarMouseOver()'  onclick='javascript:TopicBarClick(event)'  onmouseout='javascript:TopicBarMouseOut()'>
 <div  id='StaticTopicBar'  class='StaticTopicBar' style='display: block'>" + topic.FormattedName + @"
 </div>
 <div id='DynamicTopicBar' class='DynamicTopicBar' style='display: none'>
@@ -339,7 +339,7 @@ function tbinput()
 			Response.Write("<table border='0' cellpadding='0' cellspacing='0' width='100%'><tr>");
 			Response.Write("<td valign='top'>");
 			Response.Write(@"<form  style='margin-bottom:0;'  method='get' action='" + lm.LinkToSearchNamespace("") + @"'  id='SearchForm' >
-<input class='SearchBox' type='text'  name='search' length='25' value =''><INPUT type='image' hspace='2' src='" + lm.LinkToImage("images/go-dark.gif") + @"' title='Start search'>
+<input class='SearchBox' type='text'  name='search' length='25' value =''><INPUT type='image' src='" + lm.LinkToImage("images/go-dark.gif") + @"' title='Start search'>
 <input style='display: none' type='text'  name='namespace' value ='" + topic.Namespace + @"'>
 ");
 			Response.Write("</form>");
@@ -356,8 +356,8 @@ function tbinput()
 			Response.Write(options);
 			Response.Write("</select>");
 			Response.Write("<table width='100%' border='0' cellspacing='0' cellpadding='0'><tr>");
-			Response.Write("<td align='left'><input class='ShowDiffCheckbox' type='checkbox' id='showDiffs' " + (diffs ? " checked " : "") + " onclick='jscript:diffToggle()' title='Show differences between this version and the previous' class='VersionButton'><label for='ShowDiffs'>Highlight changes</label></td>");
-			Response.Write("<td align='right'><button onclick='jscript:showVersion();' class='VersionButton'>Show</button></td>");	
+			Response.Write("<td align='left'><input class='ShowDiffCheckbox' type='checkbox' id='showDiffs' " + (diffs ? " checked " : "") + " onclick='javascript:diffToggle()' title='Show differences between this version and the previous' class='VersionButton'><label for='ShowDiffs'>Highlight changes</label></td>");
+			Response.Write("<td align='right'><button onclick='javascript:showVersion();' class='VersionButton'>Show</button></td>");	
 			Response.Write("</tr></table>");
 			ClosePane(Response.Output);
 

@@ -189,8 +189,8 @@ namespace FlexWiki.Web
 			Response.Write(@"
 		<div style='display: none'>
 			<form id='Form2' method='post' target='previewWindow' ACTION='preview.aspx'>
-				<textarea id='body' name='body' /></textarea>
-				<input  type='text'  name='defaultNamespace' value ='" + TheTopic.Namespace  + @"'>
+				<textarea id='body' name='body'></textarea>
+				<input  type='text' id='Text1' name='defaultNamespace' value ='" + TheTopic.Namespace  + @"'>
 			</form>
 		</div>
 		<div class='EditZone' id='EditZone' >
@@ -404,14 +404,14 @@ Add your wiki text here.
 				// generate cancel, save, search, preview, and Save&Return buttons
 				Response.Write(@"
 <div style='margin-top: 12px; text-align: center'><table>
-<tr><td><button onclick='jscript:Cancel()' name='CancelButton'>Cancel</button></td>
-<td><button onclick='jscript:Save()' name='SaveButton'>Save</button></td></tr>
-<tr><td><Button OnClick='jscript:search()' ID='button3'>Search</Button></td>
-<td><Button OnClick='jscript:preview()' ID='button1'>Preview</Button></td></tr>");
+<tr><td><button onclick='javascript:Cancel()' name='CancelButton'>Cancel</button></td>
+<td><button onclick='javascript:Save()' name='SaveButton'>Save</button></td></tr>
+<tr><td><Button OnClick='javascript:search()' ID='button3'>Search</Button></td>
+<td><Button OnClick='javascript:preview()' ID='button1'>Preview</Button></td></tr>");
 
 				if (ReturnTopic != null)
 				{
-					Response.Write("<tr><td colspan='2'><button onclick='jscript:SaveAndReturn()'  name='SaveButton'>Save and Back</button></td></tr>");
+					Response.Write("<tr><td colspan='2'><button onclick='javascript:SaveAndReturn()'  name='SaveButton'>Save and Back</button></td></tr>");
 				}
 
 				Response.Write("</table></div>");
@@ -427,7 +427,7 @@ Add your wiki text here.
 
 		void WriteTip(string id, string text)
 		{
-			Response.Write(@"<span onclick='jscript:ShowTip(""" + id + @""")'><b>" + text + "</b></span> ");
+			Response.Write(@"<span onclick='javascript:ShowTip(""" + id + @""")'><b>" + text + "</b></span> ");
 		}
 	}
 }
