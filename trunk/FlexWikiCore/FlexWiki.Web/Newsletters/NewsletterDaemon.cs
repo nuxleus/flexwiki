@@ -163,6 +163,13 @@ namespace FlexWiki.Newsletters
 				ev.Record();
 				sw.WriteLine("End: " + DateTime.Now.ToString());
 			}
+			// Append to the newsletters log file:
+
+			string logFile = TheFederation.FederationNamespaceMapFilename;
+			logFile = Path.GetDirectoryName(logFile) + Path.DirectorySeparatorChar + "Newsletter.log";
+			StreamWriter sw2 = File.AppendText(logFile);
+			sw2.Write(sb.ToString());
+			sw2.Close();
 		}
 
 		public IEnumerable Results
