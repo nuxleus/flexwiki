@@ -102,6 +102,11 @@
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
+                <File
+                    RelPath = "SharedAssemblyInfo.cs"
+                    Link = "..\SharedAssemblyInfo.cs"
+                    BuildAction = "Compile"
+                />
             </Include>
         </Files>
     </CSHARP>

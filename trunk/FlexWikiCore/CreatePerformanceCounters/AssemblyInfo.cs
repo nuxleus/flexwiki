@@ -1,5 +1,21 @@
+#region License Statement
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+//
+// The use and distribution terms for this software are covered by the 
+// Common Public License 1.0 (http://opensource.org/licenses/cpl.php)
+// which can be found in the file CPL.TXT at the root of this distribution.
+// By using this software in any fashion, you are agreeing to be bound by 
+// the terms of this license.
+//
+// You must not remove this notice, or any other, from this software.
+#endregion
+
 using System.Reflection;
 using System.Runtime.CompilerServices;
+
+// Attributes common to all assemblies (such as version) are set in SharedAssemblyInfo.cs, 
+// which is linked to this project. Only set attributes that are specific to this file in 
+// this project
 
 //
 // General Information about an assembly is controlled through the following 
@@ -11,22 +27,8 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("")]
-[assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]		
-
-//
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-
-[assembly: AssemblyVersion("1.0.*")]
 
 //
 // In order to sign your assembly you must specify a key to use. Refer to the 
