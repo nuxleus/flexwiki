@@ -45,6 +45,18 @@ namespace FlexWiki.BuildVerificationTests
 			Assert.IsTrue(doc.Body.OuterHTML.IndexOf("The two most important things ") > 0);
 		}
 
+		
+		[Test]
+		public void ControlPageTitle()
+		{
+			AbsoluteTopicName top = new AbsoluteTopicName("TitledTopic", TheFederation.DefaultContentBase.Namespace);
+			string t = TheLinkMaker.LinkToTopic(top);
+			DocumentElement doc = TheBrowser.Navigate(t, true);
+			
+			Assert.AreEqual("This fat hen", doc.Title);
+		}
+
+
 		[Test]
 		public void CreateTestPage()
 		{

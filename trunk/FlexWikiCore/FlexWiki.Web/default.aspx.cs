@@ -78,6 +78,13 @@ namespace FlexWiki.Web
 			MainEvent.Record();
 		}
 
+		protected string GetTitle()
+		{
+			string title = TheFederation.GetTopicProperty(GetTopicName(), "Title");
+			if (title == null || title == "")
+				title = GetTopicName().Name;
+			return HTMLStringWriter.Escape(title);
+		}
 
 		protected void DoHead()
 		{
