@@ -492,9 +492,10 @@
 
 .NewsletterTopicBody
 {
-	border: 1px solid silver; 
+	border: 3px solid #0099cc; 
 	background: #f8f8f8;
 	height: 200px;
+	padding: 6px;
 	overflow: scroll;
 }
 

@@ -97,8 +97,8 @@ namespace FlexWiki.Newsletters
 		{
 			if (NextWorkDue > DateTime.Now)
 				return;
-			NextWorkDue = DateTime.Now.AddMilliseconds(WorkInterval);
 			DoWork();
+			NextWorkDue = DateTime.Now.AddMilliseconds(WorkInterval);
 		}
 
 		public bool WorkUnderway = false;

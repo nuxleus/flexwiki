@@ -106,6 +106,7 @@
                 <File
                     RelPath = "SharedAssemblyInfo.cs"
                     Link = "..\SharedAssemblyInfo.cs"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
             </Include>
