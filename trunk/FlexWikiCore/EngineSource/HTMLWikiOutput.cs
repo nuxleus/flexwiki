@@ -251,7 +251,6 @@ Write(@"
 					break;
 
 				case TableCellInfo.AlignOption.Center:
-					styles += ";margin-left: 0";
 					Write(" align='center' ");
 					break;
 			}
