@@ -1,0 +1,59 @@
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/" xmlns:wfw="http://wellformedweb.org/CommentAPI/" xmlns:slash="http://purl.org/rss/1.0/modules/slash/">
+  <channel>
+    <title>Weblogs @ ASP.NET</title>
+    <link>http://weblogs.asp.net/MainFeed.aspx</link>
+    <description>.NETWeblogs by .NET Developers</description>
+    <generator>.Text Version 0.95.2004.106</generator>
+    <item>
+      <title>Fast Chicken</title>
+      <link>http://weblogs.asp.net/aconrad/archive/2004/01/06/48205.aspx</link>
+      <pubDate>Wed, 07 Jan 2004 05:45:00 GMT</pubDate>
+      <guid isPermaLink="true">http://weblogs.asp.net/aconrad/archive/2004/01/06/48205.aspx</guid>
+      <wfw:comment>http://weblogs.asp.net/aconrad/comments/48205.aspx</wfw:comment>
+      <wfw:commentRss>http://weblogs.asp.net/aconrad/comments/commentRss/48205.aspx</wfw:commentRss>
+      <comments>http://weblogs.asp.net/aconrad/archive/2004/01/06/48205.aspx#comment</comments>
+      <slash:comments>0</slash:comments>
+      <trackback:ping>http://weblogs.asp.net/aconrad/services/trackbacks/48205.aspx</trackback:ping>
+      <source url="http://weblogs.asp.net/aconrad/rss.aspx">Andrew Conrad's WebLog</source>
+      <description>&lt;P&gt;&lt;FONT face=Arial size=2&gt;Nic Wise (of Fast Chicken fame)&amp;nbsp;has written a nice little introduction to &lt;A href="http://www.fastchicken.co.nz/blog/PermaLink,guid,24e97a53-0b04-4706-9c7f-9906e8c7f542.aspx"&gt;ObjectSpaces&lt;/A&gt;.&amp;nbsp; &lt;/FONT&gt;&lt;/P&gt;&lt;img src ="http://weblogs.asp.net/aconrad/aggbug/48205.aspx" width = "1" height = "1" /&gt;</description>
+      <dc:creator>aconrad</dc:creator>
+    </item>
+    <item>
+      <title>Are You Linked In?</title>
+      <link>http://weblogs.asp.net/CSchittko/archive/2004/01/06/48178.aspx</link>
+      <pubDate>Wed, 07 Jan 2004 03:36:00 GMT</pubDate>
+      <guid isPermaLink="true">http://weblogs.asp.net/CSchittko/archive/2004/01/06/48178.aspx</guid>
+      <wfw:comment>http://weblogs.asp.net/CSchittko/comments/48178.aspx</wfw:comment>
+      <wfw:commentRss>http://weblogs.asp.net/CSchittko/comments/commentRss/48178.aspx</wfw:commentRss>
+      <comments>http://weblogs.asp.net/CSchittko/archive/2004/01/06/48178.aspx#comment</comments>
+      <slash:comments>3</slash:comments>
+      <trackback:ping>http://weblogs.asp.net/CSchittko/services/trackbacks/48178.aspx</trackback:ping>
+      <source url="http://weblogs.asp.net/CSchittko/rss.aspx">&amp;lt;ChristophDotNet </source>
+      <description>&lt;P&gt;Has anyone else checked out:&lt;/P&gt;
+&lt;P&gt;&lt;A href="http://www.linkedin.com"&gt;http://www.linkedin.com&lt;/A&gt; ?&lt;/P&gt;
+&lt;P&gt;It's an interesting idea. I wonder if I manage to get within &lt;A href="http://www.louisville.com/loumag/mar/bacon.htm"&gt;6 degrees of separation from Kevin Bacon&lt;/A&gt; ;) I think I need to spend some time getting my profile set up. What Do You Think?&lt;/P&gt;&lt;img src ="http://weblogs.asp.net/CSchittko/aggbug/48178.aspx" width = "1" height = "1" /&gt;</description>
+      <dc:creator>Christoph Schittko</dc:creator>
+    </item>
+    <item>
+      <title>Whidbey configuration APIs</title>
+      <link>http://weblogs.asp.net/francip/archive/2004/01/06/48172.aspx</link>
+      <pubDate>Wed, 07 Jan 2004 03:27:00 GMT</pubDate>
+      <guid isPermaLink="true">http://weblogs.asp.net/francip/archive/2004/01/06/48172.aspx</guid>
+      <wfw:comment>http://weblogs.asp.net/francip/comments/48172.aspx</wfw:comment>
+      <wfw:commentRss>http://weblogs.asp.net/francip/comments/commentRss/48172.aspx</wfw:commentRss>
+      <comments>http://weblogs.asp.net/francip/archive/2004/01/06/48172.aspx#comment</comments>
+      <slash:comments>0</slash:comments>
+      <trackback:ping>http://weblogs.asp.net/francip/services/trackbacks/48172.aspx</trackback:ping>
+      <source url="http://weblogs.asp.net/francip/rss.aspx">Franci Penov</source>
+      <description>&lt;P&gt;&lt;A href="http://msdn.microsoft.com/asp.net/whidbey/aspnetwhidbey.aspx"&gt;Here's an article&lt;/A&gt; on some of the upcoming features in Whidbey. Although most of the features are ASP.Net specific, burried close to the end you can find info on the new configuration API.&lt;/P&gt;
+&lt;P&gt;Some of the things supported by the new API:&lt;/P&gt;
+&lt;UL&gt;
+&lt;LI&gt;Strong-typed properties&lt;/LI&gt;
+&lt;LI&gt;Encription of configuration sections&lt;/LI&gt;
+&lt;LI&gt;Support for reading/modifying web.config, app.config and machine.config&lt;/LI&gt;
+&lt;LI&gt;Separation between the System.ConfigurationSettings and the System.Configuration.Configuration views.&lt;/LI&gt;&lt;/UL&gt;
+&lt;P&gt;&amp;nbsp;&lt;/P&gt;&lt;img src ="http://weblogs.asp.net/francip/aggbug/48172.aspx" width = "1" height = "1" /&gt;</description>
+      <dc:creator>Franci Penov [MS]</dc:creator>
+    </item>
+  </channel>
+</rss>
