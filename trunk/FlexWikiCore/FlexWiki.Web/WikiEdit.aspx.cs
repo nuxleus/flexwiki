@@ -100,6 +100,20 @@ namespace FlexWiki.Web
 			}
 		}
 
+		bool IsBanned
+		{
+			get
+			{
+				string proposed = PostedTopicText;
+				foreach (string each in TheFederation.BlacklistedExternalLinkPrefixes)
+				{
+					if (proposed.ToUpper().IndexOf(each.ToUpper()) >= 0)
+						return true;
+				}
+				return false;
+			}
+		}
+
 		protected void ProcessSave(bool back)
 		{
 			bool isDelete = Regex.IsMatch(PostedTopicText, "^delete$", RegexOptions.IgnoreCase);
@@ -168,7 +182,7 @@ namespace FlexWiki.Web
 
 		protected void DoPage()
 		{
-			if (IsPost && !IsConflictingChange)
+			if (IsPost && !IsConflictingChange && !IsBanned)
 				ProcessPost();
 			else
 				ShowEditPage();
@@ -195,6 +209,8 @@ namespace FlexWiki.Web
 			string content = null;
 			if (TheFederation.TopicExists(TheTopic))
 				content = TheFederation.Read(TheTopic);
+			if (IsPost && IsBanned)
+				content = PostedTopicText;		// preserve what they asked for, even though we won't let them save
 			if (content == null)
 				content = @"
 Check out the formatting tips on the right for help formatting and making links.
@@ -251,7 +267,7 @@ Add your wiki text here.
 					}
 					else
 					{
-						Response.Write(@"<P>Please review the description of this WikiBase to be sure you are creating this topic where you want to: </p>
+						Response.Write(@"<P>Please review the description of this namespace to be sure you are creating this topic where you want to: </p>
 					<blockquote>" + cb.Description + @"</blockquote>");
 					}
 					Response.Write(@"</div>");
@@ -271,6 +287,14 @@ Add your wiki text here.
 				Response.Write("<div class='ConflictingChange'>Your change can not be saved.</div>");
 				Response.Write("The topic has been changed since you started to edit it and if you saved your changes, the other changes would be lost.");
 				Response.Write(" Please save your changes somewhere and edit again (no merge functionality yet).  You are now being shown the new version on the left.  To recover your previous edits, use the Back button.");
+				ClosePane(Response.Output);
+			}
+
+			if (IsPost && IsBanned)
+			{
+				OpenPane(Response.Output, "Banned URLs");
+				Response.Write("<div class='BannedChange'>Your change can not be saved.</div>");
+				Response.Write("The changes you are trying to save include banned URLs.");
 				ClosePane(Response.Output);
 			}
 

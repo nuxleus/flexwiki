@@ -101,6 +101,26 @@ namespace FlexWiki
 			}
 		}
 
+
+		ArrayList _BlacklistedExternalLinks = new ArrayList();
+
+		[XmlArray(ElementName = "BlacklistedExternalLinks"), 
+		XmlArrayItem(ElementName= "Link", 
+			Type = typeof(string))
+		]
+		public ArrayList BlacklistedExternalLinks
+		{
+			get
+			{
+				return _BlacklistedExternalLinks;
+			}
+			set
+			{
+				_BlacklistedExternalLinks = value;
+			}
+		}
+
+
 		ArrayList _DeprecatedDefinitions = new ArrayList();
 
 		// Support reading in the old-style <Namespaces> element -- just to help users convert

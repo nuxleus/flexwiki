@@ -565,6 +565,21 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "admin\EditLinksBlacklist.aspx"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "admin\EditLinksBlacklist.aspx.cs"
+                    DependentUpon = "EditLinksBlacklist.aspx"
+                    SubType = "ASPXCodeBehind"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "admin\EditLinksBlacklist.aspx.resx"
+                    DependentUpon = "EditLinksBlacklist.aspx.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "admin\EditProvider.aspx"
                     BuildAction = "Content"
                 />

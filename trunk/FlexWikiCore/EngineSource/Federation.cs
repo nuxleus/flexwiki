@@ -223,6 +223,48 @@ namespace FlexWiki
 		}
 
 
+		Set _BlacklistedExternalLinkPrefixes = new Set();
+		/// <summary>
+		/// Answer the set of blacklisted link prefixes.  Treat this set as read-only, please, and use AddBlacklistedExternalLink() and RemoveBlacklistedExternalLink().
+		/// </summary>
+		public Set BlacklistedExternalLinkPrefixes
+		{
+			get
+			{
+				return _BlacklistedExternalLinkPrefixes;
+			}
+		}
+
+		/// <summary>
+		/// Answer whether or not a link is blacklisted.  You pass in a full URL and this does checking against all blacklist rules.
+		/// </summary>
+		/// <param name="url"></param>
+		/// <returns>true if blacklisted</returns>
+		public bool IsLinkBlacklisted(string url)
+		{
+			foreach (string prefix in BlacklistedExternalLinkPrefixes)
+				if (url.ToUpper().StartsWith(prefix.ToUpper()))
+					return true;
+			return false;
+		}
+
+		public void AddBlacklistedExternalLinkPrefix(string link)
+		{
+			if (_BlacklistedExternalLinkPrefixes.Contains(link))
+				return;
+			_BlacklistedExternalLinkPrefixes.Add(link);
+			RecordFederationPropertiesChanged();
+		}
+
+		public void RemoveBlacklistedExternalLinkPrefix(string link)
+		{
+			if (!_BlacklistedExternalLinkPrefixes.Contains(link))
+				return;
+			_BlacklistedExternalLinkPrefixes.Remove(link);
+			RecordFederationPropertiesChanged();
+		}
+
+
 		/// <summary>
 		/// Invalidate and reload the information for the ContentBase with the given namespace
 		/// </summary>
@@ -628,7 +670,7 @@ namespace FlexWiki
 				done.Add(abs);
 				IBELObject s = BorderPropertyFromTopic(name, abs, border, rule);
 				if (s != null)
-			 		answer.Add(s);
+					answer.Add(s);
 			}			
 
 			return answer;
@@ -816,7 +858,8 @@ namespace FlexWiki
 				Borders = config.Borders;
 				AboutWikiString = config.AboutWikiString;
 				WikiTalkVersion = config.WikiTalkVersion;
-				ObfuscateExternalHyperlinks = config.ObfuscateExternalHyperlinks != 0;
+				foreach (string link in config.BlacklistedExternalLinks)
+					AddBlacklistedExternalLinkPrefix(link);
 				DefaultDirectoryForNewNamespaces = config.DefaultDirectoryForNewNamespaces;
 				FederationNamespaceMapLastRead = config.FederationNamespaceMapLastRead;
 				UpdateGenerator.RecordNamespaceListChanged();

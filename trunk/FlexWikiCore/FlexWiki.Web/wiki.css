@@ -816,6 +816,12 @@
 {
 }
 
+.BannedChange
+{
+	background: red;
+	color: Yellow;
+	font-weight: bold;
+}
 .ConflictingChange
 {
 	background: red;
