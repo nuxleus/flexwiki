@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Globalization;
 
 namespace FlexWiki
 {
@@ -62,30 +63,57 @@ namespace FlexWiki
 			return Value.ToString();
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the addition of this integer to the supplied integer")]
-		public int Add(int val)
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the addition of this integer to the supplied value")]
+		public int Add(object value)
 		{
-			return Value + val;
+			return Value + Int32.Parse(value.ToString(), System.Globalization.CultureInfo.CurrentCulture);
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the subtract of the supplied integer from this integer")]
-		public int Subtract(int val)
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the subtraction of the supplied value from this integer")]
+		public int Subtract(object value)
 		{
-			return Value - val;
+			return Value - Int32.Parse(value.ToString(), System.Globalization.CultureInfo.CurrentCulture);
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the integer division of this integer by the supplied integer")]
-		public int Divide(int val)
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the integer division of this integer by the supplied value")]
+		public int Divide(object value)
 		{
-			return Value / val;
+			return Value / Int32.Parse(value.ToString(), System.Globalization.CultureInfo.CurrentCulture);
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the multiplication of this integer with the supplied integer")]
-		public int Multiply(int val)
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the multiplication of this integer with the supplied value")]
+		public int Multiply(object value)
 		{
-			return Value * val;
+			return Value * Int32.Parse(value.ToString(), System.Globalization.CultureInfo.CurrentCulture);
 		}
 
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the integer addition of the supplied values")]
+		public static int Add(object firstValue, object secondValue)
+		{
+			return Int32.Parse(firstValue.ToString(), CultureInfo.CurrentCulture) + 
+				Int32.Parse(secondValue.ToString(), CultureInfo.CurrentCulture);
+		}
+
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the subtraction of the second supplied value from the first")]
+		public static int Subtract(object firstValue, object secondValue)
+		{
+			return Int32.Parse(firstValue.ToString(), CultureInfo.CurrentCulture) - 
+				Int32.Parse(secondValue.ToString(), CultureInfo.CurrentCulture);
+		}
+
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the integer division of the first supplied value by the second")]
+		public static int Divide(object firstValue, object secondValue)
+		{
+			return Int32.Parse(firstValue.ToString(), CultureInfo.CurrentCulture) / 
+				Int32.Parse(secondValue.ToString(), CultureInfo.CurrentCulture);
+		}
+
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the multiplication of first supplied value with the second")]
+		public static int Multiply(object firstValue, object secondValue)
+		{
+			return Int32.Parse(firstValue.ToString(), CultureInfo.CurrentCulture) * 
+				Int32.Parse(secondValue.ToString(), CultureInfo.CurrentCulture);
+		}
 
 		#region IWikiSequenceProducer Members
 
