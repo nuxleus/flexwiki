@@ -57,21 +57,31 @@ namespace FlexWiki
 
 		void RegisterTypesFromAssembly(Assembly a)
 		{
-				// explore types
-				foreach(Type type in a.GetExportedTypes())
-				{
-					// ignore interfaces, etc...
-					if (!type.IsClass)
-						continue;
+			IEnumerable types = null;
+			try
+			{
+				types = a.GetExportedTypes();
+			}
+			catch (NotSupportedException)
+			{
+				return;		// some types of assemblies (e.g., dynamic ones) don't let you enum exported types
+			}
 
-					// check if ExposedClass is present
-					Object[] attributes = type.GetCustomAttributes(typeof(ExposedClass),false);
-					if (attributes==null || attributes.Length==0)
-						continue;
+			// explore types
+			foreach(Type type in types)
+			{
+				// ignore interfaces, etc...
+				if (!type.IsClass)
+					continue;
 
-					// register type
-					Reg(this._Registry, type);
-				}
+				// check if ExposedClass is present
+				Object[] attributes = type.GetCustomAttributes(typeof(ExposedClass),false);
+				if (attributes==null || attributes.Length==0)
+					continue;
+
+				// register type
+				Reg(this._Registry, type);
+			}
 		}
 
 		ArrayList _AllMetaTypes;
