@@ -32,7 +32,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalendarProvider", "Calenda
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexWiki.Web.Services", "FlexWiki.Web.Service\FlexWiki.Web.Services.csproj", "{374C1AEF-4BE6-41AA-9100-9BA48AEEBEF8}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreatePerfCounters", "CreatePerformanceCounters\CreatePerfCounters.csproj", "{4F58F3F4-204B-47CB-9C4E-4576C758F742}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildVerificationTests", "BuildVerificationTests\BuildVerificationTests.csproj", "{98161BF9-0C24-4E74-AE7B-B6E0FB70700D}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
@@ -74,10 +82,18 @@ Global
 		{5F81B8BC-C8F3-491A-8680-9531350E1744}.Debug.Build.0 = Debug|.NET
 		{5F81B8BC-C8F3-491A-8680-9531350E1744}.Release.ActiveCfg = Release|.NET
 		{5F81B8BC-C8F3-491A-8680-9531350E1744}.Release.Build.0 = Release|.NET
+		{374C1AEF-4BE6-41AA-9100-9BA48AEEBEF8}.Debug.ActiveCfg = Debug|.NET
+		{374C1AEF-4BE6-41AA-9100-9BA48AEEBEF8}.Debug.Build.0 = Debug|.NET
+		{374C1AEF-4BE6-41AA-9100-9BA48AEEBEF8}.Release.ActiveCfg = Release|.NET
+		{374C1AEF-4BE6-41AA-9100-9BA48AEEBEF8}.Release.Build.0 = Release|.NET
 		{4F58F3F4-204B-47CB-9C4E-4576C758F742}.Debug.ActiveCfg = Debug|.NET
 		{4F58F3F4-204B-47CB-9C4E-4576C758F742}.Debug.Build.0 = Debug|.NET
 		{4F58F3F4-204B-47CB-9C4E-4576C758F742}.Release.ActiveCfg = Release|.NET
 		{4F58F3F4-204B-47CB-9C4E-4576C758F742}.Release.Build.0 = Release|.NET
+		{98161BF9-0C24-4E74-AE7B-B6E0FB70700D}.Debug.ActiveCfg = Debug|.NET
+		{98161BF9-0C24-4E74-AE7B-B6E0FB70700D}.Debug.Build.0 = Debug|.NET
+		{98161BF9-0C24-4E74-AE7B-B6E0FB70700D}.Release.ActiveCfg = Release|.NET
+		{98161BF9-0C24-4E74-AE7B-B6E0FB70700D}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
 		Download NUnit.url = Download NUnit.url

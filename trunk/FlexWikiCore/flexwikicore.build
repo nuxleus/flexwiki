@@ -17,22 +17,20 @@
 
   <!-- Where on disk the source tree is rooted. Defaults to the
        directory where this build file lives. -->
-  <ifnot propertyexists="basedir">
-    <property name="basedir" 
-	      value="${nant.project.basedir}" />
-  </ifnot>
-
+  <property name="basedir" 
+	    value="${nant.project.basedir}" 
+	    unless="${property::exists('basedir')}" />
+  
   <echo message="Running from directory ${basedir}" />
 
   <!-- If a file called personal.properties exists, read it in and use
        the properties defined there to override this build file's
        settings -->
-  <available property="personalprops.available"
-	     resource="${basedir}/personal.properties"
-	     type="File" />
+  <property name="personalpropspath"
+      value="${path::combine(basedir, 'personal.properties')}" />
 
-  <include buildfile="${basedir}/personal.properties" 
-	   if="${personalprops.available}" />
+  <include buildfile="${personalpropspath}" 
+	   if="${file::exists(personalpropspath)}" />
   
   <!-- Read in things like environment variables into nant properties -->
   <sysinfo />
@@ -64,81 +62,79 @@
 
   <!-- If any of the version number parts have been overridden, use
        those. Otherwise, use the ones we just generated. -->
-  <ifnot propertyexists="vermajor">
-    <property name="vermajor" value="${basevermajor}" />
-  </ifnot>
+  <property name="vermajor" value="${basevermajor}" 
+      unless="${property::exists('vermajor')}" />
 
-  <ifnot propertyexists="verminor">
-    <property name="verminor" value="${baseverminor}" />
-  </ifnot>
+  <property name="verminor" value="${baseverminor}" 
+      unless="${property::exists('verminor')}" />
 
-  <ifnot propertyexists="verbuild">
-    <property name="verbuild" value="${baseverbuild}" />
-  </ifnot>
+  <property name="verbuild" value="${baseverbuild}" 
+      unless="${property::exists('verbuild')}" />
 
-  <ifnot propertyexists="verrevision">
-    <property name="verrevision" value="${baseverrevision}" />
-  </ifnot>
+  <property name="verrevision" value="${baseverrevision}" 
+      unless="${property::exists('verrevision')}" />
 
   <echo message="Building version ${vermajor}.${verminor}.${verbuild}.${verrevision}" />
 
   <!-- The type of build to do (generally Release or Debug). Default
        to a Debug build. --> 
-  <ifnot propertyexists="configuration">
-    <property name="configuration" value="Debug" />
-  </ifnot>
-
+  <property name="configuration" value="Debug" 
+      unless="${property::exists('configuration')}" />
+  
   <!-- The directory we build everything into. Defaults to bin/Debug
        or bin/Release, depending on the configuration specified above.
        Note: this is a subdirectory off of the basedir, which means
        that the nant build builds to a *different* directory than the
        individual projects, which each build to their own subdirectory -->
-  <ifnot propertyexists="targetdir">
-    <property name="targetdir" value="${basedir}/bin/${configuration}" />
-  </ifnot>
+  <property name="targetdir" value="${path::combine(path::combine(basedir, 'bin'), configuration)}" 
+      unless="${property::exists('targetdir')}" />
 
   <!-- The directory where various report files wind up. This includes
        things like the report that NUnit spits out. Default to
        "reports" off of the base directory. -->
-  <ifnot propertyexists="reportdir">
-    <property name="reportdir" value="${basedir}\reports" />
-  </ifnot>
+  <property name="reportdir" value="${basedir}\reports" 
+      unless="${property::exists('reportdir')}" />
   
   <!-- The directory where we build the zip files for distribution.
        Defaults to "dist" off of the base directory. --> 
-  <ifnot propertyexists="distdir">
-    <property name="distdir" value="${basedir}/dist" />
-  </ifnot>
+  <property name="distdir" value="${basedir}/dist" 
+      unless="${property::exists('distdir')}" />
+
+  <!-- The directory where we install temporarily to allow us to 
+       test the build -->
+  <property name="installdir" value="${basedir}\install" 
+      unless="${property::exists('installdir')}" />
+
+  <!-- The base name for the virtual directory that gets created in
+       the install target. The actual virtual directory will be a
+       combination of the base name and the version number -->
+  <property name="install.vdir.basename" value="FlexWikiBuild" 
+      unless="${property::exists('install')}" />
 
   <!-- Set this property to true here (or override elsewhere) to skip
        the actual compilation stage of the build. -->
-  <ifnot propertyexists="build.skip">
-    <property name="build.skip" value="false" />
-  </ifnot>
+  <property name="build.skip" value="false" 
+      unless="${property::exists('build')}" />
 
   <!-- Set this property to true here (or override elsewhere) to skip
        the test stage of the build. -->
-  <ifnot propertyexists="test.skip">
-    <property name="test.skip" value="false" />
-  </ifnot>
+  <property name="test.skip" value="false" 
+      unless="${property::exists('test')}" />
 
   <!-- Set this property to true here (or override elsewhere) to skip
        the stage of the build that builds the distribution files. -->
-  <ifnot propertyexists="dist.skip">
-    <property name="dist.skip" value="false" />
-  </ifnot>
+  <property name="dist.skip" value="false" 
+      unless="${property::exists('dist')}" />
 
   <!-- Set this property to true here (or override elsewhere) to skip
        the stage of the build that uploads the distribution files. -->
-  <ifnot propertyexists="upload.skip">
-    <property name="upload.skip" value="false" />
-  </ifnot>
+  <property name="upload.skip" value="false" 
+      unless="${property::exists('upload')}" />
 
   <!-- The name of the .sln file used to compile the project. Defaults
        to having the same name as the NAnt project -->
-  <ifnot propertyexists="buildfile.name">
-    <property name="buildfile.name" value="${nant.project.name}" />
-  </ifnot>
+  <property name="buildfile.name" value="${nant.project.name}" 
+      unless="${property::exists('buildfile')}" />
 
   <!-- NAnt build targets appear after this point. To build a
        particular target, run "nant targetname" from the command line.
@@ -191,6 +187,26 @@
 		        value="Copyright (c) 2005 Microsoft Corporation" />
 	    </attributes>
 	  </asminfo>
+
+    <!-- Analyze the solution file to figure out what projects are there -->
+    
+    <!-- Start by deleting the file that lists all the projects -->
+    <property name="init.projectlistpath" value="${reportdir}/projectlist.txt" />
+    
+    <delete file="${init.projectlistpath}" if="${file::exists(init.projectlistpath)}" />
+    
+    <foreach item="Line" 
+        in="${basedir}/${nant.project.name}.sln"
+        property="init.line" >
+      <do>
+        <if test="${string::starts-with(init.line, 'Project(')}">
+          <regex pattern="(?:=\s)*&quot;(?'proj'.*?)&quot;,\s&quot;(?'path'.*?)&quot;,\s&quot;(?'guid'.*?)&quot;"
+            input="${init.line}" />
+          <echo file="${init.projectlistpath}" append="true" 
+            message="${path}" />
+        </if>
+      </do>
+    </foreach>
     
   </target>
 
@@ -261,35 +277,35 @@
     <!-- Define the web content files -->
     <fileset id="dist.web.content"
 	     basedir="${basedir}\FlexWiki.Web">
-      <includes name="**\*" />
-      <excludes name="**\*.resx" />
-      <excludes name="**\*.cs" />
-      <excludes name="**\*.csproj" />
-      <excludes name="bin\**\*" />
-      <excludes name="obj\**\*" />
+      <include name="**\*" />
+      <exclude name="**\*.resx" />
+      <exclude name="**\*.cs" />
+      <exclude name="**\*.csproj" />
+      <exclude name="bin\**\*" />
+      <exclude name="obj\**\*" />
     </fileset>
 
     <!-- Define the web binary files -->
     <fileset id="dist.web.binaries"
 	     basedir="${targetdir}">
-      <includes name="*.dll" />
-      <includes name="*.pdb" />
+      <include name="*.dll" />
+      <include name="*.pdb" />
     </fileset>
 
     <!-- Define the files that go in the "other binaries" zip
 	 directory -->
     <fileset id="dist.all.binaries"
 	     basedir="${targetdir}">
-      <includes name="*.dll" />
-      <includes name="*.pdb" />
-      <includes name="*.exe" />
+      <include name="*.dll" />
+      <include name="*.pdb" />
+      <include name="*.exe" />
     </fileset>
 
     <!-- Define the files that go right in the base directory of the
 	       zipfile --> 
     <fileset id="dist.root"
 	     basedir="${basedir}">
-      <includes name="*.txt" />
+      <include name="*.txt" />
     </fileset>
 
     <!-- Then we copy the appropriate files into each directory -->
@@ -333,7 +349,7 @@
 	        directory into the web full binaries zip -->
     <zip zipfile="${dist.web.full.binzip}">
       <fileset basedir="${dist.webdir}">
-	      <includes name="**/*" />
+	      <include name="**/*" />
       </fileset>
     </zip>
 
@@ -347,39 +363,39 @@
 	      an upgrade install -->
     <zip zipfile="${dist.web.upgrade.binzip}">
       <fileset basedir="${dist.webdir}">
-	      <includes name="**/*" />
-	      <excludes name="web.config" />
-	      <excludes name="**/WikiBases/**" />
-	      <excludes name="${dist.webdir}\**\NamespaceMap.xml" />
+	      <include name="**/*" />
+	      <exclude name="web.config" />
+	      <exclude name="**/WikiBases/**" />
+	      <exclude name="${dist.webdir}\**\NamespaceMap.xml" />
       </fileset>
     </zip>
 
     <!-- Zip up all the non-web files into the tools zip -->
     <zip zipfile="${dist.tools.binzip}">
       <fileset basedir="${dist.toolsdir}">
-        <includes name="**/*" />
+        <include name="**/*" />
       </fileset>
     </zip>    
   
     <!-- Define the files that wind up in the zip of all source code -->
     <fileset id="dist.sources" basedir="${basedir}">
-      <includes name="**/*" />
-      <excludes name="dist/**" />
-      <excludes name="diff/**" />
-      <excludes name="release/**" />
-      <excludes name="reports/**" />
-      <excludes name="**/bin/Debug/**" />
-      <excludes name="**/bin/Release/**" />
-      <excludes name="**/obj/**" />
-      <excludes name="**/*.suo" />
-      <excludes name="**/*.user" />
-      <excludes name="**/*~" />
-      <excludes name="**/*.projdata" />
-      <excludes name="**/*.bak" />
-      <excludes name="personal.properties" />
-      <excludes name="**/CVS" />
-      <includes name="tools/nant/bin" />
-      <includes name="tools/nunit/bin" />
+      <include name="**/*" />
+      <exclude name="dist/**" />
+      <exclude name="diff/**" />
+      <exclude name="release/**" />
+      <exclude name="reports/**" />
+      <exclude name="**/bin/Debug/**" />
+      <exclude name="**/bin/Release/**" />
+      <exclude name="**/obj/**" />
+      <exclude name="**/*.suo" />
+      <exclude name="**/*.user" />
+      <exclude name="**/*~" />
+      <exclude name="**/*.projdata" />
+      <exclude name="**/*.bak" />
+      <exclude name="personal.properties" />
+      <exclude name="**/CVS" />
+      <include name="tools/nant/bin" />
+      <include name="tools/nunit/bin" />
     </fileset>
     
     <!-- We'll stage all the sources in a directory because we want to modify 
@@ -403,9 +419,65 @@
       	 the sources zip -->
     <zip zipfile="${dist.srczip}">
       <fileset basedir="${dist.srcdir}">
-        <includes name="**/*" />
+        <include name="**/*" />
       </fileset>
     </zip>
+  </target>
+
+  <!-- The install target installs the web part of the build -->
+  <target name="install" depends="dist">
+    <property name="install.versiondir.name"
+	      value="${vermajor}.${verminor}.${verbuild}.${verrevision}" />
+    <property name="install.versiondir"
+	      value="${installdir}\${install.versiondir.name}" />
+    
+    <!-- Build a version-specific name for the new virtual directory.
+	 Note that IIS freaks out if there are dots in the name, so we
+	 use spaces -->
+    <property name="install.vdir.name"
+	      value="${install.vdir.basename}-${vermajor}-${verminor}-${verbuild}-${verrevision}" />
+
+    <!-- Destroy the existing physical directory if present -->
+    <property name="clean.dir.to.clean"
+	      value="${install.versiondir}" />
+    <call target="clean.dir" />
+
+    <!-- Create the physical directory -->
+    <mkdir dir="${install.versiondir}" />
+
+    <!-- Create the virtual directory and point it to the physical
+	 directory -->
+    <exec program="cscript.exe"
+	  workingdir="${basedir}">
+      <arg value="tools\scripts\makevdir.js" />
+      <arg value="localhost" />               <!-- Machine name -->
+      <arg value="${install.vdir.name}" />    <!-- Virtual directory name -->
+      <arg value="${install.versiondir}" />   <!-- Physical path -->
+    </exec>
+
+    <!-- Unzip the web dist zip we created as part of the dist target -->
+    <unzip zipfile="${dist.web.full.binzip}" 
+	   todir="${install.versiondir}" />
+
+    <!-- Give the anonymous user read/write access -->
+    <exec program="xcacls.exe"
+	  basedir="${basedir}/tools/reskit" 
+	  workingdir="${install.versiondir}">
+      <arg value="." />
+      <arg value="/E" />
+      <arg value="/G" />
+      <arg value="NETWORK SERVICE:F" />
+      <arg value="/Y" />
+    </exec>
+
+    <!-- And that should be all we need to do -->
+    
+  </target>
+
+  <!-- The verify target verifies the build by running tests against 
+        an installed version -->
+  <target name="verify" depends="install">
+    
   </target>
 
 
@@ -418,16 +490,15 @@
     <call target="clean.dir" />
     <property name="clean.dir.to.clean" value="${reportdir}" />
     <call target="clean.dir" />
+    <property name="clean.dir.to.clean" value="${installdir}" />
+    <call target="clean.dir" />
   </target>
 
   <!-- This is a little helper target that deletes a directory only if
        it is present. Otherwise the <delete> task will fail when
        deleting a directory that doesn't exist. --> 
   <target name="clean.dir">
-    <available property="clean.dir.is.present"
-	       resource="${clean.dir.to.clean}"
-	       type="Directory" />
-    <delete dir="${clean.dir.to.clean}" if="${clean.dir.is.present}" />
+    <delete dir="${clean.dir.to.clean}" if="${directory::exists(clean.dir.to.clean)}" />
   </target>
 
 </project>

@@ -1,0 +1,1 @@
+copy %1app.config %3.config

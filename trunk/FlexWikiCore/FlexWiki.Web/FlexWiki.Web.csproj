@@ -109,6 +109,11 @@
                     Project = "{7362F597-DAB3-437E-8A07-37D8D2FE6E56}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
+                <Reference
+                    Name = "FlexWiki.Web.Services"
+                    Project = "{374C1AEF-4BE6-41AA-9100-9BA48AEEBEF8}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
             </References>
         </Build>
         <Files>
@@ -189,6 +194,21 @@
                 <File
                     RelPath = "DoSearch.aspx.resx"
                     DependentUpon = "DoSearch.aspx.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "EditService.asmx"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "EditService.asmx.cs"
+                    DependentUpon = "EditService.asmx"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "EditService.asmx.resx"
+                    DependentUpon = "EditService.asmx.cs"
                     BuildAction = "EmbeddedResource"
                 />
                 <File

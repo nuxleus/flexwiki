@@ -12,13 +12,73 @@ Ant project web site (http://ant.apache.org/).
 Why NAnt?
 ---------
 Because Ant was too Java specific.
-Because Ant needed the Java runtime.  NAnt only needs the .NET runtime.
+Because Ant needed the Java runtime.  NAnt only needs the .NET 
+or Mono runtime.
 
 
 The Latest Version
 ------------------
 Details of the latest version can be found on the NAnt project web site
 http://nant.sourceforge.net/
+
+
+Compilation and Installation
+-------------------------------
+
+   a. Build Requirements
+   --------------------
+   To build NAnt, you will need the following components:
+
+   on Windows
+
+       * A version of the Microsoft .NET Framework
+
+         Available from http://msdn.microsoft.com/netframework/
+         
+         you will need the .NET Framework SDK as well as the runtime components 
+	 if you intend to compile programs.
+
+         note that NAnt currently supports versions 1.0, 1.1 and 2.0 (Beta 1) 
+	 of the Microsoft .NET Framework. 
+
+       or
+
+       * Mono for Windows (version 1.0 or higher)
+
+         Available from http://www.mono-project.com/downloads/
+   
+   Linux/Unix
+
+       * GNU toolchain - including GNU make
+
+       * pkg-config
+
+           Available from: http://www.freedesktop.org/Software/pkgconfig
+
+       * A working Mono installation and development libraries (version 1.0 or higher)
+
+           Available from: http://www.mono-project.com/downloads/
+
+           
+    b. Building the Software
+    ------------------------
+      
+    Windows (with Microsoft .NET)
+        bin\NAnt.exe
+        bin\NAnt.exe install -D:install.prefix=c:\Program Files
+
+    Windows (with Mono)
+        mono bin\NAnt.exe
+        mono bin\NAnt.exe install -D:install.prefix=c:\Program Files
+    
+    Linux/Unix
+        make
+        make install prefix=/usr/local
+
+Note: 
+
+These instructions only apply to the source distribution of NAntContrib, as the binary distribution 
+contains pre-built assemblies.
 
 
 Documentation
@@ -28,7 +88,7 @@ Documentation is available in HTML format, in the doc/ directory.
 
 License
 -------
-Copyright (C) 2001-2003 Gerry Shaw
+Copyright (C) 2001-2004 Gerry Shaw
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

@@ -30,7 +30,8 @@ namespace FlexWiki.Web.Services
 	[WebService(Namespace="http://www.flexwiki.com/webservices/")]
 	public class EditServiceImplementation : System.Web.Services.WebService
 	{
-		private LinkMaker _linkMaker;
+#if false
+    private LinkMaker _linkMaker;
 
 		protected Federation TheFederation
 		{
@@ -59,35 +60,8 @@ namespace FlexWiki.Web.Services
 
 			EstablishFederation();
 		}
-
-		#region Component Designer generated code
-		
-		//Required by the Web Services Designer 
-		private IContainer components = null;
-				
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
-		}
-
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if(disposing && components != null)
-			{
-				components.Dispose();
-			}
-			base.Dispose(disposing);		
-		}
-		
-		#endregion
-
-		/// <summary>
+#endif
+    /// <summary>
 		/// CanEdit checks to see if the user is Authenticated using supplied credentials in the Web Service proxy.
 		/// </summary>
 		/// <returns>An attribution in the form of domain\username or null if the user isn't authenticated.</returns>
@@ -99,7 +73,7 @@ namespace FlexWiki.Web.Services
 			
 			return GetVisitorIdentity(visitorIdentityString);
 		}
-
+#if false
 		/// <summary>
 		/// Returns all the namespaces in the Federation.
 		/// </summary>
@@ -342,19 +316,23 @@ namespace FlexWiki.Web.Services
 			string fsPath = Context.Request.MapPath(federationNamespaceMap);
 			TheFederation = new Federation(fsPath, FlexWiki.Formatting.OutputFormat.HTML, new LinkMaker(RootUrl(Context.Request)));
 		}
-		private string GetVisitorIdentity(string visitorIdentityString)
+#endif
+    
+    private string GetVisitorIdentity(string visitorIdentityString)
 		{
 			// if we are using Windows Authenticaiton, override the attribution with the Windows domain/username
-			if (User.Identity.IsAuthenticated)
-				return User.Identity.Name;
-			else if (visitorIdentityString == null || visitorIdentityString.Length == 0)
-			{
-				return Context.Request.UserHostAddress;
-			}
-			else
-			{
-				return visitorIdentityString;
-			}
+      if (User.Identity.IsAuthenticated)
+      {
+        return User.Identity.Name;
+      }
+      else if (visitorIdentityString == null || visitorIdentityString.Length == 0)
+      {
+        return Context.Request.UserHostAddress;
+      }
+      else
+      {
+        return visitorIdentityString;
+      }
 		}
 	}
 }

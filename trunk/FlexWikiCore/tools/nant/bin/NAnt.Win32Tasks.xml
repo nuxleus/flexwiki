@@ -4,321 +4,82 @@
         <name>NAnt.Win32Tasks</name>
     </assembly>
     <members>
-        <member name="T:NAnt.Core.Tasks.ScriptTask">
+        <member name="T:NAnt.Win32.Tasks.ReadRegistryTask">
             <summary>
-            Executes the code contained within the task.
-            </summary>
-            <remarks>
-                <para>
-                The <see cref="T:NAnt.Core.Tasks.ScriptTask"/> must contain a single <c>code</c> 
-                element, which in turn contains the script code.
-                </para>
-                <para>
-                A static entry point named <c>ScriptMain</c> is required. It must 
-                have a single <see cref="T:NAnt.Core.Project"/> parameter.
-                </para>
-                <para>
-                The following namespaces are loaded by default:
-                </para>
-                <list type="bullet">
-                    <item>
-                        <description>System</description>
-                    </item>
-                    <item>
-                        <description>System.Collections</description>
-                    </item>
-                    <item>
-                        <description>System.Collections.Specialized</description>
-                    </item>
-                    <item>
-                        <description>System.IO</description>
-                    </item>
-                    <item>
-                        <description>System.Text</description>
-                    </item>
-                    <item>
-                        <description>System.Text.RegularExpressions</description>
-                    </item>
-                    <item>
-                        <description>NAnt.Core</description>
-                    </item>
-                </list>
-            </remarks>
-            <example>
-              <para>Run C# code that writes a message to the build log.</para>
-              <code>
-                    &lt;script language="C#"&gt;
-                        &lt;code&gt;&lt;![CDATA[
-                            public static void ScriptMain(Project project) {
-                                project.Log(Level.Info, "Hello World from a script task using C#"); 
-                            }
-                        ]]&gt;&lt;/code&gt;
-                    &lt;/script&gt;
-              </code>
-            </example>
-            <example>
-              <para>Run Visual Basic.NET code that writes a message to the build log.</para>
-              <code>
-                    &lt;script language="VB"&gt;
-                        &lt;code&gt;&lt;![CDATA[
-                            Public Shared Sub ScriptMain(project As Project)
-                                project.Log(Level.Info, "Hello World from a script task using Visual Basic.NET")
-                            End Sub
-                        ]]&gt;&lt;/code&gt;
-                    &lt;/script&gt;
-              </code>
-            </example>
-        </member>
-        <member name="M:NAnt.Core.Tasks.ScriptTask.InitializeTask(System.Xml.XmlNode)">
-            <summary>
-            Initializes the task using the specified xml node.
-            </summary>
-        </member>
-        <member name="M:NAnt.Core.Tasks.ScriptTask.ExecuteTask">
-            <summary>
-            Executes the script block.
-            </summary>
-        </member>
-        <member name="P:NAnt.Core.Tasks.ScriptTask.Language">
-            <summary>
-            The language of the script block (VB, C# or JS).
-            </summary>
-        </member>
-        <member name="P:NAnt.Core.Tasks.ScriptTask.References">
-            <summary>
-            Any required references.
-            </summary>
-        </member>
-        <member name="P:NAnt.Core.Tasks.ScriptTask.MainClass">
-            <summary>
-            The name of the main class containing the static <c>ScriptMain</c> entry point.
-            </summary>
-        </member>
-        <member name="P:NAnt.Core.Tasks.ScriptTask.Imports">
-            <summary>
-            The namespaces to import.
-            </summary>
-        </member>
-        <member name="T:NAnt.Win32.Tasks.ServiceControllerTask">
-            <summary>
-            Allows a Windows service to be controlled.
+            Reads a value or set of values from the Windows Registry into one or 
+            more NAnt properties.
             </summary>
             <example>
-              <para>Starts the World Wide Web Publishing Service on the local computer.</para>
+              <para>Read a single value from the registry.</para>
               <code>
                 <![CDATA[
-            <servicecontroller action="Start" service="w3svc" />
+            <readregistry property="sdkRoot" key="SOFTWARE\Microsoft\.NETFramework\sdkInstallRoot" hive="LocalMachine" />
                 ]]>
               </code>
-              <para>Stops the Alerter service on computer 'MOTHER'.</para>
+              <para>Read all the registry values in a key.</para>
               <code>
                 <![CDATA[
-            <servicecontroller action="Stop" service="Alerter" machine="MOTHER" />
+            <readregistry prefix="dotNetFX" key="SOFTWARE\Microsoft\.NETFramework\sdkInstallRoot" hive="LocalMachine" />
                 ]]>
               </code>
             </example>
         </member>
-        <member name="M:NAnt.Win32.Tasks.ServiceControllerTask.#ctor">
+        <member name="M:NAnt.Win32.Tasks.ReadRegistryTask.ExecuteTask">
             <summary>
-            Initializes a new instance of the <see cref="T:NAnt.Win32.Tasks.ServiceControllerTask"/>
-            class.
+            read the specified registry value
             </summary>
         </member>
-        <member name="M:NAnt.Win32.Tasks.ServiceControllerTask.ExecuteTask">
+        <member name="M:NAnt.Win32.Tasks.ReadRegistryTask.LookupRegKey(System.String,Microsoft.Win32.RegistryHive[])">
             <summary>
-            Peforms actions on the service in order to reach the desired status.
+            Returns the hive for a given key.
             </summary>
-        </member>
-        <member name="M:NAnt.Win32.Tasks.ServiceControllerTask.DetermineDesiredStatus">
-            <summary>
-            Determines the desired status of the service based on the action
-            that should be performed on it.
-            </summary>
+            <param name="key"></param>
+            <param name="registries"></param>
             <returns>
-            The <see cref="T:System.ServiceProcess.ServiceControllerStatus"/> that should be reached
-            in order for the <see cref="P:NAnt.Win32.Tasks.ServiceControllerTask.Action"/> to be considered successful.
+            The hive for a given key.
             </returns>
         </member>
-        <member name="M:NAnt.Win32.Tasks.ServiceControllerTask.StartService(System.ServiceProcess.ServiceController)">
+        <member name="M:NAnt.Win32.Tasks.ReadRegistryTask.GetHiveKey(Microsoft.Win32.RegistryHive)">
             <summary>
-            Starts the service identified by <see cref="P:NAnt.Win32.Tasks.ServiceControllerTask.ServiceName"/> and
-            <see cref="P:NAnt.Win32.Tasks.ServiceControllerTask.MachineName"/>.
+            Returns the key for a given registry hive.
             </summary>
-            <param name="serviceController"><see cref="T:System.ServiceProcess.ServiceController"/> instance for controlling the service identified by <see cref="P:NAnt.Win32.Tasks.ServiceControllerTask.ServiceName"/> and <see cref="P:NAnt.Win32.Tasks.ServiceControllerTask.MachineName"/>.</param>
-        </member>
-        <member name="M:NAnt.Win32.Tasks.ServiceControllerTask.StopService(System.ServiceProcess.ServiceController)">
-            <summary>
-            Stops the service identified by <see cref="P:NAnt.Win32.Tasks.ServiceControllerTask.ServiceName"/> and
-            <see cref="P:NAnt.Win32.Tasks.ServiceControllerTask.MachineName"/>.
-            </summary>
-            <param name="serviceController"><see cref="T:System.ServiceProcess.ServiceController"/> instance for controlling the service identified by <see cref="P:NAnt.Win32.Tasks.ServiceControllerTask.ServiceName"/> and <see cref="P:NAnt.Win32.Tasks.ServiceControllerTask.MachineName"/>.</param>
-        </member>
-        <member name="M:NAnt.Win32.Tasks.ServiceControllerTask.RestartService(System.ServiceProcess.ServiceController)">
-            <summary>
-            Restarts the service identified by <see cref="P:NAnt.Win32.Tasks.ServiceControllerTask.ServiceName"/> and
-            <see cref="P:NAnt.Win32.Tasks.ServiceControllerTask.MachineName"/>.
-            </summary>
-            <param name="serviceController"><see cref="T:System.ServiceProcess.ServiceController"/> instance for controlling the service identified by <see cref="P:NAnt.Win32.Tasks.ServiceControllerTask.ServiceName"/> and <see cref="P:NAnt.Win32.Tasks.ServiceControllerTask.MachineName"/>.</param>
-        </member>
-        <member name="M:NAnt.Win32.Tasks.ServiceControllerTask.PauseService(System.ServiceProcess.ServiceController)">
-            <summary>
-            Pauses the service identified by <see cref="P:NAnt.Win32.Tasks.ServiceControllerTask.ServiceName"/> and
-            <see cref="P:NAnt.Win32.Tasks.ServiceControllerTask.MachineName"/>.
-            </summary>
-            <param name="serviceController"><see cref="T:System.ServiceProcess.ServiceController"/> instance for controlling the service identified by <see cref="P:NAnt.Win32.Tasks.ServiceControllerTask.ServiceName"/> and <see cref="P:NAnt.Win32.Tasks.ServiceControllerTask.MachineName"/>.</param>
-        </member>
-        <member name="M:NAnt.Win32.Tasks.ServiceControllerTask.ContinueService(System.ServiceProcess.ServiceController)">
-            <summary>
-            Continues the service identified by <see cref="P:NAnt.Win32.Tasks.ServiceControllerTask.ServiceName"/> and
-            <see cref="P:NAnt.Win32.Tasks.ServiceControllerTask.MachineName"/>.
-            </summary>
-            <param name="serviceController"><see cref="T:System.ServiceProcess.ServiceController"/> instance for controlling the service identified by <see cref="P:NAnt.Win32.Tasks.ServiceControllerTask.ServiceName"/> and <see cref="P:NAnt.Win32.Tasks.ServiceControllerTask.MachineName"/>.</param>
-        </member>
-        <member name="F:NAnt.Win32.Tasks.ServiceControllerTask._serviceName">
-            <summary>
-            Holds the name of the service that should be controlled.
-            </summary>
-        </member>
-        <member name="F:NAnt.Win32.Tasks.ServiceControllerTask._machineName">
-            <summary>
-            Holds the name of the computer on which the service resides.
-            </summary>
-        </member>
-        <member name="F:NAnt.Win32.Tasks.ServiceControllerTask._action">
-            <summary>
-            Holds the action that should be performed on the service.
-            </summary>
-        </member>
-        <member name="F:NAnt.Win32.Tasks.ServiceControllerTask._timeout">
-            <summary>
-            Holds the time, in milliseconds, the task will wait for a service
-            to reach the desired status.
-            </summary>
-        </member>
-        <member name="P:NAnt.Win32.Tasks.ServiceControllerTask.ServiceName">
-            <summary>
-            The name of the service that should be controlled.
-            </summary>
-        </member>
-        <member name="P:NAnt.Win32.Tasks.ServiceControllerTask.MachineName">
-            <summary>
-            The name of the computer on which the service resides. The default
-            is the local computer.
-            </summary>
-        </member>
-        <member name="P:NAnt.Win32.Tasks.ServiceControllerTask.Action">
-            <summary>
-            The action that should be performed on the service - either 
-            <see cref="F:NAnt.Win32.Tasks.ServiceControllerTask.ActionType.Start"/>, <see cref="F:NAnt.Win32.Tasks.ServiceControllerTask.ActionType.Stop"/>,
-            <see cref="F:NAnt.Win32.Tasks.ServiceControllerTask.ActionType.Restart"/>, <see cref="F:NAnt.Win32.Tasks.ServiceControllerTask.ActionType.Pause"/> 
-            or <see cref="F:NAnt.Win32.Tasks.ServiceControllerTask.ActionType.Continue"/>.
-            </summary>
-        </member>
-        <member name="P:NAnt.Win32.Tasks.ServiceControllerTask.Timeout">
-            <summary>
-            The time, in milliseconds, the task will wait for the service to
-            reach the desired status. The default is 5000 milliseconds.
-            </summary>
-        </member>
-        <member name="T:NAnt.Win32.Tasks.ServiceControllerTask.ActionType">
-            <summary>
-            Defines the actions that can be performed on a service.
-            </summary>
-        </member>
-        <member name="F:NAnt.Win32.Tasks.ServiceControllerTask.ActionType.Start">
-            <summary>
-            Starts a service.
-            </summary>
-        </member>
-        <member name="F:NAnt.Win32.Tasks.ServiceControllerTask.ActionType.Stop">
-            <summary>
-            Stops a service.
-            </summary>
-        </member>
-        <member name="F:NAnt.Win32.Tasks.ServiceControllerTask.ActionType.Restart">
-            <summary>
-            Restarts a service.
-            </summary>
-        </member>
-        <member name="F:NAnt.Win32.Tasks.ServiceControllerTask.ActionType.Pause">
-            <summary>
-            Pauses a running service.
-            </summary>
-        </member>
-        <member name="F:NAnt.Win32.Tasks.ServiceControllerTask.ActionType.Continue">
-            <summary>
-            Continues a paused service.
-            </summary>
-        </member>
-        <member name="T:NAnt.Win32.Tasks.TlbExpTask">
-            <summary>
-            Exports a .NET assembly to a type library that can be used from unmanaged 
-            code (wraps Microsoft's <c>tlbexp.exe</c>).
-            </summary>
-            <remarks>
-              <para>
-              <see href="ms-help://MS.NETFrameworkSDK/cptools/html/cpgrftypelibraryexportertlbexpexe.htm">See the Microsoft.NET Framework SDK documentation for details.</see>
-              </para>
-            </remarks>
-            <example>
-              <para>Export <c>DotNetAssembly.dll</c> to <c>LegacyCOM.dll</c>.</para>
-              <code>
-                <![CDATA[
-            <tlbexp assembly="DotNetAssembly.dll" output="LegacyCOM.dll" />
-                ]]>
-              </code>
-            </example>
-        </member>
-        <member name="M:NAnt.Win32.Tasks.TlbExpTask.ExecuteTask">
-            <summary>
-            Exports the type library.
-            </summary>
-        </member>
-        <member name="M:NAnt.Win32.Tasks.TlbExpTask.NeedsCompiling">
-            <summary>
-            Determines whether the assembly needs to be exported to a type 
-            library again.
-            </summary>
+            <param name="hive">The registry hive to return the key for.</param>
             <returns>
-            <see langword="true" /> if the assembly needs to be exported to a 
-            type library; otherwise, <see langword="false" />.
+            The key for a given registry hive.
             </returns>
         </member>
-        <member name="P:NAnt.Win32.Tasks.TlbExpTask.Assembly">
+        <member name="P:NAnt.Win32.Tasks.ReadRegistryTask.PropertyName">
             <summary>
-            Specifies the assembly for which to export a type library.
+                <para>The property to set to the specified registry key value.</para>
+                <para>If this attribute is used then a single value will be read.</para>
             </summary>
-            <value>
-            The assembly for which to export a type library.
-            </value>
-            <remarks><a href="ms-help://MS.NETFrameworkSDK/cptools/html/cpgrftypelibraryexportertlbexpexe.htm">See the Microsoft.NET Framework SDK documentation for details.</a></remarks>
         </member>
-        <member name="P:NAnt.Win32.Tasks.TlbExpTask.Output">
+        <member name="P:NAnt.Win32.Tasks.ReadRegistryTask.PropertyPrefix">
             <summary>
-            Specifies the name of the type library file to generate.
+                <para>The prefix to use for the specified registry key values.</para>
+                <para>If this attribute is used then all registry values will be read and stored as properties with this prefix.</para>
             </summary>
-            <value>
-            The name of the type library file to generate.
-            </value>
-            <remarks><a href="ms-help://MS.NETFrameworkSDK/cptools/html/cpgrftypelibraryexportertlbexpexe.htm">See the Microsoft.NET Framework SDK documentation for details.</a></remarks>
+            <example>
+                <para>Registry values a, b, c will be turned into prefixa, prefixb, prefixc named properties</para>
+            </example>
         </member>
-        <member name="P:NAnt.Win32.Tasks.TlbExpTask.Names">
+        <member name="P:NAnt.Win32.Tasks.ReadRegistryTask.RegistryKey">
             <summary>
-            Specifies the file used to determine capitalization of names in a 
-            type library.
+            The registry key to read, including the path.
             </summary>
-            <value>
-            The file used to determine capitalization of names in a type library.
-            </value>
-            <remarks><a href="ms-help://MS.NETFrameworkSDK/cptools/html/cpgrftypelibraryexportertlbexpexe.htm">See the Microsoft.NET Framework SDK documentation for details.</a></remarks>
+            <example>
+            SOFTWARE\Microsoft\.NETFramework\sdkInstallRoot
+            </example>
         </member>
-        <member name="P:NAnt.Win32.Tasks.TlbExpTask.ProgramArguments">
+        <member name="P:NAnt.Win32.Tasks.ReadRegistryTask.RegistryHiveName">
             <summary>
-            Gets the command line arguments for the external program.
+            Space separated list of registry hives to search for <see cref="P:NAnt.Win32.Tasks.ReadRegistryTask.RegistryKey"/>.
+            For a list of possible values, see <see cref="T:Microsoft.Win32.RegistryHive"/>. The 
+            default is <see cref="F:Microsoft.Win32.RegistryHive.LocalMachine"/>.
             </summary>
-            <value>
-            The command line arguments for the external program.
-            </value>
+            <remarks>
+            <seealso cref="T:Microsoft.Win32.RegistryHive"/>
+            </remarks>
         </member>
         <member name="T:NAnt.Win32.Tasks.TlbImpTask">
             <summary>
@@ -356,7 +117,7 @@
             otherwise, <see langword="false" />.
             </returns>
         </member>
-        <member name="P:NAnt.Win32.Tasks.TlbImpTask.Output">
+        <member name="P:NAnt.Win32.Tasks.TlbImpTask.OutputFile">
             <summary>
             Specifies the name of the output file.
             </summary>
@@ -412,7 +173,7 @@
             </value>
             <remarks><a href="ms-help://MS.NETFrameworkSDK/cptools/html/cpgrftypelibraryimportertlbimpexe.htm">See the Microsoft.NET Framework SDK documentation for details.</a></remarks>
         </member>
-        <member name="P:NAnt.Win32.Tasks.TlbImpTask.PublicKey">
+        <member name="P:NAnt.Win32.Tasks.TlbImpTask.PublicKeyFile">
             <summary>
             Specifies the file containing the public key to use to sign the 
             resulting assembly.
@@ -437,7 +198,7 @@
             <summary>
             Specifies the key container in which the public/private key pair 
             should be found that should be used to sign the resulting assembly
-            xith a strong name.
+            with a strong name.
             </summary>
             <value>
             The key container containing a public/private key pair that should
@@ -510,75 +271,168 @@
             The command line arguments for the external program.
             </value>
         </member>
-        <member name="T:NAnt.DotNet.Tasks.LicenseTask">
+        <member name="T:NAnt.Win32.Tasks.AxImpTask">
             <summary>
-            Generates a <c>.licence</c> file from a <c>.licx</c> file.
+            Generates a Windows Forms Control that wraps ActiveX Controls defined 
+            in an OCX.
             </summary>
-            <remarks>
-            <para>
-            If no output file is specified, the default filename is the name of the
-            target file with the extension <c>.licenses</c> appended.
-            </para>
-            </remarks>
             <example>
-              <para>
-              Generate the file <c>component.exe.licenses</c> file from <c>component.licx</c>.
-              </para>
               <code>
                 <![CDATA[
-            <license input="component.licx" licensetarget="component.exe" />
+            <aximp ocx="MyControl.ocx" output="MyFormsControl.dll" />
                 ]]>
               </code>
             </example>
         </member>
-        <member name="M:NAnt.DotNet.Tasks.LicenseTask.#ctor">
+        <member name="M:NAnt.Win32.Tasks.AxImpTask.ExecuteTask">
             <summary>
-            Initializes a new instance of the <see cref="T:NAnt.DotNet.Tasks.LicenseTask"/> class.
+            Import the ActiveX control.
             </summary>
         </member>
-        <member name="M:NAnt.DotNet.Tasks.LicenseTask.InitializeTask(System.Xml.XmlNode)">
+        <member name="M:NAnt.Win32.Tasks.AxImpTask.NeedsCompiling">
             <summary>
-            Initializes the <see cref="T:NAnt.DotNet.Tasks.LicenseTask"/> class.
+            Determines whether the assembly needs to be created again.
             </summary>
-            <param name="taskNode">The <see cref="T:System.Xml.XmlNode"/> used to initialize the task.</param>
+            <returns>
+            <see langword="true" /> if the assembly needs to be created again; 
+            otherwise, <see langword="false" />.
+            </returns>
         </member>
-        <member name="M:NAnt.DotNet.Tasks.LicenseTask.ExecuteTask">
+        <member name="P:NAnt.Win32.Tasks.AxImpTask.OcxFile">
             <summary>
-            Generates the license file.
-            </summary>
-        </member>
-        <member name="P:NAnt.DotNet.Tasks.LicenseTask.Input">
-            <summary>
-            Input file to process.
+            Filename of the .ocx file.
             </summary>
         </member>
-        <member name="P:NAnt.DotNet.Tasks.LicenseTask.Output">
+        <member name="P:NAnt.Win32.Tasks.AxImpTask.OutputFile">
             <summary>
-            Name of the license file to output.
+            Filename of the generated assembly.
             </summary>
         </member>
-        <member name="P:NAnt.DotNet.Tasks.LicenseTask.Assemblies">
+        <member name="P:NAnt.Win32.Tasks.AxImpTask.PublicKeyFile">
             <summary>
-            Names of the references to scan for the licensed component.
+            Specifies the file containing the public key to use to sign the 
+            resulting assembly.
+            </summary>
+            <value>
+            The file containing the public key to use to sign the resulting
+            assembly.
+            </value>
+        </member>
+        <member name="P:NAnt.Win32.Tasks.AxImpTask.KeyFile">
+            <summary>
+            Specifies the publisher's official public/private key pair with which 
+            the resulting assembly should be signed with a strong name.
+            </summary>
+            <value>
+            The keyfile to use to sign the resulting assembly with a strong name.
+            </value>
+            <remarks><a href="ms-help://MS.NETFrameworkSDK/cptools/html/cpgrftypelibraryimportertlbimpexe.htm">See the Microsoft.NET Framework SDK documentation for details.</a></remarks>
+        </member>
+        <member name="P:NAnt.Win32.Tasks.AxImpTask.KeyContainer">
+            <summary>
+            Specifies the key container in which the public/private key pair 
+            should be found that should be used to sign the resulting assembly
+            with a strong name.
+            </summary>
+            <value>
+            The key container containing a public/private key pair that should
+            be used to sign the resulting assembly.
+            </value>
+        </member>
+        <member name="P:NAnt.Win32.Tasks.AxImpTask.DelaySign">
+            <summary>
+            Specifies to sign the resulting control using delayed signing.
             </summary>
         </member>
-        <member name="P:NAnt.DotNet.Tasks.LicenseTask.Target">
+        <member name="P:NAnt.Win32.Tasks.AxImpTask.GenerateSource">
             <summary>
-            The executable file for which the license will be generated.
+            Determines whether C# source code for the Windows Form wrapper should 
+            be generated. The default is <see langword="false" />.
             </summary>
         </member>
-        <member name="T:NAnt.DotNet.Tasks.LicenseTask.LicenseGatherer">
+        <member name="P:NAnt.Win32.Tasks.AxImpTask.RcwFile">
             <summary>
-            Responsible for reading the license and writing them to a license 
-            file.
+            Assembly to use for Runtime Callable Wrapper rather than generating 
+            new one. Only supported on .NET 1.1 or higher.
             </summary>
         </member>
-        <member name="M:NAnt.DotNet.Tasks.LicenseTask.LicenseGatherer.CreateLicenseFile(NAnt.DotNet.Tasks.LicenseTask,System.String)">
+        <member name="P:NAnt.Win32.Tasks.AxImpTask.ProgramArguments">
             <summary>
-            Creates the whole license file.
+            Gets the command-line arguments for the external program.
             </summary>
-            <param name="licenseTask">The <see cref="T:NAnt.DotNet.Tasks.LicenseTask"/> instance for which the license file should be created.</param>
-            <param name="licenseFile">The license file to create.</param>
+            <value>
+            The command-line arguments for the external program.
+            </value>
+        </member>
+        <member name="T:NAnt.Win32.Tasks.TlbExpTask">
+            <summary>
+            Exports a .NET assembly to a type library that can be used from unmanaged 
+            code (wraps Microsoft's <c>tlbexp.exe</c>).
+            </summary>
+            <remarks>
+              <para>
+              <see href="ms-help://MS.NETFrameworkSDK/cptools/html/cpgrftypelibraryexportertlbexpexe.htm">See the Microsoft.NET Framework SDK documentation for details.</see>
+              </para>
+            </remarks>
+            <example>
+              <para>Export <c>DotNetAssembly.dll</c> to <c>LegacyCOM.dll</c>.</para>
+              <code>
+                <![CDATA[
+            <tlbexp assembly="DotNetAssembly.dll" output="LegacyCOM.dll" />
+                ]]>
+              </code>
+            </example>
+        </member>
+        <member name="M:NAnt.Win32.Tasks.TlbExpTask.ExecuteTask">
+            <summary>
+            Exports the type library.
+            </summary>
+        </member>
+        <member name="M:NAnt.Win32.Tasks.TlbExpTask.NeedsCompiling">
+            <summary>
+            Determines whether the assembly needs to be exported to a type 
+            library again.
+            </summary>
+            <returns>
+            <see langword="true" /> if the assembly needs to be exported to a 
+            type library; otherwise, <see langword="false" />.
+            </returns>
+        </member>
+        <member name="P:NAnt.Win32.Tasks.TlbExpTask.AssemblyFile">
+            <summary>
+            Specifies the assembly for which to export a type library.
+            </summary>
+            <value>
+            The assembly for which to export a type library.
+            </value>
+            <remarks><a href="ms-help://MS.NETFrameworkSDK/cptools/html/cpgrftypelibraryexportertlbexpexe.htm">See the Microsoft.NET Framework SDK documentation for details.</a></remarks>
+        </member>
+        <member name="P:NAnt.Win32.Tasks.TlbExpTask.OutputFile">
+            <summary>
+            Specifies the name of the type library file to generate.
+            </summary>
+            <value>
+            The name of the type library file to generate.
+            </value>
+            <remarks><a href="ms-help://MS.NETFrameworkSDK/cptools/html/cpgrftypelibraryexportertlbexpexe.htm">See the Microsoft.NET Framework SDK documentation for details.</a></remarks>
+        </member>
+        <member name="P:NAnt.Win32.Tasks.TlbExpTask.NamesFile">
+            <summary>
+            Specifies the file used to determine capitalization of names in a 
+            type library.
+            </summary>
+            <value>
+            The file used to determine capitalization of names in a type library.
+            </value>
+            <remarks><a href="ms-help://MS.NETFrameworkSDK/cptools/html/cpgrftypelibraryexportertlbexpexe.htm">See the Microsoft.NET Framework SDK documentation for details.</a></remarks>
+        </member>
+        <member name="P:NAnt.Win32.Tasks.TlbExpTask.ProgramArguments">
+            <summary>
+            Gets the command line arguments for the external program.
+            </summary>
+            <value>
+            The command line arguments for the external program.
+            </value>
         </member>
     </members>
 </doc>
