@@ -334,15 +334,30 @@ namespace FlexWiki.Formatting
 		public static string afterWikiName = "(?<after>'|\\||\\s|@|$|\\.|,|:|'|;|\\}|\\?|_|\\)|\\!)";
 
 		/// <summary>
+		/// Unicode compatible regex fragments.
+		/// 
+		/// Lu: Letter Uppercase
+		/// Ll: Letter Lowercase
+		/// Lt: Letter Title
+		/// Lo: Letter Other
+		/// Nd: Number decimal
+		/// Pc: Punctation connector
+		/// </summary>
+		public static string AZ = "[\\p{Lu}]"; // A-Z
+		public static string az09 = "[\\p{Ll}\\p{Lt}\\p{Lo}\\p{Nd}]"; // a-z0-9
+		public static string Az09 = "[\\p{Lu}\\p{Ll}\\p{Lt}\\p{Lo}\\p{Nd}]"; // A-Za-z0-9
+
+
+		/// <summary>
 		/// string pattern for legal namespace names
 		/// </summary>
-		static string namespaceName = "[A-Z][a-zA-Z0-9_]+";
+		static string namespaceName = AZ + "[\\w]+";
 
-		static string startsWithMulticaps = "([A-Z]{2,}[a-z0-9]+[a-zA-Z0-9]*)";
-		static string startsWithOneCap = "([A-Z][a-z0-9]+[a-zA-Z0-9]*[A-Z]+[a-zA-Z0-9]*)";
+		static string startsWithMulticaps = "(" + AZ + "{2,}" + az09 + "+" + Az09 + "*)";
+		static string startsWithOneCap = "(" + AZ + az09 + "+" + Az09 + "*" + AZ + "+" + Az09 + "*)";
 		static string unbracketedWikiName = "(?:_?" + startsWithMulticaps + "|" + startsWithOneCap + ")";
 
-		static string bracketedWikiName = "\\[(?:[A-Za-z0-9_]+)\\]";
+		static string bracketedWikiName = "\\[(?:[\\w]+)\\]"; // \w is a word character (A-z0-9_)
 		static string unqualifiedWikiName = "(?:" + "(?:" + unbracketedWikiName + ")|(?:" + bracketedWikiName + ")" + ")";
 		static string qualifiedWikiName = "(?:" + namespaceName + "\\.)*"  + unqualifiedWikiName;
 		static string forcedLocalWikiName = "\\."  + unqualifiedWikiName;
@@ -1643,7 +1658,7 @@ namespace FlexWiki.Formatting
 			if (paraOpen) { _Output.WriteClosePara(); paraOpen = false; }
 		}
 	
-		static Regex externalWikiDef = new Regex("^@([a-zA-Z0-9]+)=(.*)$");
+		static Regex externalWikiDef = new Regex("^@(" + Az09 + "+)=(.*)$");
 		public static bool StripExternalWikiDef(Hashtable table, string content)
 		{
 			Match m = externalWikiDef.Match(content);

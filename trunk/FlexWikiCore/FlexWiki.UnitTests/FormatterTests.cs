@@ -399,15 +399,36 @@ lenSpanning=@@topics.TopicWithBehaviorProperties.FaceSpanningLines(""parsing is 
 			ShouldBeTopicName("ZAAb");
 			ShouldBeTopicName("ZaAA");
 			ShouldBeTopicName("CSharp");
+			ShouldBeTopicName("Meeting25Dec");
 			ShouldBeTopicName("KeyOfficeIRMFunctionality");
 			ShouldBeTopicName("IBMMainframe");
 
 			ShouldNotBeTopicName("AAA");
 			ShouldNotBeTopicName("AA");
+			ShouldNotBeTopicName("A42");
 			ShouldNotBeTopicName("A");
 			ShouldNotBeTopicName("a");
 			ShouldNotBeTopicName("about");
 			ShouldNotBeTopicName("Hello");
+		}
+
+		[Test] public void NonAsciiTopicNameRegexTest() 
+		{
+			ShouldBeTopicName("DistribuciónTécnica");
+			ShouldBeTopicName("ProblemasProgramación");
+			ShouldBeTopicName("SmørgåsBord");
+			ShouldBeTopicName("ØrneRede");
+			ShouldBeTopicName("HöchstMaß");
+			ShouldBeTopicName("FaçadePattern");
+			ShouldBeTopicName("ReykjavíkCity");
+
+			// string russian = "\u1044\u1086\u1093\u1083\u1072\u1103\u1056\u1099\u1073\u1072";
+			// ShouldBeTopicName(russian);
+
+			ShouldNotBeTopicName("æøå");
+			ShouldNotBeTopicName("ÆØÅ");
+			ShouldNotBeTopicName("Ølle");
+			ShouldNotBeTopicName("ølle");
 		}
 
 		void ShouldBeTopicName(string s)
@@ -572,8 +593,8 @@ blah blah EndOfLineShouldLink",
 		[Test] public void UnderEmphasis()
 		{
 			FormatTest(
-				@"This should be _emphasised_ however, IID_Foo and IID_Bar should not be.",
-				@"<p>This should be <em>emphasised</em> however, IID_Foo and IID_Bar should not be.</p>
+				@"This should be _emphasised_ however, id_Foo and id_Bar should not be.",
+				@"<p>This should be <em>emphasised</em> however, id_Foo and id_Bar should not be.</p>
 ");
 		}
 
