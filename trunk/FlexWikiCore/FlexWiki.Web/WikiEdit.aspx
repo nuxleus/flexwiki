@@ -6,8 +6,36 @@
 			<%= TheTopic.ToString() %>
 			(edit)</title>
 		<meta name="Robots" content="NOINDEX, NOFOLLOW">
-		<%= InsertStylesheetReferences() %>   
+		<%= InsertStylesheetReferences() %>
 		<script  type=""text/javascript"" language="javascript">
+
+function textArea_OnFocus(event)
+{
+	document.onkeypress = Document_OnKeyPress;
+}
+
+function textArea_OnBlur(event)
+{
+	document.onkeypress = null;
+}
+
+function Document_OnKeyPress(event)
+{
+	if (event != null) // FireFox only
+	{
+		if(event.keyCode == 9)
+		{
+			textArea = document.forms["Form1"].Text1;
+			selStart = textArea.selectionStart;
+			selEnd = textArea.selectionEnd;
+			textArea.value = textArea.value.substring(0, selStart) + String.fromCharCode(9) + textArea.value.substring(selEnd, textArea.textLength);
+			textArea.selectionStart = selEnd + 1;
+			textArea.selectionEnd = selEnd + 1;
+			return false;
+		}
+	}
+	return true;
+}
 
 function CalcEditBoxHeight()
 {
@@ -65,7 +93,7 @@ function SaveAndReturn()
 
 function search()
 {
-	window.open('search.aspx'); 
+	window.open('search.aspx');
 }
 
 
@@ -75,12 +103,12 @@ function MainHeight()
 	var e;
 	return answer;
 }
-			
+
 function MainWidth()
 {
 	var answer = document.body.clientWidth;
 	var e;
-	
+
 	e = document.getElementById("Sidebar");
 	if (e != null)
 		answer -= e.scrollWidth;

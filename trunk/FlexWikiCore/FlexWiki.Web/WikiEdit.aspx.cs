@@ -1,10 +1,10 @@
 #region License Statement
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 //
-// The use and distribution terms for this software are covered by the 
+// The use and distribution terms for this software are covered by the
 // Common Public License 1.0 (http://opensource.org/licenses/cpl.php)
 // which can be found in the file CPL.TXT at the root of this distribution.
-// By using this software in any fashion, you are agreeing to be bound by 
+// By using this software in any fashion, you are agreeing to be bound by
 // the terms of this license.
 //
 // You must not remove this notice, or any other, from this software.
@@ -45,13 +45,13 @@ namespace FlexWiki.Web
 			InitializeComponent();
 			base.OnInit(e);
 		}
-		
+
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent()
-		{    
+		{
 			this.Load += new System.EventHandler(this.Page_Load);
 		}
 		#endregion
@@ -71,7 +71,7 @@ namespace FlexWiki.Web
 				return Request.Form["Text1"];
 			}
 		}
-        
+
 		protected string ReturnTopic
 		{
 			get
@@ -102,8 +102,8 @@ namespace FlexWiki.Web
 				if (lastEdit == "" || lastEdit == null)
 					return false;	// it's probably new
 				DateTime currentStamp;
-        
-				return DefaultContentBase.TopicExists(TheTopic) && 
+
+				return DefaultContentBase.TopicExists(TheTopic) &&
 					!(currentStamp = DefaultContentBase.GetTopicLastWriteTime(TheTopic)).ToString("s").Equals(lastEdit);
 			}
 		}
@@ -120,7 +120,7 @@ namespace FlexWiki.Web
 			{
 				AbsoluteTopicName newVersionName = new AbsoluteTopicName(TheTopic.Name, TheTopic.Namespace);
 				newVersionName.Version = TopicName.NewVersionStringForUser(VisitorIdentityString);
-				DefaultContentBase.WriteTopicAndNewVersion(newVersionName, PostedTopicText);		
+				DefaultContentBase.WriteTopicAndNewVersion(newVersionName, PostedTopicText);
 				returnTo = TheTopic;
 
 				if (isDelete)
@@ -150,7 +150,7 @@ namespace FlexWiki.Web
 			get
 			{
 				if (_TheTopic != null)
-					return _TheTopic;			
+					return _TheTopic;
 				string topic;
 				if (IsPost)
 					topic = Request.Form["Topic"];
@@ -195,8 +195,8 @@ namespace FlexWiki.Web
 		</div>
 		<div class='EditZone' id='EditZone' >
 			<form id='Form1' method='post'>
-			<textarea class='EditBox' onkeydown='if (document.all && event.keyCode == 9) {  event.returnValue= false; document.selection.createRange().text = String.fromCharCode(9)} ' rows='40' cols='100' name='Text1'>");
-			
+			<textarea class='EditBox' onkeydown='if (document.all && event.keyCode == 9) {  event.returnValue= false; document.selection.createRange().text = String.fromCharCode(9)} ' rows='40' cols='100' name='Text1' onfocus='textArea_OnFocus(event)' onblur='textArea_OnBlur(event)'>");
+
 			string content = null;
 			if (DefaultContentBase.TopicExists(TheTopic))
 				content = DefaultContentBase.Read(TheTopic);
@@ -214,9 +214,9 @@ Add your wiki text here.
 
 ";
 
-			Response.Write(Formatter.EscapeHTML(content));			
+			Response.Write(Formatter.EscapeHTML(content));
 			Response.Write(@"</textarea>");
-			if (IsWritable)  
+			if (IsWritable)
 			{
 				Response.Write("<input type='text' style='display:none' name='UserSuppliedName' value ='" + Formatter.EscapeHTML(UserPrefix == null ? "" : UserPrefix) + "'>");
 				if (DefaultContentBase.TopicExists(TheTopic))
@@ -248,7 +248,7 @@ Add your wiki text here.
 				{
 					Response.Write(@"
 			<div class='CreateTopicWarning'>
-				You are about to create a new topic called <b>" + TheTopic.Name + @"</b> in the <b>" + 
+				You are about to create a new topic called <b>" + TheTopic.Name + @"</b> in the <b>" +
 						cb.FriendlyTitle + @"</b> WikiBase.");
 					if (cb.Description == null)
 					{
@@ -261,13 +261,13 @@ Add your wiki text here.
 					}
 					Response.Write(@"</div>");
 				}
-			}																		  
+			}
 			else
 			{
 				Response.Write("<span class='ReadOnlyStripe'>You do not have permission to change this topic.</span>");
 			}
 
-			ClosePane(Response.Output); 
+			ClosePane(Response.Output);
 
 
 			if (IsConflictingChange)
@@ -276,7 +276,7 @@ Add your wiki text here.
 				Response.Write("<div class='ConflictingChange'>Your change can not be saved.</div>");
 				Response.Write("The topic has been changed since you started to edit it and if you saved your changes, the other changes would be lost.");
 				Response.Write(" Please save your changes somewhere and edit again (no merge functionality yet).  You are now being shown the new version on the left.  To recover your previous edits, use the Back button.");
-				ClosePane(Response.Output); 
+				ClosePane(Response.Output);
 			}
 
 			///////////////////////////////
@@ -291,14 +291,14 @@ Add your wiki text here.
 				{
 					Response.Write("Changed will be attributed to: <b>" + Formatter.EscapeHTML(VisitorIdentityString) + "</b>.<br>&nbsp;<br>");
 					Response.Write("You can change part of this by entering your preferred user identity here (e.g., an email address):<br>");
-					Response.Write(@"<input style='font-size: x-small' type='text' id='UserNameEntryField' value ='" + 
+					Response.Write(@"<input style='font-size: x-small' type='text' id='UserNameEntryField' value ='" +
 						(UserPrefix == null ? "" : Formatter.EscapeHTML(UserPrefix)) + "'>");
-				}			 
+				}
 				ClosePane(Response.Output);
 			}
 
 			///////////////////////////////
-			
+
 			OpenPane(Response.Output, "Formatting Tips");
 			Response.Write("Click on a subject for more information about formatting rules: ");
 			WriteTip("tip_boldtip", "Bold");
@@ -318,28 +318,28 @@ Add your wiki text here.
 <div style='display: none'>
 		<div id='tip_proptip'>
 			<div class='tipBody'>
-				A line that starts with a wiki word and a colon identifies a property. 
-				The value of the property is everything on the line after the colon. 
-				Multiline properties use PropertyName:[ and then multiple lines and then ] on a 
+				A line that starts with a wiki word and a colon identifies a property.
+				The value of the property is everything on the line after the colon.
+				Multiline properties use PropertyName:[ and then multiple lines and then ] on a
 				blank line to mark the end.
 			</div>
 		</div>
 		<div id='tip_imagetip'>
 			<div class='tipBody'>
-				Any URL that ends with .gif, .jpeg, .jpg or .png will be turned into an image 
+				Any URL that ends with .gif, .jpeg, .jpg or .png will be turned into an image
 				tag to display the actual image.
 			</div>
 		</div>
 		<div id='tip_pretip'>
 			<div class='tipBody'>
-				Any line that starts with at least one space will be fixed-width formatted. 
+				Any line that starts with at least one space will be fixed-width formatted.
 				Good for code and simple tables.
 			</div>
 		</div>
 		<div id='tip_liststip'>
 			<div class='tipBody'>
 				Start a line with a tab (or 8 spaces) followed by a star '*'.
-				Two tabs (or 16 spaces) indents to the next level, etc. 
+				Two tabs (or 16 spaces) indents to the next level, etc.
 				For ordered lists, use '1.' instead of '*'
 			</div>
 		</div>
@@ -347,7 +347,7 @@ Add your wiki text here.
 			<div class='tipBody'>
 				Four hyphens makes a horizontal rule.
 			</div>
-		</div> 
+		</div>
 		<div id='tip_boldtip'>
 			<div class='tipBody'>
 				Surround the text with three ticks (''').
@@ -356,7 +356,7 @@ Add your wiki text here.
 		</div>
 		<div id='tip_italicstip'>
 			<div class='tipBody'>
-				Surround the text with two ticks ('').  
+				Surround the text with two ticks ('').
 				For example, ''<i>this text will be italic</i>''
 			</div>
 		</div>
@@ -369,8 +369,8 @@ Add your wiki text here.
 		</div>
 		<div id='tip_hypertip'>
 			<div class='tipBody'>
-				Any PascalCased word becomes a link. 
-				Surrounding a word with square brackets [ word ] will make non-pascalcased 
+				Any PascalCased word becomes a link.
+				Surrounding a word with square brackets [ word ] will make non-pascalcased
 				words into links; generally this is considered 'odd'.
 				Any URL becomes a link (http://www.msn.com)
 			</div>
@@ -393,7 +393,7 @@ Add your wiki text here.
 </div>
 ");
 
-			
+
 			ClosePane(Response.Output);
 
 			//////////////////////////////
