@@ -156,7 +156,9 @@
         automated build. --> 
   <property name="automated.build" value="false"
       unless="${property::exists('automated.build')}" />      
-      
+
+  <echo message="This script is being run as part of an automated build"
+      if="${automated.build}" />
 
   <!-- NAnt build targets appear after this point. To build a
        particular target, run "nant targetname" from the command line.
