@@ -132,6 +132,19 @@ namespace FlexWiki.Web
 			}
 
 			bool fixup = Fixup == "on";
+			bool fixupDisabled = false; 
+
+			try
+			{
+				fixupDisabled = bool.Parse(ConfigurationSettings.AppSettings["DisableRenameFixup"]); 
+			}
+			catch
+			{
+			}
+
+			if (fixupDisabled)
+				fixup = false;
+
 			ArrayList log = cb.RenameTopic(oldName.LocalName, newName, fixup);
 			Response.Write("Renamed <i>" + oldAppearsAs + "</i> to <i>" + newName + "</i><br/>");
 			Response.Write("<br/>");

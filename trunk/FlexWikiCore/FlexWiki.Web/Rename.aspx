@@ -35,7 +35,7 @@
 			<p><b>Important guidelines</b> (rename is not always straightforward!):
 				<ul>
 					<li>
-						When you rename a topic, you can ask to have references to the topic 
+						When you rename a topic, you may be able to ask (depending on how this site is configuration) to have references to the topic 
 						automatically updated.
 						<ul>
 							<li>
@@ -61,8 +61,30 @@
 					<br>
 					<b>New</b> name: <input style='FONT-SIZE: x-small' type="text"  name="newName" value ="<%= FlexWiki.Web.HTMLWriter.Escape(AbsTopicName.Name)  %>">
 					<p>
-						<input type="checkbox" id="fixup" name="fixup"><label for="fixup">Automatically 
-							update references</label>
+					<%
+					{
+						bool fixupDisabled = false; 
+						try
+						{
+							fixupDisabled = bool.Parse(ConfigurationSettings.AppSettings["DisableRenameFixup"]); 
+						}
+						catch
+						{
+						}
+						if (!fixupDisabled)
+						{					
+					%>
+						<input type="checkbox" id="fixup" name="fixup"><label for="fixup">Automatically update references</label>
+					<%
+						}
+						else
+						{
+					%>
+						<p><i>Automatically updating references from other topics has been disabled on this site</i></p>
+					<%
+						}
+					}
+					%>
 						<div style='DISPLAY: none'>
 							<br>
 							<input type="checkbox" checked id="leaveRedirect" name="leaveRedirect"><label for="leaveRedirect">Generate 
