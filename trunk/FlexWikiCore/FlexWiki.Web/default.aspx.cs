@@ -86,56 +86,55 @@ namespace FlexWiki.Web
 			AbsoluteTopicName topic = GetTopicName();	 
 			LinkMaker lm = TheLinkMaker;
 
-
-			if (Request.QueryString["version"] == null || Request.QueryString["version"] == "")
+			// Consider establishing a redirect if there's a redirect to a topic or an URL
+			string redir = TheFederation.GetTopicProperty(GetTopicName(), "Redirect");
+			if (redir != "")
 			{
-				// Consider establishing a redirect if there's a redirect to a topic or an URL
-				string redir = TheFederation.GetTopicProperty(GetTopicName(), "Redirect");
-				if (redir != "")
+				UriBuilder URI = null;
+				if (IsAbsoluteURL(redir)) 
 				{
-					UriBuilder URI = null;
-					if (IsAbsoluteURL(redir)) 
+					URI = new UriBuilder(redir);
+				}
+				else
+				{
+					// Must be a topic name
+					string trimmed = redir.Trim();
+					RelativeTopicName rel = new RelativeTopicName(trimmed);
+					IList all = TheFederation.ContentBaseForTopic(GetTopicName()).AllAbsoluteTopicNamesThatExist(rel);
+
+					if (all.Count == 1) 
 					{
-						URI = new UriBuilder(redir);
+						URI = new UriBuilder(lm.LinkToTopic((TopicName)(all[0]), false, Request.QueryString));
 					}
 					else
 					{
-						// Must be a topic name
-						string trimmed = redir.Trim();
-						RelativeTopicName rel = new RelativeTopicName(trimmed);
-						IList all = TheFederation.ContentBaseForTopic(GetTopicName()).AllAbsoluteTopicNamesThatExist(rel);
-
-						if (all.Count == 1) 
-						{
-							URI = new UriBuilder(lm.LinkToTopic((TopicName)(all[0]), false, Request.QueryString));
-						}
+						if (all.Count == 0)
+							Response.Write("<!-- Redirect topic does not exist -->\n");
 						else
-						{
-							if (all.Count == 0)
-								Response.Write("<!-- Redirect topic does not exist -->\n");
-							else
-								Response.Write("<!-- Redirect topic is ambiguous -->\n");
-						}
-					}
-					if (URI != null)
-					{
-						if (Request.QueryString["DelayRedirect"] == "1")
-							Response.Write(@"<meta http-equiv='refresh' content='10;URL=" + URI + "'>\n");
-						else
-							Response.Redirect(URI.Uri.ToString());
+							Response.Write("<!-- Redirect topic is ambiguous -->\n");
 					}
 				}
-
-				string keywords = TheFederation.GetTopicProperty(GetTopicName(), "Keywords");
-				if (keywords != "")
-					Response.Write("<META name=\"keywords\" content=\"" + keywords + "\">\n");
-				string description = TheFederation.GetTopicProperty(GetTopicName(), "Summary");
-				if (description != "")
-					Response.Write("<META name=\"description\" content=\"" + description + "\">\n");
-				Response.Write("<META name=\"author\" content=\"" + TheFederation.GetTopicLastModifiedBy(GetTopicName()) + "\">\n");
-
+				if (URI != null)
+				{
+					if (Request.QueryString["DelayRedirect"] == "1")
+						Response.Write(@"<meta http-equiv='refresh' content='10;URL=" + URI + "'>\n");
+					else
+					{
+						Response.Redirect(URI.Uri.ToString());
+						return;
+					}
+				}
 			}
-			else
+
+			string keywords = TheFederation.GetTopicProperty(GetTopicName(), "Keywords");
+			if (keywords != "")
+				Response.Write("<META name=\"keywords\" content=\"" + keywords + "\">\n");
+			string description = TheFederation.GetTopicProperty(GetTopicName(), "Summary");
+			if (description != "")
+				Response.Write("<META name=\"description\" content=\"" + description + "\">\n");
+			Response.Write("<META name=\"author\" content=\"" + TheFederation.GetTopicLastModifiedBy(GetTopicName()) + "\">\n");
+
+			if (GetTopicName().Version != null)
 			{
 				// Don't index the versions
 				Response.Write("<meta name=\"Robots\" content=\"NOINDEX, NOFOLLOW\">");
@@ -229,9 +228,18 @@ function tbinput()
 			AbsoluteTopicName topic = GetTopicName();	
 			bool diffs = Request.QueryString["diff"] == "y";
 			bool restore = (Request.RequestType == "POST" && Request.Form["RestoreTopic"] != null);
+			bool isBlacklistedRestore = false;
 			if (restore==true)
 			{
-				Response.Redirect(lm.LinkToTopic(this.RestorePreviousVersion(new AbsoluteTopicName(Request.Form["RestoreTopic"]))));
+				// Prevent restoring a topic with blacklisted content
+				if (TheFederation.IsBlacklisted(TheFederation.Read(topic)))
+				{
+					isBlacklistedRestore = true;
+				}
+				else
+				{
+					Response.Redirect(lm.LinkToTopic(this.RestorePreviousVersion(new AbsoluteTopicName(Request.Form["RestoreTopic"]))));
+				}
 			}
 
 			// Go edit if we try to view it and it doesn't exist
@@ -292,6 +300,12 @@ function tbinput()
 </div>
 </form>
 ");
+
+			if (isBlacklistedRestore)
+			{
+				Response.Write("<div class='BlacklistedRestore'><font color='red'><b>The version of the topic you are trying to restore contains content that has been banned by policy of this site.  Restore can not be completed.</b></font></div>");
+			}
+			
 			Response.Write(formattedBody);
 
 			Response.Write("</div>");

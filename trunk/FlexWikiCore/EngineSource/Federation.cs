@@ -569,6 +569,18 @@ namespace FlexWiki
 			return top.Properties;
 		}
 
+		public bool IsBlacklisted(string wikiText)
+		{
+			if (wikiText == null)
+				return false;
+			string proposed = wikiText;
+			foreach (string each in BlacklistedExternalLinkPrefixes)
+			{
+				if (proposed.ToUpper().IndexOf(each.ToUpper()) >= 0)
+					return true;
+			}
+			return false;
+		}
 
 		public string GetTopicFormattedContent(AbsoluteTopicName name, bool includeDiffs)
 		{
@@ -578,7 +590,15 @@ namespace FlexWiki
 			if (answer != null)
 				return answer;
 			CompositeCacheRule rule = new CompositeCacheRule();				
-			answer = Formatter.FormattedTopic(name, Format, includeDiffs,  this, LinkMaker, rule);
+
+			// If the content is blacklisted and this is a historical version, answer dummy content
+			if (name.Version != null && IsBlacklisted(GetTopicUnformattedContent(name)))
+			{
+				answer = Formatter.FormattedString(@"%red big%This historical version of this topic contains content that has been banned by policy from appearing on this site.",
+					Format, this.ContentBaseForTopic(name), LinkMaker, rule);
+			}
+			else
+				answer = Formatter.FormattedTopic(name, Format, includeDiffs,  this, LinkMaker, rule);
 			if (CacheManager != null)
 				CacheManager.PutCachedTopicFormattedContent(name, includeDiffs, answer, rule);
 			return answer;

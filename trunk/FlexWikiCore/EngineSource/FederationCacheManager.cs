@@ -289,7 +289,7 @@ namespace FlexWiki
 
 		static string KeyForTopicInfo(AbsoluteTopicName name)
 		{
-			return "TopicInfo." + name.Fullname;
+			return "TopicInfo." + name.FullnameWithVersion;
 		}
 
 		static string KeyForProperty(string property)

@@ -223,6 +223,14 @@
 	border: #303030 1px solid;
 }
 
+.BlacklistedWarning
+{
+	margin: 1px;
+	border: #303030 1px solid;
+	color: white;
+	background-color: #e0e0e0;
+}
+
 .ErrorMessageTitle
 {
 	font-weight: bold;
