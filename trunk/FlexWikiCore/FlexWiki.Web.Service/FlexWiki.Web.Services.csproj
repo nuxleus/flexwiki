@@ -124,6 +124,12 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "SharedAssemblyInfo.cs"
+                    Link = "..\SharedAssemblyInfo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "TopicNameCollection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

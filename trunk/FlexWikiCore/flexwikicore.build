@@ -11,6 +11,8 @@
 // You must not remove this notice, or any other, from this software.
 #endregion
 -->
+
+<!-- Please do not modify this file -->
 <project name="FlexWikiCore" default="test">
 
   <!-- Where on disk the source tree is rooted. Defaults to the
@@ -21,21 +23,6 @@
   </ifnot>
 
   <echo message="Running from directory ${basedir}" />
-
-  <!-- Define the various project directories that we need to visit if
-       any steps require a project-by-project operation -->
-  <fileset id="project.dirs" basedir="${basedir}">
-    <includes name="EngineSource" />
-    <includes name="FlexWikiBehaviorDebugger" />
-    <includes name="FlexWiki.UnitTests" />
-    <includes name="FlexWiki.Web" />
-    <includes name="FlexWiki.Web.Service" />
-    <includes name="FlexWikiEditor" />
-    <includes name="FlexWikiSecurity" />
-    <includes name="PrintTopic" />
-    <includes name="wikiadmin" />
-    <includes name="wikidpad2flexwiki" />
-  </fileset>
 
   <!-- If a file called personal.properties exists, read it in and use
        the properties defined there to override this build file's
@@ -50,18 +37,25 @@
   <!-- Read in things like environment variables into nant properties -->
   <sysinfo />
 
-  <!-- Create a property called sys.version that has a version number
-       based on the number of days since 2002-10-01 (which I picked
-       arbitrarily as the FlexWiki birthday). The build number is
-       as major.minor.build.revision. Major and minor are read from
-       the build.number file, and build and revision are calculated
-       based on the amount of time elapsed from this date. -->
-  <version startDate="2002-10-01" />
+  <!-- Read the base version numbers from the version.xml file -->
+  <property name="versionfile" value="${basedir}/version.xml" />
   
-  <!-- Extract the various parts of the build number into properties
-       using a regular expression -->
-  <regex input="${sys.version}"
-	    pattern="(?'basevermajor'\d+).(?'baseverminor'\d+).(?'baseverbuild'\d+).(?'baseverrevision'\d+)" />
+  <!-- Extract the various parts of the build number into properties -->
+  <xmlpeek file="${versionfile}"
+      xpath="/version/major" 
+      property="basevermajor" />
+
+  <xmlpeek file="${versionfile}"
+      xpath="/version/minor" 
+      property="baseverminor" />
+
+  <xmlpeek file="${versionfile}"
+      xpath="/version/build" 
+      property="baseverbuild" />
+
+  <xmlpeek file="${versionfile}"
+      xpath="/version/revision" 
+      property="baseverrevision" />
 
   <!-- This next section defines a bunch of defaults. If the property
        has been defined (typically in the personal.properties file or
@@ -91,8 +85,7 @@
   <!-- The type of build to do (generally Release or Debug). Default
        to a Debug build. --> 
   <ifnot propertyexists="configuration">
-    <property name="configuration"
-	      value="Debug" />
+    <property name="configuration" value="Debug" />
   </ifnot>
 
   <!-- The directory we build everything into. Defaults to bin/Debug
@@ -101,35 +94,20 @@
        that the nant build builds to a *different* directory than the
        individual projects, which each build to their own subdirectory -->
   <ifnot propertyexists="targetdir">
-    <property name="targetdir" 
-	      value="${basedir}/bin/${configuration}" />
+    <property name="targetdir" value="${basedir}/bin/${configuration}" />
   </ifnot>
 
   <!-- The directory where various report files wind up. This includes
        things like the report that NUnit spits out. Default to
        "reports" off of the base directory. -->
   <ifnot propertyexists="reportdir">
-    <property name="reportdir"
-	      value="${basedir}\reports" />
+    <property name="reportdir" value="${basedir}\reports" />
   </ifnot>
   
   <!-- The directory where we build the zip files for distribution.
        Defaults to "dist" off of the base directory. --> 
   <ifnot propertyexists="distdir">
-    <property name="distdir"
-	      value="${basedir}/dist" />
-  </ifnot>
-
-  <!-- The directory we check the source out to when doing a diff.
-       Defaults to "diff" off of the base directory -->
-  <ifnot propertyexists="diffdir">
-    <property name="diffdir" value="${basedir}\diff" />
-  </ifnot>
-
-  <!-- The directory we check out into when doing a build from CVS.
-       Defaults to "cvsbuild" off of the base directory. -->
-  <ifnot propertyexists="cvsbuilddir">
-    <property name="cvsbuilddir" value="${basedir}\cvsbld" />
+    <property name="distdir" value="${basedir}/dist" />
   </ifnot>
 
   <!-- Set this property to true here (or override elsewhere) to skip
@@ -156,33 +134,10 @@
     <property name="upload.skip" value="false" />
   </ifnot>
 
-  <!-- The CVS connection string to use to connect to the repository
-       for diff and release tasks. Generally, you'll want to set this
-       in your personal.properties file. Defaults to anonymous access,
-       which allows you to get files (for diff), but not to check them
-       in. --> 
-  <ifnot propertyexists="cvs.root">
-    <property name="cvs.root" value=":pserver:anonymous@cvs.sourceforge.net:/cvsroot/flexwiki" />
-  </ifnot>
-
-  <!-- The name of the CVS module where this code is stored. Defaults
-       to "FlexWikiCore" -->
-  <ifnot propertyexists="cvs.module">
-    <property name="cvs.module" value="FlexWikiCore" />
-  </ifnot>
-
   <!-- The name of the .sln file used to compile the project. Defaults
        to having the same name as the NAnt project -->
   <ifnot propertyexists="buildfile.name">
     <property name="buildfile.name" value="${nant.project.name}" />
-  </ifnot>
-
-  <!-- If you want to be able to do a batch diff using the diff target
-       below, you'll need a program with which to do it. Set this
-       variable to change the program from the default of winmerge.exe
-       -->
-  <ifnot propertyexists="diff.program">
-    <property name="diff.program" value="winmerge.exe" />
   </ifnot>
 
   <!-- NAnt build targets appear after this point. To build a
@@ -193,56 +148,49 @@
   <target name="init">
 
     <!-- Create the target directory. This is where everything will
-	 get built into. Note: not the same as the directory that
-	 things get built into when doing a build from VS.NET. --> 
+	        get built into. Note: not the same as the directory that
+	        things get built into when doing a build from VS.NET. --> 
     <mkdir dir="${targetdir}" />
 
     <!-- Create the reports directory if it doesn't exist. -->
     <mkdir dir="${reportdir}" />
 
     <!-- Set up the XML version number so external tools can use it to
-	 know what version we built. -->
+        	 know what version we built. -->
 
-    <!-- Copy the template file to the reports directory -->
-    <property name="versionfile" value="${reportdir}\version.xml" />
-    <copy file="${basedir}\tools\version.xml" tofile="${versionfile}" />
+    <!-- Copy the version file to the reports directory -->
+    <property name="versionreport" value="${reportdir}/version.xml" />
+    <copy file="${versionfile}" tofile="${versionreport}" />
 
     <!-- Now store the various build numbers in the xml file -->
-    <xmlpoke file="${versionfile}" 
+    <xmlpoke file="${versionreport}" 
 	     value="${vermajor}"
 	     xpath="/version/major" />
-    <xmlpoke file="${versionfile}" 
+    <xmlpoke file="${versionreport}" 
 	     value="${verminor}"
 	     xpath="/version/minor" />
-    <xmlpoke file="${versionfile}" 
+    <xmlpoke file="${versionreport}" 
 	     value="${verbuild}"
 	     xpath="/version/build" />
-    <xmlpoke file="${versionfile}" 
+    <xmlpoke file="${versionreport}" 
 	     value="${verrevision}"
 	     xpath="/version/revision" />
     
-    <!-- For each one of the project directories, we loop through and
-	 create an AssemblyInfo.cs file with the version number that
-	 we calculated at the beginning of the build script -->
-    <foreach item="Folder" property="project.dir">
-      <in>
-	      <items refid="project.dirs" />
-      </in>
-      <do>
-	      <asminfo output="${project.dir}\AssemblyInfo.cs"
+    <!-- Create a SharedAssemblyInfo.cs file with the version number that
+	        we calculated at the beginning of the build script -->
+    <asminfo output="${basedir}/SharedAssemblyInfo.cs"
 		      language="CSharp">
-	        <imports>
-	          <import name="System" />
-	          <import name="System.Reflection" />
-	        </imports>
-	        <attributes>
-	          <attribute type="AssemblyVersionAttribute"
-		            value="${vermajor}.${verminor}.${verbuild}.${verrevision}"
-		            />
-	        </attributes>
-	      </asminfo>
-      </do>
-    </foreach>
+	    <imports>
+	      <import name="System" />
+	      <import name="System.Reflection" />
+	    </imports>
+	    <attributes>
+	      <attribute type="AssemblyVersionAttribute"
+		        value="${vermajor}.${verminor}.${verbuild}.${verrevision}" />
+		    <attribute type="AssemblyCopyrightAttribute"
+		        value="Copyright (c) 2005 Microsoft Corporation" />
+	    </attributes>
+	  </asminfo>
     
   </target>
 
@@ -448,10 +396,6 @@
     <property name="clean.dir.to.clean" value="${targetdir}" />
     <call target="clean.dir" />
     <property name="clean.dir.to.clean" value="${distdir}" />
-    <call target="clean.dir" />
-    <property name="clean.dir.to.clean" value="${diffdir}" />
-    <call target="clean.dir" />
-    <property name="clean.dir.to.clean" value="${cvsbuilddir}" />
     <call target="clean.dir" />
     <property name="clean.dir.to.clean" value="${reportdir}" />
     <call target="clean.dir" />

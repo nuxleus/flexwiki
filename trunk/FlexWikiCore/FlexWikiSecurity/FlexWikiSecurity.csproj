@@ -114,6 +114,12 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "SharedAssemblyInfo.cs"
+                    Link = "..\SharedAssemblyInfo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "SimplePermissionsDataProvider.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
