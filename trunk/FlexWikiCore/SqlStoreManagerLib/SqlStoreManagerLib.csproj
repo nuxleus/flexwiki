@@ -3,22 +3,22 @@
         ProjectType = "Local"
         ProductVersion = "7.10.3077"
         SchemaVersion = "2.0"
-        ProjectGuid = "{2D3D6848-3BCF-4FAB-B73D-859692867616}"
+        ProjectGuid = "{47F46CF2-B36A-48C7-A26C-6A20A8EC2E13}"
     >
         <Build>
             <Settings
-                ApplicationIcon = "App.ico"
+                ApplicationIcon = ""
                 AssemblyKeyContainerName = ""
-                AssemblyName = "SqlStoreDatabaseCreationTool"
+                AssemblyName = "FlexWiki.SqlStoreManagerLib"
                 AssemblyOriginatorKeyFile = ""
                 DefaultClientScript = "JScript"
                 DefaultHTMLPageLayout = "Grid"
                 DefaultTargetSchema = "IE50"
                 DelaySign = "false"
-                OutputType = "WinExe"
+                OutputType = "Library"
                 PreBuildEvent = ""
-                PostBuildEvent = "copy $(ProjectDir)DatabaseScripts\FlexWikiSqlStoreObjectCreationScript.sql $(TargetDir)FlexWikiSqlStoreObjectCreationScript.sql&#xd;&#xa;copy $(ProjectDir)DatabaseScripts\osqlcmd.cmd $(TargetDir)osqlcmd.cmd&#xd;&#xa;copy $(ProjectDir)DatabaseScripts\osqlcmdwithdatabase.cmd $(TargetDir)osqlcmdwithdatabase.cmd"
-                RootNamespace = "SqlStoreDatabaseCreationTool"
+                PostBuildEvent = ""
+                RootNamespace = "FlexWiki.SqlStoreManagerLib"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
             >
@@ -59,7 +59,7 @@
                     OutputPath = "bin\Release\"
                     RegisterForComInterop = "false"
                     RemoveIntegerChecks = "false"
-                    TreatWarningsAsErrors = "false"
+                    TreatWarningsAsErrors = "true"
                     WarningLevel = "4"
                 />
             </Settings>
@@ -67,62 +67,43 @@
                 <Reference
                     Name = "System"
                     AssemblyName = "System"
-                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.dll"
+                    HintPath = "..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.dll"
                 />
                 <Reference
                     Name = "System.Data"
                     AssemblyName = "System.Data"
-                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Data.dll"
-                />
-                <Reference
-                    Name = "System.Drawing"
-                    AssemblyName = "System.Drawing"
-                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Drawing.dll"
-                />
-                <Reference
-                    Name = "System.Windows.Forms"
-                    AssemblyName = "System.Windows.Forms"
-                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Windows.Forms.dll"
+                    HintPath = "..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Data.dll"
                 />
                 <Reference
                     Name = "System.XML"
                     AssemblyName = "System.Xml"
-                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
+                    HintPath = "..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
                 />
             </References>
         </Build>
         <Files>
             <Include>
                 <File
-                    RelPath = "App.ico"
-                    BuildAction = "Content"
-                />
-                <File
                     RelPath = "AssemblyInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Form1.cs"
-                    SubType = "Form"
+                    RelPath = "DatabaseHelper.cs"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Form1.resx"
-                    DependentUpon = "Form1.cs"
+                    RelPath = "Scripts\CreateFlexWikiDatabase.sql"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "DatabaseScripts\FlexWikiSqlStoreObjectCreationScript.sql"
-                    BuildAction = "Content"
+                    RelPath = "Scripts\FlexWikiSqlStoreObjectCreationScript.sql"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "DatabaseScripts\osqlcmd.cmd"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "DatabaseScripts\osqlcmdwithdatabase.cmd"
-                    BuildAction = "None"
+                    RelPath = "Scripts\GrantUserPermisions.sql"
+                    BuildAction = "EmbeddedResource"
                 />
             </Include>
         </Files>

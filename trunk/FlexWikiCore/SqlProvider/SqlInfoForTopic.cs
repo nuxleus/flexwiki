@@ -11,7 +11,7 @@
 #endregion
 using System;
 
-namespace SqlProvider
+namespace FlexWiki.SqlProvider
 {
 	/// <summary>
 	/// This class contains information about topics stored in Sql similar 

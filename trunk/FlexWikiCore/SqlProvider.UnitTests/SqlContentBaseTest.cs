@@ -19,7 +19,7 @@ using FlexWiki;
 using NUnit.Framework;
 using FlexWiki.UnitTests;
 
-namespace SqlProvider.UnitTests
+namespace FlexWiki.SqlProvider.UnitTests
 {
 	[TestFixture] public class SqlContentBaseTests: ContentBaseTests
 	{

@@ -208,7 +208,7 @@
                 <File
                     RelPath = "EditService.asmx.cs"
                     DependentUpon = "EditService.asmx"
-                    SubType = "Code"
+                    SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File

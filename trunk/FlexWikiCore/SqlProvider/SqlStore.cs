@@ -15,7 +15,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using FlexWiki;
 
-namespace SqlProvider
+namespace FlexWiki.SqlProvider
 {
 	/// <summary>
 	/// Summary description for SqlStore.

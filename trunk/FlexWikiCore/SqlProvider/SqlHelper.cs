@@ -15,7 +15,7 @@ using System.Collections;
 using System.Data;
 using System.Data.SqlClient;
 
-namespace SqlProvider
+namespace FlexWiki.SqlProvider
 {
 	/// <summary>
 	/// Summary description for SqlHelper.

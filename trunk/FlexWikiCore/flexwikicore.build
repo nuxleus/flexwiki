@@ -34,7 +34,7 @@
 
   <include buildfile="${personalpropspath}" 
 	   if="${file::exists(personalpropspath)}" />
-  
+
   <!-- Read in things like environment variables into nant properties -->
   <sysinfo />
 
@@ -92,6 +92,22 @@
   <property name="targetdir" value="${path::combine(path::combine(basedir, 'bin'), configuration)}" 
       unless="${property::exists('targetdir')}" />
 
+  <!-- This is the directory where SQL Server database files will be created.
+        Defaults to "sqlstore" off the base directory -->
+  <property name="sqldir" value="${path::combine(basedir, 'sqlstore')}"
+      unless="${property::exists('sqldir')}" />
+
+  <!-- This is the name of the SQL Server database that will be created.
+        Defaults to "FlexWikiTestSqlStore". -->
+  <property name="sqldatabase" value="FlexWikiTestSqlStore"
+      unless="${property::exists('sqldatabase')}" />
+
+  <!-- This is the name of the SQL Server instance that will be used when
+        creating a new database. Defaults to ".", which is the default 
+        instance on the local machine. -->
+  <property name="sqlinstance" value="."
+      unless="${property::exists('sqlinstance')}" />
+
   <!-- The directory where various report files wind up. This includes
        things like the report that NUnit spits out. Default to
        "reports" off of the base directory. -->
@@ -119,9 +135,29 @@
       unless="${property::exists('build.skip')}" />
 
   <!-- Set this property to true here (or override elsewhere) to skip
-       the test stage of the build. -->
+       the test stage (nunit, fxcop) of the build. -->
   <property name="test.skip" value="false" 
       unless="${property::exists('test.skip')}" />
+
+  <!-- Set this property to true here (or override elsewhere) to skip
+       running nunit as part of the build. -->
+  <property name="nunit.skip" value="false"
+      unless="${property::exists('nunit.skip')}" />
+
+  <!-- Set this property to true here (or override elsewhere) to skip
+       running fxcop as part of the build. -->
+  <property name="fxcop.skip" value="false"
+      unless="${property::exists('fxcop.skip')}" />
+
+  <!-- Set this property to true here (or override elsewhere) to skip
+        setting up a test SqlStore database as part of the build. -->
+  <property name="sqlsetup.skip" value="true"
+      unless="${property::exists('sqlsetup.skip')}" />
+
+  <!-- Set this property to true here (or override elsewhere) to skip
+        testing the SqlStore provider as part of the build. -->
+  <property name="sqltest.skip" value="true"
+      unless="${property::exists('sqltest.skip')}" />
 
   <!-- Set this property to true here (or override elsewhere) to skip
        the stage of the build that builds the distribution files. -->
@@ -155,6 +191,12 @@
   <property name="nunit.breaks.build" value="true" 
       unless="${property::exists('nunit.breaks.build')}" />
 
+  <!-- Set this property false here (or override elsewhere) to prevent
+        FxCop failures from breaking the build. This can be useful
+        when debugging complex build problems. -->
+  <property name="fxcop.breaks.build" value="false" 
+      unless="${property::exists('fxcop.breaks.build')}" />
+
   <!-- This property is set to true when this script is invoked by the
         automated build. --> 
   <property name="automated.build" value="false"
@@ -162,6 +204,17 @@
 
   <echo message="This script is being run as part of an automated build"
       if="${automated.build}" />
+
+  <!-- Set default values for when we're running under an automated build -->
+  <if test="${automated.build}">
+    <!-- As part of the automated build, we want to both set up and test
+          the SqlStore stuff -->
+    <property name="sqlsetup.skip" value="true" />
+    <property name="sqltest.skip"  value="true" />
+    
+    <!-- We also want to run FxCop -->
+    <property name="fxcop.skip" value="true" />
+  </if>
 
   <!-- NAnt build targets appear after this point. To build a
        particular target, run "nant targetname" from the command line.
@@ -177,6 +230,9 @@
 
     <!-- Create the reports directory if it doesn't exist. -->
     <mkdir dir="${reportdir}" />
+    
+    <!-- Create the SQL Server data directory if it doens't exist -->
+    <mkdir dir="${sqldir}" />
 
     <!-- Set up the XML version number so external tools can use it to
         	 know what version we built. -->
@@ -249,36 +305,78 @@
        tests in them. --> 
   <target name="test" depends="build" unless="${test.skip}">
 
-    <!-- Much as I would like to use this next bit of code, it simply
-	 doesn't work. There's a problem with using the nunit2 task
-	 when a config file is present. This is a problem even when
-	 using the latest nightly build (2004-07-05) of NAnt. This
-	 problem is documented at
-	 http://blog.iceglue.com/archive/2004/05/12/168.aspx 
-	 So instead we invoke nunit-console explicitly. Yuk, but oh
-	 well. --> 
-    <!-- 
-      This code commented out intentionally
-    <nunit2>
-      <formatter type="Plain" />
-      <test>
-	<assemblies basedir="${targetdir}">
-	  <includes name="*.dll" />
-	  <includes name="*.exe" />
-	</assemblies>
-      </test>
-    </nunit2>
-	 -->
+    <!-- Set nunit.skip to true to skip NUnit testing -->
+    <ifnot test="${nunit.skip}">
+      <!-- This command runs nunit-console and directs the XML report to
+	          the reports directory. -->
+      <exec program="nunit-console.exe"
+    	    basedir="${basedir}\tools\nunit\bin"
+	        workingdir="${targetdir}"
+	        failonerror="${nunit.breaks.build}">
+        <arg value="FlexWiki.UnitTests.dll" />
+        <arg value="/xml=${reportdir}\nunit.xml"/>
+      </exec>
+    </ifnot>
+    
+    <!-- Here's where we run FxCop analysis of the project assemblies. 
+          Set fxcop.skip to true to skip FxCop testing. -->
+    <ifnot test="${fxcop.skip}">
+      <exec program="fxcopcmd"
+          basedir="${basedir}/tools/fxcop"
+          workingdir="${basedir}"
+          failonerror="${fxcop.breaks.build}">
+        <arg value="/project:${nant.project.name}.fxcop" />
+        <arg value="/out:${path::combine(reportdir, 'fxcop.xml')}" />
+      </exec>
+    </ifnot>
+    
+    <!-- Here's where we set up the SQL Server database to prepare for
+          SqlProvider testing -->
+    <ifnot test="${sqlsetup.skip}">
+      <!-- We're creating a new database (and dropping the one that's there, 
+            if there is one), specifying a directory for the data files, and 
+            a database name to create. -->
+      <exec program="fwsqlmgr.exe"
+          basedir="${targetdir}">
+        <arg value="create" />        
+        <arg value="${sqlinstance}" />
+        <arg value="${sqldatabase}" />
+        <arg value="${sqldir}" />
+      </exec>
+      
+      <!-- Grant the current user permission to access the database 
+      <exec program="fwsqlmgr.exe"
+          basedir="${targetdir}">
+        <arg value="grant" />
+        <arg value="${sqlinstance}" />
+        <arg value="${sqldatabase}" />
+        <arg value="${sys.env.USERDOMAIN}\${sys.env.USERNAME}" />
+      </exec>
+      -->
 
-    <!-- This command runs nunit-console and directs the XML report to
-	 the reports directory. -->
-    <exec program="nunit-console.exe"
-    	  basedir="${basedir}\tools\nunit\bin"
-	      workingdir="${targetdir}"
-	      failonerror="${nunit.breaks.build}">
-      <arg value="FlexWiki.UnitTests.dll" />
-      <arg value="/xml=${reportdir}\nunit.xml"/>
-    </exec>
+    </ifnot>
+    
+    <!-- Here's where we test the SqlProvider against the database -->
+    <ifnot test="${sqltest.skip}">
+    
+      <property name="sqltest.assembly" value="FlexWiki.SqlProvider.UnitTests.dll" />
+      <property name="sqltest.configfile" value="${sqltest.assembly}.config" />
+    
+      <!-- Update the config file with the right connection string. -->
+      <xmlpoke file="${path::combine(targetdir, sqltest.configfile)}" 
+          value="server=${sqlinstance};database=${sqldatabase};Integrated Security=true" 
+          xpath="/configuration/appSettings/add[@key = 'SqlStoreConnectionString']/@value" />
+    
+      <!-- Run the SqlProvider tests -->
+      <exec program="nunit-console.exe"
+    	    basedir="${basedir}\tools\nunit\bin"
+	        workingdir="${targetdir}"
+	        failonerror="${nunit.breaks.build}">
+        <arg value="${sqltest.assembly}" />
+        <arg value="/xml=${reportdir}\sqltest.xml"/>
+      </exec>
+    </ifnot>
+    
   </target> 
 
   <!-- The dist target builds the distribution zipfiles from the files
@@ -421,6 +519,8 @@
       <exclude name="**/*.bak" />
       <exclude name="personal.properties" />
       <exclude name="**/CVS" />
+      <exclude name="${sqldir}/**" />
+      <exclude name="${targetdir}/**" />
       <include name="tools/nant/bin" />
       <include name="tools/nunit/bin" />
     </fileset>

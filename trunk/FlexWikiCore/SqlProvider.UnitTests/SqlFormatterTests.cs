@@ -16,7 +16,7 @@ using FlexWiki.Formatting;
 using NUnit.Framework;
 using FlexWiki.UnitTests;
 
-namespace SqlProvider.UnitTests
+namespace FlexWiki.SqlProvider.UnitTests
 {
 	/// <summary>
 	/// Summary description for SqlFormatterTests.

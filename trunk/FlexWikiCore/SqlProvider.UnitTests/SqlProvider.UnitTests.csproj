@@ -9,7 +9,7 @@
             <Settings
                 ApplicationIcon = ""
                 AssemblyKeyContainerName = ""
-                AssemblyName = "SqlProvider.UnitTests"
+                AssemblyName = "FlexWiki.SqlProvider.UnitTests"
                 AssemblyOriginatorKeyFile = ""
                 DefaultClientScript = "JScript"
                 DefaultHTMLPageLayout = "Grid"
@@ -17,8 +17,8 @@
                 DelaySign = "false"
                 OutputType = "Library"
                 PreBuildEvent = ""
-                PostBuildEvent = "copy $(ProjectDir)NamespaceMap.xml $(TargetDir)NamespaceMap.xml&#xd;&#xa;copy $(ProjectDir)app.config $(TargetDir)SqlProvider.UnitTests.dll.config"
-                RootNamespace = "SqlProvider.UnitTests"
+                PostBuildEvent = "copy $(ProjectDir)NamespaceMap.xml $(TargetDir)NamespaceMap.xml&#xd;&#xa;copy $(ProjectDir)app.config $(TargetDir)$(TargetFileName).config"
+                RootNamespace = "FlexWiki.SqlProvider.UnitTests"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
             >

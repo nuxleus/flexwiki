@@ -13,7 +13,7 @@ using System;
 using System.Collections;
 using FlexWiki;
 
-namespace SqlProvider
+namespace FlexWiki.SqlProvider
 {
 	/// <summary>
 	/// Summary description for SqlNamespaceProvider.

@@ -10,7 +10,8 @@ the terms of this license.
 You must not remove this notice, or any other, from this software.
 */
 
-
+use ${database}
+GO
 if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[FK_Topic_Namespace]') and OBJECTPROPERTY(id, N'IsForeignKey') = 1)
 ALTER TABLE [dbo].[Topic] DROP CONSTRAINT FK_Topic_Namespace
 GO

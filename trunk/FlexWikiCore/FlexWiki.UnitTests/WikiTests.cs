@@ -14,7 +14,7 @@ using System;
 using System.Configuration;
 using System.IO; 
 using System.Reflection;
-using SqlProvider;
+using FlexWiki.SqlProvider;
 
 namespace FlexWiki.UnitTests
 {
