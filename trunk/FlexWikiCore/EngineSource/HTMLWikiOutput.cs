@@ -450,14 +450,23 @@ Write(@"
 			WriteLine("<fieldset " + css() + " class='Property' style='width: auto'>");
 			WriteLine("<legend class='PropertyName'>" + name + "</legend> <span class='PropertyValue'>");
 		}
-		
+
 		override public void WriteCloseProperty()
 		{
 			WriteLine("</span>");
 			WriteLine("</fieldset>");
 		}
 
+		override public void WriteOpenAnchor(string name)
+		{
+			WriteLine("<a name=\"" + name + "\" class=\"Anchor\">");
+		}
 
+		override public void WriteCloseAnchor()
+		{
+			WriteLine("</a>");
+		}
+		
 		override public void FormStart(string method, string URI)
 		{
 			WriteLine("<form method='" + method + "' action='" + URI + "'>");

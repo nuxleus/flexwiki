@@ -332,6 +332,10 @@ namespace FlexWiki.Formatting
 		/// string pattern for what comes after a wiki name
 		/// </summary>
 		public static string afterWikiName = "(?<after>'|\\||\\s|@|$|\\.|,|:|'|;|\\}|\\?|_|\\)|\\!)";
+		/// <summary>
+		/// string pattern for the optional anchor after a wiki name.
+		/// </summary>
+		public static string wikiNameAnchor = @"(?:\#)?(?<anchor>([\w\d]+))?";
 
 		/// <summary>
 		/// Unicode compatible regex fragments.
@@ -370,7 +374,7 @@ namespace FlexWiki.Formatting
 
 		// A wiki link is a wiki name, possible prefixed by a relabel
 		static string beforeOrRelabel = "(" + relabelPrefix + "|" + beforeWikiName + ")";
-		public static string extractWikiLinksString = beforeOrRelabel + "(?<topic>" + wikiName + ")"  + afterWikiName;
+		public static string extractWikiLinksString = beforeOrRelabel + "(?<topic>" + wikiName + ")"  + wikiNameAnchor + afterWikiName;
 		public static Regex extractWikiLinks = new Regex(extractWikiLinksString) ;
 
 		static string emailAddressString = @"([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)";
@@ -754,35 +758,38 @@ namespace FlexWiki.Formatting
 				string each = eachLine.Text;
 				_Output.Style = eachLine.Style;
 
-                each = StripHTMLSpecialCharacters(each);
+				each = StripHTMLSpecialCharacters(each);
 
-                if ( inPreBlock )
-                {
-                    if ( each.StartsWith("}@") && each.Substring(2).Trim() == preBlockKey )
-                    {
-                        Ensure(typeof(NeutralState));
-                        inPreBlock = false;
-                        preBlockKey = null;
-                    }
-                    else
-                    {
-                        _Output.Write(Regex.Replace(each, "\t", "        "));
-                        _Output.WriteEndLine();
-                        _CurrentLineIndex++;
-                    }
-                    continue;
-                }
-                else if ( !inMultilineProperty && each.StartsWith("{@") )
-                {
-                    Ensure(typeof(PreState));
-                    inPreBlock = true;
-                    preBlockKey = each.Substring(2).Trim();
-                    continue;
-                }
+				if ( inPreBlock )
+				{
+					if ( each.StartsWith("}@") && each.Substring(2).Trim() == preBlockKey )
+					{
+						Ensure(typeof(NeutralState));
+						inPreBlock = false;
+						preBlockKey = null;
+					}
+					else
+					{
+						if (false == currentMultilinePropertyIsHidden)
+						{
+							_Output.Write(Regex.Replace(each, "\t", "        "));
+							_Output.WriteEndLine();
+						}
+						_CurrentLineIndex++;
+					}
+					continue;
+				}
+				else if ( !inMultilineProperty && each.StartsWith("{@") )
+				{
+					Ensure(typeof(PreState));
+					inPreBlock = true;
+					preBlockKey = each.Substring(2).Trim();
+					continue;
+				}
 
-                // Make all the 8-space sequences into tabs
-                each = Regex.Replace(each, " {8}", "\t");
-        
+				// Make all the 8-space sequences into tabs
+				each = Regex.Replace(each, " {8}", "\t");
+    
 				// See if this is the first line of a multiline property.
 				if (!inMultilineProperty && ContentBase.MultilinePropertyRegex.IsMatch(each))
 				{
@@ -794,6 +801,9 @@ namespace FlexWiki.Formatting
 					string delim = m.Groups["delim"].Value;
 					multiLinePropertyDelim = ContentBase.ClosingDelimiterForOpeningMultilinePropertyDelimiter(delim);
 					currentMultilinePropertyIsHidden = leader == ":";
+
+					// Write out the anchor field.
+					_Output.WriteOpenAnchor(name);
 					if (!currentMultilinePropertyIsHidden)	// Don't bother showing out hidden page properties
 					{
 						val = val.Trim();
@@ -821,10 +831,16 @@ namespace FlexWiki.Formatting
 						if (!currentMultilinePropertyIsHidden)
 						{
 							if (ContentBase.IsBehaviorPropertyDelimiter(multiLinePropertyDelim))
+							{
 								_Output.Write(multiLinePropertyDelim);
+							}
+							// Make sure we close off things like tables before we close the property.
+							Ensure(typeof(NeutralState));
 							_Output.WriteCloseProperty();
 						}
+						_Output.WriteCloseAnchor();
 						inMultilineProperty = false;
+						currentMultilinePropertyIsHidden = false;
 						continue;
 					}
 
@@ -842,21 +858,22 @@ namespace FlexWiki.Formatting
 
 				if (Formatter.StripExternalWikiDef(_ExternalWikiMap, each)) 
 					continue;
-            
-				// empty line resets everything (except pre)
+        
+				// empty line resets everything (except pre and multiline properties )
 				if (each.Trim().Length == 0)
 				{
 					if (!(CurrentState is PreState) || (CurrentState is PreState && !IsNextLinePre()))
 						Ensure(typeof(NeutralState));
 					_Output.WriteEndLine();
 				}
-				else if (each.StartsWith("----"))
+				else if ((each.StartsWith("----")) && (false == currentMultilinePropertyIsHidden))
 				{
 					Ensure(typeof(NeutralState));
 					_Output.WriteRule();
 				}
 				// insert topic -- {{IncludeSomeTopic}} ?
-				else if (!each.StartsWith(" ") & Regex.IsMatch(each, @"^[\t]*\{\{" + wikiName + @"\}\}[\s]*$"))
+				else if ((!each.StartsWith(" ") & Regex.IsMatch(each, @"^[\t]*\{\{" + wikiName + @"\}\}[\s]*$")) && 
+					(false == currentMultilinePropertyIsHidden))
 				{
 					Regex nameGetter = new Regex("(?<topic>" + wikiName + ")");
 					string name = nameGetter.Matches(each)[0].Groups["topic"].Value;
@@ -875,7 +892,7 @@ namespace FlexWiki.Formatting
 					AddCacheRule(ContentBase.CacheRuleForAllPossibleInstancesOfTopic(topicName));
 					if (ContentBase.TopicExists(topicName)) 
 					{
-						if (!IsBeyondSafeNestingDepth) 
+						if ((!IsBeyondSafeNestingDepth) && (false == currentMultilinePropertyIsHidden))
 						{
 							_Output.Write(IncludedTopic(topicName, _HeadingLevelBase + tabs));
 						}
@@ -888,7 +905,8 @@ namespace FlexWiki.Formatting
 					}
 				}
 				// line begins with a space, it's PRE time!
-				else if (each.StartsWith(" ") || Regex.IsMatch(each, "^[ \t]+[^ \t*1]"))
+				else if ((each.StartsWith(" ") || Regex.IsMatch(each, "^[ \t]+[^ \t*1]")) && 
+					(false == currentMultilinePropertyIsHidden))
 				{
 					Ensure(typeof(PreState));
 					_Output.Write(Regex.Replace(each, "\t", "        "));
@@ -897,6 +915,12 @@ namespace FlexWiki.Formatting
 				else
 				{
 					// OK, it's likely more complicated
+
+					// Continue if we're inside a multiline hidden property.
+					if (true == currentMultilinePropertyIsHidden)
+					{
+						continue;
+					}
 
 					// See if this is a bullet line
 					if (each.StartsWith("\t"))
@@ -1009,18 +1033,22 @@ namespace FlexWiki.Formatting
 								string val = m.Groups["val"].Value;
 								string leader = m.Groups["leader"].Value;
 								bool isLeader = leader == ":";
+
+								// Write out an anchor tag.
+								_Output.WriteOpenAnchor(name);
 								if (!isLeader)	// Don't bother showing out hidden page properties
 								{
-									val = val.Trim();
-
 									// Do the normal processing
 									name = ProcessLineElements(name);
+
+									val = val.Trim();
 									val = ProcessLineElements(val);
 
 									_Output.WriteOpenProperty(name);
 									_Output.Write(val);
 									_Output.WriteCloseProperty();
 								}
+								_Output.WriteCloseAnchor();
 							}
 							else
 							{
@@ -1033,7 +1061,10 @@ namespace FlexWiki.Formatting
 					}
 				}
 				EnsureParaClose();
-				_Output.WriteEndLine();
+				if (false == currentMultilinePropertyIsHidden)
+				{
+					_Output.WriteEndLine();
+				}
 				_CurrentLineIndex++;
 			}
     
@@ -1728,18 +1759,11 @@ namespace FlexWiki.Formatting
 				Match m = extractWikiLinks.Match(str);
 				if (!m.Success)
 					break;
-				// System.Console.Out.WriteLine("Match: {0}", m.ToString());
 				string each = m.Groups["topic"].ToString();
-				// System.Console.Out.WriteLine("topic: {0}", each);
 				string before = m.Groups["before"].ToString();
 				string after = m.Groups["after"].ToString();
 				string relabel = m.Groups["relabel"].ToString();
-				// System.Console.Out.WriteLine("relabel: {0}", relabel);
-//				if (processed.Contains(each))
-//				{
-//					continue;   // skip dup	
-//				}
-//				processed.Add(each);
+				string anchor = m.Groups["anchor"].ToString();
 				
 				RelativeTopicName relName = new RelativeTopicName(TopicName.StripEscapes(each));
 
@@ -1758,14 +1782,16 @@ namespace FlexWiki.Formatting
 				string rep = beforeOrRelabel + "(" + RegexEscapeTopic(each) + ")" + afterWikiName;
 				AbsoluteTopicName appearedAs = new AbsoluteTopicName(each);  // in case it was a plural form, be sure to show it as it appeared
 				string displayname = TopicName.StripEscapes((ContentBase.DisplaySpacesInWikiLinks ? appearedAs.FormattedName : appearedAs.Name));
-				if (relabel != "")
+				if (relabel.Length > 0)
+				{
 					displayname = relabel;
+				}
 
 				if (absoluteNames.Count == 0)
 				{
 					// It doesn't exist, so give the option to create it
 					AbsoluteTopicName abs = relName.AsAbsoluteTopicName(ContentBase.Namespace);
-					str = ReplaceMatch(answer, str, m, before + "<a title='Click here to create this topic' class=\"create\" href=\"" + LinkMaker().LinkToEditTopic(abs) + "\">" + displayname + "</a>" + after) ;
+					str = ReplaceMatch(answer, str, m, before + "<a title='Click here to create this topic' class=\"create\" href=\"" + LinkMaker().LinkToEditTopic(abs) + "\">" + displayname + "</a>" + after);
 				}
 				else
 				{
@@ -1780,18 +1806,33 @@ namespace FlexWiki.Formatting
 						string tipHTML = null;
 						bool defaultTip = tip == null;
 						if (defaultTip)
+						{
 							tip = "Click to read this topic";
+						}
 						tipid = NewUniqueIdentifier();
 						tipHTML = Formatter.EscapeHTML(tip);
 						if (defaultTip)
+						{
 							tipHTML = "<span class='DefaultTopicTipText'>" + tipHTML + "</span>";
+						}
 						tipHTML += "<div class='TopicTipStats'>" + TheFederation.GetTopicModificationTime(abs).ToString() + " - " + TheFederation.GetTopicLastModifiedBy(abs) + "</div>";
 						tipHTML = "<div id=" + tipid +" style='display: none'>" + tipHTML + "</div>";
 						Output.AddToFooter(tipHTML);
 						string replacement = "<a ";
 						if (tip != null)
+						{
 							replacement += "onmouseover='TopicTipOn(this, \"" + tipid + "\", event);' onmouseout='TopicTipOff();' ";
-						replacement += "href=\"" + LinkMaker().LinkToTopic(abs) + "\">" + displayname + "</a>";
+						}
+						replacement += "href=\"" + LinkMaker().LinkToTopic(abs);
+						if (anchor.Length > 0)
+						{
+							replacement += "#" + anchor;
+							if (0 == relabel.Length)
+							{
+								displayname += "#" + anchor;
+							}
+						}
+						replacement += "\">" + displayname + "</a>";
 						str = ReplaceMatch(answer, str, m, before + replacement + after) ;
 					}
 					else

@@ -199,7 +199,8 @@ namespace FlexWiki
 			{
 				try
 				{
-					hashTable.Add(element.GetHashCode(), element);
+					string key = element.ToString();
+					hashTable.Add(key, element);
 					uniqueElements.Add(element);
 				}
 				catch (ArgumentException)
@@ -232,7 +233,6 @@ namespace FlexWiki
 
 			#endregion
 		}
-
 
 		class CustomSorter : IComparer
 		{
@@ -270,7 +270,5 @@ namespace FlexWiki
 
 			#endregion
 		}
-
-
 	}
 }

@@ -106,6 +106,8 @@ namespace FlexWiki.Formatting
 		abstract public void WriteErrorMessage(string title, string body);
 		abstract public void WriteOpenProperty(string name);
 		abstract public void WriteCloseProperty();
+		abstract public void WriteOpenAnchor(string name);
+		abstract public void WriteCloseAnchor();
 		abstract public void WriteCloseUnorderedList();
 		abstract public void WriteOpenUnorderedList();
 		abstract public void WriteCloseOrderedList();

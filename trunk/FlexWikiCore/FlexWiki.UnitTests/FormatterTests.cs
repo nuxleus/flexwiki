@@ -196,6 +196,73 @@ lenSpanning=@@topics.TopicWithBehaviorProperties.FaceSpanningLines(""parsing is 
 			_externals = new Hashtable();
 		}
 
+		#region WikiPageProperty Tests
+		[Test] public void SinglineLinePropertyTest()
+		{
+			FormatTest(
+				@"Singleline: single line property",
+				@"<a name=""Singleline"" class=""Anchor"">
+<fieldset  class='Property' style='width: auto'>
+<legend class='PropertyName'>Singleline</legend> <span class='PropertyValue'>
+single line property</span>
+</fieldset>
+</a>
+
+");
+		}
+
+		[Test] public void FormattedSingleLinePropertyTest()
+		{
+			FormatTest(
+				@"Singleline: '''bold''' ''italics'' -deleted-",
+				@"<a name=""Singleline"" class=""Anchor"">
+<fieldset  class='Property' style='width: auto'>
+<legend class='PropertyName'>Singleline</legend> <span class='PropertyValue'>
+<strong>bold</strong> <em>italics</em> <del>deleted</del></span>
+</fieldset>
+</a>
+
+");
+		}
+
+		[Test] public void MultilinePropertyTest()
+		{
+			FormatTest(
+				@"Multiline:[
+first line
+second line
+]",
+				@"<a name=""Multiline"" class=""Anchor"">
+<fieldset  class='Property' style='width: auto'>
+<legend class='PropertyName'>Multiline</legend> <span class='PropertyValue'>
+<p>first line</p>
+<p>second line</p>
+</span>
+</fieldset>
+</a>
+");
+		}
+
+		[Test] public void FormattedMultilinePropertyTest()
+		{
+			FormatTest(
+				@"Multiline:[
+!Heading1
+'''bold''' ''italics'' -deleted-
+]",
+				@"<a name=""Multiline"" class=""Anchor"">
+<fieldset  class='Property' style='width: auto'>
+<legend class='PropertyName'>Multiline</legend> <span class='PropertyValue'>
+<h1>Heading1</h1>
+
+<p><strong>bold</strong> <em>italics</em> <del>deleted</del></p>
+</span>
+</fieldset>
+</a>
+");
+		}
+		#endregion
+
 		[Test] public void TestInlineWikiTalk()
 		{
 			WikiOutput output = WikiOutput.ForFormat(OutputFormat.HTML, null);
@@ -351,11 +418,132 @@ lenSpanning=@@topics.TopicWithBehaviorProperties.FaceSpanningLines(""parsing is 
 			ShouldNotBeTopicName("ølle");
 		}
 
+		[Test] public void TopicNameWithAnchorRegexTests()
+		{
+			ShouldBeTopicName("AaA#Anchor");
+			ShouldBeTopicName("AaA#anchor");
+			ShouldBeTopicName("AaA#TestAnchor");
+			ShouldBeTopicName("AaA#testAnchor");
+			ShouldBeTopicName("AAa#Anchor");
+			ShouldBeTopicName("AAa#anchor");
+			ShouldBeTopicName("AAa#TestAnchor");
+			ShouldBeTopicName("AAa#testAnchor");
+			ShouldBeTopicName("AaAA#Anchor");
+			ShouldBeTopicName("AaAA#anchor");
+			ShouldBeTopicName("AaAA#TestAnchor");
+			ShouldBeTopicName("AaAA#aestAnchor");
+			ShouldBeTopicName("AaAa#Anchor");
+			ShouldBeTopicName("AaAa#anchor");
+			ShouldBeTopicName("AaAa#TestAnchor");
+			ShouldBeTopicName("AaAa#testAnchor");
+			ShouldBeTopicName("ZAAbAA#Anchor");
+			ShouldBeTopicName("ZAAbAA#anchor");
+			ShouldBeTopicName("ZAAbAA#TestAnchor");
+			ShouldBeTopicName("ZAAbAA#testAnchor");
+			ShouldBeTopicName("ZAAb#Anchor");
+			ShouldBeTopicName("ZAAb#anchor");
+			ShouldBeTopicName("ZAAb#TestAnchor");
+			ShouldBeTopicName("ZAAb#testAnchor");
+			ShouldBeTopicName("ZaAA#Anchor");
+			ShouldBeTopicName("ZaAA#anchor");
+			ShouldBeTopicName("ZaAA#TestAnchor");
+			ShouldBeTopicName("ZaAA#testAnchor");
+			ShouldBeTopicName("CSharp#Anchor");
+			ShouldBeTopicName("CSharp#anchor");
+			ShouldBeTopicName("CSharp#TestAnchor");
+			ShouldBeTopicName("CSharp#testAnchor");
+			ShouldBeTopicName("Meeting25Dec#Anchor");
+			ShouldBeTopicName("Meeting25Dec#anchor");
+			ShouldBeTopicName("Meeting25Dec#TestAnchor");
+			ShouldBeTopicName("Meeting25Dec#testAnchor");
+			ShouldBeTopicName("KeyOfficeIRMFunctionality#Anchor");
+			ShouldBeTopicName("KeyOfficeIRMFunctionality#anchor");
+			ShouldBeTopicName("KeyOfficeIRMFunctionality#TestAnchor");
+			ShouldBeTopicName("KeyOfficeIRMFunctionality#testAnchor");
+			ShouldBeTopicName("IBMMainframe#Anchor");
+			ShouldBeTopicName("IBMMainframe#anchor");
+			ShouldBeTopicName("IBMMainframe#TestAnchor");
+			ShouldBeTopicName("IBMMainframe#testAnchor");
+
+			ShouldNotBeTopicName("AAA#Anchor");
+			ShouldNotBeTopicName("AAA#anchor");
+			ShouldNotBeTopicName("AAA#TestAnchor");
+			ShouldNotBeTopicName("AAA#testAnchor");
+			ShouldNotBeTopicName("AA#Anchor");
+			ShouldNotBeTopicName("AA#anchor");
+			ShouldNotBeTopicName("AA#TestAnchor");
+			ShouldNotBeTopicName("AA#testAnchor");
+			ShouldNotBeTopicName("A42#Anchor");
+			ShouldNotBeTopicName("A42#anchor");
+			ShouldNotBeTopicName("A42#TestAnchor");
+			ShouldNotBeTopicName("A42#testAnchor");
+			ShouldNotBeTopicName("A#Anchor");
+			ShouldNotBeTopicName("A#anchor");
+			ShouldNotBeTopicName("A#TestAnchor");
+			ShouldNotBeTopicName("A#testAnchor");
+			ShouldNotBeTopicName("a#Anchor");
+			ShouldNotBeTopicName("a#anchor");
+			ShouldNotBeTopicName("a#TestAnchor");
+			ShouldNotBeTopicName("a#testAnchor");
+			ShouldNotBeTopicName("about#Anchor");
+			ShouldNotBeTopicName("about#anchor");
+			ShouldNotBeTopicName("about#TestAnchor");
+			ShouldNotBeTopicName("about#testAnchor");
+			ShouldNotBeTopicName("Hello#Anchor");
+			ShouldNotBeTopicName("Hello#anchor");
+			ShouldNotBeTopicName("Hello#TestAnchor");
+			ShouldNotBeTopicName("Hello#testAnchor");
+		}
+
+		[Test] public void NonAsciiTopicNameWithAnchorRegexTest() 
+		{
+			ShouldBeTopicName("DistribuciónTécnica#Distribución");
+			ShouldBeTopicName("DistribuciónTécnica#distribución");
+			ShouldBeTopicName("DistribuciónTécnica#DistribuciónTécnica");
+			ShouldBeTopicName("DistribuciónTécnica#distribuciónTécnica");
+			ShouldBeTopicName("ProblemasProgramación#Problemas");
+			ShouldBeTopicName("ProblemasProgramación#problemas");
+			ShouldBeTopicName("ProblemasProgramación#ProblemasProgramación");
+			ShouldBeTopicName("ProblemasProgramación#problemasProgramación");
+			ShouldBeTopicName("SmørgåsBord#Smørgås");
+			ShouldBeTopicName("SmørgåsBord#smørgås");
+			ShouldBeTopicName("SmørgåsBord#SmørgåsBord");
+			ShouldBeTopicName("SmørgåsBord#smørgåsBord");
+			ShouldBeTopicName("ØrneRede#Ørne");
+			ShouldBeTopicName("ØrneRede#ØrneRede");
+			ShouldBeTopicName("HöchstMaß#Höchst");
+			ShouldBeTopicName("HöchstMaß#höchst");
+			ShouldBeTopicName("HöchstMaß#HöchstMaß");
+			ShouldBeTopicName("HöchstMaß#höchstMaß");
+			ShouldBeTopicName("FaçadePattern#FaçadePattern");
+			ShouldBeTopicName("FaçadePattern#façadePattern");
+			ShouldBeTopicName("FaçadePattern#Façade");
+			ShouldBeTopicName("FaçadePattern#façade");
+			ShouldBeTopicName("ReykjavíkCity#Reykjavík");
+			ShouldBeTopicName("ReykjavíkCity#reykjavík");
+			ShouldBeTopicName("ReykjavíkCity#ReykjavíkCity");
+			ShouldBeTopicName("ReykjavíkCity#reykjavíkCity");
+
+			// string russian = "\u1044\u1086\u1093\u1083\u1072\u1103\u1056\u1099\u1073\u1072";
+			// ShouldBeTopicName(russian);
+
+			ShouldNotBeTopicName("æøå#æøå");
+			ShouldNotBeTopicName("ÆØÅ#ÆØÅ");
+			ShouldNotBeTopicName("Ølle#Ølle");
+			ShouldNotBeTopicName("ølle#ølle");
+		}
+
 		void ShouldBeTopicName(string s)
 		{
+			string topicName = s;
+			int hashIndex = s.IndexOf("#");
+			if (hashIndex > -1)
+			{
+				topicName = s.Substring(0, hashIndex);
+			}
 			FormatTest(
 				@s,
-				@"<p><a title='Click here to create this topic' class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor(s)) + @""">" + s + @"</a></p>
+				@"<p><a title='Click here to create this topic' class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor(topicName)) + @""">" + topicName + @"</a></p>
 ");
 		}
 
@@ -375,6 +563,19 @@ lenSpanning=@@topics.TopicWithBehaviorProperties.FaceSpanningLines(""parsing is 
 		//				@"href=""" + _lm.LinkToTopic(_cb.TopicNameFor("BigBox")) + @""">BigBox</a>");
 		//		}
 
+		[Test] public void RealTopicWithAnchorTest()
+		{
+			FormatTestContains(
+				"HomePage#Anchor",
+				"href=\"" + _lm.LinkToTopic(_cb.TopicNameFor("HomePage")) + "#Anchor\">HomePage#Anchor</a>");
+		}
+
+		[Test] public void RealTopicWithAnchorRelabelTest()
+		{
+			FormatTestContains(
+				"\"Relabel\":HomePage#Anchor",
+				"href=\"" + _lm.LinkToTopic(_cb.TopicNameFor("HomePage")) + "#Anchor\">Relabel</a>");
+		}
 
 		[Test] public void SimpleLinkTests()
 		{
