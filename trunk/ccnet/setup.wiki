@@ -29,7 +29,7 @@ Here's the list of what I had to do to get the CCNET server working:
 		* osql -E
 		* sp_grantlogin 'builds\fwbuild'
 		* go
-		* sp_grantdbaccess 'builds\fwbuild'
+		* sp_addsrvrolemember 'builds\fwbuild', 'sysadmin'
 		* go
 		* exit
 	* Started the service with "net start ccnet-flexwiki"
