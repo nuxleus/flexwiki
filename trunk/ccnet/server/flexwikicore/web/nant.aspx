@@ -1,4 +1,5 @@
 <%@ Page language="c#" %>
+<%@ Import namespace="ThoughtWorks.CruiseControl.Web" %>
 <HTML>
   <HEAD>
     <TITLE>NAnt Results</TITLE>
