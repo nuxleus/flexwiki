@@ -82,6 +82,7 @@ namespace FlexWiki.Newsletters
 			foreach (AbsoluteTopicName each in GetAllNewsletterNames())
 			{
 				LogLine("Checking newsletter: " + each);
+				LogLine("\tLast newsletter update - " + GetLastUpdateForNewsletter(each));
 				if (!IsNewsletterDueForUpdate(each))
 				{
 					LogLine("\tnot due for update");
@@ -310,6 +311,7 @@ namespace FlexWiki.Newsletters
 
 		public IEnumerable AllChangesForNewsletterSince(AbsoluteTopicName newsletter, DateTime since)
 		{
+			LogLine("\tAllChangesForNewsletterSince since(" + since.ToString() + ")");
 			return AllChangesForTopicsSince(AllTopicsForNewsletter(newsletter), since);
 		}
 
@@ -319,12 +321,14 @@ namespace FlexWiki.Newsletters
 			foreach (AbsoluteTopicName each in topics)
 			{
 				ContentBase cb = TheFederation.DefaultContentBase;
-				IEnumerable e = cb.AllChangesForTopicSince(each, since);
+				IEnumerable e = cb.AllChangesForTopicSince(each, since);   
+				int changeCount = 0;
 				foreach (object obj in e)
 				{
+					changeCount++;
 					answer.Add(obj);
 				}
-				LogLine("\tAllChangesForTopicsSince topic(" + each.Fullname + ")");
+				LogLine("\tAllChangesForTopicsSince topic(" + each.Fullname + ") since(" + since.ToString() + ") - " + changeCount + " change(s)");
 			}
 			return answer;
 		}

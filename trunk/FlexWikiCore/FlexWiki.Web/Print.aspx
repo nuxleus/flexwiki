@@ -10,7 +10,6 @@
 		<style type="text/css">
 			body 
 			{
-				font-size: x-small;
 				margin: 4px;
 			}
 		</style>

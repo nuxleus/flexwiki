@@ -181,30 +181,21 @@ namespace FlexWiki.Web
 
 		void ShowEditPage()
 		{
-			Response.Write("<body scroll='no'>");
+			Response.Write("<body class='EditBody' width='100%' height='100%' scroll='no'>");
 
-			Response.Write("<table width='100%' border='0' cellpadding='0' cellspacing='0'><tr><td valign='top'>");
+			Response.Write("<table width='100%' id='MasterTable' height='100%' border='0' cellpadding='0' cellspacing='0'><tr><td valign='top'>");
 			Response.Write("<div id='MainRegion' class='EditMain'>");
 
 			Response.Write(@"
 		<div style='display: none'>
-			<form id='Form2' method='post' target='PreviewPane' ACTION='preview.aspx'>
+			<form id='Form2' method='post' target='previewWindow' ACTION='preview.aspx'>
 				<textarea id='body' name='body' /></textarea>
 				<input  type='text'  name='defaultNamespace' value ='" + TheTopic.Namespace  + @"'>
 			</form>
 		</div>
-		<div id='PreviewArea' class='PreviewArea' style='display: none; text-align: right;'>
-			<iframe name='PreviewPane' width='100%' height='100%'></iframe><button style='margin: 3px;' onClick='jscript:previewOff();'>
-				Hide Preview</button>
-		</div>
-		<div id='SearchArea' class='SearchArea' style='display: none; text-align: right;'>
-			<iframe src='search.aspx' id='SearchPane' name='SearchPane' width='100%' height='100%'>
-			</iframe><button style='margin: 3px;' onClick='jscript:newSearch();'>New Search</button>
-			<button style='margin: 3px;' onClick='jscript:searchOff();'>Hide Search</button>
-		</div>
-		<div class='EditZone' id='EditZone' style='background: green'>
+		<div class='EditZone' id='EditZone' >
 			<form id='Form1' method='post'>
-			<textarea class='EditBox' onkeydown='if (document.all && event.keyCode == 9) {  event.returnValue= false; document.selection.createRange().text = String.fromCharCode(9)} ' rows='30' cols='100' name='Text1'>");
+			<textarea class='EditBox' onkeydown='if (document.all && event.keyCode == 9) {  event.returnValue= false; document.selection.createRange().text = String.fromCharCode(9)} ' rows='40' cols='100' name='Text1'>");
 			
 			string content = null;
 			if (DefaultContentBase.TopicExists(TheTopic))
@@ -224,28 +215,20 @@ Add your wiki text here.
 ";
 
 			Response.Write(Formatter.EscapeHTML(content));			
-			Response.Write(@"</textarea>
-				<div id='ButtonBar' class='SaveChanges'>
-							<Button OnClick='jscript:search()' ID='button3'>Search</Button> <Button OnClick='jscript:preview()' ID='button1'>
-								Preview</Button>");
-	
+			Response.Write(@"</textarea>");
 			if (IsWritable)  
 			{
 				Response.Write("<input type='text' style='display:none' name='UserSuppliedName' value ='" + Formatter.EscapeHTML(UserPrefix == null ? "" : UserPrefix) + "'>");
 				if (DefaultContentBase.TopicExists(TheTopic))
 					Response.Write("<input type='text' style='display:none' name='TopicLastWrite' value ='" + Formatter.EscapeHTML(DefaultContentBase.GetTopicLastWriteTime(TheTopic).ToString("s")) + "'>");
 				Response.Write("<input type='text' style='display:none' name='Topic' value ='" + Formatter.EscapeHTML(TheTopic.ToString()) + "'>");
-				Response.Write("<button onclick='jscript:Save()' name='SaveButton'>Save</button>");
 				if (ReturnTopic != null)
 				{
-					Response.Write("<button onclick='jscript:SaveAndReturn()'  name='SaveButton'>Save and Back</button>");
 					Response.Write("<input type='text' style='display:none' name='ReturnTopic' value ='" + Formatter.EscapeHTML(ReturnTopic) + "'>");
 				}
-			} 
+			}
 
-
-
-			Response.Write(@"</div></form></div>");
+			Response.Write(@"</form></div>");
 
 			Response.Write("</div></td>");
 			Response.Write("<td valign='top' id='Sidebar' class='Sidebar'>");
@@ -253,7 +236,6 @@ Add your wiki text here.
 			Response.Write("<table style='height: 100%'><tr><td height='100%' valign='top'>");
 
 			/////////////////////////////
-
 			OpenPane(Response.Output, "Edit&nbsp;" + Formatter.EscapeHTML(TheTopic.ToString()));
 			if (IsWritable)
 			{
@@ -309,7 +291,7 @@ Add your wiki text here.
 				{
 					Response.Write("Changed will be attributed to: <b>" + Formatter.EscapeHTML(VisitorIdentityString) + "</b>.<br>&nbsp;<br>");
 					Response.Write("You can change part of this by entering your preferred user identity here (e.g., an email address):<br>");
-					Response.Write(@"<input style='font-size: x-small' type='text' onchange='jscript:document.getElementById(""UserSuppliedName"").value = this.value' id='UserNameEntryField' value ='" + 
+					Response.Write(@"<input style='font-size: x-small' type='text' id='UserNameEntryField' value ='" + 
 						(UserPrefix == null ? "" : Formatter.EscapeHTML(UserPrefix)) + "'>");
 				}			 
 				ClosePane(Response.Output);
@@ -416,6 +398,19 @@ Add your wiki text here.
 
 			//////////////////////////////
 
+
+			if (IsWritable)
+			{
+				Response.Write("<div style='margin-top: 12px; text-align: center'>");			
+				Response.Write("<button onclick='jscript:Save()' name='SaveButton'>Save</button> ");
+				Response.Write("<Button OnClick='jscript:search()' ID='button3'>Search</Button> ");
+				Response.Write("<Button OnClick='jscript:preview()' ID='button1'>Preview</Button>");
+				if (ReturnTopic != null)
+				{
+					Response.Write("<br /><button onclick='jscript:SaveAndReturn()'  name='SaveButton'>Save and Back</button>");
+				}
+				Response.Write("</div>");
+			}
 
 			Response.Write("</td></tr></table>");
 

@@ -7,23 +7,17 @@
 			(edit)</title>
 		<meta name="Robots" content="NOINDEX, NOFOLLOW">
 		<%= InsertStylesheetReferences() %>   
-		<script  type=""text/jscript"" language="jscript">
+		<script  type=""text/javascript"" language="javascript">
 
 function CalcEditBoxHeight()
 {
 	var answer = CalcEditZoneHeight();
-	if (document.all("ButtonBar") != null)
-		answer -= ButtonBar.clientHeight;
 	return answer;
 }
 
 function CalcEditZoneHeight()
 {
 	var answer = MainHeight();
-	if (PreviewArea.style.display == "block")
-		answer -= PreviewArea.clientHeight;
-	if (SearchArea.style.display == "block")
-		answer -= SearchArea.clientHeight;
 	return answer;
 }
 
@@ -36,16 +30,21 @@ function ShowTip(tipid)
 
 function preview()
 {
-	searchOff();
-	PreviewArea.style.display = 'block';
-	
 	var s = document.all("Text1").value;
 	document.all("body").value = s;
-	document.all("form2").submit();
+	// window.open('preview.aspx', document.all("form2").target, '');
+	window.open('about:blank', 'previewWindow');
+	document.getElementById("Form2").submit();
+}
+
+function SetUserName()
+{
+	document.all("UserSuppliedName").value = document.all("UserNameEntryField").value;
 }
 
 function Save()
 {
+	SetUserName();
 	var r = document.all("ReturnTopic");
 	if (r != null)
 		r.value = ""; // prevent return action by emptying this out
@@ -54,29 +53,15 @@ function Save()
 
 function SaveAndReturn()
 {
+	SetUserName();
 	document.all("Form1").submit();
-}
-
-function previewOff()
-{
-	PreviewArea.style.display = 'none';
 }
 
 function search()
 {
-	previewOff();
-	SearchArea.style.display = 'block';
+	window.open('search.aspx'); 
 }
 
-function searchOff()
-{
-	SearchArea.style.display = 'none';
-}
-
-function newSearch()
-{
-	SearchPane.location="search.aspx";
-}
 
 function MainHeight()
 {
@@ -108,7 +93,7 @@ function MainWidth()
 }
 
 .EditZone {
-	background: #404040;
+	background: lemonchiffon;
 	overflow: hidden;
 	height: expression(CalcEditZoneHeight());
 	width: 100%;
@@ -138,22 +123,6 @@ function MainWidth()
     background: whitesmoke;
 	height: expression(CalcEditBoxHeight());
 	width: 100%;
-}
-
-.PreviewArea
-{
-	background: #404040;
-	padding: 1px;
-	height: 250px;
-	width: expression(MainWidth());
-}
-
-.SearchArea
-{
-	background: #404040;
-	padding: 1px;
-	height: 250px;
-	width: expression(MainWidth());
 }
 
 		</style>

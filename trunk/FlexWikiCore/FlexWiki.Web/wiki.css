@@ -1,11 +1,3 @@
-.Sidebar 
-{
-	padding-top:  12px;
-	padding-bottom:  12px ;
-	padding-right:  12px;
-	background: #404040;
-	width: 200px;
-}
 
 .CreateTopicWarning
 {
@@ -19,7 +11,6 @@
 
 .BorderLeft
 {
-	font-size: 70%;
 	background-color: lemonchiffon;
 	border-right: solid 1px silver;
 	margin-right: 2em;
@@ -34,13 +25,11 @@
 .SubscriptionNamespace
 {
 	font-weight: bold;
-	font-size: x-small;
 	text-decoration: underline;
 }
 
 .BorderRight
 {
-	font-size: 70%;
 	background-color: lemonchiffon;
 	border-left: solid 1px silver;
 	margin-left: 2em;
@@ -49,7 +38,6 @@
 
 .BorderTop
 {
-	font-size: 70%;
 	background-color: lemonchiffon;
 	border-bottom: solid 1px silver;
 	margin-bottom: 2em;
@@ -58,7 +46,6 @@
 
 .BorderBottom
 {
-	font-size: 70%;
 	background-color: lemonchiffon;
 	border-top: solid 1px silver;
 	margin-top: 2em;
@@ -82,6 +69,7 @@
 
 .CacheKey
 {
+	font-size: .8em;
 	background-color: Silver;
 	color: Black;
 	font-weight: bold;
@@ -89,14 +77,14 @@
 
 .CacheRules
 {
+	font-size: .8em;
 	background-color: #e0e0e0;
 	color: Black;
-	font-size: x-small;
 }
 
 .CacheValue
 {
-	font-size: xx-small;
+	font-size: .8em;
 }
 
 
@@ -107,18 +95,29 @@
 }
 
 
+.Sidebar 
+{
+	padding-top:  12px;
+	padding-bottom:  12px ;
+	padding-right:  12px;
+	background: lemonchiffon;
+	width: 200px;
+}
+
 .SidebarTile
 {
-	border-right: #d0d0d0 1px solid;
+	border-right: #404040 1px solid;
 	padding-right: 2px;
-	border-top: #d0d0d0 1px solid;
+	border-top: #404040 1px solid;
 	padding-left: 2px;
+	font-size: .8em;
+	color: black;
 	margin-bottom: 6px;
 	padding-bottom: 2px;
-	border-left: #d0d0d0 1px solid;
+	border-left: #404040 1px solid;
 	width: 100%;
 	padding-top: 2px; 
-	border-bottom: #d0d0d0 1px solid;
+	border-bottom: #404040 1px solid;
 }
 
 .ExternalLink
@@ -133,33 +132,23 @@
 
 .NamespaceTable
 {
-	font-family: Tahoma, Arial;
-	font-size: 8pt;
 }
 
 .FieldTable
 {
-	font-family: Tahoma, Arial;
-	font-size: 8pt;
 }
 
 .FieldName 
 {
-	font-family: Tahoma, Arial;
-	font-size: 8pt;
 	font-weight: bold;
 }
 
 .FieldValue
 {
-	font-family: Tahoma, Arial;
-	font-size: 8pt;
 }
 
 .FieldHelp
 {
-	font-family: Tahoma, Arial;
-	font-size: 8pt;
 	color: Gray;
 }
 
@@ -188,23 +177,17 @@
 
 .AdvancedSearchLink
 {
-	font-family: Tahoma, Arial;
-	font-size: 8pt;
 }
 
 .SearchBox
 {
-	font-family: Tahoma, Arial;
-	font-size: 8pt;
 }
 
 .SidebarTileTitle
 {
-	font-size: 8pt;
 	background-image: url(images/tile-title.gif);
 	background-repeat: repeat-x;
 	color: #e0e0e0;
-	font-family: Tahoma, Arial;
 }
 
 .SidebarTileTitle a
@@ -220,27 +203,23 @@
 
 .SidebarTileBody
 {
-	font-size: x-small;
-	color: white;
-	font-family: Tahoma, Arial;
+	color: #404040;
 }
 
 .SidebarTileBody a
 {
-	color: #ffcc99;
+	color: mediumblue;
 	text-decoration: none;
 }
 
 .SidebarTileBody a:hover {
-	color: #FBE52F;
+	color: mediumblue;
 	text-decoration:underline;
 }
 
 .SidebarTileBody td
 {
-	font-size: 8pt;
-	color: white;
-	font-family: Tahoma, Arial;
+	color: #404040;
 }
 
 .CommandTable
@@ -261,14 +240,11 @@
 
 .CommandTable td
 {
-	font-size: 8pt;
 	color: white;
-	font-family: Tahoma, Arial;
 }
 
 .NewsletterBody
 {
-	font-size: 75%;
 }
 
 .NewsletterInterior
@@ -279,7 +255,7 @@
 .NewsletterName
 {
 	padding: 4px;
-	font-size: x-large;
+	font-size: 2em;
 	background: #0099cc;
 	margin-bottom: 6px;
 	color: white;
@@ -287,19 +263,16 @@
 
 .NewsletterTableOfContentsChangedTopicName
 {
-	font-size: x-small;
 	font-weight:bold;
 }
 
 .NewsletterTableOfContentsChangedTopicDetails
 {
-	font-size:  xx-small;
 	color: gray;
 }
 
 .NewsletterTopicChangers
 {
-	font-size: xx-small;
 }
 
 .NewsletterName a
@@ -332,7 +305,7 @@
 	margin-top: 16px;
 	border-top: navy 1px solid;
 	padding-left: 1px;
-	font-size: medium;
+	font-size: 1.4em;
 	background: #0099cc;
 	margin-bottom: 4px;
 	padding-bottom: 1px;
@@ -356,7 +329,7 @@
 
 .NewsletterDescription
 {
-	font-size: small;
+	font-size: 1em;
 	margin-bottom: 6px;
 }
 
@@ -364,43 +337,30 @@
 {
 	margin-top: 12px;
 	border-top: 1px solid silver;
-	font-size: x-small;
 }
 
 .NewsletterInfoNewsletterName
 {
-	font-size: xx-small;
 }
 
 .NewsletterInfoTopics
 {
-	font-size: xx-small;
 }
 
 .NewsletterDeliveredBy
 {
-	font-size: xx-small;
 	font-style: italic;
 }
 
-body {
-   font-family:  Verdana, Arial, Sans-Serif;
-   font-size: medium;
-   background:white;
-   margin: 0;
-   padding: 0;
-}
 
 .Dialog
 {
-	font-family: Tahoma, Arial;
-	font-size: 10pt;
 	padding: 10px;
 }
 
 .DialogTitle
 {
-	font-size: 12pt;
+	font-size: 1.2em;
 	font-weight: bold;
 }
 
@@ -408,8 +368,6 @@ body {
 {
 	/* BACKGROUND: url(/watermark.jpeg) white fixed no-repeat center center; */
 	color: #303030;
-	font-family:  Verdana, Arial, Sans-Serif;
-	font-size: 80%;
 	padding-left: .2in;
 	padding-top: .01in;
 	padding-right: .2in;
@@ -424,8 +382,6 @@ body {
 	width: expression(MainWidth());
 	overflow: auto;
 	color: #303030;
-	font-family:  Verdana, Arial, Sans-Serif;
-	font-size: 80%;
 	padding: .2in;
 	border: solid 12px #404040;
 }
@@ -437,13 +393,9 @@ body {
 	width: expression(MainWidth());
 	overflow: auto;
 	color: #303030;
-	font-family:  Verdana, Arial, Sans-Serif;
-	font-size: 80%;
 }
 
 .PreviewMain {
-	font-family:  Verdana, Arial, Sans-Serif;
-	font-size: 60%;
 	padding: .1in;
 }
 
@@ -451,7 +403,6 @@ body {
 .SearchMain {
 	background: white;
 	color: #303030;
-	font-family:  Verdana, Arial, Sans-Serif;
 	font-size: 80%;
 	padding: .2in;
 	border: solid 12px #404040;
@@ -462,14 +413,12 @@ body {
 	border-right: #3333cc thin solid;
 	border-top: #66ccff thin solid;
 	display: none;
-	font-size: x-small;
 	background: #ccffcc;
 	border-left: #66ccff thin solid;
 	cursor: hand;
 	padding: 2px;
 	color: blue;
 	border-bottom: #3333cc thin solid;
-	font-family: Verdana, Arial, Sans-Serif;
 	position: absolute;
 }
 
@@ -495,6 +444,7 @@ body {
 {
 	background: #003399;
 	color: white;
+	font-size: .8em;
 	border-top: solid 1px black;
 	border-left: solid 1px black;
 	border-right: solid 1px black;
@@ -505,6 +455,7 @@ body {
 .SearchColumnFilter
 {
 	background: #003399;
+	font-size: .8em;
 	color: white;
 	border-left: solid 1px black;
 	border-right: solid 1px black;
@@ -520,12 +471,14 @@ body {
 .SearchEvenRow
 {
 	background: #ffffff;
+	font-size: .7em;
 	border-bottom: solid 1px silver;
 }
 
 .SearchOddRow
 {
 	background: #f8f8f8;
+	font-size: .7em;
 	border-bottom: solid 1px silver;
 }
 
@@ -539,12 +492,10 @@ body {
 	margin-left: 0.25in;	
 	font-weight: bold;
 	background: #e0e0e0;	
-	font-size: x-small;
 }
 
 .VersionList
 {
-	font-size: xx-small;
 	background: #f2f2f2;
 	color: black;
 }
@@ -552,7 +503,6 @@ body {
 .VersionBar
 {
 	padding: 2px;
-	font-size: 8pt;
 	background: #f2f2f2;
 	border-bottom: solid 1px #808080;
 	text-align: right;
@@ -561,35 +511,30 @@ body {
 
 .VersionButton
 {
-	font-size: xx-small;
 }
 
 .searchHitBody
 {
 	margin-left: 0.25in;	
-	font-size: x-small;
 }
 
 .searchHitBody p
 {
    line-height: 1em;
-   margin-top: .5em;
-   font-size: xx-small;
-   margin-bottom: .5em;
+   margin-top: .8em;
+   margin-bottom: .8em;
 }
 
 .searchHitBody td
 {
    line-height: 1em;
-   margin-top: .5em;
-   font-size: xx-small;
-   margin-bottom: .5em;
+   margin-top: .8em;
+   margin-bottom: .8em;
 }
 
 .searchHitBody li
 {
    margin-left: .5in;
-   font-size: xx-small;
    line-height: 1em;
    margin-top: 0;
    padding-top: 1px;
@@ -621,7 +566,6 @@ body {
 }
 
 .FooterCell {
-	font-size: xx-small;
 	color: white;
 }
 
@@ -641,7 +585,6 @@ body {
 .Header
 {
 	padding: 5px;
-	font-size: 9pt;
 	background: #2FA7FB;
 	border-bottom: solid 1px #404040;
 	border-right: solid 1px #404040;
@@ -661,8 +604,6 @@ body {
 }
 
 .PrintMain {
-	font-family:  Verdana, Arial, Sans-Serif;
-	font-size: 80%;
 	padding: .2in;
 }
 
@@ -677,12 +618,17 @@ body {
 	font-weight: bold;
 }
 
+.EditBody
+{
+	background: lemonchiffon;
+}
+
 .SaveChanges
 {
 	text-align: right;
 	vertical-align: middle;
-	background: #404040;
-	font-size: large;
+	background: lemonchiffon;
+	font-size: 1.5em;
 	height: 22px;
 	padding: 2px;
 }
@@ -694,7 +640,7 @@ body {
 
 .SimpleTopic
 {
-	color: #black;
+	color: black;
 	font-size: 16pt;
 }
 
@@ -703,7 +649,7 @@ body {
 	font-weight: bold;
 	margin-bottom: 14px;
 	color: #3399cc;
-	padding: 2px;
+	padding: 0px;
 }
 
 .TopicBarHover
@@ -719,7 +665,7 @@ body {
 {
 	border: none;
 	font-weight: bold;
-	font-size: medium;
+	font-size: 1.4em;
 	color: royalblue;
 	background: #e0e0e0;
 }
@@ -727,7 +673,7 @@ body {
 .DynamicTopicBarHelp
 {
 	background: #d0d0d0;
-	font-size: xx-small;
+	font-size: .8em;
 	color: black;
 }
 
@@ -739,14 +685,15 @@ body {
 .TopicTipStats
 {
 	border-top: 1px solid grey;
-	font-size: xx-small;
+	font-size: .8em;
 	color: Gray;
 }
 
 .StaticTopicBar
 {
-    color: royalblue;
-	font-size: large;
+	font-weight: bold;
+	font-size: 2em;
+	color: #0066ff;
 }
 
 .TopicTip
@@ -757,7 +704,7 @@ body {
 	background: #e0e0e0;
 	color: Black;
 	padding: 1px;
-	font-size: xx-small;
+	font-size: .7em;
 }
 
 
@@ -769,17 +716,96 @@ body {
 
 .TopicInfo {
 	color: black;
-	font-size: x-small;
 	text-align: center;
 }
-td {
-	font-size: x-small;
-    color:black;
+
+.Property
+{
+	font-size: .82em;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	margin-left: -5px;
+	color: #0066ff;
 }
-p {
-   line-height: 1.45em;
-   margin-top: 0.7em;
-   margin-bottom: 0.9em;
+
+.PropertyName
+{
+	font-weight: bold;
+	font-size: .8em;
+	line-height: 1.2em;
+}
+
+.PropertyValue
+{
+	font-size: .8em;
+	color: #cc6600;
+	background-color: white;
+}
+
+.Deemphasis 
+{
+	color: #a0a0a0;
+}
+
+.TableClass
+{
+	background-color: #f8f8f8;
+	border: #505050 1px solid;	
+	border-collapse: collapse;
+}
+
+.TableWithoutBorderClass
+{
+	border-collapse: collapse;
+}
+
+.CellHighlighted
+{
+	background-color: #e0e0e0;
+	font-size: .8em;
+	border-collapse: collapse;
+	border: #909090 1px solid;
+}
+
+.TableCell
+{
+	font-size: .8em;
+	border-collapse: collapse;
+	border: #909090 1px solid;
+}
+
+.TableCellHighlightedNoBorder
+{
+	background-color: #e0e0e0;
+	font-size: .8em;
+}
+
+.TableCellNoBorder
+{
+	font-size: .8em;
+}
+
+
+
+
+
+
+body {
+   font-family: Arial, Sans-Serif;
+   background:white;
+   margin: 0;
+   padding: 0;
+}
+
+td {
+   color:black;
+}
+
+p
+{
+	font-size: 0.76em;
+	line-height: 1.35em;
+	font-family: Arial, Sans-Serif;
 }
 a {
    color: royalblue;
@@ -814,45 +840,22 @@ code {
    font-family: lucida console;
 }
 
-.Property
+
+h1
 {
-	margin-top: 5px;
-	margin-bottom: 5px;
-	margin-left: -5px;
-	color: #0066ff;
-}
-
-.PropertyName
-{
-	font-weight: bold;
-	font-size: xx-small;
-	line-height: 1.2em;
-}
-
-.PropertyValue
-{
-	font-size: xx-small;
-	color: #cc6600;
-	background-color: white;
-}
-
-
-h1 {
-   font-family:  Verdana, Arial, Sans-Serif;
-	border-top: 1px solid #c0c0c0;
-	border-left: 1px solid #c0c0c0;
-	padding-top: 2px;
+	border-top: mediumblue 2px solid;
 	padding-left: 4px;
+	font-size: 1.4em;
 	margin-left: -5px;
-	background: #f0f0e0;
-   color: #122e57;
-   font-size: medium;
+	color: #0033cc;
+	padding-top: 2px;
 }
 
 
-h1 a {
-   color: royalblue;
-   text-decoration: none;
+h1 a
+{
+	color: darkslateblue;
+	text-decoration: none;
 }
 h1 a:hover {
    color: royalblue;
@@ -860,9 +863,8 @@ h1 a:hover {
 }
 
 h2 {
-   font-family:  Verdana, Arial, Sans-Serif;
-   font-size: medium;
-   color: #122e57;
+   font-size: 1.35em;
+	color: darkslateblue;
    margin-top: 1.6em;
 }
 h2 a {
@@ -877,9 +879,8 @@ h2 a:hover {
 h3
 {
 	margin-top: 1.6em;
-	font-size: small;
-	color: #122e57;
-	font-family: Arial, Sans-Serif;
+	font-size: 1.1em;
+	color: darkslateblue;
 	font-variant: small-caps;
 }
 h3 a {
@@ -892,29 +893,26 @@ h3 a:hover {
 }
 
 h4 {
-   font-family:  Verdana, Arial, Sans-Serif;
-   font-size: x-small;
-   color: #122e57;
+   font-size: .76em;
+	color: darkslateblue;
    margin-top: 1.6em;
 }
 
 h5 {
-   font-family:  Verdana, Arial, Sans-Serif;
-   font-size: x-small;
-   color: #122e57;
+   font-size: .76em;
+	color: darkslateblue;
    margin-top: 1.6em;
 }
 
 h6 {
-   font-family:  Verdana, Arial, Sans-Serif;
-   font-size: x-small;
-   color: #122e57;
+   font-size: .76em;
+	color: darkslateblue;
    margin-top: 1.6em;
 }
 h7 
 {
-   font-size: x-small;
-   color: #122e57;
+   font-size: .76em;
+   color: darkslateblue;
    margin-top: 1.6em;
 }
 a.standardsButton
@@ -950,54 +948,11 @@ a.standardsButton:visited
 li
 {
    margin-left: .05in;
-   line-height: 1.4em;
+   line-height: 1.2em;
+   font-size:.76em;
    margin-top: 1px;
    padding-top: 2px;
    padding-bottom: 2px;
    margin-bottom: 1px;
 }
 
-.Deemphasis 
-{
-	color: #a0a0a0;
-}
-
-.TableClass
-{
-	background-color: #f8f8f8;
-	border: #505050 1px solid;	
-	border-collapse: collapse;
-	font-size: x-small;
-}
-
-.TableWithoutBorderClass
-{
-	border-collapse: collapse;
-	font-size: x-small;	
-}
-
-.TableCellHighlighted
-{
-	background-color: #e0e0e0;
-	font-size: 80%;
-	border-collapse: collapse;
-	border: #909090 1px solid;
-}
-
-.TableCell
-{
-	font-size: 80%;
-	border-collapse: collapse;
-	border: #909090 1px solid;
-}
-
-.TableCellHighlightedNoBorder
-{
-	background-color: #e0e0e0;
-	font-size: 80%;
-}
-
-.TableCellNoBorder
-{
-	font-size: 80%;
-}
