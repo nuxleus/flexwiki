@@ -1403,14 +1403,8 @@ namespace FlexWiki.Formatting
 			Regex	style=new	Regex( "%"+elem+"( +"+elem+")*%" );
 			Match	match;
 			int	lastMatchedPosition=0;
-			string debugString="";
 			while	(	(match=style.Match(	str, lastMatchedPosition )).Success	)
 			{
-				for	(	int	i=0; i < match.Groups.Count; ++i )
-				{
-					debugString	+= string.Format(	"<br/>Group[{0}] = '{1}'", i,	match.Groups[i].Value	);
-				}
-
 				string newValue="";
 
 				// terminate previous	<big>	first	(if	any)
