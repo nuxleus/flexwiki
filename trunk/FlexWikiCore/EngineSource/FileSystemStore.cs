@@ -195,7 +195,7 @@ namespace FlexWiki
 			AbsoluteTopicName a;
 			BackingTopic top;
 			
-			a = new AbsoluteTopicName("HomePage", Namespace);
+			a = new AbsoluteTopicName((HomePage == null ? "HomePage" : HomePage), Namespace);
 			top = new BackingTopic(a, DefaultHomePageContent, true);
 			BackingTopics[a.Name] = top;
 			
