@@ -1180,8 +1180,8 @@ namespace FlexWiki.Formatting
 			string answer = line;
 			answer = ConvertEmoticons(answer);	// needs to come before textile because of precedence in overlappign formatting rules
 			answer = SentencePairedDelimiters(answer);
-			answer = LinkHyperLinks(answer);
 			answer = TextileFormat(answer);
+			answer = LinkHyperLinks(answer);
             answer = ColorsEtcFormat(answer);
 			answer = LinkWikiNames(answer);
 			answer = ProcessWikiLinks(answer);
@@ -1402,9 +1402,9 @@ namespace FlexWiki.Formatting
 			// ??citation?? 
 			str = Regex.Replace (str, "(^|\\W)\\?\\?([^ ].*?)\\?\\?", "$1<cite>$2</cite>") ;
 			// -deleted text- 
-//			str = Regex.Replace (str, "(^|\\W)-([^ -].*?)-", "$1<del>$2</del>") ;
-			// Special care needs to be taken with this expression so that the - in URLs and images does not get replaced.
-			str = Regex.Replace (str, "(^|\\s+)-([^ <a ]|[^ <img ].*)-", "$1<del>$2</del>");
+			// Special care needs to be taken with this expression so that the - in URLs and images does not get replaced
+			// and that Wiki Signatures with trailing dates contianing hypens are ignored.
+			str = Regex.Replace (str, "(^|\\s+)-([^ <a ]|[^ <img ]|[^ -].*)-", "$1<del>$2</del>");
 			// +inserted text+ 
 			str = Regex.Replace (str, "(^|\\W)\\+(.*?)\\+", "$1<ins>$2</ins>") ;
 			// ^superscript^ 
@@ -1418,6 +1418,8 @@ namespace FlexWiki.Formatting
 			str = Regex.Replace (str, "(^|\\s|\\(|\\[)@([^@]+)@", "$1<code>$2</code>") ;
 			// "link text":url 
 			str = Regex.Replace (str, "\"([^\"(]+)( \\(([^\\)]+)\\))?\":" + urlPattern, ObfuscatableLinkReplacementPattern("$1", "$4"));
+			// "link text":url for mail and news
+			str = Regex.Replace (str, "\"([^\"(]+)( \\(([^\\)]+)\\))?\":" + mailAndNewsPattern, ObfuscatableLinkReplacementPattern("$1", "${uri}"));
 
 			return str;
 		}
@@ -1524,7 +1526,8 @@ namespace FlexWiki.Formatting
 			return str;	//	+	debugString;
 		}
 
-		static string urlPattern = @"((https?|ftp|gopher|telnet|file|mailto|news):(//)?[a-zA-Z0-9:#@%/;$()~_?\+-=\\\.&]*)";
+		static string urlPattern = @"((https?|ftp|gopher|telnet|file):(//)+[\w\d:#@%/;$()~_?\+-=\\\.&]*)";
+		static string mailAndNewsPattern = @"(?<ignore>(^|\s|\W)[\W*])?(?<uri>((mailto|news){1}:[^(//\s,)][\w\d:#@%/;$()~_?\+-=\\\.&]+))";
 
 		string LinkHyperLinks (string input)
 		{
@@ -1536,11 +1539,30 @@ namespace FlexWiki.Formatting
 			str = Regex.Replace (str, @"([^""'])file(://\S*(\.jpg|\.gif|\.png|\.jpeg))",
 				"$1<img src=\"FILEIMAGESOURCE:$2\">") ;
 
-			// web links (including those surrounded by parens, brackets and curlies
+			// web links (including those surrounded by parens, brackets and curlies)
 			str = Regex.Replace (str, @"[(]" + urlPattern + "[)]", "(" + ObfuscatableLinkReplacementPattern("$1", "$1") + ")") ;
 			str = Regex.Replace (str, @"[{]" + urlPattern + "[}]", "{" + ObfuscatableLinkReplacementPattern("$1", "$1") + "}") ;
 			str = Regex.Replace (str, @"[\\[]" + urlPattern + "[\\]]", "[" + ObfuscatableLinkReplacementPattern("$1", "$1") + "]") ;
 			str = Regex.Replace (str, @"(^|\s)" + urlPattern, "$1" + ObfuscatableLinkReplacementPattern("$2", "$2"));
+
+			// mail and news links (including those surrounded by parens, brackets and curlies)
+			str = Regex.Replace (str, @"[(]" + mailAndNewsPattern + "[)]", "(" + ObfuscatableLinkReplacementPattern("${uri}", "${uri}") + ")") ;
+			str = Regex.Replace (str, @"[{]" + mailAndNewsPattern + "[}]", "{" + ObfuscatableLinkReplacementPattern("${uri}", "${uri}") + "}") ;
+			str = Regex.Replace (str, @"[\\[]" + mailAndNewsPattern + "[\\]]", "[" + ObfuscatableLinkReplacementPattern("${uri}", "${uri}") + "]") ;
+			MatchCollection matches = Regex.Matches(str, mailAndNewsPattern);
+			foreach (Match match in matches)
+			{
+				Group group = match.Groups["ignore"];
+				if (null != group)
+				{
+					if ((0 == group.Captures.Count) || 
+						((group.Captures.Count > 0) && (false == group.Captures[0].Value.EndsWith("\"")) && 
+						(false == group.Captures[0].Value.EndsWith(">"))))
+					{
+						str = Regex.Replace (str, mailAndNewsPattern, ObfuscatableLinkReplacementPattern("${uri}", "${uri}"));
+					}
+				}
+			}
 
 			str = FinalizeImageLinks(str);
 			return str;

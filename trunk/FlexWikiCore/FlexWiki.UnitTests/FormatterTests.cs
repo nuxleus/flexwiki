@@ -522,7 +522,7 @@ Test for case-insensitivity, such as CAPS@BAF, or some such nonsense.",
 ");
 		}
 
-		[Test] public void TextileHyphesnInLinkTest()
+		[Test] public void TextileHyphensInLinkTest()
 		{
 			FormatTest(
 				@"some leading text ""textile"":http://www.amazon.com/exec/obidos/tg/detail/-/0735617228/qid=1080277573/sr=8-1/ref=pd_ka_1/102-9825269-6457731?v=glance&s=books&n=50784 some trailing text",
@@ -898,7 +898,7 @@ And the text in the parens and brackets should be code formatted:
 				@"<p><a href=""file://server/directory/sales%2020%%20Markup.doc"">Sales 20% Markup</a></p>
 ");
 		}
-		[Test][Ignore("Not Functional yet")] public void DoNotConvertIntoLinks()
+		[Test] public void DoNotConvertIntoLinks()
 		{
 			FormatTest(
 				@":",
@@ -978,7 +978,7 @@ And the text in the parens and brackets should be code formatted:
 				@"<p><a href=""file://machine/user$/folder/file"">file://machine/user$/folder/file</a></p>
 ");
 		}
-		[Test][Ignore("Not functional yet")] public void TildeHyperLinks()
+		[Test] public void TildeHyperLinks()
 		{
 			// Collides with textile subscript markup
 			FormatTest(
@@ -1028,6 +1028,13 @@ And the text in the parens and brackets should be code formatted:
 				@"<p><sub>1/2</sub></p>
 ");
 
+		}
+		[Test] public void WikiSignatureWithHyphenDates()
+		{
+			FormatTest(
+				@"Test comment. -- Derek Lakin [28-Jan-2005]",
+				@"<p>Test comment. -- Derek Lakin [28-Jan-2005]</p>
+");
 		}
 		[Test] public void MultipleParametersHyperLinks()
 		{
