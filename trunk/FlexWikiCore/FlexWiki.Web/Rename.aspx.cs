@@ -136,7 +136,7 @@ namespace FlexWiki.Web
 
 			try
 			{
-				fixupDisabled = bool.Parse(ConfigurationSettings.AppSettings["DisableRenameFixup"]); 
+				fixupDisabled = bool.Parse(System.Configuration.ConfigurationSettings.AppSettings["DisableRenameFixup"]); 
 			}
 			catch
 			{
