@@ -10,7 +10,7 @@
 <script runat="server" language="C#">
   private void Page_Load(object sender, EventArgs e)
   {
-    string xslFilename = WebUtil.GetXslFilename("NAnt.xsl", Request);
+    string xslFilename = WebUtil.GetXslFilename("NAnt.xslt", Request);
     BodyArea.InnerHtml = new PageTransformer(WebUtil.ResolveLogFile(Context),xslFilename).LoadPageContent();
   }
 </script>
