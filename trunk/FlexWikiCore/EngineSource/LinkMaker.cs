@@ -147,22 +147,10 @@ namespace FlexWiki
 		{
 			StringBuilder builder = new StringBuilder();
 			builder.Append(SiteURL());
-			builder.Append("default.aspx/");
-			builder.Append(top);
-			string query = "";
+			builder.Append("default.aspx?");
+			builder.Append("topic=" + HttpUtility.UrlEncode(top));
 			if (showDiffs)
-			{
-				if (query != "")
-					query += "&";
-				query += "diff=y";
-			}
-
-			if (query != "")
-			{
-				builder.Append("?");
-				builder.Append(query);
-			}
-
+				builder.Append("&diff=y");
 			return builder.ToString();
 		}
 	
@@ -172,8 +160,7 @@ namespace FlexWiki
 		{
 			StringBuilder builder = new StringBuilder();
 			builder.Append(SiteURL());
-			builder.Append("login.aspx?ReturnURL=default.aspx\\");
-			builder.Append(topic);
+			builder.Append("login.aspx?ReturnURL=" + HttpUtility.UrlEncode(TopicLink(topic, false)));
 			return builder.ToString();
 		}
 
@@ -261,13 +248,9 @@ namespace FlexWiki
 		{
 			StringBuilder builder = new StringBuilder();
 			builder.Append(SiteURL());
-			builder.Append("default.aspx/");
-			builder.Append(top);
-			string query = "";
-			query += "&";
-			query += "restore=y";
-			builder.Append("?");
-			builder.Append(query);
+			builder.Append("default.aspx?");
+			builder.Append("topic=" + HttpUtility.UrlEncode(top));
+			builder.Append("&restore=y");
 			return builder.ToString();
 		}
 		/// <summary>

@@ -137,13 +137,23 @@ namespace FlexWiki.Web
 
 		protected AbsoluteTopicName GetTopicName()
 		{
-			string topic = Request.PathInfo;
+			string topic;
+			
+			string topicFromQueryString = Request.QueryString["topic"];
+			if (topicFromQueryString != null)
+				topic = topicFromQueryString;
+			else
+			{
+				topic = Request.PathInfo;
+				if (topic.StartsWith("/"))
+					topic = topic.Substring(1);
+			}
 
 			RelativeTopicName rel;
 			if (topic == null || topic.Length == 0)
 				rel = new RelativeTopicName(DefaultContentBase.HomePage, DefaultContentBase.Namespace);
 			else
-				rel = new RelativeTopicName(topic.Substring(1));
+				rel = new RelativeTopicName(topic);
 			IList topics = DefaultContentBase.AllAbsoluteTopicNamesThatExist(rel);
 			if (topics.Count == 0)
 				return rel.AsAbsoluteTopicName(DefaultContentBase.Namespace);		// topic doesn't exist, assume in the wiki's home content base
