@@ -12,6 +12,7 @@
 
 using System;
 using System.Collections;
+using System.Reflection;
 using FlexWiki.Formatting;
 
 namespace FlexWiki
@@ -40,40 +41,51 @@ namespace FlexWiki
 			{
 				if (_Registry != null)
 					return _Registry;
-				_Registry= new Hashtable();
-				Reg(_Registry, typeof(BELObject));
-				Reg(_Registry, typeof(BELType));
-				Reg(_Registry, typeof(Block));
-				Reg(_Registry, typeof(Presentations));
-				Reg(_Registry, typeof(BELMember));
-				Reg(_Registry, typeof(BELArray));
-				Reg(_Registry, typeof(BELDateTime));
-				Reg(_Registry, typeof(BELTimeSpan));
-				Reg(_Registry, typeof(Home));
-				Reg(_Registry, typeof(BELInteger));
-				Reg(_Registry, typeof(BELString));
-				Reg(_Registry, typeof(UndefinedObject));
-				Reg(_Registry, typeof(ClassicBehaviors));
-				Reg(_Registry, typeof(CompositePresentation));
-				Reg(_Registry, typeof(ImagePresentation));
-				Reg(_Registry, typeof(LinkPresentation));
-				Reg(_Registry, typeof(Presentation));
-				Reg(_Registry, typeof(PresentationPrimitive));
-				Reg(_Registry, typeof(StringPresenation));
-				Reg(_Registry, typeof(TopicContext));
-				Reg(_Registry, typeof(Federation));
-				Reg(_Registry, typeof(ContentBase));
-				Reg(_Registry, typeof(TopicInfo));
-				Reg(_Registry, typeof(LinkMaker));
-				Reg(_Registry, typeof(TopicChange));
-				Reg(_Registry, typeof(BELBoolean));
-				Reg(_Registry, typeof(LinkMaker));
-				Reg(_Registry, typeof(Presentations));
-				Reg(_Registry, typeof(Request));
-				Reg(_Registry, typeof(BlockParameter));
-				
+
+				LoadRegistry();
+
 				return _Registry;
 			}
+		}
+
+		private void LoadRegistry()
+		{
+			this._Registry = new Hashtable();
+			LoadTypesFromAssembly(Assembly.GetExecutingAssembly());
+			LoadPlugins();
+		}
+
+		void LoadPlugins()
+		{
+			FlexWikiConfigurationSectionHandler config = FlexWikiConfigurationSectionHandler.GetConfig();
+			if (config==null)
+				return;
+
+			foreach(string plugin in config.Plugins)
+			{
+				// load plugin assembly
+				Assembly a = Assembly.Load(plugin);
+				LoadTypesFromAssembly(a);
+			}
+		}
+
+		void LoadTypesFromAssembly(Assembly a)
+		{
+				// explore types
+				foreach(Type type in a.GetExportedTypes())
+				{
+					// ignore interfaces, etc...
+					if (!type.IsClass)
+						continue;
+
+					// check if ExposedClass is present
+					Object[] attributes = type.GetCustomAttributes(typeof(ExposedClass),false);
+					if (attributes==null || attributes.Length==0)
+						continue;
+
+					// register type
+					Reg(this._Registry, type);
+				}
 		}
 
 		ArrayList _AllMetaTypes;

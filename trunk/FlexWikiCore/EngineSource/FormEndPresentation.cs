@@ -18,6 +18,8 @@ namespace FlexWiki
 	/// <summary>
 	/// 
 	/// </summary>
+	/// 
+	[ExposedClass("FormEndPresentation", "Presents the end of a form")]
 	public class FormEndPresentation : FlexWiki.PresentationPrimitive
 	{
 		public FormEndPresentation()

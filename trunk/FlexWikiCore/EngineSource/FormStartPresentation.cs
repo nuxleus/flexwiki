@@ -18,6 +18,7 @@ namespace FlexWiki
 	/// <summary>
 	/// 
 	/// </summary>
+	[ExposedClass("FormStartPresentation", "Presents the start of a form")]
 	public class FormStartPresentation : FlexWiki.PresentationPrimitive
 	{
 		public FormStartPresentation(string URI, string method)

@@ -18,6 +18,7 @@ namespace FlexWiki
 	/// <summary>
 	/// 
 	/// </summary>
+	[ExposedClass("FormImageButtonPresentation", "Presents the an image button")]
 	public class FormImageButtonPresentation : FlexWiki.PresentationPrimitive
 	{
 		public FormImageButtonPresentation(string fieldName, string imageURI, string tipString)

@@ -18,6 +18,7 @@ namespace FlexWiki
 	/// <summary>
 	/// 
 	/// </summary>
+	[ExposedClass("FormSubmitButtonPresentation", "Presents a form submit button")]
 	public class FormSubmitButtonPresentation : FlexWiki.PresentationPrimitive
 	{
 		public FormSubmitButtonPresentation(string fieldName, string label)
