@@ -61,7 +61,7 @@
   <!-- Extract the various parts of the build number into properties
        using a regular expression -->
   <regex input="${sys.version}"
-	 pattern="(?'basevermajor'\d+).(?'baseverminor'\d+).(?'baseverbuild'\d+).(?'baseverrevision'\d+)" />
+	    pattern="(?'basevermajor'\d+).(?'baseverminor'\d+).(?'baseverbuild'\d+).(?'baseverrevision'\d+)" />
 
   <!-- This next section defines a bunch of defaults. If the property
        has been defined (typically in the personal.properties file or
@@ -226,21 +226,21 @@
 	 we calculated at the beginning of the build script -->
     <foreach item="Folder" property="project.dir">
       <in>
-	<items refid="project.dirs" />
+	      <items refid="project.dirs" />
       </in>
       <do>
-	<asminfo output="${project.dir}\AssemblyInfo.cs"
-		 language="CSharp">
-	  <imports>
-	    <import name="System" />
-	    <import name="System.Reflection" />
-	  </imports>
-	  <attributes>
-	    <attribute type="AssemblyVersionAttribute"
-		       value="${vermajor}.${verminor}.${verbuild}.${verrevision}"
-		       />
-	  </attributes>
-	</asminfo>
+	      <asminfo output="${project.dir}\AssemblyInfo.cs"
+		      language="CSharp">
+	        <imports>
+	          <import name="System" />
+	          <import name="System.Reflection" />
+	        </imports>
+	        <attributes>
+	          <attribute type="AssemblyVersionAttribute"
+		            value="${vermajor}.${verminor}.${verbuild}.${verrevision}"
+		            />
+	        </attributes>
+	      </asminfo>
       </do>
     </foreach>
     
@@ -251,8 +251,7 @@
   <target name="build" depends="init" unless="${build.skip}">
     <solution configuration="${configuration}" 
 	      outputdir="${targetdir}"
-	      solutionfile="${nant.project.name}.sln">
-    </solution>
+	      solutionfile="${nant.project.name}.sln" />
   </target>
   
   <!-- The test target runs nunit on any assemblies that have NUnit
@@ -283,8 +282,8 @@
     <!-- This command runs nunit-console and directs the XML report to
 	 the reports directory. -->
     <exec program="nunit-console.exe"
-	  basedir="${basedir}\tools\nunit\bin"
-	  workingdir="${targetdir}">
+    	  basedir="${basedir}\tools\nunit\bin"
+	      workingdir="${targetdir}">
       <arg value="FlexWiki.UnitTests.dll" />
       <arg value="/xml=${reportdir}\nunit.xml"/>
     </exec>
@@ -307,9 +306,9 @@
 
     <!-- Next we create a web and a bin directory underneath it -->
     <property name="dist.webdir" value="${dist.stagingdir}\web" />
-    <property name="dist.bindir" value="${dist.stagingdir}\bin" />
+    <property name="dist.toolsdir" value="${dist.stagingdir}\tools" />
     <mkdir dir="${dist.webdir}" />
-    <mkdir dir="${dist.bindir}" />
+    <mkdir dir="${dist.toolsdir}" />
 
     <!-- Define the web content files -->
     <fileset id="dist.web.content"
@@ -339,7 +338,7 @@
     </fileset>
 
     <!-- Define the files that go right in the base directory of the
-	 zipfile --> 
+	       zipfile --> 
     <fileset id="dist.root"
 	     basedir="${basedir}">
       <includes name="*.txt" />
@@ -354,7 +353,7 @@
       <fileset refid="dist.web.binaries" />
     </copy>
 
-    <copy todir="${dist.bindir}">
+    <copy todir="${dist.toolsdir}">
       <fileset refid="dist.all.binaries" />
     </copy>
 
@@ -362,46 +361,58 @@
       <fileset refid="dist.root" />
     </copy>
 
-    <!-- We build three zipfiles: a source zip containing the source
-	 files, a full binary zip containing all the files necessary
-	 to install and run FlexWiki, and an upgrade binary zip, which
-	 contains files you can unzip into an existing FlexWiki
-	 install to upgrade it. -->
+    <!-- We build four zipfiles: 
+          * a source zip containing the source files, 
+          * a full web binary zip containing all the files necessary
+	          to install and run the web parts of FlexWiki, 
+	        * an upgrade web binary zip, which contains files you can 
+	          unzip into an existing FlexWiki web install to upgrade it
+	        * a tools zip containing all the binaries for all the non-web 
+	          of FlexWiki -->
 
     <!-- Cook up names for the zipfiles based on the project name,
-	 version number, and configuration. --> 
-    <property name="dist.full.binzip" 
-	      value="${distdir}/${nant.project.name}-${vermajor}.${verminor}.${verbuild}.${verrevision}-full-${configuration}.zip" />
-    <property name="dist.upgrade.binzip" 
-	      value="${distdir}/${nant.project.name}-${vermajor}.${verminor}.${verbuild}.${verrevision}-upgrade-${configuration}.zip" />
+      	 version number, and configuration. --> 
+    <property name="dist.web.full.binzip" 
+	      value="${distdir}/${nant.project.name}-${vermajor}.${verminor}.${verbuild}.${verrevision}-web-full-${configuration}.zip" />
+    <property name="dist.web.upgrade.binzip" 
+	      value="${distdir}/${nant.project.name}-${vermajor}.${verminor}.${verbuild}.${verrevision}-web-upgrade-${configuration}.zip" />
+    <property name="dist.tools.binzip" 
+	      value="${distdir}/${nant.project.name}-${vermajor}.${verminor}.${verbuild}.${verrevision}-tools-${configuration}.zip" />
     <property name="dist.srczip" 
 	      value="${distdir}/${nant.project.name}-${vermajor}.${verminor}.${verbuild}.${verrevision}-src.zip" />
 
     <!-- Zip up all the files that we just put in the staging
-	 directory into the full binaries zip -->
-    <zip zipfile="${dist.full.binzip}">
-      <fileset basedir="${dist.stagingdir}">
-	<includes name="**/*" />
+	        directory into the web full binaries zip -->
+    <zip zipfile="${dist.web.full.binzip}">
+      <fileset basedir="${dist.webdir}">
+	      <includes name="**/*" />
       </fileset>
     </zip>
 
     <!-- Make a copy of the new web.config file as web.config.version
-	 so people can easily see what's new in the config file even
-	 though we don't overwrite their old one -->
+	        so people can easily see what's new in the config file even
+	        though we don't overwrite their old one -->
     <copy file="${dist.webdir}\web.config" 
-	  tofile="${dist.webdir}\web.config.${vermajor}.${verminor}.${verbuild}.${verrevision}" />
+	      tofile="${dist.webdir}\web.config.${vermajor}.${verminor}.${verbuild}.${verrevision}" />
 
     <!-- Zip up all files, except those that we shouldn't overwrite in
-	 an upgrade install -->
-    <zip zipfile="${dist.upgrade.binzip}">
-      <fileset basedir="${dist.stagingdir}">
-	<includes name="**/*" />
-	<excludes name="${dist.webdir}\web.config" />
-	<excludes name="**/WikiBases/**" />
-	<excludes name="${dist.webdir}\**\NamespaceMap.xml" />
+	      an upgrade install -->
+    <zip zipfile="${dist.web.upgrade.binzip}">
+      <fileset basedir="${dist.webdir}">
+	      <includes name="**/*" />
+	      <excludes name="web.config" />
+	      <excludes name="**/WikiBases/**" />
+	      <excludes name="${dist.webdir}\**\NamespaceMap.xml" />
       </fileset>
     </zip>
 
+    <!-- Zip up all the non-web files into the tools zip -->
+    <zip zipfile="${dist.tools.binzip}">
+      <fileset basedir="${dist.toolsdir}">
+        <includes name="**/*" />
+      </fileset>
+    </zip>    
+  
     <!-- Define the files that wind up in the zip of all source code -->
     <fileset id="dist.sources" basedir="${basedir}">
       <includes name="**/*" />
@@ -424,27 +435,12 @@
     </fileset>
 
     <!-- Zip up all the files specified in the dist.sources list into
-	 the sources zip -->
+      	 the sources zip -->
     <zip zipfile="${dist.srczip}">
       <fileset refid="dist.sources" />
     </zip>
   </target>
 
-  <!-- The upload target uploads the dist files to SourceForge so they
-       can be included as part of a release -->
-  <target name="upload" depends="dist" unless="${upload.skip}">
-    <echo message="Uploading ${dist.binzip} and ${dist.srczip} to SourceForge" />
-    <exec program="ncftpput" 
-	  basedir="${basedir}\tools\ncftp\bin"
-	  workingdir="${distdir}">
-      <arg value="-p" />
-      <arg value="flexwiki-admins@users.sourceforge.net" />
-      <arg value="upload.sourceforge.net" />
-      <arg value="incoming" />
-      <arg value="${dist.binzip}" />
-      <arg value="${dist.srczip}" />
-    </exec>
-  </target>
 
   <!-- The clean target cleans out any files that are created as part
        of the build process --> 
@@ -469,31 +465,6 @@
 	       resource="${clean.dir.to.clean}"
 	       type="Directory" />
     <delete dir="${clean.dir.to.clean}" if="${clean.dir.is.present}" />
-  </target>
-
-  <!-- The diff target is a convenience for developers: gets a fresh
-       copy of the source from CVS and runs winmerge so you can see
-       all the differences between what's in CVS and what's on your
-       hard drive. -->
-  <target name="diff">
-    <delete dir="${diffdir}" failonerror="false" />
-    <mkdir dir="${diffdir}" />
-
-    <exec program="cvs.exe">
-      <arg value="-d" />
-      <arg value="${cvs.root}" />
-      <arg value="co" />
-      <arg value="-R" />
-      <arg value="-d" />
-      <arg value="${diffdir}" />
-      <arg value="${cvs.module}" />
-    </exec>
-
-    <exec program="${diff.program}">
-      <arg value="${diffdir}" />
-      <arg value="${basedir}" />
-    </exec>
-	  
   </target>
 
 </project>
