@@ -28,21 +28,20 @@ namespace FlexWiki.Newsletters
 	/// </summary>
 	public class NewsletterDaemon
 	{
-		public NewsletterDaemon(string configFilePath, string rootURL, string newslettersFrom, 
-			string headInsert) : this(configFilePath, rootURL, newslettersFrom, headInsert, false)
+		public NewsletterDaemon(Federation fed, string rootURL, string newslettersFrom, 
+			string headInsert) : this(fed, rootURL, newslettersFrom, headInsert, false)
 		{}
 
-		public NewsletterDaemon(string configFilePath, string rootURL, string newslettersFrom, 
+		public NewsletterDaemon(Federation fed, string rootURL, string newslettersFrom, 
 			string headInsert, bool sendAsAttachments)
 		{
-			ConfigurationFilePath = configFilePath;
+			_TheFederation = fed;
 			RootURL = rootURL;
 			_NewslettersFrom = newslettersFrom;
 			_HeadInsert = headInsert;
 			_sendAsAttachments = sendAsAttachments; 
 		}
 
-		string ConfigurationFilePath;
 		string RootURL;
 		string _NewslettersFrom;
 		string _HeadInsert;
@@ -129,28 +128,15 @@ namespace FlexWiki.Newsletters
 		{
 			get
 			{
-				if (_TheFederation != null)
-					return _TheFederation;
-				LinkMaker lm = new LinkMaker(RootURL);
-				_TheFederation = new Federation(ConfigurationFilePath, FlexWiki.Formatting.OutputFormat.HTML, lm);
-				_TheFederation.LogEventFactory = LogEventFactory;		
-				_TheFederation.EnableCaching();
 				return _TheFederation;
 			}
 		}
-
-
-		public ILogEventFactory _LogEventFactory;
 
 		public ILogEventFactory LogEventFactory
 		{
 			get
 			{
-				return _LogEventFactory;
-			}
-			set
-			{
-				_LogEventFactory = value;
+				return TheFederation.LogEventFactory;
 			}
 		}
 

@@ -73,7 +73,7 @@ namespace FlexWiki.Web
 			{
 				// 1 hit; take it!
 				target = lm.LinkToTopic((TopicName)(hits[0]));
-				target += "?DelayRedirect=1";
+				target += "&DelayRedirect=1";
 			}
 
 			// If we have a target, go there

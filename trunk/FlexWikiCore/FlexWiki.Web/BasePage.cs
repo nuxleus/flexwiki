@@ -340,7 +340,7 @@ namespace FlexWiki.Web
 			string styles = "";
 			try
 			{
-				string mainStylesFile = MapPath("wiki.css");
+				string mainStylesFile = MapPath(RelativeBase + "wiki.css");
 				using (TextReader s = new StreamReader(mainStylesFile))
 				{
 					styles += s.ReadToEnd();
@@ -378,13 +378,12 @@ namespace FlexWiki.Web
         System.Diagnostics.Debug.WriteLine(ex.ToString()); 
       }
 
-			NewsletterDaemon daemon = new NewsletterDaemon(TheFederation.FederationNamespaceMapFilename, TheLinkMaker.SiteURL(), 
+			NewsletterDaemon daemon = new NewsletterDaemon(TheFederation, TheLinkMaker.SiteURL(), 
         newslettersFrom, styles, sendAsAttachments);
 			TheNewsletterDaemon = daemon;
 			daemon.SMTPServer = SMTPServer;
 			daemon.SMTPUser = SMTPUser;
 			daemon.SMTPPassword = SMTPPassword;
-			daemon.LogEventFactory = TheFederation.LogEventFactory;
 			daemon.EnsureRunning();
 		}
 

@@ -82,30 +82,34 @@ namespace FlexWiki.Newsletters
 			foreach (AbsoluteTopicName each in GetAllNewsletterNames())
 			{
 				LogLine("Checking newsletter: " + each);
-				LogLine("\tLast newsletter update - " + GetLastUpdateForNewsletter(each));
-				if (!IsNewsletterDueForUpdate(each))
+				DateTime nextUpdate=DateTime.MaxValue;
+				DateTime lastUpdate=this.GetLastUpdateForNewsletter(each);
+				LogLine("\tLast newsletter update - " + lastUpdate);
+				if (!IsNewsletterDueForUpdate(each,out nextUpdate))
 				{
-					LogLine("\tnot due for update");
+					LogLine("\tnot due for update - " + nextUpdate);
 					continue;
 				}
 				LogLine("\tdue for update");
 				LogLine("\tcollecting changes");
-				IEnumerable changes = AllChangesForNewsletterSince(each, GetLastUpdateForNewsletter(each));
+				IEnumerable changes = AllChangesForNewsletterSince(each, lastUpdate);
 				IEnumerator e = changes.GetEnumerator();
 				if (!e.MoveNext())
 				{
 					LogLine("\tno changes; skipping");
+					SetLastUpdateForNewsletter(each, DateTime.Now);
 					continue;	// no changes
 				}
 				LogLine("\tchanges found; sending newsletter");
 				SendNewsletterUpdate(each, changes, log);				
+				SetLastUpdateForNewsletter(each, DateTime.Now);
 			}
 		}
 
 		public string GetDescriptionForNewsletter(AbsoluteTopicName newsletter)
 		{
 			return TheFederation.GetTopicProperty(newsletter, "Description");
-		}
+		}   
 
 		void GenerateAndDeliverNewsletter(AbsoluteTopicName newsletter, IEnumerable changes, TextWriter log)
 		{
@@ -354,12 +358,18 @@ namespace FlexWiki.Newsletters
 			return answer;
 		}
 
-		bool IsNewsletterDueForUpdate(AbsoluteTopicName newsletter)
+		bool IsNewsletterDueForUpdate(AbsoluteTopicName newsletter, out DateTime nextUpdate)
 		{
 			DateTime lastUpdate = GetLastUpdateForNewsletter(newsletter);
 			int updateFrequency = GetUpdateFrequencyForNewsletter(newsletter);
 			DateTime updateDue = lastUpdate.AddMinutes(updateFrequency);
+			nextUpdate=updateDue;
 			return updateDue <= DateTime.Now;
+		}
+		bool IsNewsletterDueForUpdate(AbsoluteTopicName newsletter)
+		{
+			DateTime throwAway;
+			return IsNewsletterDueForUpdate(newsletter,out throwAway);
 		}
 
 		// History for a topic is in the same namespace, called _NewsletterHistory
@@ -406,7 +416,6 @@ namespace FlexWiki.Newsletters
 		void SendNewsletterUpdate(AbsoluteTopicName newsletter, IEnumerable changes, TextWriter log)
 		{
 			GenerateAndDeliverNewsletter(newsletter, changes, log);
-			SetLastUpdateForNewsletter(newsletter, DateTime.Now);
 		}
 
 		Federation TheFederation
