@@ -136,6 +136,7 @@ namespace FlexWiki.UnitTests
 			WriteTestTopicAndNewVersion(_cb, "IncludeNestURI", @"wiki://IncludeNest1 wiki://IncludeNest2 ", user);
 			WriteTestTopicAndNewVersion(_cb, "ResourceReference", @"URI: http://www.google.com/$$$", user);
 			WriteTestTopicAndNewVersion(_cb, "FlexWiki", "flex ", user);
+			WriteTestTopicAndNewVersion(_cb, "InlineTestTopic", @"aaa @@""foo""@@ zzz", user);
 			WriteTestTopicAndNewVersion(_cb, "OneMinuteWiki", "one ", user);
 			WriteTestTopicAndNewVersion(_cb, "TestIncludesBehaviors", "@@ProductName@@ somthing @@Now@@ then @@Now@@", user);
 			WriteTestTopicAndNewVersion(_cb, "TopicWithBehaviorProperties", @"
@@ -157,6 +158,15 @@ lenSpanning=@@topics.TopicWithBehaviorProperties.FaceSpanningLines(""parsing is 
 
 
 			_externals = new Hashtable();
+		}
+
+		[Test] public void TestInlineWikiTalk()
+		{
+			WikiOutput output = WikiOutput.ForFormat(OutputFormat.HTML, null);
+			AbsoluteTopicName top = new AbsoluteTopicName("InlineTestTopic", _cb.Namespace);
+			Formatter.Format(top, TheFederation.ContentBaseForTopic(top).Read(top.LocalName), output,  _cb, _lm, _externals, 0, null);
+			string result = output.ToString();
+			Assertion.Assert(result.IndexOf("aaa foo zzz") >= 0);
 		}
 
 		[Test] public void TopicBehaviorProperty()

@@ -55,7 +55,7 @@ namespace FlexWiki.Formatting
 		{
 			get
 			{
-				return _Parent == null;
+				return _Parent != null;
 			}
 		}
 
