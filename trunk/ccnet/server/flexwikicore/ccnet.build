@@ -17,7 +17,7 @@
     <!-- Build the project --> 
     <nant buildfile="build\flexwikicore.build"
 	      inheritall="true"
-	      target="clean dist" />
+	      target="clean verify" />
 
     <!-- Figure out what version just got built -->
     <property name="versionfile" value="build\reports\version.xml" />
