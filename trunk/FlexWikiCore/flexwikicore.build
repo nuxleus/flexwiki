@@ -421,7 +421,7 @@
       <exclude name="nunit.framework.dll" />
       <exclude name="BuildVerificationTests.*" />
       <exclude name="FlexBehaviorDebugger.pdb" />
-      <exclude name="FlexWikiSqlStoreManagerLib.dll" />
+      <exclude name="FlexWiki.SqlStoreManagerLib.dll" />
       <exclude name="PrintTopic.pdb" />
       <exclude name="Win32Security.*" />
       <exclude name="fwsqlmgr.pdb" />
