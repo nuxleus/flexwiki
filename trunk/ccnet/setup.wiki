@@ -4,21 +4,21 @@ Here's the list of what I had to do to get the CCNET server working:
 	* Added cvs.exe to the system PATH
 	* Created an environment variable called CVS_RSH set to "C:\program files\tortoisecvs\tortoiseplink.exe"
 	* Copied over the CCNET configuration I came up with. This was just a CVS checkout, since I have it all in source control. 
-	* Set up a virtual directory called "builds" that points to C:\flexwiki\ccnet\webdashboard
-	* Created a virtual directory called "FlexWikiCore" that points to C:\flexwiki\ccnet\server\flexwikicore\web
-	* Created another virtual directory _under FlexWikiCore_ called "download" that points to C:\flexwiki\ccnet\server\flexwikicore\download
+	* Set up a virtual directory called "builds" that points to C:\builds\ccnet\webdashboard
+	* Created a virtual directory called "FlexWikiCore" that points to C:\builds\ccnet\server\flexwikicore\web
+	* Created another virtual directory _under FlexWikiCore_ called "download" that points to C:\builds\ccnet\server\flexwikicore\download
 	* Enabled browse directory and disabled run scripts permission on the download vdir
 	* Had to install the .NET SDK (not just the runtime)
-	* Ran C:\flexwiki\ccnet\server\ccnet.exe to make sure everything was working. This is the command-line version of the build service, so it's convenient for seeing what's going on. 
+	* Ran C:\builds\ccnet\server\ccnet.exe to make sure everything was working. This is the command-line version of the build service, so it's convenient for seeing what's going on. 
 	* Created a new user (fwbuild) to run the build service under
-	* Gave the fwbuild user "Full Control" on C:\flexwiki
+	* Gave the fwbuild user "Full Control" on C:\builds
 	* Granted fwbuild user temporary membership in Administrators group
 	* Logged in as fwbuild
 	* Set up SourceForgeCVS SSH connection to SourceForge per developer setup instructions
-	* Checked the FlexWikiCore sources out into the C:\flexwiki\ccnet\server\flexwikicore\build directory
+	* Checked the FlexWikiCore sources out into the C:\builds\ccnet\server\flexwikicore\build directory
 	* Logged out as fwbuild and back in as Admin
 	* Removed fwbuild from every group execept "guests" group
-	* Installed the build service with @sc create ccnet-flexwiki binPath= C:\flexwiki\ccnet\server\ccservice.exe start= auto@
+	* Installed the build service with @sc create ccnet-flexwiki binPath= C:\builds\ccnet\server\ccservice.exe start= auto@
 	* Used the Control Panel to change the service to run as fwbuild. 
 	* Installed MailEnable and configured it to allow SMTP relaying for localhost
 	* Started the service with "net start ccnet-flexwiki"
