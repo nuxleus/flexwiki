@@ -1,0 +1,12 @@
+@flexWiki=http://www.flexwiki.com/default.aspx/$$$
+
+!About Wiki
+If you're new to WikiWiki@flexWiki, you should read the VisitorWelcome@flexWiki or OneMinuteWiki@flexWiki .  The two most important things to know are 
+	1. follow the links to follow the thoughts and  
+	1. YouAreEncouragedToChangeTheWiki@flexWiki
+
+Check out the FlexWikiFaq@flexWiki as a means  to collaborate on questions you may have on FlexWiki@flexWiki
+
+Something more...
+
+

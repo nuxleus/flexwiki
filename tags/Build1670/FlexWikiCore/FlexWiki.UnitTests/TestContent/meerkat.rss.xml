@@ -1,0 +1,319 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE rdf:RDF [
+<!ENTITY % HTMLlat1 PUBLIC
+ "-//W3C//ENTITIES Latin 1 for XHTML//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml-lat1.ent">
+%HTMLlat1;
+]>
+
+<rdf:RDF 
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+  xmlns:dc="http://purl.org/dc/elements/1.1/"
+  xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+  xmlns="http://purl.org/rss/1.0/"
+> 
+
+  <channel rdf:about="http://meerkat.oreillynet.com/">
+    <title>XML.com</title>   
+    <link>http://www.xml.com/</link>                                 
+    <description>XML.com features a rich mix of information and services for the XML community.</description>                 
+    <sy:updatePeriod>hourly</sy:updatePeriod>
+    <sy:updateFrequency>2</sy:updateFrequency>
+    <sy:updateBase>2000-01-01T12:00+00:00</sy:updateBase>
+
+    <image rdf:resource="http://meerkat.oreillynet.com/icons/meerkat-powered.jpg" />
+
+    <items>
+      <rdf:Seq>
+        <rdf:li rdf:resource="http://www.xml.com/pub/a/2004/07/28/py-xml.html" />
+        <rdf:li rdf:resource="http://www.xml.com/pub/a/2004/07/28/qa.html" />
+        <rdf:li rdf:resource="http://www.xml.com/pub/a/2004/07/28/deviant.html" />
+        <rdf:li rdf:resource="http://www.xml.com/pub/a/2004/07/21/oxml.html" />
+        <rdf:li rdf:resource="http://www.xml.com/pub/a/2004/07/21/design.html" />
+        <rdf:li rdf:resource="http://www.xml.com/pub/a/2004/07/21/dive.html" />
+        <rdf:li rdf:resource="http://www.xml.com/pub/a/2004/07/14/onto.html" />
+        <rdf:li rdf:resource="http://www.xml.com/pub/a/2004/07/14/deviant.html" />
+        <rdf:li rdf:resource="http://www.xml.com/pub/a/2004/07/14/dbndx.html" />
+        <rdf:li rdf:resource="http://www.xml.com/pub/a/2004/07/07/hello.html" />
+        <rdf:li rdf:resource="http://www.xml.com/pub/a/2004/07/07/tr.html" />
+        <rdf:li rdf:resource="http://www.xml.com/pub/a/2004/07/07/econ-ws.html" />
+        <rdf:li rdf:resource="http://www.xml.com/pub/a/2004/07/07/deviant.html" />
+        <rdf:li rdf:resource="http://www.xml.com/pub/a/2004/06/30/qa.html" />
+        <rdf:li rdf:resource="http://www.xml.com/pub/a/2004/06/30/py-xml.html" />
+      </rdf:Seq>
+    </items>
+  
+    <textinput rdf:resource="http://meerkat.oreillynet.com/" />
+
+  </channel>
+
+  <image rdf:about="http://meerkat.oreillynet.com/icons/meerkat-powered.jpg">
+    <title>Meerkat Powered!</title>
+    <url>http://meerkat.oreillynet.com/icons/meerkat-powered.jpg</url>
+    <link>http://meerkat.oreillynet.com</link>
+  </image>
+
+  <item rdf:about="http://www.xml.com/pub/a/2004/07/28/py-xml.html">
+    <title>Python and XML: Decomposition, Process, Recomposition</title>
+    <link>http://www.xml.com/pub/a/2004/07/28/py-xml.html</link>
+    <description>
+    In Uche Ogbuji's latest Python and XML column he explores a pattern for handling very large XML files easily and efficiently.
+   </description>
+    <dc:source>XML.com</dc:source>
+    <dc:creator>Uche Ogbuji</dc:creator>
+    <dc:subject>Programming, Programming</dc:subject>
+    <dc:publisher>O'Reilly Media, Inc.</dc:publisher>
+    <dc:date>2004-07-28</dc:date>
+    <dc:type>Python and XML</dc:type>
+    <dc:format>text/html</dc:format>
+    <dc:language>en-us</dc:language>
+    <dc:rights>Copyright 2004, O'Reilly Media, Inc.</dc:rights>
+  </item>
+
+  <item rdf:about="http://www.xml.com/pub/a/2004/07/28/qa.html">
+    <title>XML Q&amp;amp;A: From English to Dutch?</title>
+    <link>http://www.xml.com/pub/a/2004/07/28/qa.html</link>
+    <description>
+    In John Simpson's final XML Q&amp;amp;A column, he explains how to use XML to facilitate phrase translation in multilingual apps, and announces his forthcoming new XML.com column.
+   </description>
+    <dc:source>XML.com</dc:source>
+    <dc:creator>John E. Simpson</dc:creator>
+    <dc:subject>Programming, Publishing</dc:subject>
+    <dc:publisher>O'Reilly Media, Inc.</dc:publisher>
+    <dc:date>2004-07-28</dc:date>
+    <dc:type>XML Q&amp;amp;A</dc:type>
+    <dc:format>text/html</dc:format>
+    <dc:language>en-us</dc:language>
+    <dc:rights>Copyright 2004, O'Reilly Media, Inc.</dc:rights>
+  </item>
+
+  <item rdf:about="http://www.xml.com/pub/a/2004/07/28/deviant.html">
+    <title>Caveat Incumbent</title>
+    <link>http://www.xml.com/pub/a/2004/07/28/deviant.html</link>
+    <description>
+    Is XHTML an evil intrusion into the Web by religious lunatics from the cult of XML? And does XML-ification really help anyway?
+   </description>
+    <dc:source>XML.com</dc:source>
+    <dc:creator>Edd Dumbill</dc:creator>
+    <dc:subject>Web</dc:subject>
+    <dc:publisher>O'Reilly Media, Inc.</dc:publisher>
+    <dc:date>2004-07-28</dc:date>
+    <dc:format>text/html</dc:format>
+    <dc:language>en-us</dc:language>
+    <dc:rights>Copyright 2004, O'Reilly Media, Inc.</dc:rights>
+  </item>
+
+  <item rdf:about="http://www.xml.com/pub/a/2004/07/21/oxml.html">
+    <title>Features: Introducing o:XML</title>
+    <link>http://www.xml.com/pub/a/2004/07/21/oxml.html</link>
+    <description>
+    o:XML is an innovative object-oriented programming language in which XML is a first class type and also provides the concrete syntax.
+   </description>
+    <dc:source>XML.com</dc:source>
+    <dc:creator>Martin Klang</dc:creator>
+    <dc:subject>Programming, Programming</dc:subject>
+    <dc:publisher>O'Reilly Media, Inc.</dc:publisher>
+    <dc:date>2004-07-21</dc:date>
+    <dc:type>Features</dc:type>
+    <dc:format>text/html</dc:format>
+    <dc:language>en-us</dc:language>
+    <dc:rights>Copyright 2004, O'Reilly Media, Inc.</dc:rights>
+  </item>
+
+  <item rdf:about="http://www.xml.com/pub/a/2004/07/21/design.html">
+    <title>Features: Designing Extensible, Versionable XML Formats</title>
+    <link>http://www.xml.com/pub/a/2004/07/21/design.html</link>
+    <description>
+    Dare Obasanjo explores the issues surrounding the design of extensible, versionable XML vocabularies.
+   </description>
+    <dc:source>XML.com</dc:source>
+    <dc:creator>Dare Obasanjo</dc:creator>
+    <dc:subject>Schemas, Vocabularies, Instruction</dc:subject>
+    <dc:publisher>O'Reilly Media, Inc.</dc:publisher>
+    <dc:date>2004-07-21</dc:date>
+    <dc:type>Features</dc:type>
+    <dc:format>text/html</dc:format>
+    <dc:language>en-us</dc:language>
+    <dc:rights>Copyright 2004, O'Reilly Media, Inc.</dc:rights>
+  </item>
+
+  <item rdf:about="http://www.xml.com/pub/a/2004/07/21/dive.html">
+    <title>Dive into XML: XML on the Web Has Failed</title>
+    <link>http://www.xml.com/pub/a/2004/07/21/dive.html</link>
+    <description>
+    In Mark Pilgrim's latest Dive into XML column he argues that most XML on the Web has failed utterly, miserably, completely.
+   </description>
+    <dc:source>XML.com</dc:source>
+    <dc:creator>Mark Pilgrim</dc:creator>
+    <dc:subject>Web, Specifications, Instruction</dc:subject>
+    <dc:publisher>O'Reilly Media, Inc.</dc:publisher>
+    <dc:date>2004-07-21</dc:date>
+    <dc:type>Dive into XML</dc:type>
+    <dc:format>text/html</dc:format>
+    <dc:language>en-us</dc:language>
+    <dc:rights>Copyright 2004, O'Reilly Media, Inc.</dc:rights>
+  </item>
+
+  <item rdf:about="http://www.xml.com/pub/a/2004/07/14/onto.html">
+    <title>Features: Ontology Tools Survey, Revisited</title>
+    <link>http://www.xml.com/pub/a/2004/07/14/onto.html</link>
+    <description>
+    Michael Denny updates his original survey of tools for creating ontologies, including the W3C's OWL Web Ontology Language. 
+   </description>
+    <dc:source>XML.com</dc:source>
+    <dc:creator>Michael Denny</dc:creator>
+    <dc:subject>Metadata, Tools</dc:subject>
+    <dc:publisher>O'Reilly Media, Inc.</dc:publisher>
+    <dc:date>2004-07-14</dc:date>
+    <dc:type>Features</dc:type>
+    <dc:format>text/html</dc:format>
+    <dc:language>en-us</dc:language>
+    <dc:rights>Copyright 2004, O'Reilly Media, Inc.</dc:rights>
+  </item>
+
+  <item rdf:about="http://www.xml.com/pub/a/2004/07/14/deviant.html">
+    <title>XML-Deviant: Browser Boom</title>
+    <link>http://www.xml.com/pub/a/2004/07/14/deviant.html</link>
+    <description>
+    Edd Dumbill reports on the boom in web-browser innovation as well as Mozilla and Opera's mysterious desertion of the W3C as a forum.
+   </description>
+    <dc:source>XML.com</dc:source>
+    <dc:creator>Edd Dumbill</dc:creator>
+    <dc:subject>Web, Perspectives</dc:subject>
+    <dc:publisher>O'Reilly Media, Inc.</dc:publisher>
+    <dc:date>2004-07-14</dc:date>
+    <dc:type>XML-Deviant</dc:type>
+    <dc:format>text/html</dc:format>
+    <dc:language>en-us</dc:language>
+    <dc:rights>Copyright 2004, O'Reilly Media, Inc.</dc:rights>
+  </item>
+
+  <item rdf:about="http://www.xml.com/pub/a/2004/07/14/dbndx.html">
+    <title>Features: Mastering DocBook Indexes</title>
+    <link>http://www.xml.com/pub/a/2004/07/14/dbndx.html</link>
+    <description>
+    Jirka Kosek explains the ins and outs of constructing document indexes in DocBook.
+   </description>
+    <dc:source>XML.com</dc:source>
+    <dc:creator>Jirka Kosek</dc:creator>
+    <dc:subject>Style, Publishing</dc:subject>
+    <dc:publisher>O'Reilly Media, Inc.</dc:publisher>
+    <dc:date>2004-07-14</dc:date>
+    <dc:type>Features</dc:type>
+    <dc:format>text/html</dc:format>
+    <dc:language>en-us</dc:language>
+    <dc:rights>Copyright 2004, O'Reilly Media, Inc.</dc:rights>
+  </item>
+
+  <item rdf:about="http://www.xml.com/pub/a/2004/07/07/hello.html">
+    <title>&lt;taglines/&gt;: An Old New Thing</title>
+    <link>http://www.xml.com/pub/a/2004/07/07/hello.html</link>
+    <description>
+    In Kendall Clark's first week as managing editor, he says hello to new challenges and old friends.
+   </description>
+    <dc:source>XML.com</dc:source>
+    <dc:creator>Kendall Grant Clark</dc:creator>
+    <dc:subject>, Perspectives</dc:subject>
+    <dc:publisher>O'Reilly Media, Inc.</dc:publisher>
+    <dc:date>2004-07-07</dc:date>
+    <dc:type>&lt;taglines/&gt;</dc:type>
+    <dc:format>text/html</dc:format>
+    <dc:language>en-us</dc:language>
+    <dc:rights>Copyright 2004, O'Reilly Media, Inc.</dc:rights>
+  </item>
+
+  <item rdf:about="http://www.xml.com/pub/a/2004/07/07/tr.html">
+    <title>Transforming XML: An Interview with Michael Kay</title>
+    <link>http://www.xml.com/pub/a/2004/07/07/tr.html</link>
+    <description>
+    In his latest Transforming XML column, Bob DuCharme interviews Michael Kay, developer of Saxon, about his new venture, Saxonica.
+   </description>
+    <dc:source>XML.com</dc:source>
+    <dc:creator>Bob DuCharme</dc:creator>
+    <dc:subject>Style, Style, Perspectives</dc:subject>
+    <dc:publisher>O'Reilly Media, Inc.</dc:publisher>
+    <dc:date>2004-07-07</dc:date>
+    <dc:type>Transforming XML</dc:type>
+    <dc:format>text/html</dc:format>
+    <dc:language>en-us</dc:language>
+    <dc:rights>Copyright 2004, O'Reilly Media, Inc.</dc:rights>
+  </item>
+
+  <item rdf:about="http://www.xml.com/pub/a/2004/07/07/econ-ws.html">
+    <title>Features: The Economics of Web Service Development</title>
+    <link>http://www.xml.com/pub/a/2004/07/07/econ-ws.html</link>
+    <description>
+    Marcia Gulesian explores the economics and management dimensions of implementing web services in the healthcare field.
+   </description>
+    <dc:source>XML.com</dc:source>
+    <dc:creator>Marcia Gulesian</dc:creator>
+    <dc:subject>Business, Perspectives</dc:subject>
+    <dc:publisher>O'Reilly Media, Inc.</dc:publisher>
+    <dc:date>2004-07-07</dc:date>
+    <dc:type>Features</dc:type>
+    <dc:format>text/html</dc:format>
+    <dc:language>en-us</dc:language>
+    <dc:rights>Copyright 2004, O'Reilly Media, Inc.</dc:rights>
+  </item>
+
+  <item rdf:about="http://www.xml.com/pub/a/2004/07/07/deviant.html">
+    <title>XML-Deviant: Eternal Refactoring</title>
+    <link>http://www.xml.com/pub/a/2004/07/07/deviant.html</link>
+    <description>
+    A summary of the latest happenings in the XML and RDF developer communities: refactoring specifications, Amazon wishlists in RDF, and XML as art.
+   </description>
+    <dc:source>XML.com</dc:source>
+    <dc:creator>Edd Dumbill</dc:creator>
+    <dc:subject>Metadata, Perspectives, Community</dc:subject>
+    <dc:publisher>O'Reilly Media, Inc.</dc:publisher>
+    <dc:date>2004-07-07</dc:date>
+    <dc:type>XML-Deviant</dc:type>
+    <dc:format>text/html</dc:format>
+    <dc:language>en-us</dc:language>
+    <dc:rights>Copyright 2004, O'Reilly Media, Inc.</dc:rights>
+  </item>
+
+  <item rdf:about="http://www.xml.com/pub/a/2004/06/30/qa.html">
+    <title>XML Q&amp;amp;A: Trickledown Namespaces?</title>
+    <link>http://www.xml.com/pub/a/2004/06/30/qa.html</link>
+    <description>
+    In this month's Q&amp;amp;A column John Simpson explains how namespaces are inherited, or not, by children elements and attributes.
+   </description>
+    <dc:source>XML.com</dc:source>
+    <dc:creator>John E. Simpson</dc:creator>
+    <dc:subject>Style, Specifications</dc:subject>
+    <dc:publisher>O'Reilly Media, Inc.</dc:publisher>
+    <dc:date>2004-06-30</dc:date>
+    <dc:type>XML Q&amp;amp;A</dc:type>
+    <dc:format>text/html</dc:format>
+    <dc:language>en-us</dc:language>
+    <dc:rights>Copyright 2004, O'Reilly Media, Inc.</dc:rights>
+  </item>
+
+  <item rdf:about="http://www.xml.com/pub/a/2004/06/30/py-xml.html">
+    <title>Python and XML: XML Namespaces Support in Python Tools, Part Three</title>
+    <link>http://www.xml.com/pub/a/2004/06/30/py-xml.html</link>
+    <description>
+    In this month's Python and XML column Uche Ogbuji examines the namespace support in ElementTree, PyRXPU, and libxml.
+   </description>
+    <dc:source>XML.com</dc:source>
+    <dc:creator>Uche Ogbuji</dc:creator>
+    <dc:subject>Programming, Programming</dc:subject>
+    <dc:publisher>O'Reilly Media, Inc.</dc:publisher>
+    <dc:date>2004-06-30</dc:date>
+    <dc:type>Python and XML</dc:type>
+    <dc:format>text/html</dc:format>
+    <dc:language>en-us</dc:language>
+    <dc:rights>Copyright 2004, O'Reilly Media, Inc.</dc:rights>
+  </item>
+
+
+  <textinput rdf:about="http://meerkat.oreillynet.com/">
+    <title>Search</title>
+    <description>Search Meerkat...</description>
+    <name>s</name>
+    <link>http://meerkat.oreillynet.com/</link>
+  </textinput>
+
+</rdf:RDF>
