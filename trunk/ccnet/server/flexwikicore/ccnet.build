@@ -1,15 +1,18 @@
 <project name="ccnet" default="go">
   <target name="go">
+    
+    <property name="module.name" value="FlexWikiCore" />
 
     <property name="cvs.tag" value="Build${label-to-apply}" />
 
     <!-- Tag the tree with the build label -->
     <exec program="cvs.exe"
 	  workingdir="build">
-      <arg value="tag" />
-      <arg value="-F" />         <!-- Move tag if it already exists -->
-      <arg value="-R" />         <!-- Tag recursively -->
-      <arg value="${cvs.tag}" /> <!-- Tag name -->
+      <arg value="rtag" />
+      <arg value="-F" />             <!-- Move tag if it already exists -->
+      <arg value="-R" />             <!-- Tag recursively -->
+      <arg value="${cvs.tag}" />     <!-- Tag name -->
+      <arg value="${module.name}" /> <!-- Module name -->
     </exec>
     
     <!-- Update the build directory with the sources we just tagged -->
@@ -28,7 +31,7 @@
     <property name="verrevision" value="${label-to-apply}" />
 
     <!-- Build the project --> 
-    <nant buildfile="build\flexwikicore.build"
+    <nant buildfile="build\${module.name}.build"
 	      inheritall="true"
 	      target="clean verify" />
 
