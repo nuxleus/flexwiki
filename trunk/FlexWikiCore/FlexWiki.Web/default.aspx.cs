@@ -236,6 +236,7 @@ function tbinput()
 			bool diffs = Request.QueryString["diff"] == "y";
 			bool restore = (Request.RequestType == "POST" && Request.Form["RestoreTopic"] != null);
 			bool isBlacklistedRestore = false;
+			bool editOnDoubleClick = true;
 			if (restore==true)
 			{
 				// Prevent restoring a topic with blacklisted content
@@ -256,7 +257,19 @@ function tbinput()
 				return;
 			}
 
-			Response.Write("<body onclick='javascript: BodyClick()' ondblclick=\"location.href='" + this.TheLinkMaker.LinkToEditTopic(topic) + "'\">");
+			// check to see if edit-on-double-click should be enabled
+			if ( System.Configuration.ConfigurationSettings.AppSettings["DoubleClickToEdit"] != null )
+			{
+				string doubleClickToEditConfig = System.Configuration.ConfigurationSettings.AppSettings["DoubleClickToEdit"].ToString().ToUpper();
+				if ( doubleClickToEditConfig == "FALSE" )
+					editOnDoubleClick = false;
+			}
+
+			if ( editOnDoubleClick )
+				Response.Write("<body onclick='javascript: BodyClick()' ondblclick=\"location.href='" + this.TheLinkMaker.LinkToEditTopic(topic) + "'\">");
+			else
+				Response.Write("<body onclick='javascript: BodyClick()'>");
+
 			Response.Write(script);
 			Response.Write(@"<div id='TopicTip' class='TopicTip' ></div>");
 

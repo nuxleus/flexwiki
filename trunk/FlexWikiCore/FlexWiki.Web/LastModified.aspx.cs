@@ -171,7 +171,7 @@ function changeNamespace()
 			int row = 0;
 			foreach (AbsoluteTopicName  topic in topics)
 			{
-				Response.Write("<tr id='row" + row + "' style='display: block' class='" + (((row & 1) == 0) ? "SearchOddRow" : "SearchOddRow") + "'>");
+				Response.Write("<tr id='row" + row + "' style='display: block' class='" + (((row & 1) == 0) ? "SearchOddRow" : "SearchEvenRow") + "'>");
 				row++;
 
 				Response.Write("<td>");
