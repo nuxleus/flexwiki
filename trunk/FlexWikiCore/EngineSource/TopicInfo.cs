@@ -19,7 +19,7 @@ namespace FlexWiki
 	/// Summary description for Topic.
 	/// </summary>
 	[ExposedClass("TopicInfo", "Provides information about a topic")]
-	public class TopicInfo : BELObject
+	public class TopicInfo : BELObject, IComparable
 	{
 		public TopicInfo(Federation aFed, AbsoluteTopicName name)
 		{
@@ -194,7 +194,13 @@ namespace FlexWiki
 				return Federation.GetTopicLastModifiedBy(Fullname); 
 			}
 		}
+		#region IComparable Members
 
-	
+		public int CompareTo(object obj)
+		{
+			return this.Fullname.Fullname.CompareTo(((TopicInfo)obj).Fullname.Fullname);
+		}
+
+		#endregion
 	}
 }

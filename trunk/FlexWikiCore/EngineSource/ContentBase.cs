@@ -93,6 +93,78 @@ namespace FlexWiki
 			}
 		}
 
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Gets the topics with the specified property and value (excluding those in the imported namespaces).")]
+		public TopicInfoArray TopicsWith(string property, string desiredValue)
+		{
+			return this.RetrieveAllTopicsWith(property, desiredValue, false);
+		}
+
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Gets the topics with the specified property and value (including those in the imported namespaces).")]
+		public TopicInfoArray AllTopicsWith(string property, string desiredValue)
+		{
+			return this.RetrieveAllTopicsWith(property, desiredValue, true);
+		}
+
+		private TopicInfoArray RetrieveAllTopicsWith(string property, string desiredValue, bool includeImports)
+		{
+			TopicInfoArray answer = this.TopicInfoCacheContains(this.CreateTopicInfoCacheKey(property,  desiredValue, includeImports));
+
+			if( answer != null )
+			{
+				return answer;
+			}
+
+			answer = new TopicInfoArray();
+			CompositeCacheRule compositeCacheRule = new CompositeCacheRule();
+
+			foreach(AbsoluteTopicName topic in AllTopics(includeImports))
+			{
+				if(topic.Name.StartsWith("_"))
+					continue;
+
+				string propertyValue = Federation.GetTopicProperty(topic, property);
+
+				if( propertyValue.ToLower() == desiredValue.ToLower() )
+				{
+					ContentBase contentBaseForTopic = Federation.ContentBaseForTopic(topic);
+					answer.Add(new TopicInfo(Federation, topic));
+					compositeCacheRule.Add(contentBaseForTopic.CacheRuleForAllPossibleInstancesOfTopic(topic));
+				}
+			}
+
+			this.UpdateTopicInfoCache(this.CreateTopicInfoCacheKey(property,  desiredValue, includeImports), answer, compositeCacheRule);
+
+			return answer;
+		}
+
+		private string CreateTopicInfoCacheKey(string property, string desiredValue, bool includeImports)
+		{
+			return (this.Namespace + "_" + property + "_" + desiredValue + "_" + ((includeImports) ? Boolean.TrueString: Boolean.FalseString));
+		}
+
+		private TopicInfoArray TopicInfoCacheContains(string key)
+		{
+			object cacheContents = this.Federation.FederationCache.Get(key);
+			if( cacheContents != null )
+			{
+				return (TopicInfoArray)cacheContents; 
+			}
+			else
+			{
+				return null;
+			}
+		}
+
+		private void UpdateTopicInfoCache(string key, TopicInfoArray topicInfoArray, CacheRule cacheRule)
+		{
+			// Will overwrite an existing item in the cache.
+			if( this.Federation.FederationCache != null )
+			{
+				this.Federation.FederationCache.Put(key, topicInfoArray, cacheRule);
+			}
+		}
+
+
 		Hashtable _BackingTopics;
 		[XmlIgnore]
 		public Hashtable BackingTopics
@@ -1131,6 +1203,22 @@ namespace FlexWiki
 		public IEnumerable AllTopics(bool includeImports)
 		{
 			return AllTopicsSorted(null, includeImports);
+		}
+
+		/// <summary>
+		/// Returns a list of all topics in this namespace (including imported namespaces)
+		/// </summary>
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a list of all topics in this namespace (including imported namespaces)")]
+		[XmlIgnore]
+		public ArrayList AllTopicsInfo
+		{
+			get
+			{
+				ArrayList answer = new ArrayList();
+				foreach (AbsoluteTopicName name in AllTopics(true))
+					answer.Add(new TopicInfo(Federation, name));
+				return answer;
+			}
 		}
 
 		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a list of all topic in this namespace (excluding imported namespaces)")]

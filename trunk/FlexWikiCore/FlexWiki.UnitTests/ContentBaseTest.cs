@@ -81,12 +81,15 @@ Import: FlexWiki.Other1, Other2", author);
 			WriteTestTopicAndNewVersion(_base, "TopicTwo", @"FlexWiki.Other1.OtherOneGoodbye", author);
 			WriteTestTopicAndNewVersion(_base, "TopicThree", @"No.Such.Namespace.FooBar", author);
 			WriteTestTopicAndNewVersion(_base, "TopicFour", @".TopicOne", author);
-			WriteTestTopicAndNewVersion(_base, "TopicFive", @"FooBar", author);
-			WriteTestTopicAndNewVersion(_base, "TopicSix", @".GooBar", author);
+			WriteTestTopicAndNewVersion(_base, "TopicFive", @"FooBar
+Role:Designer", author);
+			WriteTestTopicAndNewVersion(_base, "TopicSix", @".GooBar
+Role:Developer", author);
 
 			WriteTestTopicAndNewVersion(_other1, _other1.DefinitionTopicName.Name, @"Namespace: FlexWiki.Other1
 Import: Other3,Other2", author);
-			WriteTestTopicAndNewVersion(_other1, "OtherOneHello", @"hello", author);
+			WriteTestTopicAndNewVersion(_other1, "OtherOneHello", @"hello
+Role:Developer", author);
 			WriteTestTopicAndNewVersion(_other1, "OtherOneGoodbye", @"goodbye", author);
 			WriteTestTopicAndNewVersion(_other1, "OtherOneRefThree", @"OtherThreeTest", author);
 
@@ -157,6 +160,20 @@ Import: Other3,Other2", author);
 			Assertion.AssertEquals(expecting.Count, 0);
 		}
 
+		[Test] public void TopicsWithTest()
+		{
+			TheFederation.FederationCache = new MockFederationCache();
+
+			Assert.AreEqual(1,_base.TopicsWith("Role","Developer").Count,"TopicsWith Role:Developer");
+			Assert.AreEqual(1,_base.TopicsWith("Role","Designer").Count,"TopicsWith Role:Designer");
+			Assert.AreEqual(2,_base.AllTopicsWith("Role","Developer").Count,"AllTopicsWith Role:Developer");
+			Assert.AreEqual(1,_base.AllTopicsWith("Role","Designer").Count,"AllTopicsWith Role:Designer");
+		}
+
+		[Test] public void AllTopicsInfo()
+		{
+			Assert.AreEqual(26,_base.AllTopicsInfo.Count);
+		}
 
 		[TearDown] public void DeInit()
 		{

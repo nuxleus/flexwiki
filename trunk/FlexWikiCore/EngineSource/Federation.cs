@@ -524,7 +524,7 @@ namespace FlexWiki
 			if (answer != null)
 				return answer;
 			ContentBase cb = ContentBaseForTopic(name);
-			if (!cb.TopicExists(name))
+			if (cb ==null || !cb.TopicExists(name))
 				return null;
 			answer = new CachedTopic(name);
 			CompositeCacheRule rule = new CompositeCacheRule();

@@ -128,6 +128,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "MockFederationCache.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "RoleTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -177,6 +182,11 @@
                 />
                 <File
                     RelPath = "TopicChangeTest.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "TopicInfoArrayTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
