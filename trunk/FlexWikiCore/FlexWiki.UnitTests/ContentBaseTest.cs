@@ -186,7 +186,7 @@ Role:Developer", author);
 		[Test] public void BaseToQualifiedAbsent()
 		{
 			_lm.ReturnToTopicForEditLinks = new AbsoluteTopicName("FlexWiki.Base.TopicThree");
-			CompareTopic("TopicThree", @"class=""create"" href=""" + _lm.LinkToEditTopic(new AbsoluteTopicName("No.Such.Namespace.FooBar")) + @""">FooBar</a>");
+			CompareTopic("TopicThree", @"<p>No.Such.Namespace.FooBar</p>");
 		}
 
 		[Test] public void BaseToForcedLocal()
@@ -219,7 +219,7 @@ Role:Developer", author);
 		[Test] public void ForeignToQualifiedAbsent()
 		{
 			_lm.ReturnToTopicForEditLinks = new AbsoluteTopicName("FlexWiki.Other1.OtherOneTopicThree");
-			CompareTopic("OtherOneTopicThree", @"class=""create"" href=""" + _lm.LinkToEditTopic(new AbsoluteTopicName("No.Such.Namespace.FooBar")) + @""">FooBar</a>");
+			CompareTopic("OtherOneTopicThree", @"<p>No.Such.Namespace.FooBar</p>");
 		}
 
 		[Test] public void ForeignToForcedLocal()

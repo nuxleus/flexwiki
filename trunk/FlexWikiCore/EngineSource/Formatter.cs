@@ -1767,91 +1767,99 @@ namespace FlexWiki.Formatting
 				
 				RelativeTopicName relName = new RelativeTopicName(TopicName.StripEscapes(each));
 
-				// Build a list of all the possible absoluteNames for this topic
-				ArrayList absoluteNames = new ArrayList();
-				// Start with the singulars in the various reachable namespaces, then add the plurals
-				absoluteNames.AddRange(ContentBase.AllAbsoluteTopicNamesThatExist(relName));
-				AddCacheRule(ContentBase.CacheRuleForAllPossibleInstancesOfTopic(relName));
-				foreach (TopicName alternate in relName.AlternateForms)
+				// Ignore apparent links to non-existent namespaces.
+				if ((null == relName.Namespace) || (null != TheFederation.ContentBaseForNamespace(relName.Namespace)))
 				{
-					AddCacheRule(ContentBase.CacheRuleForAllPossibleInstancesOfTopic(alternate));
-					absoluteNames.AddRange(ContentBase.AllAbsoluteTopicNamesThatExist(alternate));
-				}
-					
-				// Now see if we got any hits or not
-				string rep = beforeOrRelabel + "(" + RegexEscapeTopic(each) + ")" + afterWikiName;
-				AbsoluteTopicName appearedAs = new AbsoluteTopicName(each);  // in case it was a plural form, be sure to show it as it appeared
-				string displayname = TopicName.StripEscapes((ContentBase.DisplaySpacesInWikiLinks ? appearedAs.FormattedName : appearedAs.Name));
-				if (relabel.Length > 0)
-				{
-					displayname = relabel;
-				}
-
-				if (absoluteNames.Count == 0)
-				{
-					// It doesn't exist, so give the option to create it
-					AbsoluteTopicName abs = relName.AsAbsoluteTopicName(ContentBase.Namespace);
-					str = ReplaceMatch(answer, str, m, before + "<a title='Click here to create this topic' class=\"create\" href=\"" + LinkMaker().LinkToEditTopic(abs) + "\">" + displayname + "</a>" + after);
-				}
-				else
-				{
-					// We got hits, let's add links
-
-					if (absoluteNames.Count == 1)
+					// Build a list of all the possible absoluteNames for this topic
+					ArrayList absoluteNames = new ArrayList();
+					// Start with the singulars in the various reachable namespaces, then add the plurals
+					absoluteNames.AddRange(ContentBase.AllAbsoluteTopicNamesThatExist(relName));
+					AddCacheRule(ContentBase.CacheRuleForAllPossibleInstancesOfTopic(relName));
+					foreach (TopicName alternate in relName.AlternateForms)
 					{
-						// The simple case is that there's only one link to point to, so we output just a normal link
-						AbsoluteTopicName abs = (AbsoluteTopicName)absoluteNames[0];
-						string tip = TipForTopic(abs);
-						string tipid = null;
-						string tipHTML = null;
-						bool defaultTip = tip == null;
-						if (defaultTip)
-						{
-							tip = "Click to read this topic";
-						}
-						tipid = NewUniqueIdentifier();
-						tipHTML = Formatter.EscapeHTML(tip);
-						if (defaultTip)
-						{
-							tipHTML = "<span class='DefaultTopicTipText'>" + tipHTML + "</span>";
-						}
-						tipHTML += "<div class='TopicTipStats'>" + TheFederation.GetTopicModificationTime(abs).ToString() + " - " + TheFederation.GetTopicLastModifiedBy(abs) + "</div>";
-						tipHTML = "<div id=" + tipid +" style='display: none'>" + tipHTML + "</div>";
-						Output.AddToFooter(tipHTML);
-						string replacement = "<a ";
-						if (tip != null)
-						{
-							replacement += "onmouseover='TopicTipOn(this, \"" + tipid + "\", event);' onmouseout='TopicTipOff();' ";
-						}
-						replacement += "href=\"" + LinkMaker().LinkToTopic(abs);
-						if (anchor.Length > 0)
-						{
-							replacement += "#" + anchor;
-							if (0 == relabel.Length)
-							{
-								displayname += "#" + anchor;
-							}
-						}
-						replacement += "\">" + displayname + "</a>";
-						str = ReplaceMatch(answer, str, m, before + replacement + after) ;
+						AddCacheRule(ContentBase.CacheRuleForAllPossibleInstancesOfTopic(alternate));
+						absoluteNames.AddRange(ContentBase.AllAbsoluteTopicNamesThatExist(alternate));
+					}
+					
+					// Now see if we got any hits or not
+					string rep = beforeOrRelabel + "(" + RegexEscapeTopic(each) + ")" + afterWikiName;
+					AbsoluteTopicName appearedAs = new AbsoluteTopicName(each);  // in case it was a plural form, be sure to show it as it appeared
+					string displayname = TopicName.StripEscapes((ContentBase.DisplaySpacesInWikiLinks ? appearedAs.FormattedName : appearedAs.Name));
+					if (relabel.Length > 0)
+					{
+						displayname = relabel;
+					}
+
+					if (absoluteNames.Count == 0)
+					{
+						// It doesn't exist, so give the option to create it
+						AbsoluteTopicName abs = relName.AsAbsoluteTopicName(ContentBase.Namespace);
+						str = ReplaceMatch(answer, str, m, before + "<a title='Click here to create this topic' class=\"create\" href=\"" + LinkMaker().LinkToEditTopic(abs) + "\">" + displayname + "</a>" + after);
 					}
 					else
 					{
-						// There's more than one; we need to generate a dynamic menu
-						string clickEvent;
-						clickEvent = "onclick='javascript:LinkMenu(new Array(";
-						bool first = true;
-						foreach (AbsoluteTopicName eachAbs in absoluteNames)
-						{	
-							if (!first)
-								clickEvent += ", ";
-							first = false;
-							clickEvent += "new Array(\"" + eachAbs + "\", \"" + LinkMaker().LinkToTopic(eachAbs) + "\")";
-						}
-						clickEvent += "));'";
+						// We got hits, let's add links
 
-						str = ReplaceMatch(answer, str, m, before + "<a title='Different versions of this topic exist.  Click to pick one.' " + clickEvent + ">" + displayname + "</a>" + after) ;
+						if (absoluteNames.Count == 1)
+						{
+							// The simple case is that there's only one link to point to, so we output just a normal link
+							AbsoluteTopicName abs = (AbsoluteTopicName)absoluteNames[0];
+							string tip = TipForTopic(abs);
+							string tipid = null;
+							string tipHTML = null;
+							bool defaultTip = tip == null;
+							if (defaultTip)
+							{
+								tip = "Click to read this topic";
+							}
+							tipid = NewUniqueIdentifier();
+							tipHTML = Formatter.EscapeHTML(tip);
+							if (defaultTip)
+							{
+								tipHTML = "<span class='DefaultTopicTipText'>" + tipHTML + "</span>";
+							}
+							tipHTML += "<div class='TopicTipStats'>" + TheFederation.GetTopicModificationTime(abs).ToString() + " - " + TheFederation.GetTopicLastModifiedBy(abs) + "</div>";
+							tipHTML = "<div id=" + tipid +" style='display: none'>" + tipHTML + "</div>";
+							Output.AddToFooter(tipHTML);
+							string replacement = "<a ";
+							if (tip != null)
+							{
+								replacement += "onmouseover='TopicTipOn(this, \"" + tipid + "\", event);' onmouseout='TopicTipOff();' ";
+							}
+							replacement += "href=\"" + LinkMaker().LinkToTopic(abs);
+							if (anchor.Length > 0)
+							{
+								replacement += "#" + anchor;
+								if (0 == relabel.Length)
+								{
+									displayname += "#" + anchor;
+								}
+							}
+							replacement += "\">" + displayname + "</a>";
+							str = ReplaceMatch(answer, str, m, before + replacement + after) ;
+						}
+						else
+						{
+							// There's more than one; we need to generate a dynamic menu
+							string clickEvent;
+							clickEvent = "onclick='javascript:LinkMenu(new Array(";
+							bool first = true;
+							foreach (AbsoluteTopicName eachAbs in absoluteNames)
+							{	
+								if (!first)
+									clickEvent += ", ";
+								first = false;
+								clickEvent += "new Array(\"" + eachAbs + "\", \"" + LinkMaker().LinkToTopic(eachAbs) + "\")";
+							}
+							clickEvent += "));'";
+
+							str = ReplaceMatch(answer, str, m, before + "<a title='Different versions of this topic exist.  Click to pick one.' " + clickEvent + ">" + displayname + "</a>" + after) ;
+						}
 					}
+				}
+				else
+				{
+					str = ReplaceMatch(answer, str, m, before + relName.Fullname + after);
 				}
 			}
 
