@@ -108,7 +108,7 @@ namespace FlexWiki.Web.Admin
 			{
 				foreach (NamespaceProviderDefinition each in TheFederation.CurrentConfiguration.NamespaceMappings)
 				{
-					if (each.TemporaryIdentifier == providerID)
+					if (each.Id == providerID)
 					{
 						def = each;
 						break;
@@ -148,7 +148,7 @@ namespace FlexWiki.Web.Admin
 						// Great!  All's OK.  Create/modify the provider
 						if (def == null)
 						{
-							def = new NamespaceProviderDefinition(AssemblyNamePart, TypeNamePart);
+							def = new NamespaceProviderDefinition(AssemblyNamePart, TypeNamePart, Guid.NewGuid().ToString());
 						}
 						foreach (NamespaceProviderParameterDescriptor each in provider.ParameterDescriptors)
 						{
@@ -268,7 +268,7 @@ namespace FlexWiki.Web.Admin
 			get
 			{
 				Type answer = null;
-				NamespaceProviderDefinition def = new NamespaceProviderDefinition(AssemblyNamePart, TypeNamePart);
+				NamespaceProviderDefinition def = new NamespaceProviderDefinition(AssemblyNamePart, TypeNamePart, Guid.NewGuid().ToString());
 				try
 				{
 					answer = def.ProviderType;

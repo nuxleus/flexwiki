@@ -132,7 +132,7 @@ namespace FlexWiki.Web.Admin
 				foreach (NamespaceProviderDefinition inner in each)
 				{
 					UIResponse.WriteStartRow();
-					UIResponse.WriteCell(UIResponse.CommandLink("EditProvider.aspx?Provider=" + inner.TemporaryIdentifier, UIResponse.Command.Edit, "edit this provider's information"));
+					UIResponse.WriteCell(UIResponse.CommandLink("EditProvider.aspx?Provider=" + inner.Id, UIResponse.Command.Edit, "edit this provider's information"));
 					foreach (NamespaceProviderParameter parm in inner.Parameters)
 						UIResponse.WriteCell(UIResponse.Escape(parm.Value));
 					UIResponse.WriteEndRow();

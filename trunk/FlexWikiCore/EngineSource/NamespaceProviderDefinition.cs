@@ -22,27 +22,33 @@ namespace FlexWiki
 	/// </summary>
 	public class NamespaceProviderDefinition
 	{
+
 		/// <summary>
 		/// Answer a definition object for the given namespace
 		/// </summary>
 		/// <param name="type">Type (class name)</param>
 		/// <param name="assembly">Assembly containing the type (or null for the core engine)</param>
-		public NamespaceProviderDefinition(string assembly, string type)
+		/// <param name="uniqueId">Unique identifier for the provider.</param>
+		public NamespaceProviderDefinition(string assembly, string type, string uniqueId)
 		{
 			_Type = type;
 			_AssemblyName = assembly;
-			AssignTemporaryIdentifier();
+			_Id = uniqueId;
 		}
 
-		[XmlIgnore]
-		public string TemporaryIdentifier
+		[XmlAttribute]
+		public string Id
 		{
 			get
 			{
-				return _TemporaryIdentifier;
+				return _Id;
+			}
+			set
+			{
+				_Id = value;
 			}
 		}
-		string _TemporaryIdentifier;
+		string _Id;
 		
 		ArrayList _Parameters = new ArrayList();
 		[XmlArray(ElementName = "Parameters"), 
@@ -100,15 +106,9 @@ namespace FlexWiki
 			}
 		}
 
-
 		public NamespaceProviderDefinition()
 		{
-			AssignTemporaryIdentifier();
-		}
-
-		void AssignTemporaryIdentifier()
-		{
-			_TemporaryIdentifier = Guid.NewGuid().ToString();
+			_Id = Guid.NewGuid().ToString();
 		}
 
 		[XmlAttribute]

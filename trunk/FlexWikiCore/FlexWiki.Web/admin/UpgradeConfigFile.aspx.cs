@@ -74,7 +74,7 @@ namespace FlexWiki.Web.Admin
 			{
 				UIResponse.WritePara("Converting namespace " + HTMLWriter.Escape(each.Namespace) + "...");
 
-				NamespaceProviderDefinition def = new NamespaceProviderDefinition(typeof(FileSystemNamespaceProvider).Assembly.FullName, typeof(FileSystemNamespaceProvider).FullName);
+				NamespaceProviderDefinition def = new NamespaceProviderDefinition(typeof(FileSystemNamespaceProvider).Assembly.FullName, typeof(FileSystemNamespaceProvider).FullName, Guid.NewGuid().ToString());
 				def.SetParameter("Root", each.Root);
 				def.SetParameter("Namespace", each.Namespace);
 				config.NamespaceMappings.Add(def);
