@@ -14,12 +14,11 @@ using System;
 using System.Xml;
 using System.Xml.Serialization; 
 
-namespace FlexWiki.Web.Services
+namespace FlexWiki.Web.Services.WireTypes
 {
   [XmlType(Namespace="http://www.flexwiki.com/webservices/")]
-  [XmlInclude(typeof(BELObjectWireFormat))]
-  [XmlInclude(typeof(ContentBaseWireFormat))]
-  public abstract class ReflectedValueSourceWireFormat 
+  [XmlInclude(typeof(ContentBase))]
+  public abstract class BELObject : ReflectedValueSource
   {
   }
 }

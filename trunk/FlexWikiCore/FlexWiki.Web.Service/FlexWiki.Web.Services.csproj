@@ -99,32 +99,7 @@
         <Files>
             <Include>
                 <File
-                    RelPath = "AbsoluteTopicNameWireFormat.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "AbsoluteTopicNameWireFormatCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "AssemblyInfo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "BELObjectWireFormat.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ContentBaseWireFormat.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ContentBaseWireFormatCollection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -139,23 +114,53 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "ReflectedValueSourceWireFormat.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "SharedAssemblyInfo.cs"
                     Link = "..\SharedAssemblyInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "TopicNameWireFormat.cs"
+                    RelPath = "WireTypes\AbsoluteTopicName.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "TopicNameWireFormatCollection.cs"
+                    RelPath = "WireTypes\AbsoluteTopicNameCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "WireTypes\BELObject.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "WireTypes\ContentBase.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "WireTypes\ContentBaseCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "WireTypes\ReflectedValueSource.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "WireTypes\TopicName.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "WireTypes\TopicNameCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "WireTypes\WikiVersion.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

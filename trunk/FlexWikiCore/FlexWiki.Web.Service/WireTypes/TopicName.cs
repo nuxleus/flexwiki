@@ -14,11 +14,11 @@ using System;
 using System.Xml;
 using System.Xml.Serialization; 
 
-namespace FlexWiki.Web.Services
+namespace FlexWiki.Web.Services.WireTypes
 {
   [XmlType(Namespace="http://www.flexwiki.com/webservices/")]
-  [XmlInclude(typeof(AbsoluteTopicNameWireFormat))]
-  public abstract class TopicNameWireFormat 
+  [XmlInclude(typeof(AbsoluteTopicName))]
+  public abstract class TopicName
   {
     private string fullnameWithVersion;
     private string version;

@@ -14,10 +14,10 @@ using System;
 using System.Xml;
 using System.Xml.Serialization; 
 
-namespace FlexWiki.Web.Services
+namespace FlexWiki.Web.Services.WireTypes
 {
   [XmlType(Namespace="http://www.flexwiki.com/webservices/")]
-  public class ContentBaseWireFormat : BELObjectWireFormat 
+  public class ContentBase : BELObject
   {
     private DateTime created;
     private DateTime lastRead;
@@ -30,11 +30,11 @@ namespace FlexWiki.Web.Services
     private string ns;
     private string title;
 
-    public ContentBaseWireFormat()
+    public ContentBase()
     {
     }
 
-    public ContentBaseWireFormat(ContentBase contentBase)
+    public ContentBase(FlexWiki.ContentBase contentBase)
     {
       this.Created = contentBase.Created; 
       this.LastRead = contentBase.LastRead; 

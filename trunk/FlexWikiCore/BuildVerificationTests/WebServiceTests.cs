@@ -19,6 +19,8 @@ using System.Text.RegularExpressions;
 
 using NUnit.Framework; 
 
+using FlexWiki.BuildVerificationTests.EditService; 
+
 namespace FlexWiki.BuildVerificationTests
 {
   [TestFixture]
@@ -52,7 +54,8 @@ namespace FlexWiki.BuildVerificationTests
       // Back up the wiki configuration
       oldWikiState = TestUtilities.BackupWikiState(); 
 
-      // Recreate the wiki each time so we start from a known state
+      // Recreate the wiki each time so we start from a known state. Otherwise, tests
+      // that (for example) retrieve old versions might not get what they expect.
       federation = TestUtilities.CreateFederation("TestFederation", testContent); 
     }
 
@@ -72,7 +75,7 @@ namespace FlexWiki.BuildVerificationTests
     [Test]
     public void GetAllNamespaces()
     {
-      ContentBaseWireFormat[] bases = proxy.GetAllNamespaces(); 
+      EditService.ContentBase[] bases = proxy.GetAllNamespaces(); 
       Assert.AreEqual(testContent.Namespaces.Length, bases.Length, "Checking that the correct number of content bases was returned"); 
       
       for (int i = 0; i < testContent.Namespaces.Length; ++i)
@@ -86,9 +89,9 @@ namespace FlexWiki.BuildVerificationTests
     public void GetAllTopics()
     {
       TestNamespace testNamespace = testContent.Namespaces[1]; 
-      ContentBaseWireFormat contentBase = new ContentBaseWireFormat(); 
+      EditService.ContentBase contentBase = new EditService.ContentBase(); 
       contentBase.Namespace = testNamespace.Name; 
-      AbsoluteTopicNameWireFormat[] topics = proxy.GetAllTopics(contentBase); 
+      EditService.AbsoluteTopicName[] topics = proxy.GetAllTopics(contentBase); 
 
       // We might get some extra topics back, as FlexWiki will create things like 
       // HomePage and _ContentBaseDefinition for us. 
@@ -108,7 +111,7 @@ namespace FlexWiki.BuildVerificationTests
     [Test]
     public void GetDefaultNamespace()
     {
-      ContentBaseWireFormat contentBase = proxy.GetDefaultNamespace(); 
+      EditService.ContentBase contentBase = proxy.GetDefaultNamespace(); 
 
       Assert.AreEqual(testContent.Namespaces[0].Name, contentBase.Namespace, 
         "Checking that the correct default namespace was returned"); 
@@ -118,7 +121,7 @@ namespace FlexWiki.BuildVerificationTests
     public void GetHtmlForTopic()
     {
       TestNamespace testNamespace = testContent.Namespaces[1]; 
-      AbsoluteTopicNameWireFormat topicName = new AbsoluteTopicNameWireFormat(); 
+      EditService.AbsoluteTopicName topicName = new EditService.AbsoluteTopicName(); 
       topicName.Namespace = testNamespace.Name; 
       topicName.Name = testNamespace.Topics[1].Name; 
       string html = proxy.GetHtmlForTopic(topicName); 
@@ -136,7 +139,7 @@ namespace FlexWiki.BuildVerificationTests
       TestTopic testTopic = testNamespace.Topics[2];
       string oldVersion = GetVersions(testNamespace.Name, testTopic.Name)[0]; 
 
-      AbsoluteTopicNameWireFormat topicName = new AbsoluteTopicNameWireFormat(); 
+      EditService.AbsoluteTopicName topicName = new EditService.AbsoluteTopicName(); 
       topicName.Namespace = testNamespace.Name; 
       topicName.Name = testTopic.Name; 
       string html = proxy.GetHtmlForTopicVersion(topicName, oldVersion); 
@@ -145,11 +148,115 @@ namespace FlexWiki.BuildVerificationTests
         "Checking that old content was returned"); 
     }
 
+    [Test]
+    public void GetPreviewForTopic()
+    {
+      TestNamespace testNamespace = testContent.Namespaces[1]; 
+      TestTopic testTopic = testNamespace.Topics[2];
+      EditService.AbsoluteTopicName topicName = new EditService.AbsoluteTopicName(); 
+      topicName.Namespace = testNamespace.Name; 
+      topicName.Name = testTopic.Name; 
+
+      string html = proxy.GetPreviewForTopic(topicName, "This is some unrelated text with a WikiWord in it."); 
+
+      Assert.IsTrue(html.IndexOf("This is some unrelated text") != 0, 
+        "Checking that plain text was rendered to HTML"); 
+      Assert.IsTrue(Regex.IsMatch(html, @"\<a.*\>WikiWord.*\</a\>"), 
+        "Checking that a link was rendered"); 
+
+    } 
+
+    [Test]
+    public void GetTextForTopic()
+    {
+      TestNamespace testNamespace = testContent.Namespaces[1]; 
+      TestTopic testTopic = testNamespace.Topics[2];
+      EditService.AbsoluteTopicName topicName = new EditService.AbsoluteTopicName(); 
+      topicName.Namespace = testNamespace.Name; 
+      topicName.Name = testTopic.Name; 
+
+      string text = proxy.GetTextForTopic(topicName); 
+
+      Assert.AreEqual(testTopic.LatestContent, text, "Checking that correct text was returned"); 
+    }
+
+    [Test]
+    public void GetVersionsForTopic()
+    {
+      TestNamespace testNamespace = testContent.Namespaces[1]; 
+      TestTopic testTopic = testNamespace.Topics[2];
+      EditService.AbsoluteTopicName topicName = new EditService.AbsoluteTopicName(); 
+      topicName.Namespace = testNamespace.Name; 
+      topicName.Name = testTopic.Name; 
+
+      string[] versions = proxy.GetVersionsForTopic(topicName); 
+      StringCollection expectedVersions = GetVersions(testNamespace.Name, testTopic.Name); 
+
+      Assert.AreEqual(expectedVersions.Count, versions.Length, "Checking that right number of versions were returned"); 
+
+      int n = expectedVersions.Count; 
+      for (int i = 0; i < n; ++i)
+      {
+        // Versions are returned from the web service in reverse order
+        Assert.AreEqual(expectedVersions[i], versions[n - i - 1], "Checking that correct version was returned"); 
+      }
+
+    }
+
+    [Test]
+    public void GetWikiVersion()
+    {
+      WikiVersion version = proxy.GetWikiVersion(); 
+
+      bool nonzeroVersion = 
+        version.Major != 0 ||
+        version.Minor != 0 ||
+        version.Build != 0 ||
+        version.Revision != 0; 
+
+      Assert.IsTrue(nonzeroVersion, "Checking that at least one element of the wiki version is nonzero"); 
+    }
+
+    [Test]
+    public void RestoreTopic()
+    {
+      TestNamespace testNamespace = testContent.Namespaces[1]; 
+      TestTopic testTopic = testNamespace.Topics[2];
+      EditService.AbsoluteTopicName topicName = new EditService.AbsoluteTopicName(); 
+      topicName.Namespace = testNamespace.Name; 
+      topicName.Name = testTopic.Name; 
+      StringCollection versions = GetVersions(testNamespace.Name, testTopic.Name); 
+
+      proxy.RestoreTopic(topicName, "BuildVerificationTests", versions[0]); 
+
+      string text = proxy.GetTextForTopic(topicName); 
+
+      Assert.AreEqual(testTopic.ContentHistory[0], text, "Checking that topic text was restored"); 
+    }
+
+    [Test]
+    public void SetTextForTopic()
+    {
+      TestNamespace testNamespace = testContent.Namespaces[1]; 
+      TestTopic testTopic = testNamespace.Topics[2];
+      string newContent = "This is the replacement text.";
+
+      EditService.AbsoluteTopicName topicName = new EditService.AbsoluteTopicName(); 
+      topicName.Namespace = testNamespace.Name; 
+      topicName.Name = testTopic.Name; 
+
+      proxy.SetTextForTopic(topicName, newContent, "BuildVerificationTests"); 
+
+      string retrievedContent = proxy.GetTextForTopic(topicName); 
+
+      Assert.AreEqual(newContent, retrievedContent, "Checking that topic text was updated on the remote wiki."); 
+
+    }
     
     private StringCollection GetVersions(string ns, string topic)
     {
       StringCollection versions = new StringCollection(); 
-      AbsoluteTopicName atn = new AbsoluteTopicName(topic, ns); 
+      FlexWiki.AbsoluteTopicName atn = new FlexWiki.AbsoluteTopicName(topic, ns); 
       foreach (TopicChange change in federation.GetTopicChanges(atn))
       {
         // They appear to come in reverse chronological order, so we 
@@ -160,9 +267,9 @@ namespace FlexWiki.BuildVerificationTests
       return versions; 
     }
 
-    private bool HasNamespace(ContentBaseWireFormat[] bases, string name)
+    private bool HasNamespace(EditService.ContentBase[] bases, string name)
     {
-      foreach (ContentBaseWireFormat contentBase in bases)
+      foreach (EditService.ContentBase contentBase in bases)
       {
         if (contentBase.Namespace == name)
         {
@@ -173,9 +280,9 @@ namespace FlexWiki.BuildVerificationTests
       return false; 
     }
 
-    private bool HasTopic(AbsoluteTopicNameWireFormat[] topics, string name)
+    private bool HasTopic(EditService.AbsoluteTopicName[] topics, string name)
     {
-      foreach (AbsoluteTopicNameWireFormat topic in topics)
+      foreach (EditService.AbsoluteTopicName topic in topics)
       {
         if (topic.Name == name)
         {

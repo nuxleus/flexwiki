@@ -14,8 +14,11 @@ using System;
 using System.Collections; 
 using System.Configuration; 
 using System.IO; 
+using System.Runtime.InteropServices; 
 using System.Xml; 
 using System.Xml.XPath; 
+
+using Microsoft.Win32.Security; 
 
 using FlexWiki.Formatting;
 
@@ -53,7 +56,6 @@ namespace FlexWiki.BuildVerificationTests
       return new WikiState(backupPath); 
     }
 
-
     internal static Federation CreateFederation(string root, TestContent content)
     {
       string contentDir = Path.Combine(Path.GetFullPath(root), "WikiBases"); 
@@ -63,6 +65,8 @@ namespace FlexWiki.BuildVerificationTests
       }
 
       Directory.CreateDirectory(contentDir); 
+      
+      TestUtilities.SetDirectoryWebWritable(contentDir); 
 
       FederationConfiguration configuration = new FederationConfiguration(); 
 
@@ -94,13 +98,13 @@ namespace FlexWiki.BuildVerificationTests
       
       foreach (TestNamespace ns in content.Namespaces)
       {
-        ContentBase contentBase = federation.ContentBaseForNamespace(ns.Name); 
+        FlexWiki.ContentBase contentBase = federation.ContentBaseForNamespace(ns.Name); 
         foreach (TestTopic topic in ns.Topics)
         {
           LocalTopicName name = new LocalTopicName(topic.Name); 
           foreach (string text in topic.ContentHistory)
           {
-            name.Version = AbsoluteTopicName.NewVersionStringForUser("BuildVerificationTests");
+            name.Version = FlexWiki.AbsoluteTopicName.NewVersionStringForUser("BuildVerificationTests");
             contentBase.WriteTopicAndNewVersion(name, text); 
             //CA We need to sleep a little while so we don't try to write two topics 
             //CA within the same time slice, or they get the same version name. 
@@ -162,7 +166,6 @@ namespace FlexWiki.BuildVerificationTests
 
     }
 
-
     internal static void RestoreWikiState(WikiState state)
     {
       if (File.Exists(state.ConfigPath))
@@ -177,6 +180,40 @@ namespace FlexWiki.BuildVerificationTests
       }
     }
 
+
+    internal static void SetDirectoryWebWritable(string path)
+    {
+      SecurityDescriptor sd = SecurityDescriptor.GetFileSecurity(path, SECURITY_INFORMATION.DACL_SECURITY_INFORMATION); 
+      Dacl dacl = sd.Dacl;
+
+      AddAceForAccount(dacl, "NETWORK SERVICE"); 
+      AddAceForAccount(dacl, "IUSR_" + Environment.MachineName); 
+
+      sd.SetDacl(dacl); 
+      sd.SetFileSecurity(path, SECURITY_INFORMATION.DACL_SECURITY_INFORMATION);
+    }
+
+    private static void AddAceForAccount(Dacl dacl, string account)
+    {
+      bool accountExists = true;
+
+      Sid sid = null; 
+      try
+      {
+        sid = new Sid(account); 
+      }
+      catch (COMException)
+      {
+        accountExists = false; 
+      }
+
+      if (accountExists)
+      {
+        AceAccessAllowed netAce = new AceAccessAllowed(sid, AccessType.GENERIC_ALL, AceFlags.CONTAINER_INHERIT_ACE | AceFlags.OBJECT_INHERIT_ACE); 
+        dacl.AddAce(netAce); 
+      }
+
+    }
     
   }
 }
