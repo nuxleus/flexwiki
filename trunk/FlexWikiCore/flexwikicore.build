@@ -297,6 +297,7 @@
        .sln file into the target directory -->
   <target name="build" depends="init" unless="${build.skip}">
     <solution configuration="${configuration}" 
+        includevsfolders="false"
 	      outputdir="${targetdir}"
 	      solutionfile="${nant.project.name}.sln" />
   </target>
