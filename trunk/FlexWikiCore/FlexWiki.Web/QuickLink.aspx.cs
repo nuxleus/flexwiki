@@ -12,6 +12,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
@@ -72,8 +73,9 @@ namespace FlexWiki.Web
 			else if (hits.Count == 1)
 			{
 				// 1 hit; take it!
-				target = lm.LinkToTopic((TopicName)(hits[0]));
-				target += "&DelayRedirect=1";
+				NameValueCollection extras = new NameValueCollection();
+				extras.Add("DelayRedirect", "1");
+				target = lm.LinkToTopic((TopicName)(hits[0]), false, extras);
 			}
 
 			// If we have a target, go there
