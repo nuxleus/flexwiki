@@ -334,9 +334,34 @@ but the namespace you specified can not be found (either because it's not listed
 		
 		void CheckProviders(FederationConfiguration config )
 		{
+			ArrayList uniqueProviders = new ArrayList();
+
 			// Now make sure each provider is well-defined
 			foreach (NamespaceProviderDefinition provider in config.NamespaceMappings)
 			{
+				if (provider.Id == null || (provider.Id != null && provider.Id.Length == 0))
+				{
+					Result r = new Result("Missing Id attribute in <Namespace> element", Result.Level.Error);
+					r.Writer.Write(@"<p>You did not specify the a unique Id for the NamespaceProvider in the in the &lt;Namespaces&gt; section of the configuration file.
+	<p>Here is an example of a valid federation configuration file:");			
+					r.Writer.Write(ExampleConfig());
+					AddResult(r);
+				}
+				if( provider.Id != null )
+				{
+					if( uniqueProviders.Contains(provider.Id) )
+					{
+						Result r = new Result("Id attribute value in <Namespace> element must be unique", Result.Level.Error);
+						r.Writer.Write(@"<p>You specified a non-unique Id:&quot;" + provider.Id + @"&quot; for the NamespaceProvider in the in the &lt;Namespaces&gt; section of the configuration file.
+	<p>Here is an example of a valid federation configuration file:");			
+						r.Writer.Write(ExampleConfig());
+						AddResult(r);		
+					}
+					else
+					{
+						uniqueProviders.Add(provider.Id);
+					}
+				}
 				if (provider.Type == null)
 				{
 					Result r = new Result("Missing Type attribute in &lt;Namespace&gt; element", Result.Level.Error);
@@ -497,8 +522,8 @@ configuration file is stored here: <b>" + HTMLWriter.Escape(FederationNamespaceM
 <FederationConfiguration>
   <DefaultNamespace>FlexWiki</DefaultNamespace>
   <Namespaces>
-		<Namespace Type=""FlexWiki.FileSystemStore"" Connection="".\wikibases\FlexWiki"" Namespace=""FlexWiki"" />
-		<Namespace Type=""FlexWiki.FileSystemStore"" Connection="".\wikibases\Some.Other.Namespace"" Namespace=""Some.Other.Namespace"" />
+		<Namespace Id=""238f8774-a470-4f2e-93a0-07252e99fcb9"" Type=""FlexWiki.FileSystemStore"" Connection="".\wikibases\FlexWiki"" Namespace=""FlexWiki"" />
+		<Namespace Id=""890e8874-a470-4f2e-93a0-07252e99ed19"" Type=""FlexWiki.FileSystemStore"" Connection="".\wikibases\Some.Other.Namespace"" Namespace=""Some.Other.Namespace"" />
   </Namespaces>
   <About>This site is the home of FlexWiki, an experimental collaboration tool.</About>
 </FederationConfiguration>"));

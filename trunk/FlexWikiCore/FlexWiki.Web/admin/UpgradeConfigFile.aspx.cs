@@ -81,6 +81,15 @@ namespace FlexWiki.Web.Admin
 			}
 			config.DeprecatedNamespaceDefinitions.Clear();
 
+			foreach(NamespaceProviderDefinition providerDefinition in config.NamespaceMappings)
+			{
+				// Upgrade the id if it is null or empty.
+				if(providerDefinition.Id == null || (providerDefinition.Id != null && providerDefinition.Id.Length == 0))
+				{
+					providerDefinition.Id = Guid.NewGuid().ToString();					
+				}
+			}
+
 			UIResponse.WritePara("Writing updated configuration file: " + HTMLWriter.Escape(config.FederationNamespaceMapFilename));
 			config.WriteToFile(config.FederationNamespaceMapFilename);
 

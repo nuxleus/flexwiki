@@ -108,7 +108,6 @@ namespace FlexWiki
 
 		public NamespaceProviderDefinition()
 		{
-			_Id = Guid.NewGuid().ToString();
 		}
 
 		[XmlAttribute]

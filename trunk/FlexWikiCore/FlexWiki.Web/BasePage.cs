@@ -531,6 +531,17 @@ namespace FlexWiki.Web
 			if (config.DeprecatedNamespaceDefinitions != null && config.DeprecatedNamespaceDefinitions.Count > 0)
 				needed = true;
 
+			foreach(NamespaceProviderDefinition providerDefinition in config.NamespaceMappings)
+			{
+				// If we find atleast one namespace provider definition with no Id
+				// or Id that is empty we force an upgrade.
+				if(providerDefinition.Id == null || (providerDefinition.Id != null && providerDefinition.Id.Length == 0))
+				{
+					needed = true;
+					break;
+				}
+			}
+
 			// OK we've figured it out
 			if (!needed)
 				return false;
