@@ -186,8 +186,8 @@ namespace FlexWiki.BuildVerificationTests
       SecurityDescriptor sd = SecurityDescriptor.GetFileSecurity(path, SECURITY_INFORMATION.DACL_SECURITY_INFORMATION); 
       Dacl dacl = sd.Dacl;
 
-      AddAceForAccount(dacl, "NETWORK SERVICE"); 
-      AddAceForAccount(dacl, "IUSR_" + Environment.MachineName); 
+      AddAceForAccount(dacl, "NETWORK SERVICE"); // IIS6 process identity
+      AddAceForAccount(dacl, "ASPNET");          // IIS5 process identity
 
       sd.SetDacl(dacl); 
       sd.SetFileSecurity(path, SECURITY_INFORMATION.DACL_SECURITY_INFORMATION);
