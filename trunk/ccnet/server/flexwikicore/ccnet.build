@@ -3,7 +3,7 @@
     
     <!-- Update the build directory with the latest sources -->
     <exec program="cvs.exe"
-	  workingdir="build">
+	      workingdir="build">
       <arg value="update" /> <!-- Command -->
       <arg value="-P" /> <!-- Prune empty dirs -->
       <arg value="-R" /> <!-- Recursive -->
@@ -12,13 +12,12 @@
     </exec>
 
     <!-- Override the version numbers when building from CCNet -->
-    <property name="verbuild" value="${label-to-apply}" />
-    <property name="verrevision" value="0" />
+    <property name="verrevision" value="${label-to-apply}" />
 
     <!-- Build the project --> 
     <nant buildfile="build\flexwikicore.build"
-	  inheritall="true"
-	  target="clean dist" />
+	      inheritall="true"
+	      target="clean dist" />
 
     <!-- Figure out what version just got built -->
     <property name="versionfile" value="build\reports\version.xml" />
@@ -35,15 +34,14 @@
 	     property="verrevision"
 	     xpath="/version/revision" />
     
-    <!-- Move the zips to the directory where they can be downloaded
-    -->
+    <!-- Move the zips to the directory where they can be downloaded -->
     <property name="downloaddir" 
 	      value="download\${vermajor}.${verminor}.${verbuild}.${verrevision}" />
     <mkdir dir="${downloaddir}" />
     <copy todir="${downloaddir}">
       <fileset basedir="build\dist">
-	<includes
-	  name="*${vermajor}.${verminor}.${verbuild}.${verrevision}*.zip" />
+	      <includes
+	        name="*${vermajor}.${verminor}.${verbuild}.${verrevision}*.zip" />
       </fileset>
     </copy>
 
