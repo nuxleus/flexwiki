@@ -82,9 +82,9 @@ namespace FlexWiki
 
 		ArrayList _Mappings = new ArrayList();
 
-		[XmlArray(ElementName = "Namespaces"), 
-		XmlArrayItem(ElementName= "Namespace", 
-			Type = typeof(NamespaceToRoot))
+		[XmlArray(ElementName = "NamespaceProviders"), 
+		XmlArrayItem(ElementName= "Provider", 
+			Type = typeof(NamespaceProviderDefinition))
 		]
 		public ArrayList NamespaceMappings
 		{
@@ -95,6 +95,25 @@ namespace FlexWiki
 			set
 			{
 				_Mappings = value;
+			}
+		}
+
+		ArrayList _DeprecatedDefinitions = new ArrayList();
+
+		// Support reading in the old-style <Namespaces> element -- just to help users convert
+		[XmlArray(ElementName = "Namespaces"), 
+		XmlArrayItem(ElementName= "Namespace", 
+			Type = typeof(DeprecatedNamespaceDefinition))
+		]
+		public ArrayList DeprecatedNamespaceDefinitions
+		{
+			get
+			{
+				return _DeprecatedDefinitions;
+			}
+			set
+			{
+				_DeprecatedDefinitions = value;
 			}
 		}
 

@@ -84,10 +84,18 @@ namespace FlexWiki.UnitTests
 		{
 			AbsoluteTopicName name = new AbsoluteTopicName(localName, cb.Namespace);
 			name.Version = AbsoluteTopicName.NewVersionStringForUser(author);
-			cb.WriteTopicAndNewVersion(name, content);
-			return new AbsoluteTopicName(localName, cb.Namespace);
+			cb.WriteTopicAndNewVersion(name.LocalName, content);
+			return name;
+			//return new AbsoluteTopicName(localName, cb.Namespace);
 		}
 
+		protected FileSystemStore CreateFileSystemStore(string ns)
+		{
+			string path = "\\" + ns;	
+			FileSystemStore store = new FileSystemStore(TheFederation, ns, path);
+			TheFederation.RegisterNamespace(store);
+			return store;
+		}
 
 	}
 }

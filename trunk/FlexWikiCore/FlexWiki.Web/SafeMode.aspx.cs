@@ -112,7 +112,7 @@ namespace FlexWiki.Web
 				string description = TheFederation.GetTopicProperty(GetTopicName(), "Summary");
 				if (description != "")
 					Response.Write("<META name=\"description\" content=\"" + description + "\">\n");
-				Response.Write("<META name=\"author\" content=\"" + DefaultContentBase.GetTopicLastAuthor(GetTopicName()) + "\">\n");
+				Response.Write("<META name=\"author\" content=\"" + TheFederation.GetTopicLastModifiedBy(GetTopicName()) + "\">\n");
 
 			}
 			else

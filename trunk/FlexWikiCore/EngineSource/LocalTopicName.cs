@@ -163,5 +163,12 @@ namespace FlexWiki
 
 		#endregion
 
+		public AbsoluteTopicName AsAbsoluteTopicName(string ns)
+		{
+			AbsoluteTopicName answer = new AbsoluteTopicName(Name, ns);
+			answer.Version = Version;
+			return answer;
+		}
+
 	}
 }

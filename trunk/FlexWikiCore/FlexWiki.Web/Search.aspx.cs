@@ -114,7 +114,7 @@ namespace FlexWiki.Web
 					bool header = false;
 					foreach (AbsoluteTopicName topic in (ArrayList)(searchTopics[cb]))
 					{
-						string s = cb.Read(topic);
+						string s = TheFederation.Read(topic);
 						string bodyWithTitle = topic.ToString() + s;
 						
 						if (Regex.IsMatch(bodyWithTitle, search, RegexOptions.IgnoreCase))

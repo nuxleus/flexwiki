@@ -14,6 +14,7 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Data;
+using System.Configuration;
 using System.Drawing;
 using System.Web;
 using System.Web.SessionState;
@@ -29,35 +30,105 @@ namespace FlexWiki.Web.Admin
 	/// </summary>
 	public class Default : AdminPage
 	{
-		protected System.Web.UI.WebControls.Image Image3;
-		protected System.Web.UI.WebControls.Image Image4;
-		protected System.Web.UI.WebControls.Image Image2;
-		protected System.Web.UI.WebControls.Image Image5;
-	
-		private void Page_Load(object sender, System.EventArgs e)
+
+		protected override void PageLoad()
 		{
-			// Put user code to initialize the page here
 		}
 
-		#region Web Form Designer generated code
-		override protected void OnInit(EventArgs e)
+		protected void ShowBody()
 		{
-			//
-			// CODEGEN: This call is required by the ASP.NET Web Form Designer.
-			//
-			InitializeComponent();
-			base.OnInit(e);
+			UIResponse.ShowPage("FlexWiki Administration Home", new UIResponse.MenuWriter(ShowAdminMenu), new UIResponse.BodyWriter(ShowMain));
 		}
-		
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{    
-			this.Load += new System.EventHandler(this.Page_Load);
 
+		override protected void EnsurePluginsLoaded()
+		{
+			// We ignore errors as the config checker will get them in the context of this specific page
+			try
+			{
+				base.EnsurePluginsLoaded();
+			}
+			catch (Exception)
+			{
+			}
 		}
-		#endregion
+   
+		void ShowMain()
+		{
+			if (CheckForConfigurationFormatUpgrade())
+				return;
+
+			string config = ConfigurationSettings.AppSettings["FederationNamespaceMapFile"];
+			string mappedConfig = (config == null ? null : MapPath(config));
+			ConfigurationChecker checker = new ConfigurationChecker(
+				config,
+				mappedConfig);
+
+			checker.Check();
+			checker.WriteStoplightTo(UIResponse);
+
+			UIResponse.WriteDivider();
+
+			Federation aFederation = null;
+			try
+			{
+				aFederation = new Federation(mappedConfig, Formatting.OutputFormat.HTML, new LinkMaker(""));
+			}
+			catch (Exception)
+			{
+			}
+
+			if (aFederation != null)
+				ShowFederationInfo(aFederation);
+		}
+
+
+		void ShowFederationInfo(Federation aFederation)
+		{
+			LinkMaker lm = new LinkMaker(RootUrl(Request));
+
+			UIResponse.WritePara(UIResponse.Bold("General Federation Information"));
+			UIResponse.WriteStartKVTable();
+			UIResponse.WriteKVRow("Created", HTMLWriter.Escape(aFederation.Created.ToString()));
+			UIResponse.WriteKVRow("Default Namespace", HTMLWriter.Escape(aFederation.DefaultNamespace.ToString()));
+			UIResponse.WriteEndKVTable();
+
+			UIResponse.WriteDivider();
+
+			UIResponse.WritePara(UIResponse.Bold("Namespace Information"));
+
+			UITable namespacesTable = new UITable();
+			namespacesTable.AddColumn(new UIColumn("Namespace"));
+			namespacesTable.AddColumn(new UIColumn("Title"));
+			namespacesTable.AddColumn(new UIColumn("Imports"));
+
+			UIResponse.WriteStartTable(namespacesTable);
+			foreach (ContentBase each in aFederation.ContentBases)
+			{
+				UIResponse.WriteStartRow();
+
+				string ns = each.Namespace;
+				UIResponse.WriteCell(
+					UIResponse.Bold(
+						UIResponse.Link(lm.LinkToTopic(new AbsoluteTopicName(each.HomePage, each.Namespace), false), 
+							UIResponse.Escape(each.Namespace))));
+
+				UIResponse.WriteCell(HTMLWriter.Escape(each.Title));
+
+				string imports = "";
+				foreach (string e in each.ImportedNamespaces)
+				{
+					if (imports != "")
+						imports += ", ";
+					imports += e;
+				}
+
+				UIResponse.WriteCell(HTMLWriter.Escape(imports));
+
+				UIResponse.WriteEndRow();
+
+			}
+			UIResponse.WriteEndTable();
+		}
+
 	}
 }

@@ -10,8 +10,10 @@
 // You must not remove this notice, or any other, from this software.
 #endregion
 
+
 using System;
 using FlexWiki.Web;
+using System.Configuration;
 
 namespace FlexWiki.Web.Admin
 {
@@ -31,6 +33,21 @@ namespace FlexWiki.Web.Admin
 				return "../";
 			}
 		}
+
+		protected void ShowAdminMenu()
+		{
+			UIResponse.WriteStartMenu("Administration");
+			UIResponse.WriteMenuItem("default.aspx", "Home", "Go to the home page for FlexWiki administration");
+			UIResponse.WriteMenuItem("Providers.aspx", "Namespace providers", "View and edit namespace providers for this federation");
+			UIResponse.WriteMenuItem("config.aspx", "Validate Configuration", "Validate that your FlexWiki site is correctly configured");
+			UIResponse.WriteMenuItem("Newsletter.aspx", "Newsletter Daemon", "Show information about the newsletter delivery daemon status");
+			UIResponse.WriteMenuItem("ShowCache.aspx", "Show Cache", "Show a list of everything in the cache (and, optionally, clear the cache)");
+			UIResponse.WriteMenuItem("ShowUpdates.aspx", "Show Updates", "Show recent changes to the federation");
+			UIResponse.WriteEndMenu();
+		}
+
+
+
 
 	}
 }

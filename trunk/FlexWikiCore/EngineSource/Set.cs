@@ -12,16 +12,17 @@
 
 using System;
 using System.Collections;
+using System.Collections.Specialized;
 
 namespace FlexWiki
 {
 	public class Set : IEnumerable
 	{
-		Hashtable hash = new Hashtable();
+		HybridDictionary hash = new HybridDictionary();
 
 		public void Add(object obj)
 		{
-			if (hash.ContainsKey(obj))
+			if (hash.Contains(obj))
 				return;
 			hash[obj] = null;
 		}
@@ -34,7 +35,7 @@ namespace FlexWiki
 
 		public bool Contains(object obj)
 		{
-			return hash.ContainsKey(obj);
+			return hash.Contains(obj);
 		}
 
 		public int Count

@@ -27,6 +27,15 @@ namespace FlexWiki
 			_Federation = aFed;
 		}
 
+		public override string ToString()
+		{
+			string answer = "TopicInfo for ";
+			if (Fullname != null)
+				answer += Fullname;
+			return answer;
+		}
+
+
 		AbsoluteTopicName _Fullname;
 
 		public AbsoluteTopicName Fullname
@@ -202,5 +211,6 @@ namespace FlexWiki
 		}
 
 		#endregion
+
 	}
 }

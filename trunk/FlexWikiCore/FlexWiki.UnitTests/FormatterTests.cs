@@ -19,6 +19,7 @@ using System.Text.RegularExpressions;
 using System.Reflection; 
 
 using FlexWiki.Formatting;
+using FlexWiki;
 
 using NUnit.Framework;
 
@@ -83,130 +84,6 @@ namespace FlexWiki.UnitTests
 
 	}
 
-	
-	
-	[TestFixture] public class CachingTests : WikiTests
-	{
-		ContentBase _cb, _cb2;
-		const string _base = "http://boo/";
-		LinkMaker _lm;
-		string user = "joe";
-
-		[SetUp] public void Init()
-		{
-			_lm = new LinkMaker(_base);
-			TheFederation = new Federation(OutputFormat.HTML, _lm);
-			TheFederation.WikiTalkVersion = 1;
-			string root = Path.GetFullPath("temp-wikibasex");
-			string root2 = Path.GetFullPath("temp-wikibasex2");
-			string ns = "FlexWiki";
-			string ns2 = "FlexWiki2";
-			TheFederation.Register(ns, root);		
-			TheFederation.Register(ns2, root2);		
-			_cb = TheFederation.ContentBaseForRoot(root);
-			_cb.Namespace = ns;
-
-			_cb2 = TheFederation.ContentBaseForRoot(root2);
-			_cb2.Namespace = ns2;
-
-			WriteTestTopicAndNewVersion(_cb, _cb.DefinitionTopicName.Name, @"Import: FlexWiki2
-Namespace: " + ns + @"
-", user);
-			WriteTestTopicAndNewVersion(_cb2, _cb2.DefinitionTopicName.Name, @"
-Namespace: " + ns2 + @"
-", user);
-			WriteTestTopicAndNewVersion(_cb, "HomePage", "This is a simple topic RefOne plus PluralWords reference to wiki://PresentIncluder wiki://TestLibrary/foo.gif", user);
-			WriteTestTopicAndNewVersion(_cb2, "AbsentIncluder", "{{NoSuchTopic}}", user);
-			WriteTestTopicAndNewVersion(_cb2, "PresentIncluder", "{{IncludePresent}}", user);
-			WriteTestTopicAndNewVersion(_cb2, "IncludePresent", "hey! this is ReferencedFromIncludePresent", user);
-			WriteTestTopicAndNewVersion(_cb2, "TestLibrary", "URI: whatever", user);
-		}
-
-		[Test] public void TestIncludeForPresentTopic()
-		{
-			CacheRule rule = GetCacheRuleForTopic("FlexWiki2.PresentIncluder");
-			AssertFileRule(rule, "IncludePresent.wiki");
-			AssertFileRule(rule, "ReferencedFromIncludePresent.wiki");
-		}
-
-		[Test] public void TestIncludeForAbsentTopic()
-		{
-			CacheRule rule = GetCacheRuleForTopic("FlexWiki2.AbsentIncluder");
-			AssertFileRule(rule, "NoSuchTopic.wiki");
-		}
-
-		[Test] public void TestWikiURLResourceLibraryCaching()
-		{
-			CacheRule rule = GetCacheRuleForTopic("FlexWiki.HomePage");
-			AssertFileRule(rule, "TestLibrary.wiki");
-		}
-
-
-		[Test] public void TestWikiURLTopicCaching()
-		{
-			CacheRule rule = GetCacheRuleForTopic("FlexWiki.HomePage");
-			AssertFileRule(rule, "PresentIncluder.wiki");
-		}
-
-		[Test] public void TestBasicTopicCaching()
-		{
-			CacheRule rule = GetCacheRuleForTopic("FlexWiki.HomePage");
-			AssertFileRule(rule, "HomePage.wiki");
-			AssertFileRule(rule, _cb.DefinitionTopicName.Name);	// getting the whole path is not convenient, but this should be enough
-		}
-
-		[Test] public void TestBasicTopicCachingAllPossibleVersions()
-		{
-			CacheRule rule = GetCacheRuleForTopic("FlexWiki.HomePage");
-			Assertion.AssertEquals("Want 2 refs to RefOne", 2, CountFileRuleMatches(rule, "RefOne.wiki"));	// We should see two cache rules, one for each of the two namespaces in which the referenced topic could appear
-			Assertion.AssertEquals("Want 2 refs to PluralWord", 2, CountFileRuleMatches(rule, "PluralWord.wiki"));	// We should see two refs to this (because it's a plural form)
-			Assertion.AssertEquals("Want 2 refs to PluralWords", 2, CountFileRuleMatches(rule, "PluralWords.wiki"));	// We should see two refs to this (because it's the natural form)
-		}
-
-		[TearDown] public void Deinit()
-		{
-			_cb.Delete();
-			_cb2.Delete();
-		}
-
-		void AssertFileRule(CacheRule rule, string path)
-		{
-			int count = CountFileRuleMatches(rule, path);
-			if (count == 0)
-				System.Console.Error.WriteLine("Rule: " + rule.Description);
-			Assertion.Assert("Searching for path (" + path + ") in cache rule", count > 0); 
-		}
-
-		int CountFileRuleMatches(CacheRule rule, string path)
-		{
-			int found = 0;
-			foreach (CacheRule r in rule.AllLeafRules)
-			{
-				if (r is FilesCacheRule)
-				{
-					FilesCacheRule fcr = (FilesCacheRule)r;
-					foreach (string p in fcr.Files)
-					{
-						if (p.IndexOf(path) >= 0)
-						{
-							found++;
-						}
-					}
-				}
-			}
-			return found;
-		}
-
-		CacheRule GetCacheRuleForTopic(string topic)
-		{
-			AbsoluteTopicName tn = new AbsoluteTopicName(topic);
-			CompositeCacheRule rule = new CompositeCacheRule();
-			Formatter.FormattedTopic(tn, OutputFormat.Testing, false, TheFederation, _lm, rule);
-			return rule;
-		}
-
-	}
-
 	[TestFixture] public class FormattingTests : WikiTests
 	{
 		ContentBase _cb;
@@ -238,11 +115,8 @@ Namespace: " + ns2 + @"
 			_lm = new LinkMaker(_base);
 			TheFederation = new Federation(OutputFormat.HTML, _lm);
 			TheFederation.WikiTalkVersion = 1;
-			string root = Path.GetFullPath("temp-wikibasex");
-			string ns = "FlexWiki";
-			TheFederation.Register(ns, root);		
-			_cb = TheFederation.ContentBaseForRoot(root);
-			_cb.Namespace = ns;
+
+			_cb = CreateFileSystemStore("FlexWiki");
 			_cb.Title  = "Friendly Title";
 
 			WriteTestTopicAndNewVersion(_cb, "HomePage", "Home is where the heart is", user);
@@ -1165,7 +1039,7 @@ And the text in the parens and brackets should be code formatted:
 
 		string FormattedTopic(AbsoluteTopicName top)
 		{
-			return FormattedTestText(TheFederation.ContentBaseForTopic(top).Read(top), top);
+			return FormattedTestText(TheFederation.ContentBaseForTopic(top).Read(top.LocalName), top);
 		}
 
 		void FormattedTopicContainsTest(AbsoluteTopicName top, string find)
@@ -1331,15 +1205,12 @@ Normal again
 
 		[SetUp] public void Init()
 		{
-			string _tempPath = @"\temp-wikitests";
 			string author = "tester-joebob";
 			_lm = new LinkMaker("http://bogusville");
 			TheFederation = new Federation(OutputFormat.HTML, _lm);
 
 			_versions = new ArrayList();
-			TheFederation.Register("FlexWiki.Base", _tempPath);
-			_base = TheFederation.ContentBaseForRoot(_tempPath);
-			_base.Namespace = "FlexWiki.Base";
+			_base = CreateFileSystemStore("FlexWiki.Base");
 
 			WriteTestTopicAndNewVersion(_base, "TopicOne", @"1
 2
@@ -1373,7 +1244,7 @@ b
 8
 9", author);
 
-			foreach (TopicChange change in _base.AllChangesForTopic(_base.TopicNameFor("TopicOne")))
+			foreach (TopicChange change in _base.AllChangesForTopic(new LocalTopicName("TopicOne")))
 				_versions.Add(change.Version);
 		}
 

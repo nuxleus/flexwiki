@@ -264,6 +264,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "DeprecatedNamespaceDefinition.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "DereferencePTN.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -339,12 +344,37 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "FederationCacheManager.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "FederationConfiguration.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "FilesCacheRule.cs"
+                    RelPath = "FederationUpdate.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "FederationUpdateEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "FederationUpdateGenerator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "FileSystemNamespaceProvider.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "FileSystemStore.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -389,6 +419,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GenerationCompleteEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Home.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -409,6 +444,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "IHTMLRenderable.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ILogEventFactory.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -425,6 +465,11 @@
                 />
                 <File
                     RelPath = "ImplementationException.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "INamespaceProvider.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -509,12 +554,27 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "NamespaceScope.cs"
+                    RelPath = "NamespaceProviderDefinition.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "NamespaceToRoot.cs"
+                    RelPath = "NamespaceProviderParameter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "NamespaceProviderParameterDescriptor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "NamespaceProviderParameterException.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "NamespaceScope.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -555,6 +615,16 @@
                 />
                 <File
                     RelPath = "QualifiedBlockPTN.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ReadOnlyStore.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ReadWriteStore.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -654,27 +724,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "TopicPropertiesUpdateEventArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TopicPropertyUpdateBatch.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "TopicScope.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TopicsUpdateEventArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TopicUpdateBatch.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -740,6 +790,36 @@
                 />
                 <File
                     RelPath = "WithScope.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Caching\AllTopicsInNamespaceCacheRule.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Caching\FederationNamespacesCacheRule.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Caching\FederationPropertiesCacheRule.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Caching\GenericCache.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Caching\PropertyCacheRule.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Caching\TopicsCacheRule.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

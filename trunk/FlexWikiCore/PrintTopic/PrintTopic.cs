@@ -27,76 +27,6 @@ namespace PrintTopic
 		/// </summary>
 		/// 
 
-		class Cache : IFederationCache
-		{
-			Hashtable Hash = new Hashtable();
-
-			#region IFederationCache Members
-
-			class Entry
-			{
-				public object Value;
-				public CacheRule Rule;
-				public Entry(object v)
-				{
-					Value = v;
-				}
-				public Entry(object v, CacheRule r)
-				{
-					Value = v;
-					Rule = r;
-				}
-			}
-
-			public object this[string key]
-			{
-				get
-				{
-					Entry e = (Entry)Hash[key];
-					if (e == null)
-						return null;
-					return e.Value;
-				}
-				set
-				{
-					Hash[key] = new Entry(value);
-				}
-			}
-
-			public void Put(string key, object val, CacheRule rule)
-			{
-				Hash[key] = new Entry(val, rule);
-			}
-
-			void FlexWiki.IFederationCache.Put(string key, object val)
-			{
-				this[key] = val;
-			}
-
-			public CacheRule GetRuleForKey(string key)
-			{
-				Entry e = (Entry)Hash[key];
-				if (e == null)
-					return null;
-				return e.Rule;
-			}
-
-			public object Get(string key)
-			{
-				return this[key];
-			}
-
-			public System.Collections.ICollection Keys
-			{
-				get
-				{
-					return Hash.Keys;
-				}
-			}
-
-			#endregion
-		}
-
 		[STAThread]
 		static void Main(string[] args)
 		{
@@ -112,8 +42,7 @@ namespace PrintTopic
 			LinkMaker lm = new LinkMaker("http://dummy");
 
 			Federation fed = new Federation(fsPath, OutputFormat.HTML, lm);
-			Cache cache = new Cache();
-			fed.FederationCache = cache;
+			fed.EnableCaching();
 			if (topic != null)
 				Print(fed, new AbsoluteTopicName(topic));
 			else

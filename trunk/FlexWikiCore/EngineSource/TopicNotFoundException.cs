@@ -60,5 +60,12 @@ namespace FlexWiki
 			return answer;
 		}
 
+		public static TopicNotFoundException ForTopic(LocalTopicName topic, string ns)
+		{
+			AbsoluteTopicName t = new AbsoluteTopicName(topic.NameWithVersion, ns);
+			return ForTopic(t);
+		}
+
+
 	}
 }

@@ -25,12 +25,38 @@ namespace FlexWiki.Web
 {
 	/// <summary>
 	/// Summary description for Page.
-	/// </summary>
+	/// </summary>   
 	public class BasePage : System.Web.UI.Page
 	{
 		public BasePage()
 		{
 			Load += new EventHandler(Page_Load);
+		}
+
+		protected bool IsPost
+		{
+			get
+			{
+				return Request.RequestType == "POST";
+			}
+		}
+
+		public static void WriteNicely(TextWriter output, object obj)
+		{
+			IHTMLRenderable renderable = obj as IHTMLRenderable;
+			if (renderable == null)
+				output.Write(EscapeHTML(obj.ToString()) + "<br />");
+			else
+				renderable.RenderToHTML(output);
+		}
+
+		public static void WriteLineNicely(TextWriter output, object obj)
+		{
+			IHTMLRenderable renderable = obj as IHTMLRenderable;
+			if (renderable == null)
+				output.WriteLine(obj.ToString());
+			else
+				renderable.RenderToHTML(output);
 		}
 
 		/// <summary>
@@ -246,7 +272,40 @@ namespace FlexWiki.Web
 			string fsPath = MapPath(federationNamespaceMap);
 			TheFederation = new Federation(fsPath, OutputFormat.HTML, TheLinkMaker);
 			// Give the federation a cache to work with 
-			TheFederation.FederationCache = CacheManager;
+			TheFederation.EnableCaching(CacheManager);
+			// Setup event monitoring
+			SetupUpdateMonitoring();
+		}
+
+		void LoadPlugins()
+		{
+			FlexWikiConfigurationSectionHandler config = FlexWikiConfigurationSectionHandler.GetConfig();
+			if (config==null)
+				return;
+
+			foreach(string plugin in config.Plugins)
+			{
+				System.Reflection.Assembly.Load(plugin);
+			}
+		}
+
+
+		void SetupUpdateMonitoring()
+		{
+			UpdateMonitor.Start();
+		}
+
+		protected UpdateMonitor UpdateMonitor
+		{
+			get
+			{
+				UpdateMonitor answer = (UpdateMonitor)(Application["UpdateMonitor"]);
+				if (answer != null)
+					return answer;
+				answer = new UpdateMonitor(TheFederation);
+				Application["UpdateMonitor"] = answer;
+				return answer;
+			}
 		}
 
 		protected string FederationNamespaceMapPath
@@ -348,13 +407,92 @@ namespace FlexWiki.Web
 			return answer;
 		}
 
+		UIResponse _UIResponse;
+		protected UIResponse UIResponse
+		{
+			get
+			{
+				if (_UIResponse != null)
+					return _UIResponse;
+				_UIResponse = new UIResponse(_Response, RelativeBase);
+				return _UIResponse;
+			}
+		}
+
 		private void Page_Load(object sender, EventArgs e)
 		{
+			DefaultPageLoad();
+		}
+
+		virtual protected void DefaultPageLoad()  
+		{
+			MinimalPageLoad();
+			PageLoad();
+		}
+
+		protected void MinimalPageLoad()
+		{
+			_Response = Response;
+			EnsurePluginsLoaded();
+		}
+
+		virtual protected void EnsurePluginsLoaded()
+		{
+			string loaded = (string)(Application["PluginsLoaded"]);
+			if (loaded == "yes")
+				return;
+			LoadPlugins();
+			Application["PluginsLoaded"] = "yes";
+		}
+
+		protected FederationConfiguration FederationConfigurationFromFile
+		{
+			get
+			{
+				string config = ConfigurationSettings.AppSettings["FederationNamespaceMapFile"];
+				if (config == null)
+					return null;
+				string mappedConfig = MapPath(config);
+				if (mappedConfig == null)
+					return null;
+				return FederationConfiguration.FromFile(mappedConfig);
+			}
+		}
+
+		/// <summary>
+		/// Check to see if the format of the configuration file needs to be updated to a new version.
+		/// If yes, do a redirect to the upgrader page...
+		/// </summary>
+		/// <returns>true if upgrade required</returns>
+		virtual protected bool CheckForConfigurationFormatUpgrade()
+		{
+			FederationConfiguration config = FederationConfigurationFromFile;
+			if (config == null)
+				return false;
+
+			// As the format of the file evolves, this logic below will evolve:
+
+			// Check to see if there are old-style deprecated <namespace> elements.
+			bool needed = false;
+			if (config.DeprecatedNamespaceDefinitions != null && config.DeprecatedNamespaceDefinitions.Count > 0)
+				needed = true;
+
+			// OK we've figured it out
+			if (!needed)
+				return false;
+
+			Response.Redirect(RelativeBase + "UpgradeConfigurationFile.aspx");
+			return true;
+		}
+
+		protected virtual void PageLoad()
+		{
+			if (CheckForConfigurationFormatUpgrade())
+				return;
+
 			// Setup the federation -- either find the existing one or create a new one
 			_LinkMaker = new LinkMaker(RootUrl(Request));
 			EstablishFederation();
-
-			_Response = Response;
 
 			// Make sure we've setup a LogEventFactory for the federation
 			string logFile = ConfigurationSettings.AppSettings["LogPath"];
@@ -374,7 +512,10 @@ namespace FlexWiki.Web
 			ContentBase cb  = TheFederation.ContentBaseForNamespace(ns);
 			if (cb == null)
 				throw new Exception("Default namespace (" + ns + ") doesn't exist.");
-			TheFederation.DefaultNamespace = ns;
+
+			// Commented out by david ornstein 11/14/2004 -- As far as i can tell there's no need for this call (and its presence is now causing unneeded/expected federation
+			// update events to fire).  If you're reading this aftre a few months and it's still here, you can rip it out...
+			//TheFederation.DefaultNamespace = ns;
 
 			EstablishNewsletterDaemon(
 				ConfigurationSettings.AppSettings["SMTPServer"], 
@@ -445,7 +586,8 @@ namespace FlexWiki.Web
 			{
 				AbsoluteTopicName newVersionName = new AbsoluteTopicName(topic.Name, topic.Namespace);
 				newVersionName.Version = TopicName.NewVersionStringForUser(VisitorIdentityString);
-				DefaultContentBase.WriteTopicAndNewVersion(newVersionName, this.DefaultContentBase.Read(topic));
+				ContentBase cb = TheFederation.ContentBaseForNamespace(topic.Namespace);
+				cb.WriteTopicAndNewVersion(newVersionName.LocalName, TheFederation.Read(topic));
 			}
 			finally
 			{

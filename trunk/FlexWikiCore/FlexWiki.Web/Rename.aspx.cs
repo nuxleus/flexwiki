@@ -61,6 +61,19 @@ namespace FlexWiki.Web
 			}
 		}
 
+		protected bool IsTopicReadOnly
+		{
+			get
+			{
+				ContentBase cb = TheFederation.ContentBaseForTopic(AbsTopicName);
+				if (cb == null)
+					return true;
+				return !cb.IsExistingTopicWritable(AbsTopicName.LocalName);
+
+			}
+
+		}
+		
 		protected string Fixup
 		{
 			get
@@ -104,21 +117,22 @@ namespace FlexWiki.Web
 		protected void PerformRename()
 		{
 			AbsoluteTopicName oldName = new AbsoluteTopicName(OldName, Namespace);
+			ContentBase cb = TheFederation.ContentBaseForNamespace(Namespace);
+
 			string defaultNamespace = DefaultNamespace;
 			string oldAppearsAs = (oldName.Namespace == defaultNamespace) ? oldName.Name : oldName.Fullname;
 			string newName = NewName;
 			string newAppearsAs = (oldName.Namespace == defaultNamespace) ? newName : Namespace + "." + newName;
 
 			// See if the new name already exists
-			if (DefaultContentBase.TopicExistsLocally(newName))
+			if (cb.TopicExistsLocally(newName))
 			{
 				Response.Write("<b>Topic (" + newName + ") already exists.  Choose another name...</b>");
 				return;
 			}
 
-
 			bool fixup = Fixup == "on";
-			ArrayList log = DefaultContentBase.RenameTopic(oldName, newName, fixup);
+			ArrayList log = cb.RenameTopic(oldName.LocalName, newName, fixup);
 			Response.Write("Renamed <i>" + oldAppearsAs + "</i> to <i>" + newName + "</i><br/>");
 			Response.Write("<br/>");
 			foreach (string each in log)
@@ -129,7 +143,7 @@ namespace FlexWiki.Web
 			if (redir)
 			{
 				DateTime ts = DateTime.Now.ToLocalTime();
-				DefaultContentBase.WriteTopic(oldName, 
+				cb.WriteTopic(oldName.LocalName, 
 					"Redirect: " + newName + @"
 
 This page was automatically generated when this topic (" + oldName.Name + ") was renamed to " + newName + " on " +

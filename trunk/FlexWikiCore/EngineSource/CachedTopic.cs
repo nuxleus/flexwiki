@@ -19,7 +19,7 @@ namespace FlexWiki
 	/// <summary>
 	/// Summary description for CachedTopic.
 	/// </summary>
-	public class CachedTopic
+	public class CachedTopic : IHTMLRenderable
 	{
 		public CachedTopic(AbsoluteTopicName name)
 		{
@@ -52,6 +52,19 @@ namespace FlexWiki
 			b.Append("Content: " + UnformattedContent.ToString() + Environment.NewLine);
 			return b.ToString();
 		}
+		#region IHTMLRenderable Members
 
+		public void RenderToHTML(System.IO.TextWriter output)
+		{
+			output.WriteLine("<table cellspacing=0 cellpadding=2 border=0>");
+			output.WriteLine("<tr><td valign='top'>Name</td><td valign='top'>" + Formatting.Formatter.EscapeHTML(Name.FullnameWithVersion) + "</td></tr>");
+			output.WriteLine("<tr><td valign='top'>Created</td><td valign='top'>" + Formatting.Formatter.EscapeHTML(CreationTime.ToString()) + "</td></tr>");
+			output.WriteLine("<tr><td valign='top'>Modified</td><td valign='top'>" + Formatting.Formatter.EscapeHTML(LastModified.ToString()) + "</td></tr>");
+			output.WriteLine("<tr><td valign='top'>Modified by</td><td valign='top'>" + Formatting.Formatter.EscapeHTML(LastModifiedBy.ToString()) + "</td></tr>");
+			output.WriteLine("<tr><td valign='top'>Content</td><td valign='top'>" + Formatting.Formatter.EscapeHTML(UnformattedContent) + "</td></tr>");
+			output.WriteLine("</table>");
+		}
+
+		#endregion
 	}
 }

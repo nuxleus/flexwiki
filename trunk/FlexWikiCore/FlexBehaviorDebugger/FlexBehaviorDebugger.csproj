@@ -99,11 +99,6 @@
                     Project = "{7362F597-DAB3-437E-8A07-37D8D2FE6E56}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
-                <Reference
-                    Name = "FlexWiki.Web"
-                    Project = "{0EE80D53-C65E-4AFE-953A-AB9160521890}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
             </References>
         </Build>
         <Files>

@@ -37,101 +37,114 @@ namespace FlexWiki.Web.Admin
 
 		protected void ShowPage()
 		{
-			Response.Write(@"<fieldset><legend class='DialogTitle'>Cache</legend>");
+			UIResponse.ShowPage("Cache Information", new UIResponse.MenuWriter(ShowMenu), new UIResponse.BodyWriter(ShowMain));
+		}
+
+		void ShowMenu()
+		{
+			UIResponse.WriteStartMenu("Cache");
+			UIResponse.WriteMenuItem("ShowCache.aspx?clear=1", "Clear", "Clear the cache");
+			UIResponse.WriteEndMenu();
+			UIResponse.WritePara("&nbsp;");
+
+			ShowAdminMenu();
+		}
+   
+		protected void ShowMain()
+		{
+			string clear = Request.QueryString["clear"];
+			if (clear == "1")
+			{
+				CacheManager.Clear();
+				Response.Redirect("ShowCache.aspx");
+				return;
+			}
+
 			string key = Request.QueryString["key"];
 			if (key == null)
 				ShowKeys();
 			else
 				ShowKey(key);
-			Response.Write(@"</fieldset>");
 		}
+
+		void WriteFilterScript()
+		{
+			Response.Write("<script language='javascript'>");
+			Response.Write(@"
+
+function FilterChanged()
+{
+	var filterControl = document.getElementById('Filter');
+	var filter = filterControl.value;
+	var id = 0;
+	while (true)
+	{
+		var headerPrefix = '" + headerPrefix + @"' + id;
+		var valuePrefix = '" + valuePrefix + @"' + id;
+
+		var valueElement = document.getElementById(valuePrefix);
+		if (valueElement == null)
+			break;
+		var show = true;
+		var test = """" + valueElement.innerText.toUpperCase();
+		if (filter != """" && test.indexOf(filter.toUpperCase()) < 0)
+			show = false;
+		var styleString = show ? 'block' : 'none';
+
+		var headerPrefixElement = document.getElementById(headerPrefix);
+		headerPrefixElement.style.display = styleString;
+		id++;
+	}
+}
+
+");
+
+			Response.Write("</script>");
+		}
+
+		const string headerPrefix = "Row";
+		const string valuePrefix = "RowData";
 
 		void ShowKeys()
 		{
-			Response.Write("<table cellpadding='2' cellspacing='0' border='0'>");
-
-			bool isEmpty = true;
-			foreach (string key in CacheManager.Keys)
+			WriteFilterScript();
+			Response.Write("<p>Search for key: <input id='Filter' onkeyup='javascript:FilterChanged()' length=30/></p>");
+			int id = 0;
+			ArrayList keys = new ArrayList();
+			keys.AddRange(CacheManager.Keys);
+			keys.Sort();
+			foreach (string key in keys)
 			{
-				isEmpty = false;
-				const int ml = 150;
-				object shortValue = CacheManager[key];
-				string shortValueString = "";
-				if (shortValue != null)
-				{
-					shortValueString = shortValue.ToString();
-					if (shortValue is IEnumerable && !(shortValue is string))
-					{
-						int count = 0;
-						StringBuilder b = new StringBuilder();
-						foreach (object each in (IEnumerable)shortValue)
-						{
-							if (count != 0)
-								b.Append(", ");
-							b.Append(each.ToString());
-							count++;
-						}
-						shortValueString += "([count=" + count + "]: " + b.ToString() + ")";
-					}
-					if (shortValueString.Length > ml)
-						shortValueString = shortValueString.Substring(0, ml) + "...";
-				}
-				string ruleText = "";
-				CacheRule rule = CacheManager.GetRuleForKey(key);
-				if (rule != null)
-				{
-					ruleText = rule.Description;
-					if (ruleText.Length > ml)
-						ruleText = ruleText.Substring(0, ml) + "...";
-					ruleText = EscapeHTML(ruleText);
-				}
-
-				Response.Write("<tr>");
-				Response.Write("<td valign='top' class='CacheKey'><a href='ShowCache.aspx?key=" + key + "'>" + key + "</a></td>");
-				Response.Write("<td valign='top' class='CacheRules'>" + ruleText + "</td>");
-				Response.Write("</tr>");
-				Response.Write("<tr>");
-				Response.Write("<td colspan='2' valign='top' class='CacheValue'>" + EscapeHTML(shortValueString) + "</td>");
-				Response.Write("</tr>");
+				Response.Write("<div  id='" + headerPrefix + id + "' class='CacheKey'><a href='ShowCache.aspx?key=" + key + "'><span id='" + valuePrefix + id + "'>" + key + "</span></a></div>");
+				id++;
 			}
-
-			Response.Write("</table>");
-			if (isEmpty)
-				Response.Write("Cache is empty");
 		}
 
 		void ShowKey(string key)
 		{
-			Response.Write("<b>Key:</b> " + EscapeHTML(key));
-			Response.Write("<hr />");
-			Response.Write("<b>Rule:</b><br />");
-			string ruleText = "";
+			Response.Write("<h2>" + EscapeHTML(key) + "</h2>");
+			Response.Write("<h3>Cache Rule:</h3>");
 			CacheRule rule = CacheManager.GetRuleForKey(key);
 			if (rule != null)
-				ruleText = EscapeHTML(rule.Description);
-			Response.Write(ruleText);
-			Response.Write("<hr />");
-			Response.Write("<b>Cached Value:</b><br />");
+				WriteLineNicely(Response.Output, rule);
+			Response.Write("<h3>Value</h3>");
 			object shortValue = CacheManager[key];
-			string shortValueString = "";
 			if (shortValue != null)
 			{
-				shortValueString = shortValue.ToString();
 				if (shortValue is IEnumerable && !(shortValue is string))
 				{
-					int count = 0;
-					StringBuilder b = new StringBuilder();
+					Response.Output.WriteLine("<table width='100%' border=1 cellpadding=3 cellspacing=0>");
 					foreach (object each in (IEnumerable)shortValue)
 					{
-						if (count != 0)
-							b.Append(", ");
-						b.Append(each.ToString());
-						count++;
+						Response.Output.WriteLine("<tr><td valign='top'>");
+						WriteLineNicely(Response.Output, each);
+						Response.Output.WriteLine("</tr>");
 					}
-					shortValueString += "([count=" + count + "]: " + b.ToString() + ")";
+					Response.Output.WriteLine("</table>");
 				}
+				else
+					WriteLineNicely(Response.Output, shortValue);
 			}
-			Response.Write(EscapeHTML(shortValueString));
 		}
 
 

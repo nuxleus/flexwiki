@@ -124,9 +124,20 @@ namespace FlexWiki.Web
 			Response.Write(cb.LastModified(true).ToUniversalTime().ToString("r"));
 			Response.Write("</lastBuildDate>");
 
-			foreach (AbsoluteTopicName topic in cb.AllTopicsSortedLastModifiedDescending(inherited))
+			foreach (AbsoluteTopicName topic in cb.AllTopicsSortedLastModifiedDescending())
 			{
 				Response.Write(FormmatedRSSItem(topic));
+			}
+
+			if (inherited)
+			{
+				foreach (ContentBase each in cb.ImportedContentBases)
+				{
+					foreach (AbsoluteTopicName topic in each.AllTopicsSortedLastModifiedDescending())
+					{
+						Response.Write(FormmatedRSSItem(topic));
+					}					
+				}
 			}
 
 			Response.Write(@"</channel>
@@ -166,7 +177,7 @@ namespace FlexWiki.Web
 			builder.Append("</body>\n");
             
 			builder.Append("      <created>");
-			builder.Append(cb.GetTopicCreationTime(topic).ToUniversalTime().ToString("r"));
+			builder.Append(cb.GetTopicCreationTime(topic.LocalName).ToUniversalTime().ToString("r"));
 			builder.Append("</created>\n");
             
 			builder.Append("      <link>");
@@ -174,7 +185,7 @@ namespace FlexWiki.Web
 			builder.Append("</link>\n");
             
 			builder.Append("      <pubDate>");
-			builder.Append(cb.GetTopicLastWriteTime(topic).ToUniversalTime().ToString("r"));
+			builder.Append(cb.GetTopicLastWriteTime(topic.LocalName).ToUniversalTime().ToString("r"));
 			builder.Append("</pubDate>\n");
             
 			builder.Append("      <guid>");
@@ -196,7 +207,7 @@ namespace FlexWiki.Web
 		{
 			ContentBase cb = TheFederation.ContentBaseForNamespace(topic.Namespace);
 
-			IEnumerable changesForThisTopic = cb.AllChangesForTopicSince(topic, DateTime.MinValue);
+			IEnumerable changesForThisTopic = cb.AllChangesForTopicSince(topic.LocalName, DateTime.MinValue);
 			StringBuilder builder = new StringBuilder();
 			ArrayList names = new ArrayList();
 			int count = 0;

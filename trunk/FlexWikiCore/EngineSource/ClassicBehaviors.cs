@@ -109,7 +109,7 @@ namespace FlexWiki
 				ctx.AddCacheRule(cb.CacheRuleForDefinition);
 			}
 			// And now add the namespace map itself
-			ctx.AddCacheRule(new FilesCacheRule(fed.FederationNamespaceMapFilename));
+			ctx.AddCacheRule(fed.CacheRuleForNamespaces);
 			bases.Sort();
 			foreach (ContentBase info in bases)
 			{
@@ -316,12 +316,12 @@ namespace FlexWiki
 				}
 
 				AbsoluteTopicName topic = new AbsoluteTopicName(interWikisTopic, fed.DefaultNamespace);
-				if (!fed.DefaultContentBase.TopicExists(topic) )
+				if (!fed.TopicExists(topic) )
 				{
 					throw new ArgumentException("Failed to find InterWikisTopic [" + interWikisTopic + "].");
 				}
 
-				Hashtable props = fed.DefaultContentBase.GetFieldsForTopic(topic);
+				Hashtable props = fed.GetFieldsForTopic(topic);
 				if ( props != null)
 				{
 					foreach( DictionaryEntry entry in props )

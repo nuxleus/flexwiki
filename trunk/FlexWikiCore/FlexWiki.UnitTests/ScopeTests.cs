@@ -57,22 +57,14 @@ namespace FlexWiki.UnitTests
 			_lm = new LinkMaker(_base);
 			TheFederation = new Federation(OutputFormat.HTML, _lm);
 			TheFederation.WikiTalkVersion = 1;
-			string root = "c:\\temp-wikibasex";
-			string root2 = "c:\\temp-wikibasex2";
+
 			string ns = "FlexWiki";
 			string ns2 = "FlexWiki2";
-			TheFederation.Register(ns, root);		
-			TheFederation.Register(ns2, root2);		
-			_cb = TheFederation.ContentBaseForRoot(root);
-			_cb.Namespace = ns;
-
-			_cb2 = TheFederation.ContentBaseForRoot(root2);
-			_cb2.Namespace = ns2;
+			_cb = CreateFileSystemStore(ns);
+			_cb2 = CreateFileSystemStore(ns2);
 
 			WriteTestTopicAndNewVersion(_cb, "HomePage", "", user);
-			WriteTestTopicAndNewVersion(_cb, _cb.DefinitionTopicName.Name, @"
-Namespace: " + ns + @"
-Import: FlexWiki2", user);
+			WriteTestTopicAndNewVersion(_cb, _cb.DefinitionTopicName.Name, @"Import: FlexWiki2", user);
 			WriteTestTopicAndNewVersion(_cb, "QualifiedLocalPropertyRef", @"
 Color: green
 color=@@topics.QualifiedLocalPropertyRef.Color@@", user);

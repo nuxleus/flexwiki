@@ -19,6 +19,7 @@ using System.Web;
 using System.Threading;
 using System.Text;
 using FlexWiki.Web;
+using FlexWiki;
 
 namespace FlexWiki.Newsletters
 {
@@ -133,83 +134,10 @@ namespace FlexWiki.Newsletters
 				LinkMaker lm = new LinkMaker(RootURL);
 				_TheFederation = new Federation(ConfigurationFilePath, FlexWiki.Formatting.OutputFormat.HTML, lm);
 				_TheFederation.LogEventFactory = LogEventFactory;		
-				_TheFederation.FederationCache = new Cache();
+				_TheFederation.EnableCaching();
 				return _TheFederation;
 			}
 		}
-
-
-		public class Cache : IFederationCache
-		{
-			Hashtable Hash = new Hashtable();
-
-			#region IFederationCache Members
-
-			class Entry
-			{
-				public object Value;
-				public CacheRule Rule;
-				public Entry(object v)
-				{
-					Value = v;
-				}
-				public Entry(object v, CacheRule r)
-				{
-					Value = v;
-					Rule = r;
-				}
-			}
-
-			public object this[string key]
-			{
-				get
-				{
-					Entry e = (Entry)Hash[key];
-					if (e == null)
-						return null;
-					return e.Value;
-				}
-				set
-				{
-					Hash[key] = new Entry(value);
-				}
-			}
-
-			public void Put(string key, object val, CacheRule rule)
-			{
-				Hash[key] = new Entry(val, rule);
-			}
-
-			void FlexWiki.IFederationCache.Put(string key, object val)
-			{
-				this[key] = val;
-			}
-
-			public CacheRule GetRuleForKey(string key)
-			{
-				Entry e = (Entry)Hash[key];
-				if (e == null)
-					return null;
-				return e.Rule;
-			}
-
-			public object Get(string key)
-			{
-				return this[key];
-			}
-
-			public System.Collections.ICollection Keys
-			{
-				get
-				{
-					return Hash.Keys;
-				}
-			}
-
-			#endregion
-		}
-
-
 
 
 		public ILogEventFactory _LogEventFactory;

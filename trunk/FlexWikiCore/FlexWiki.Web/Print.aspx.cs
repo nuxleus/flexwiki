@@ -57,7 +57,7 @@ namespace FlexWiki.Web
 		protected void DoPage()
 		{
 			AbsoluteTopicName topic = GetTopicName();
-			ContentBase cb = DefaultContentBase;
+			ContentBase cb = TheFederation.ContentBaseForTopic(topic);
 			LinkMaker lm = TheLinkMaker;
 
 			Response.Write("<div style='font-family: Verdana'>");
@@ -67,7 +67,7 @@ namespace FlexWiki.Web
 			Response.Write("</div>");
 
 			Response.Write("<div style='font-size: 8pt'>");
-			Response.Write("Last changed: " + cb.GetTopicLastAuthor(topic));
+			Response.Write("Last changed: " + cb.GetTopicLastAuthor(topic.LocalName));
 			Response.Write("</div>");
 
 			Response.Write("<hr noshade size='2' />");

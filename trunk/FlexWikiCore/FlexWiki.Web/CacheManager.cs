@@ -32,6 +32,20 @@ namespace FlexWiki.Web
 			}
 		}
 
+		public void Clear()
+		{
+			foreach (DictionaryEntry k in TheCache)
+				TheCache.Remove(k.Key.ToString());
+			Tracker.Clear();
+		}
+
+		public void Remove(string key)
+		{
+			TheCache.Remove(key);
+			Tracker.Remove(key);
+		}
+
+
 		const string trackerKey = "___CacheRuleTrackerKey";
 		Hashtable Tracker
 		{
@@ -95,10 +109,7 @@ namespace FlexWiki.Web
 		{
 			if (rule.IncludesNeverCacheRule)
 				return;
-			if (rule != null)
-				TheCache.Insert(key, val, rule.GetCacheDependency());
-			else
-				TheCache.Insert(key, val);
+			TheCache.Insert(key, val);
 			Tracker[key] = rule;
 		}
 	

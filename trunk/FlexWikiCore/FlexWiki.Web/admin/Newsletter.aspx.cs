@@ -55,23 +55,15 @@ namespace FlexWiki.Web.Admin
 		}
 		#endregion
 
-		static string escWithBreaks(string input)
-		{
-			// replace HTML special characters with character entities
-			// this has the side-effect of stripping all markup from text
-			string str = input;
-			str = Regex.Replace (str, "&", "&amp;") ;
-			str = Regex.Replace (str, "<", "&lt;") ;
-			str = Regex.Replace (str, ">", "&gt;") ;
-			str = Regex.Replace (str, "\n", "<br />") ;
-			return str;
-		}
 
 		protected void ShowPage()
 		{
-			Response.Write("<h1>Newsletter Daemon Status</h1>");
+			UIResponse.ShowPage("Newsletter Daemon Status", new UIResponse.MenuWriter(ShowAdminMenu), new UIResponse.BodyWriter(ShowMain));
+		}
+   
 
-			Response.Write("<div style='margin: .25in; font-size: 9pt;'>");
+		protected void ShowMain()
+		{
 
 			Response.Write("<p>Now: <b>" + DateTime.Now.ToString() + " </b></p>");
 
@@ -89,10 +81,8 @@ namespace FlexWiki.Web.Admin
 			
 			foreach (string s in TheNewsletterDaemon.Results)
 			{
-				Response.Write("<div style='margin: .25in; border 1px solid silver'>" + escWithBreaks(s) + "</div>");
+				Response.Write("<div style='margin: .25in; border 1px solid silver'>" + HTMLWriter.Escape(s, true) + "</div>");
 			}
-
-			Response.Write("</div'>");
 
 		}
 

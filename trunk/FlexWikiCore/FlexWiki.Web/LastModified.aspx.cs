@@ -81,25 +81,24 @@ namespace FlexWiki.Web
 			ContentBase cb = TheFederation.ContentBaseForNamespace(preferredNamespace);
 
 			// Get the list of topics and authors from the cache (or generate if needed)
-			string historyKey = "HistoryForNamespace." + cb.Namespace.ToString();
-			ArrayList history;
+			IList history;
 			IEnumerable topics;
 			Hashtable authors;
 
-			history = (ArrayList)(CacheManager[historyKey]);
+			history = TheFederation.CacheManager.GetCachedNamespaceHistory(cb.Namespace);
 			if (history == null)
 			{
-				IEnumerable t = cb.AllTopicsSortedLastModifiedDescending(false);
+				IEnumerable t = cb.AllTopicsSortedLastModifiedDescending();
 				
 				Hashtable a = new Hashtable();
 				foreach (AbsoluteTopicName topic in t)
-					a[topic] = cb.GetTopicLastAuthor(topic);
+					a[topic] = cb.GetTopicLastAuthor(topic.LocalName);
 	
 				history = new ArrayList();
 				history.Add(t);
 				history.Add(a);
 
-				CacheManager.Put(historyKey, history, cb.CacheRule);
+				TheFederation.CacheManager.PutCachedNamespaceHistory(cb.Namespace, history, cb.CacheRule);
 			}
 
 			// Now pull from the cached data
@@ -181,9 +180,9 @@ function changeNamespace()
 				Response.Write(topic.Name);
 				Response.Write("</a></b>");
 				Response.Write("</td>");
-
+   
 				Response.Write("<td>");
-				DateTime stamp = cb.GetTopicLastWriteTime(topic);
+				DateTime stamp = cb.GetTopicLastWriteTime(topic.LocalName);
 				if (stamp.Date == DateTime.Now.Date)
 					Response.Write(stamp.ToString("h:mm tt"));
 				else

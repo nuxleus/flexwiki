@@ -9,6 +9,169 @@
 	background-color: #cc3333;
 } 
 
+
+.GenericRow
+{
+
+}
+
+.GenericCell
+{
+	font-size: .88em;
+	border-collapse: collapse;
+	border: #909090 1px solid;
+}
+
+.GenericKVKey
+{
+	font-size: .75em;
+	border-collapse: collapse;
+	border: #909090 1px solid;
+	background-color: #e0e0e0;
+	font-weight: bold;
+}
+
+.GenericKVValue
+{
+	font-size: .75em;
+	border-collapse: collapse;
+	border: #909090 1px solid;
+}
+
+
+.GenericKVTable  
+{
+	padding-top: 6px;
+	padding-bottom: 6px;
+	background-color: #f8f8c0;
+}
+
+.GenericTable  
+{
+	padding-top: 6px;
+	padding-bottom: 6px;
+	background-color: #f8f8f8;
+}
+
+.GenericHeaderRow
+{
+
+}
+
+.GenericHeaderCell
+{
+	background-color: #e0e0e0;
+	font-size: .88em;
+	font-weight: bold;
+	border-collapse: collapse;
+	border: #909090 1px solid;
+}
+
+.GenericEmptyHeaderCell
+{
+	font-size: .88em;
+	font-weight: bold;
+	border-collapse: collapse;
+
+}
+
+.GenericPageTitle
+{
+	background-color: royalblue;
+	color: white;
+	font-size: 1.3em;
+	font-weight: bold;
+}
+
+.GenericMenuTable
+{
+	padding-top: 1li;
+	padding-bottom: 1li;
+	background-color: darkblue;
+	border: darkblue 1px solid;
+}
+
+.GenericMenuHeaderRow
+{
+}
+
+.GenericMenuHeaderLeft
+{
+	font-size: .88em;
+	font-weight: bold;
+	color: white;
+}
+
+.GenericMenuHeaderText
+{
+	font-size: .88em;
+	font-weight: bold;
+	color: white;
+}
+
+.GenericMenuRow
+{
+}
+
+.GenericMenuLeft
+{
+	font-size: .88em;
+}
+
+.GenericMenuText
+{
+	background-color: royalblue;
+	color: white;
+	font-size: .88em;
+}
+
+.GenericMenuText a
+{
+	background-color: royalblue;
+	color: white;
+}
+
+.GenericMenuText a:hover
+{
+	background-color: yellow;
+	color: blue;
+}
+
+.GenericPageMenuColumn
+{
+	background-color: gray;
+
+}
+
+.UpdateDivider
+{
+	font-size: .8em;
+	background-color: Silver;
+	color: Black;
+	font-weight: bold;
+}
+
+.UpdateKey
+{
+	font-size: .8em;
+	background-color: #e0e0e0;
+	color: Black;
+}
+
+.UpdateValue
+{
+	font-size: .8em;
+	color: Black;
+}
+
+.CompositeCacheRuleChild
+{
+	font-size: .8em;
+	color: Black;
+}
+
+
+
 .BorderLeft
 {
 	background-color: lemonchiffon;
@@ -70,9 +233,7 @@
 .CacheKey
 {
 	font-size: .8em;
-	background-color: Silver;
 	color: Black;
-	font-weight: bold;
 }
 
 .CacheRules
@@ -147,9 +308,17 @@
 {
 }
 
+.FieldError
+{
+	color: Red;
+	font-weight: bold;
+}
+
 .FieldHelp
 {
+	font-size: .74em;
 	color: Gray;
+	padding-bottom: 3px;
 }
 
 .NamespaceTitleLine

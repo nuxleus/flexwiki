@@ -73,7 +73,7 @@ namespace FlexWiki.Formatting
 			ContentBase relativeToBase = aFederation.ContentBaseForNamespace(topic.Namespace);
 
 			if (showDiffs)
-				previousVersion = relativeToBase.VersionPreviousTo(topic);
+				previousVersion = relativeToBase.VersionPreviousTo(topic.LocalName);
 
 			return FormattedTopicWithSpecificDiffs(topic, format, previousVersion, aFederation, lm, accumulator);
 		}
@@ -103,11 +103,11 @@ namespace FlexWiki.Formatting
 				ArrayList styledLines = new ArrayList();
 				IList leftLines;
 				IList rightLines;
-				using (TextReader srLeft = relativeToBase.TextReaderForTopic(topic))
+				using (TextReader srLeft = relativeToBase.TextReaderForTopic(topic.LocalName))
 				{
 					leftLines = MergeBehaviorLines(srLeft.ReadToEnd().Replace("\r", "").Split('\n'));
 				}
-				using (TextReader srRight = relativeToBase.TextReaderForTopic(diffWithThisVersion))
+				using (TextReader srRight = relativeToBase.TextReaderForTopic(diffWithThisVersion.LocalName))
 				{
 					rightLines = MergeBehaviorLines(srRight.ReadToEnd().Replace("\r", "").Split('\n'));
 				}
@@ -135,7 +135,7 @@ namespace FlexWiki.Formatting
 			}
 			else
 			{
-				using (TextReader sr = relativeToBase.TextReaderForTopic(topic))
+				using (TextReader sr = relativeToBase.TextReaderForTopic(topic.LocalName))
 				{
 					Format(topic, sr.ReadToEnd(), output, relativeToBase, linker, relativeToBase.ExternalWikiHash(), 0, accumulator);
 				}
@@ -1209,8 +1209,9 @@ namespace FlexWiki.Formatting
 			// TODO: how do we identify specific versions? [maybe this just works now? since versionids are a formal part of a wikiname???]
 			// TODO: how do we show diffs?
 			string ns = ContentBase.UnambiguousTopicNamespace(topic);
+			ContentBase containingContentBase = TheFederation.ContentBaseForNamespace(ns);
 			AbsoluteTopicName abs = new AbsoluteTopicName(topic.Name, ns);
-			string content = ContentBase.Read(abs).TrimEnd();
+			string content = containingContentBase.Read(abs.LocalName).TrimEnd();
 			WikiOutput output = WikiOutput.ForFormat(_Output.Format, Output);
 			Formatter.Format(abs, content, output, ContentBase, LinkMaker(), _ExternalWikiMap, headingLevelBase, CacheRuleAccumulator);
 			return output.ToString().Trim();
@@ -1724,8 +1725,7 @@ namespace FlexWiki.Formatting
 						tipHTML = Formatter.EscapeHTML(tip);
 						if (defaultTip)
 							tipHTML = "<span class='DefaultTopicTipText'>" + tipHTML + "</span>";
-						ContentBase cb = TheFederation.ContentBaseForTopic(abs);
-						tipHTML += "<div class='TopicTipStats'>" + cb.GetTopicLastWriteTime(abs).ToString() + " - " + cb.GetTopicLastAuthor(abs) + "</div>";
+						tipHTML += "<div class='TopicTipStats'>" + TheFederation.GetTopicModificationTime(abs).ToString() + " - " + TheFederation.GetTopicLastModifiedBy(abs) + "</div>";
 						tipHTML = "<div id=" + tipid +" style='display: none'>" + tipHTML + "</div>";
 						Output.AddToFooter(tipHTML);
 						string replacement = "<a ";

@@ -15,6 +15,7 @@ using System.Collections;
 using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
+using System.Reflection;
 using System.IO;
 using System.Text.RegularExpressions;
 
@@ -28,12 +29,22 @@ namespace FlexWiki
 	[ExposedClass("Federation", "Represents the entire Wiki federation")]
 	public class Federation : BELObject
 	{
+		public delegate void FederationUpdateEventHandler(object sender, FederationUpdateEventArgs e);
+		public event FederationUpdateEventHandler FederationUpdated;
+
+		// Invoke the FederationUpdated event; called whenever topics or other things about the federation change
+		protected virtual void OnFederationUpdated(FederationUpdateEventArgs e) 
+		{
+			if (FederationUpdated != null)
+				FederationUpdated(this, e);
+		}
+
 		public DateTime Created = DateTime.Now;
 
 		/// <summary>
-		/// The registry of all known ContentBases.  Keys are root directories and values are ContentBases.
+		/// The registry of all known ContentBases.  Keys are namespace names and values are ContentBases.
 		/// </summary>
-		Hashtable	 _RootToContentBaseMap = new Hashtable();
+		Hashtable	 _NamespaceToContentBaseMap = new Hashtable();
 
 		/// <summary>
 		/// Answer an enumeration of all the ContentBases
@@ -42,51 +53,59 @@ namespace FlexWiki
 		{
 			get
 			{
-				return _RootToContentBaseMap.Values;
+				return _NamespaceToContentBaseMap.Values;
 			}
 		}
 
 		/// <summary>
-		/// Answer the ContentBase registered for the given root (and create it if it doesn't exist)
+		/// Create a namespace provider for the description and then give it a chance to create its namespace(s)
 		/// </summary>
-		/// <param name="root">the directory</param>
-		/// <returns>ContentBase</returns>
-		public ContentBase ContentBaseForRoot(string root)
+		/// <param name="def"></param>
+		void LoadNamespacesFromProviderDefinition(NamespaceProviderDefinition def)
 		{
-			return ContentBaseForRoot(root, true);
+			// We need to create it
+			Type providerType = def.ProviderType;
+			if (providerType == null)
+				throw new Exception("Unrecognized type (" + def.Type + ") in assembly (" + (def.AssemblyName == null ? "[default]" : def.AssemblyName) + ")");
+			object c = Activator.CreateInstance(providerType);
+			INamespaceProvider provider = c as INamespaceProvider;
+			if (provider == null)
+				throw new Exception("Illegal type (" + def.Type + ") in assembly (" + (def.AssemblyName == null ? "[default]" : def.AssemblyName) + ").  Type must implement INamespaceProvider.");
+			def.SetParametersInProvider(provider);
+			provider.LoadNamespaces(this);
 		}
 
 		/// <summary>
-		/// Answer the ContentBase registered for the given root (and either answer null or create as indicated by parms)
+		/// Register the given ContentBase in the federation.
 		/// </summary>
-		/// <param name="possiblyRelativeRoot">the directory (.\ is relative to the namespace config)</param>
-		/// <param name="isCreatedIfAbsent">true to created and answer the ContentBase if it doesn't exist; else answer null if it doesn't</param>
-		/// <returns>ContentBase or null if none registered</returns>
-		public ContentBase ContentBaseForRoot(string possiblyRelativeRoot, bool isCreatedIfAbsent)
-		{
-			string root = possiblyRelativeRoot;
-			if (FederationNamespaceMapFilename != null)
-			{
-				FileInfo fi = new FileInfo(FederationNamespaceMapFilename);
-				root = AbsoluteRoot(possiblyRelativeRoot, fi.DirectoryName);
-			}
-			ContentBase answer = (ContentBase)( _RootToContentBaseMap[root]);
-			if (answer != null)
-				return answer;
-			if (!isCreatedIfAbsent)
-				return null;
-			answer = ContentBase.zzzSecretDoNotUseNewContentBaseDemandCreatedInFederation(root, this);
-			return answer;
-		}
-
-		/// <summary>
-		/// Set the registered ContentBase for the given root; overwrites any existing one in place (so be careful)
-		/// </summary>
-		/// <param name="root"></param>
 		/// <param name="cb"></param>
-		public void SetContentBaseForRoot(string root, ContentBase cb)
+		public void RegisterNamespace(ContentBase cb)
+		{		
+			_NamespaceToContentBaseMap[cb.Namespace] = cb;
+
+			// Hook the FederationUpdate events so we can aggregate them for listeners to the Federation
+			cb.FederationUpdated += new ContentBase.FederationUpdateEventHandler(FederationUpdateMonitor);	
+			RecordNamespacesListChanged();
+		}
+
+
+		/// <summary>
+		/// Unregister the given ContentBase in the federation.
+		/// </summary>
+		/// <param name="cb"></param>
+		public void UnregisterNamespace(ContentBase cb)
+		{		
+			cb.FederationUpdated -= new ContentBase.FederationUpdateEventHandler(FederationUpdateMonitor);	
+			_NamespaceToContentBaseMap.Remove(cb.Namespace);
+			RecordNamespacesListChanged();
+		}
+
+
+
+		void FederationUpdateMonitor(object sender, FederationUpdateEventArgs e) 
 		{
-			_RootToContentBaseMap[root] = cb;
+			// One of the content bases we're hooked to has fired a federation update event -- just pass it on
+			OnFederationUpdated(new FederationUpdateEventArgs(e.Updates));
 		}
 
 		/// <summary>
@@ -94,13 +113,46 @@ namespace FlexWiki
 		/// </summary>
 		/// <param name="ns">Name of the namespace</param>
 		/// <returns></returns>
-		[ExposedMethod("GetNamespaceInfo", ExposedMethodFlags.CachePolicyNone, "Answer the given namespace")]
+		[ExposedMethod("GetNamespaceInfo", ExposedMethodFlags.CachePolicyNone | ExposedMethodFlags.NeedContext, "Answer the given namespace")]
+		public ContentBase ExposedContentBaseForNamespace(ExecutionContext ctx, string ns)
+		{
+			ctx.AddCacheRule(this.CacheRuleForNamespaces);
+			ContentBase answer = ContentBaseForNamespace(ns);
+			if (answer != null)
+				ctx.AddCacheRule(answer.CacheRuleForDefinition);
+			return answer;
+		}
+
+
+		FederationUpdateGenerator _UpdateGenerator= null;
+		FederationUpdateGenerator UpdateGenerator
+		{
+			get
+			{
+				if (_UpdateGenerator != null)
+					return _UpdateGenerator;
+				_UpdateGenerator = new FederationUpdateGenerator();
+				_UpdateGenerator.GenerationComplete += new FederationUpdateGenerator.GenerationCompleteEventHandler(FederationUpdateGeneratorGenerationComplete);
+				return _UpdateGenerator;
+			}
+		}
+
+		/// <summary>
+		/// A FederationUpdateGenerator has completed generation.  Fire a FederationUpdate event for this content base.
+		/// </summary>
+		void FederationUpdateGeneratorGenerationComplete(object sender, GenerationCompleteEventArgs e)
+		{
+			OnFederationUpdated(new FederationUpdateEventArgs(e.Updates));
+		}
+
+		/// <summary>
+		/// Answer the ContentBase for the given namespace (or null if it's an absent namespace)
+		/// </summary>
+		/// <param name="ns">Name of the namespace</param>
+		/// <returns></returns>
 		public ContentBase ContentBaseForNamespace(string ns)
 		{
-			string root = RootForNamespace(ns);
-			if (root == null)
-				return null;
-			return ContentBaseForRoot(root, true);
+			return (ContentBase)(_NamespaceToContentBaseMap[ns]);
 		}
 
 		/// <summary>
@@ -108,10 +160,10 @@ namespace FlexWiki
 		/// </summary>
 		/// <param name="ns">Name of the namespace</param>
 		/// <returns></returns>
-		[ExposedMethod("GetNamespace", ExposedMethodFlags.CachePolicyNone, "Answer an object whose properties are all of the topics in the given namespace")]
-		public DynamicNamespace DynamicNamespaceForNamespace(string ns)
+		[ExposedMethod("GetNamespace", ExposedMethodFlags.CachePolicyNone | ExposedMethodFlags.NeedContext, "Answer an object whose properties are all of the topics in the given namespace")]
+		public DynamicNamespace DynamicNamespaceForNamespace(ExecutionContext ctx, string ns)
 		{
-			if (ContentBaseForNamespace(ns) == null)
+			if (ExposedContentBaseForNamespace(ctx, ns) == null)
 				return null;
 			return new DynamicNamespace(this, ns);
 		}
@@ -121,13 +173,14 @@ namespace FlexWiki
 		/// </summary>
 		/// <param name="top">Name of the topic (including namespace)</param>
 		/// <returns></returns>
-		[ExposedMethod("GetTopic", ExposedMethodFlags.CachePolicyNone, "Answer an object whose properties are those of the given topic")]
-		public DynamicTopic DynamicTopicForTopic(string top)
+		[ExposedMethod("GetTopic", ExposedMethodFlags.CachePolicyNone | ExposedMethodFlags.NeedContext, "Answer an object whose properties are those of the given topic")]
+		public DynamicTopic DynamicTopicForTopic(ExecutionContext ctx, string top)
 		{
 			AbsoluteTopicName abs = new AbsoluteTopicName(top);
 			if (abs.Namespace == null)
 				throw new Exception("Only fully-qualified topic names can be used with GetTopic(): only got " + top);
-			DynamicNamespace dns = DynamicNamespaceForNamespace(abs.Namespace);
+			DynamicNamespace dns = DynamicNamespaceForNamespace(ctx, abs.Namespace);
+			ctx.AddCacheRule(new TopicsCacheRule(this, abs));
 			return dns.DynamicTopicFor(abs.Name);
 		}
 
@@ -137,7 +190,19 @@ namespace FlexWiki
 		/// </summary>
 		/// <param name="top">Name of the topic (including namespace)</param>
 		/// <returns></returns>
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Get information about the given topic")]
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone | ExposedMethodFlags.NeedContext, "Get information about the given topic")]
+		public TopicInfo GetTopicInfo(ExecutionContext ctx, string top)
+		{
+			AbsoluteTopicName abs = new AbsoluteTopicName(top);
+			ctx.AddCacheRule(new TopicsCacheRule(this, abs));
+			return GetTopicInfo(top);
+		}
+
+		/// <summary>
+		/// Answer the TopicInfo for the given topic (or null if it's an absent)
+		/// </summary>
+		/// <param name="top">Name of the topic (including namespace)</param>
+		/// <returns></returns>
 		public TopicInfo GetTopicInfo(string top)
 		{
 			AbsoluteTopicName abs = new AbsoluteTopicName(top);
@@ -158,19 +223,16 @@ namespace FlexWiki
 
 
 		/// <summary>
-		/// Invalidate and reload the information for the ContentBase with the given root
+		/// Invalidate and reload the information for the ContentBase with the given namespace
 		/// </summary>
 		/// <param name="root"></param>
-		public void InvalidateRoot(string root)
+		public void InvalidateNamespace(string ns)
 		{
-			ContentBase cb = ContentBaseForRoot(root, false);
+			ContentBase cb = ContentBaseForNamespace(ns);
 			if (cb == null)
 				return;
 			cb.Validate();
 		}
-
-		Hashtable _NamespaceToRoot = new Hashtable();
-		Hashtable _RootToNamespace = new Hashtable();
 
 		string _DefaultNamespace;
 
@@ -183,6 +245,33 @@ namespace FlexWiki
 			set
 			{
 				_DefaultNamespace = value;
+				RecordFederationPropertiesChanged();
+			}
+		}
+
+		void RecordFederationPropertiesChanged()
+		{
+			UpdateGenerator.Push();
+			try
+			{
+				UpdateGenerator.RecordFederationPropertiesChanged();
+			}
+			finally
+			{
+				UpdateGenerator.Pop();
+			}
+		}
+
+		void RecordNamespacesListChanged()
+		{
+			UpdateGenerator.Push();
+			try
+			{
+				UpdateGenerator.RecordNamespaceListChanged();
+			}
+			finally
+			{
+				UpdateGenerator.Pop();
 			}
 		}
 
@@ -210,7 +299,7 @@ namespace FlexWiki
 		{
 			Initialize(format, linker);
 			FileInfo info = new FileInfo(configFile);
-			LoadFromConfiguration(FederationConfiguration.FromFile(configFile), info.DirectoryName);
+			LoadFromConfiguration(FederationConfiguration.FromFile(configFile));
 		}
 
 
@@ -224,6 +313,7 @@ namespace FlexWiki
 			set
 			{
 				_LinkMaker = value;
+				RecordFederationPropertiesChanged();
 			}
 		}
 
@@ -247,6 +337,7 @@ namespace FlexWiki
 			set
 			{
 				_Format = value;
+				RecordFederationPropertiesChanged();
 			}
 		}
 
@@ -261,23 +352,38 @@ namespace FlexWiki
 			ContentBase cb = ContentBaseForTopic(topic);
 			if (cb == null)
 				return false;
-			return cb.IsExistingTopicWritable(topic);
+			return cb.IsExistingTopicWritable(topic.LocalName);
 		}
 
 
-		IFederationCache _FederationCache;
-		public IFederationCache FederationCache
+		/// <summary>
+		/// Enable caching for this federation.  Use a default, internal cache that is just a dumb, in-memory cache.
+		/// If you have a smarter cache available, consider using EnableCaching(IFederationCache aCache).
+		/// </summary>
+		public void EnableCaching()
+		{
+			EnableCaching(new GenericCache());
+		}
+
+		/// <summary>
+		/// Enable caching for this federation and use the supplied IFederationCache as the underlying store for 
+		/// the caching.  By using this method, you can pass in a cache that's smarter about memory allocation and 
+		/// resource utilization than the GenericCache used by default.
+		/// </summary>
+		/// <param name="aCache"></param>
+		public void EnableCaching(IFederationCache aCache)
+		{
+			_FederationCacheManager = new FederationCacheManager(this, aCache);
+		}
+
+		FederationCacheManager  _FederationCacheManager;
+		public FederationCacheManager CacheManager
 		{
 			get
 			{
-				return _FederationCache;
-			}
-			set
-			{
-				_FederationCache = value;
+				return _FederationCacheManager;
 			}
 		}
-
 
 		public string GetTopicUnformattedContent(AbsoluteTopicName name)
 		{
@@ -319,38 +425,26 @@ namespace FlexWiki
 			return top.Properties;
 		}
 
-		static string TopicFormattedContentKey(AbsoluteTopicName name, bool includeDiffs)
-		{
-			return "FormattedPage." + name.FullnameWithVersion + (includeDiffs ? "/diff" : "");
-		}
-
-		public string TopicFormattedBorderKey(AbsoluteTopicName name, Border border)
-		{
-			return "FormattedBorder." + name.FullnameWithVersion + "." + border.ToString();
-		}
-
 
 		public string GetTopicFormattedContent(AbsoluteTopicName name, bool includeDiffs)
 		{
-			string key = TopicFormattedContentKey(name, includeDiffs);
 			string answer = null;
-			if (FederationCache != null)
-				answer = (string)FederationCache.Get(key);
+			if (CacheManager != null)
+				answer = (string)CacheManager.GetCachedTopicFormattedContent(name, includeDiffs);
 			if (answer != null)
 				return answer;
 			CompositeCacheRule rule = new CompositeCacheRule();				
 			answer = Formatter.FormattedTopic(name, Format, includeDiffs,  this, LinkMaker, rule);
-			if (FederationCache != null)
-				FederationCache.Put(key, answer, rule);
+			if (CacheManager != null)
+				CacheManager.PutCachedTopicFormattedContent(name, includeDiffs, answer, rule);
 			return answer;
 		}
 
 		public string GetTopicFormattedBorder(AbsoluteTopicName name, Border border)
 		{
-			string key = TopicFormattedBorderKey(name, border);
 			string answer = null;
-			if (FederationCache != null)
-				answer = (string)FederationCache.Get(key);
+			if (CacheManager != null)
+				answer = (string)CacheManager.GetCachedTopicFormattedBorder(name, border);
 			if (answer != null)
 				return answer;
 			// OK, we need to figure it out.  
@@ -366,8 +460,8 @@ namespace FlexWiki
 				pres.OutputTo(output);
 			}
 			answer = output.ToString();
-			if (FederationCache != null)
-				FederationCache.Put(key, answer, rule);
+			if (CacheManager != null)
+				CacheManager.PutCachedTopicFormattedBorder(name, border, answer, rule);
 			return answer;
 		}
 
@@ -384,8 +478,9 @@ namespace FlexWiki
 			ContentBase cb;
 			string bordersTopicsProperty = "Borders";
 
-			ArrayList borderTopics = new ArrayList();
-
+			ArrayList borderTopics = new ArrayList();   
+    
+   
 			// Start with whatever the namespace defines
 			if (Borders != null)
 			{
@@ -510,17 +605,11 @@ namespace FlexWiki
 			return top.Changes;
 		}
 
-		static string TopicChangesKey(AbsoluteTopicName name)
-		{
-			return "TopicInfo." + name.Fullname;
-		}
-
 		CachedTopic GetCachedTopic(AbsoluteTopicName name)
 		{
-			string key = TopicChangesKey(name);
 			CachedTopic answer = null;
-			if (FederationCache != null)
-				answer = (CachedTopic)FederationCache.Get(key);
+			if (CacheManager != null)
+				answer = (CachedTopic)CacheManager.GetCachedTopic(name);
 			if (answer != null)
 				return answer;
 			ContentBase cb = ContentBaseForTopic(name);
@@ -529,19 +618,42 @@ namespace FlexWiki
 			answer = new CachedTopic(name);
 			CompositeCacheRule rule = new CompositeCacheRule();
 			rule.Add(cb.CacheRuleForAllPossibleInstancesOfTopic(name));
-			answer.Changes = cb.AllChangesForTopic(name, rule);
-			answer.CreationTime = cb.GetTopicCreationTime(name);
-			answer.LastModified = cb.GetTopicLastWriteTime(name);
-			answer.LastModifiedBy = cb.GetTopicLastAuthor(name);
-			answer.UnformattedContent = cb.Read(name);
+			answer.Changes = cb.AllChangesForTopic(name.LocalName, rule);
+			answer.CreationTime = cb.GetTopicCreationTime(name.LocalName);
+			answer.LastModified = cb.GetTopicLastWriteTime(name.LocalName);
+			answer.LastModifiedBy = cb.GetTopicLastAuthor(name.LocalName);
+			answer.UnformattedContent = cb.Read(name.LocalName);
 			answer.Properties = ContentBase.ExtractExplicitFieldsFromTopicBody(answer.UnformattedContent);
-			ContentBase.AddImplicitPropertiesToHash(answer.Properties, name, answer.LastModifiedBy, answer.CreationTime, answer.LastModified, answer.UnformattedContent);
-			if (FederationCache != null)
-				FederationCache.Put(key, answer, rule);
+			AddImplicitPropertiesToHash(answer.Properties, name, answer.LastModifiedBy, answer.CreationTime, answer.LastModified, answer.UnformattedContent);
+			if (CacheManager != null)
+				CacheManager.PutCachedTopic(name, answer, rule);
 			return answer;
 		}
 
-		[ExposedMethod("Namespaces", ExposedMethodFlags.CachePolicyNone, "Answer an array of namespaces in the federation")]
+		public CacheRule CacheRuleForNamespaces
+		{
+			get
+			{
+				return new FederationNamespacesCacheRule(this);
+			}
+		}
+
+		public CacheRule CacheRuleForFederationProperties
+		{
+			get
+			{
+				return new FederationPropertiesCacheRule(this);
+			}
+		}
+
+		[ExposedMethod("Namespaces", ExposedMethodFlags.CachePolicyNone | ExposedMethodFlags.NeedContext, "Answer an array of namespaces in the federation")]
+		public ArrayList ExposedNamespaces(ExecutionContext ctx)
+		{
+			ctx.AddCacheRule(this.CacheRuleForNamespaces);
+			return AllNamespaces;
+		}
+
+
 		public ArrayList AllNamespaces
 		{
 			get
@@ -557,32 +669,8 @@ namespace FlexWiki
 		{
 			get
 			{
-				return _NamespaceToRoot.Keys;
+				return _NamespaceToContentBaseMap.Keys;
 			}
-		}
-
-		public ICollection Roots
-		{
-			get
-			{
-				return _RootToNamespace.Keys;
-			}
-		}
-
-		public string NamespaceForRoot(string root)
-		{
-			if (_RootToNamespace.ContainsKey(root))
-				return (string)(_RootToNamespace[root]);
-			return null;
-		}
-
-		public string RootForNamespace(string ns)
-		{
-			if (null == ns)
-				return null;
-			if (_NamespaceToRoot.ContainsKey(ns))
-				return (string)(_NamespaceToRoot[ns]);
-			return null;
 		}
 
 		public ContentBase DefaultContentBase
@@ -612,28 +700,38 @@ namespace FlexWiki
 		/// If relativeDirectoryBase is null and a relative reference is used, an Exception will be throw
 		/// </summary>
 		/// <param name="config"></param>
-		/// <param name="relativeDirectoryBase">Directory path (without the trailing slash)</param>
-		public void LoadFromConfiguration(FederationConfiguration config, string relativeDirectoryBase)
+		public void LoadFromConfiguration(FederationConfiguration config)
 		{
-			FederationNamespaceMapFilename = config.FederationNamespaceMapFilename;
-			_RootToContentBaseMap = new Hashtable();
-			_NamespaceToRoot = new Hashtable();
-			_RootToNamespace = new Hashtable();
-			foreach (NamespaceToRoot map in config.NamespaceMappings)
+			try
 			{
-				string abs = AbsoluteRoot(map.Root, relativeDirectoryBase);
-
-				Register(map.Namespace, abs);
-				ContentBaseForRoot(abs, true);
-				((ContentBase)_RootToContentBaseMap[abs]).Secure=map.Secure;
+				_CurrentConfiguration = config;
+				UpdateGenerator.Push();
+				FederationNamespaceMapFilename = config.FederationNamespaceMapFilename;
+				_NamespaceToContentBaseMap = new Hashtable();
+				foreach (NamespaceProviderDefinition def in config.NamespaceMappings)
+					LoadNamespacesFromProviderDefinition(def);
+				_DefaultNamespace = config.DefaultNamespace;
+				Borders = config.Borders;
+				AboutWikiString = config.AboutWikiString;
+				WikiTalkVersion = config.WikiTalkVersion;
+				DefaultDirectoryForNewNamespaces = config.DefaultDirectoryForNewNamespaces;
+				FederationNamespaceMapLastRead = config.FederationNamespaceMapLastRead;
+				UpdateGenerator.RecordNamespaceListChanged();
+				UpdateGenerator.RecordFederationPropertiesChanged();
 			}
-			_DefaultNamespace = config.DefaultNamespace;
-			Borders = config.Borders;
-			AboutWikiString = config.AboutWikiString;
-			WikiTalkVersion = config.WikiTalkVersion;
-			DefaultDirectoryForNewNamespaces = config.DefaultDirectoryForNewNamespaces;
+			finally
+			{
+				UpdateGenerator.Pop();
+			}
+		}
 
-			FederationNamespaceMapLastRead = config.FederationNamespaceMapLastRead;
+		FederationConfiguration _CurrentConfiguration = null;
+		public FederationConfiguration CurrentConfiguration
+		{
+			get
+			{
+				return _CurrentConfiguration;
+			}
 		}
 
 
@@ -647,6 +745,7 @@ namespace FlexWiki
 			set
 			{
 				_DefaultDirectoryForNewNamespaces = value;
+				RecordFederationPropertiesChanged();
 			}
 		}
 
@@ -660,12 +759,19 @@ namespace FlexWiki
 			set
 			{
 				_Borders = value;
+				RecordFederationPropertiesChanged();
 			}
 		}
 		
 
 		public string _AboutWikiString;
-		[ExposedMethod("About", ExposedMethodFlags.CachePolicyNone, "Answer the 'about' string for the federation")]
+		[ExposedMethod("About", ExposedMethodFlags.CachePolicyNone | ExposedMethodFlags.NeedContext, "Answer the 'about' string for the federation")]
+		public string ExposedAbout(ExecutionContext ctx)
+		{
+			ctx.AddCacheRule(CacheRuleForFederationProperties);
+			return AboutWikiString;
+		}
+
 		public string AboutWikiString
 		{
 			get
@@ -675,6 +781,7 @@ namespace FlexWiki
 			set
 			{
 				_AboutWikiString = value;
+				RecordFederationPropertiesChanged();
 			}
 		}
 
@@ -689,13 +796,8 @@ namespace FlexWiki
 			set
 			{
 				_WikiTalkVersion = value;
+				RecordFederationPropertiesChanged();
 			}
-		}
-
-		public void Register(string theNamespace, string root)
-		{
-			_NamespaceToRoot[theNamespace] = root;
-			_RootToNamespace[root] = theNamespace;
 		}
 
 		DateTime FederationNamespaceMapLastRead = DateTime.MinValue;
@@ -710,13 +812,12 @@ namespace FlexWiki
 			if (FederationNamespaceMapLastRead >= lastmod)
 				return;
 			FederationConfiguration config = FederationConfiguration.FromFile(FederationNamespaceMapFilename);
-			FileInfo info = new FileInfo(FederationNamespaceMapFilename);
-			LoadFromConfiguration(config, info.DirectoryName);
+			LoadFromConfiguration(config);
 		}
 
 		public void SetTopicProperty(AbsoluteTopicName topic, string field, string value, bool writeNewVersion)
 		{
-			ContentBaseForTopic(topic).SetFieldValue(topic, field, value, writeNewVersion);
+			ContentBaseForTopic(topic).SetFieldValue(topic.LocalName, field, value, writeNewVersion);
 		}
 
 		public string GetTopicProperty(AbsoluteTopicName topic, string field)
@@ -744,6 +845,100 @@ namespace FlexWiki
 			}
 			return answer;
 		}
-		
+
+		public override bool Equals(object obj)
+		{
+			Federation other = obj as Federation;
+			if (other == null)
+				return false;
+			if (other.FederationNamespaceMapFilename != FederationNamespaceMapFilename)
+				return false;
+			return true;
+		}
+
+		public override int GetHashCode()
+		{
+			int answer = 0;
+			if (FederationNamespaceMapFilename != null)
+				answer ^= FederationNamespaceMapFilename.GetHashCode();
+			return answer;
+		}
+
+		/// <summary>
+		/// Answer all the properties (aka fields) for the given topic.  Uncached!
+		/// This includes both the  properties defined in the topic plus the extra properties that every 
+		/// topic has (e.g., _TopicName, _TopicFullName, _LastModifiedBy, etc.)
+		/// </summary>
+		/// <param name="topic"></param>
+		/// <returns>Hashtable (keys = string property names, values = values [as strings?]);  or null if the topic doesn't exist</returns>
+		public Hashtable GetFieldsForTopic(AbsoluteTopicName topic)
+		{
+			ContentBase cb = ContentBaseForTopic(topic);
+			if (cb == null)
+				return null;
+			return cb.GetFieldsForTopic(topic.LocalName);
+		}
+
+
+		/// <summary>
+		/// Answer the contents of a given topic (uncached!)
+		/// </summary>
+		/// <param name="topic">The topic</param>
+		/// <returns>The contents of the topic or null if it can't be read (e.g., doesn't exist)</returns>
+		public string Read(AbsoluteTopicName topic)
+		{
+			ContentBase cb = ContentBaseForTopic(topic);
+			if (cb == null)
+				return null;
+			return cb.Read(topic.LocalName);
+		}
+
+		/// <summary>
+		/// Rename the given topic.  If requested, find references and fix them up.  Answer a report of what was fixed up.  Throw a DuplicationTopicException
+		/// if the new name is the name of a topic that already exists.
+		/// </summary>
+		/// <param name="oldName">Old topic name</param>
+		/// <param name="newName">The new name</param>
+		/// <param name="fixup">true to fixup referenced topic *in this namespace*; false to do no fixups</param>
+		/// <returns>ArrayList of strings that can be reported back to the user of what happened during the fixup process</returns>
+		public ArrayList RenameTopic(AbsoluteTopicName oldName, string newName, bool fixup)
+		{
+			ContentBase cb = ContentBaseForTopic(oldName);
+			if (cb == null)
+				throw NamespaceNotFoundException.ForNamespace(oldName.Namespace);
+			return cb.RenameTopic(oldName.LocalName, newName, fixup);	
+		}
+
+		public static void AddImplicitPropertiesToHash(Hashtable hash, AbsoluteTopicName topic, string lastModBy, DateTime creation, DateTime modification, string content)
+		{
+			// Remember that this list is closely bound to some implicit knowledge of what these properties are in the logic in WriteTopic that send change notifications for properties
+			// If you add/change these properties, you need to carefully revie wthat code too to be sure it fires the right changed events
+			hash["_TopicName"] = topic.Name;
+			hash["_TopicFullName"] = topic.FullnameWithVersion;
+			hash["_LastModifiedBy"] = lastModBy;
+			hash["_CreationTime"] = creation.ToString();
+			hash["_ModificationTime"] = modification.ToString();
+			hash["_Body"] = content;
+		}
+
+		/// <summary>
+		/// Answer true if the topic exists; else false
+		/// </summary>
+		public bool TopicExists(AbsoluteTopicName topic)
+		{
+			ContentBase cb = ContentBaseForTopic(topic);
+			if (cb == null)
+				return false;
+			return cb.TopicExistsLocally(topic.LocalName);
+		}
+
+		public void DeleteTopic(AbsoluteTopicName topic)
+		{
+			ContentBase cb = ContentBaseForTopic(topic);
+			if (cb == null)
+				return ;
+			cb.DeleteTopic(topic.LocalName);
+		}
+
 	}
 }

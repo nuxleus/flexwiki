@@ -20,14 +20,14 @@ using System.Data;
 using System.Text;
 using FlexWiki.BeL;
 using FlexWiki.Formatting;
-using FlexWiki.Newsletters;
+using FlexWiki;
 
 namespace FlexWiki.BeL.Debugger
 {
 	/// <summary>
 	/// Summary description for Form1.
 	/// </summary>
-	public class Form1 : System.Windows.Forms.Form, IWikiToPresentation, IDeliveryBoy
+	public class Form1 : System.Windows.Forms.Form, IWikiToPresentation
 	{
 		private System.Windows.Forms.TextBox textBoxInput;
 		private System.Windows.Forms.TreeView treeViewParseTree;
@@ -60,9 +60,6 @@ namespace FlexWiki.BeL.Debugger
 		private System.Windows.Forms.Splitter splitter2;
 		private System.Windows.Forms.TabControl tabControl1;
 		private System.Windows.Forms.TabPage tabPage1;
-		private System.Windows.Forms.TabPage tabPage2;
-		private System.Windows.Forms.Button button1;
-		private System.Windows.Forms.TextBox textBoxNewsletterDelivery;
 		private System.ComponentModel.IContainer components;
 
 		public Form1()
@@ -132,9 +129,6 @@ namespace FlexWiki.BeL.Debugger
 			this.mainMenu1 = new System.Windows.Forms.MainMenu();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
-			this.tabPage2 = new System.Windows.Forms.TabPage();
-			this.button1 = new System.Windows.Forms.Button();
-			this.textBoxNewsletterDelivery = new System.Windows.Forms.TextBox();
 			this.tabControl.SuspendLayout();
 			this.tabParser.SuspendLayout();
 			this.panel5.SuspendLayout();
@@ -146,7 +140,6 @@ namespace FlexWiki.BeL.Debugger
 			this.panel1.SuspendLayout();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
-			this.tabPage2.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// textBoxInput
@@ -410,13 +403,13 @@ namespace FlexWiki.BeL.Debugger
 			// tabControl1
 			// 
 			this.tabControl1.Controls.Add(this.tabPage1);
-			this.tabControl1.Controls.Add(this.tabPage2);
 			this.tabControl1.Dock = System.Windows.Forms.DockStyle.Bottom;
 			this.tabControl1.Location = new System.Drawing.Point(0, 78);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
 			this.tabControl1.Size = new System.Drawing.Size(776, 328);
 			this.tabControl1.TabIndex = 8;
+			this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
 			// 
 			// tabPage1
 			// 
@@ -426,34 +419,6 @@ namespace FlexWiki.BeL.Debugger
 			this.tabPage1.Size = new System.Drawing.Size(768, 302);
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "WikiTalk";
-			// 
-			// tabPage2
-			// 
-			this.tabPage2.Controls.Add(this.textBoxNewsletterDelivery);
-			this.tabPage2.Controls.Add(this.button1);
-			this.tabPage2.Location = new System.Drawing.Point(4, 22);
-			this.tabPage2.Name = "tabPage2";
-			this.tabPage2.Size = new System.Drawing.Size(768, 302);
-			this.tabPage2.TabIndex = 1;
-			this.tabPage2.Text = "Newsletter";
-			// 
-			// button1
-			// 
-			this.button1.Location = new System.Drawing.Point(24, 16);
-			this.button1.Name = "button1";
-			this.button1.Size = new System.Drawing.Size(144, 23);
-			this.button1.TabIndex = 0;
-			this.button1.Text = "Process newsletters";
-			this.button1.Click += new System.EventHandler(this.button1_Click);
-			// 
-			// textBoxNewsletterDelivery
-			// 
-			this.textBoxNewsletterDelivery.Location = new System.Drawing.Point(192, 16);
-			this.textBoxNewsletterDelivery.Multiline = true;
-			this.textBoxNewsletterDelivery.Name = "textBoxNewsletterDelivery";
-			this.textBoxNewsletterDelivery.Size = new System.Drawing.Size(520, 200);
-			this.textBoxNewsletterDelivery.TabIndex = 1;
-			this.textBoxNewsletterDelivery.Text = "";
 			// 
 			// Form1
 			// 
@@ -475,7 +440,6 @@ namespace FlexWiki.BeL.Debugger
 			this.panel1.ResumeLayout(false);
 			this.tabControl1.ResumeLayout(false);
 			this.tabPage1.ResumeLayout(false);
-			this.tabPage2.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -680,58 +644,9 @@ namespace FlexWiki.BeL.Debugger
 		
 		}
 
-		private void button1_Click(object sender, System.EventArgs e)
+		private void tabControl1_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
-			ProcessNewsletters();
-		}
-
-		DateTime NewsletterStartStamp;
-		DateTime NewsletterEndStamp;
-
-		void NewsletterStart()
-		{
-			NewsletterStartStamp = DateTime.Now;
-			NLog("Start newsletter processing");
-		}
-
-		void NewsletterEnd()
-		{
-			NewsletterEndStamp = DateTime.Now;
-			NLog("End newsletter processing");
-			NLog("Duration: " + NewsletterEndStamp.Subtract(NewsletterStartStamp));
-		}
-
-		void ProcessNewsletters()
-		{
-			NewsletterStart();
-			LinkMaker lm = new LinkMaker("http://dummy");
-			Federation fed = new Federation(textBoxFederationPath.Text, FlexWiki.Formatting.OutputFormat.HTML, lm);
-			fed.FederationCache = new NewsletterDaemon.Cache();
-			NewsletterManager manager = new NewsletterManager(fed, lm, this, "test@test.com", "");
-			StringBuilder sb = new StringBuilder();
-			StringWriter sw = new StringWriter(sb);
-			manager.Notify(sw);
-			textBoxNewsletterDelivery.Text += sb.ToString();
-			NewsletterEnd();
-		}
-		#region IDeliveryBoy Members
-
-		public void Deliver(string to, string from, string subject, string body)
-		{
-			String s = "";
-			
-			s += "To: " + to + Environment.NewLine;
-			s += "From: " + from + Environment.NewLine;
-			s += "Subject: " + subject + Environment.NewLine + Environment.NewLine;
-			s += body + Environment.NewLine;
-			NLog(s);
-		}
-
-		#endregion
-
-		void NLog(string s)
-		{
-			textBoxNewsletterDelivery.Text += s;
+		
 		}
 	}
 }

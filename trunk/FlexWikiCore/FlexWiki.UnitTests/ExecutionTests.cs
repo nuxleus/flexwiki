@@ -389,34 +389,12 @@ with(""short"")
 			Assertion.AssertEquals("P(false)", Run(@"20.Equals(""blah"")"));
 		}
 
-
-
 		bool FindRule(ExecutionContext ctx, Type type)
 		{
 			foreach (CacheRule each in ctx.CacheRules)
 				if (each.GetType() == type)
 					return true;
 			return false;
-		}
-
-		[Test] public void TestComplexCache()
-		{
-			IBELObject p = new Dummy();
-			StringPTN s1 = new StringPTN(@"c:\boot.ini");
-			ExecutionContext ctx = new ExecutionContext();
-			ArrayList args = new ArrayList();
-			args.Add(s1);
-
-			IBELObject v = p.ValueOf("FileTime", args, ctx);
-
-			Assertion.AssertEquals(1, ctx.CacheRules.Count);
-			foreach (CacheRule r in ctx.CacheRules)
-			{
-				Assertion.AssertEquals(r.GetType(), typeof(FilesCacheRule));
-				FilesCacheRule fcr = (FilesCacheRule)r;
-				Assertion.AssertEquals(1, fcr.Files.Count);
-				Assertion.AssertEquals(s1.Value, fcr.Files[0]);
-			}
 		}
 
 		[Test] public void TestVarArgsZero()
@@ -485,13 +463,6 @@ with(""short"")
 				{
 					return _ForeverCounter++;
 				}
-			}
-
-			[ExposedMethod(ExposedMethodFlags.CachePolicyComplex, "")]
-			public DateTime FileTime(ExecutionContext ctx, string path)
-			{
-				ctx.AddCacheRule(new FilesCacheRule(path));
-				return System.IO.File.GetLastWriteTime(path);
 			}
 
 			public override IOutputSequence ToOutputSequence()

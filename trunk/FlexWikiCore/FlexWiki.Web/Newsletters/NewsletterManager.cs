@@ -320,8 +320,8 @@ namespace FlexWiki.Newsletters
 			ArrayList answer = new ArrayList();
 			foreach (AbsoluteTopicName each in topics)
 			{
-				ContentBase cb = TheFederation.DefaultContentBase;
-				IEnumerable e = cb.AllChangesForTopicSince(each, since);   
+				ContentBase cb = TheFederation.ContentBaseForTopic(each);
+				IEnumerable e = cb.AllChangesForTopicSince(each.LocalName, since);   
 				int changeCount = 0;
 				foreach (object obj in e)
 				{

@@ -25,13 +25,8 @@ namespace FlexWiki
 		{
 		}
 
-		public abstract CacheDependency GetCacheDependency(CacheDependency inner);
-
-		public CacheDependency GetCacheDependency()
-		{
-			return GetCacheDependency(null);
-		}
-
+		public abstract void SetupInvalidation(FederationCacheManager manager, string key);
+		
 		public abstract string Description {get;}
 		public virtual bool IncludesNeverCacheRule 
 		{
@@ -42,6 +37,17 @@ namespace FlexWiki
 		}
 
 		public abstract ICollection AllLeafRules {get;}
+
+		public override int GetHashCode()
+		{
+			return base.GetHashCode ();
+		}
+
+		public override bool Equals(object obj)
+		{
+			return base.Equals (obj);
+		}
+
 
 	}
 }

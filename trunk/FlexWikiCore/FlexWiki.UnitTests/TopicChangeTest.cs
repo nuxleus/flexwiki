@@ -19,14 +19,14 @@ namespace FlexWiki.UnitTests
 	{
 		[Test] public void VersionWithSimpleName()
 		{
-			TopicChange ch = new TopicChange(new AbsoluteTopicName("Foo.CodeImprovementIdeas(2003-11-23-14-34-03-Name)"));
+			TopicChange ch = FileSystemStore.TopicChangeFromName(new AbsoluteTopicName("Foo.CodeImprovementIdeas(2003-11-23-14-34-03-Name)"));
 			DateTime dt = new DateTime(2003, 11, 23, 14,34, 3, 0);
 			Assertion.AssertEquals(dt, ch.Timestamp);
 		}
 
 		[Test] public void VersionWithSimpleNameWithMilliseconds()
 		{
-			TopicChange ch = new TopicChange(new AbsoluteTopicName("Foo.CodeImprovementIdeas(2003-11-23-14-34-03.123-Name)"));
+			TopicChange ch = FileSystemStore.TopicChangeFromName(new AbsoluteTopicName("Foo.CodeImprovementIdeas(2003-11-23-14-34-03.123-Name)"));
 			DateTime dt = new DateTime(2003, 11, 23, 14,34, 3, 123);
 			Assertion.AssertEquals(dt, ch.Timestamp);
 		}
@@ -34,28 +34,28 @@ namespace FlexWiki.UnitTests
 
 		[Test] public void VersionWithLeadingDigitForName()
 		{
-			TopicChange ch = new TopicChange(new AbsoluteTopicName("Foo.CodeImprovementIdeas(2003-11-23-14-34-03-127.0.0.1)"));
+			TopicChange ch = FileSystemStore.TopicChangeFromName(new AbsoluteTopicName("Foo.CodeImprovementIdeas(2003-11-23-14-34-03-127.0.0.1)"));
 			DateTime dt = new DateTime(2003, 11, 23, 14,34, 3, 0);
 			Assertion.AssertEquals(dt, ch.Timestamp);
 		}
 
 		[Test] public void VersionWithMillisecondsWithLeadingDigitForName()
 		{
-			TopicChange ch = new TopicChange(new AbsoluteTopicName("Foo.CodeImprovementIdeas(2003-11-23-14-34-03.1-127.0.0.1)"));
+			TopicChange ch = FileSystemStore.TopicChangeFromName(new AbsoluteTopicName("Foo.CodeImprovementIdeas(2003-11-23-14-34-03.1-127.0.0.1)"));
 			DateTime dt = new DateTime(2003, 11, 23, 14,34, 3, 100);
 			Assertion.AssertEquals(dt, ch.Timestamp);
 		}
 
 		[Test] public void VersionWithMillisecondsWithExtraTail()
 		{
-			TopicChange ch = new TopicChange(new AbsoluteTopicName("Foo.CodeImprovementIdeas(2003-11-23-14-34-03.1000-127.0.0.1)"));
+			TopicChange ch = FileSystemStore.TopicChangeFromName(new AbsoluteTopicName("Foo.CodeImprovementIdeas(2003-11-23-14-34-03.1000-127.0.0.1)"));
 			DateTime dt = new DateTime(2003, 11, 23, 14,34, 3, 100);
 			Assertion.AssertEquals(dt, ch.Timestamp);
 		}
 
 		[Test] public void VersionWithMillisecondsBiggie()
 		{
-			TopicChange ch = new TopicChange(new AbsoluteTopicName("Foo.CodeImprovementIdeas(2003-11-23-14-34-03.8890-127.0.0.1)"));
+			TopicChange ch = FileSystemStore.TopicChangeFromName(new AbsoluteTopicName("Foo.CodeImprovementIdeas(2003-11-23-14-34-03.8890-127.0.0.1)"));
 			DateTime dt = new DateTime(2003, 11, 23, 14,34, 3, 889);
 			Assertion.AssertEquals(dt, ch.Timestamp);
 		}

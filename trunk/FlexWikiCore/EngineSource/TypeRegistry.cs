@@ -51,25 +51,11 @@ namespace FlexWiki
 		private void LoadRegistry()
 		{
 			this._Registry = new Hashtable();
-			LoadTypesFromAssembly(Assembly.GetExecutingAssembly());
-			LoadPlugins();
+			foreach (Assembly each in AppDomain.CurrentDomain.GetAssemblies())
+				RegisterTypesFromAssembly(each);
 		}
 
-		void LoadPlugins()
-		{
-			FlexWikiConfigurationSectionHandler config = FlexWikiConfigurationSectionHandler.GetConfig();
-			if (config==null)
-				return;
-
-			foreach(string plugin in config.Plugins)
-			{
-				// load plugin assembly
-				Assembly a = Assembly.Load(plugin);
-				LoadTypesFromAssembly(a);
-			}
-		}
-
-		void LoadTypesFromAssembly(Assembly a)
+		void RegisterTypesFromAssembly(Assembly a)
 		{
 				// explore types
 				foreach(Type type in a.GetExportedTypes())

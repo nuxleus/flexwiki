@@ -56,14 +56,6 @@ namespace FlexWiki.Web
 		}
 		#endregion
 
-		bool IsPost
-		{
-			get
-			{
-				return Request.HttpMethod == "POST";
-			}
-		}
-
 		string PostedTopicText
 		{
 			get
@@ -102,9 +94,9 @@ namespace FlexWiki.Web
 				if (lastEdit == "" || lastEdit == null)
 					return false;	// it's probably new
 				DateTime currentStamp;
-
-				return DefaultContentBase.TopicExists(TheTopic) &&
-					!(currentStamp = DefaultContentBase.GetTopicLastWriteTime(TheTopic)).ToString("s").Equals(lastEdit);
+        
+				return TheFederation.TopicExists(TheTopic) && 
+					!(currentStamp = TheFederation.GetTopicModificationTime(TheTopic)).ToString("s").Equals(lastEdit);
 			}
 		}
 
@@ -120,13 +112,14 @@ namespace FlexWiki.Web
 			{
 				AbsoluteTopicName newVersionName = new AbsoluteTopicName(TheTopic.Name, TheTopic.Namespace);
 				newVersionName.Version = TopicName.NewVersionStringForUser(VisitorIdentityString);
-				DefaultContentBase.WriteTopicAndNewVersion(newVersionName, PostedTopicText);
+				ContentBase cb = TheFederation.ContentBaseForNamespace(TheTopic.Namespace);
+				cb.WriteTopicAndNewVersion(newVersionName.LocalName, PostedTopicText);		
 				returnTo = TheTopic;
 
 				if (isDelete)
 				{
 					returnTo = null;	// we won't be able to go back here because we're deleting it!
-					DefaultContentBase.DeleteTopic(TheTopic);
+					TheFederation.DeleteTopic(TheTopic);
 				}
 
 				if (back && ReturnTopic != null)
@@ -165,7 +158,7 @@ namespace FlexWiki.Web
 		{
 			get
 			{
-				if (!DefaultContentBase.TopicExists(TheTopic))
+				if (!TheFederation.TopicExists(TheTopic))
 					return true;	// assume we can create
 				return TheFederation.IsExistingTopicWritable(TheTopic);
 			}
@@ -198,8 +191,8 @@ namespace FlexWiki.Web
 			<textarea class='EditBox' onkeydown='if (document.all && event.keyCode == 9) {  event.returnValue= false; document.selection.createRange().text = String.fromCharCode(9)} ' rows='20' cols='50' name='Text1' onfocus='textArea_OnFocus(event)' onblur='textArea_OnBlur(event)'>");
 
 			string content = null;
-			if (DefaultContentBase.TopicExists(TheTopic))
-				content = DefaultContentBase.Read(TheTopic);
+			if (TheFederation.TopicExists(TheTopic))
+				content = TheFederation.Read(TheTopic);
 			if (content == null)
 				content = @"
 Check out the formatting tips on the right for help formatting and making links.
@@ -219,8 +212,8 @@ Add your wiki text here.
 			if (IsWritable)
 			{
 				Response.Write("<input type='text' style='display:none' name='UserSuppliedName' value ='" + Formatter.EscapeHTML(UserPrefix == null ? "" : UserPrefix) + "'>");
-				if (DefaultContentBase.TopicExists(TheTopic))
-					Response.Write("<input type='text' style='display:none' name='TopicLastWrite' value ='" + Formatter.EscapeHTML(DefaultContentBase.GetTopicLastWriteTime(TheTopic).ToString("s")) + "'>");
+				if (TheFederation.TopicExists(TheTopic))
+					Response.Write("<input type='text' style='display:none' name='TopicLastWrite' value ='" + Formatter.EscapeHTML(TheFederation.GetTopicModificationTime(TheTopic).ToString("s")) + "'>");
 				Response.Write("<input type='text' style='display:none' name='Topic' value ='" + Formatter.EscapeHTML(TheTopic.ToString()) + "'>");
 				if (ReturnTopic != null)
 				{

@@ -119,11 +119,11 @@ namespace FlexWiki.Web.Admin
 			MailMessage msg = new MailMessage();
 			string adminMail = SendRequestsTo;
 			Uri uri = Request.Url;
-			UriBuilder b = new UriBuilder(uri.Scheme, uri.Host, uri.Port, "/admin/EditNamespace.aspx", 
-				"?contact=" +  HttpUtility.UrlEncode(values.Contact) + 
-				"&ns=" +  HttpUtility.UrlEncode(values.Namespace) + 
-				"&title=" +  HttpUtility.UrlEncode(values.Title) + 
-				"&description=" +  HttpUtility.UrlEncode(values.Description));
+			UriBuilder b = new UriBuilder(uri.Scheme, uri.Host, uri.Port, "/admin/EditProvider.aspx", 
+				"?Contact=" +  HttpUtility.UrlEncode(values.Contact) + 
+				"&Namespace=" +  HttpUtility.UrlEncode(values.Namespace) + 
+				"&Title=" +  HttpUtility.UrlEncode(values.Title) + 
+				"&Description=" +  HttpUtility.UrlEncode(values.Description));
 			string link = b.ToString();
 
 			msg.To = adminMail;
@@ -244,14 +244,6 @@ namespace FlexWiki.Web.Admin
 			Response.Write("<tr>");
 			Response.Write("<td><td class='FieldHelp'>" + (help) + "</td>");
 			Response.Write("</tr>");
-		}
-
-		bool IsPost
-		{
-			get
-			{
-				return Request.HttpMethod == "POST";
-			}
 		}
 
 		void EndFields()

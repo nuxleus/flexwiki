@@ -20,7 +20,7 @@ namespace FlexWiki
 	/// <summary>
 	/// Summary description for CompositeCacheRule.
 	/// </summary>
-	public class CompositeCacheRule : CacheRule
+	public class CompositeCacheRule : CacheRule, IHTMLRenderable
 	{
 		public CompositeCacheRule()
 		{
@@ -44,6 +44,13 @@ namespace FlexWiki
 			}
 		}
 
+		public override void SetupInvalidation(FederationCacheManager manager, string key)
+		{
+				foreach (CacheRule each in _Children)
+					each.SetupInvalidation(manager, key);
+		}
+
+
 		public override ICollection AllLeafRules
 		{
 			get
@@ -56,32 +63,54 @@ namespace FlexWiki
 		}
 
 
-		public override CacheDependency GetCacheDependency(CacheDependency inner)
-		{
-			CacheDependency answer = inner;
-			foreach (CacheRule each in _Children)
-			{
-				answer = each.GetCacheDependency(answer);
-			}
-			return answer;
-		}
-
 		public override string Description
 		{
 			get
 			{
 				StringBuilder b = new StringBuilder();
 				b.Append("CompositeCacheRule(");
+				bool first = true;
 				foreach (CacheRule each in _Children)
 				{
-					if (b.Length > 0)
+					if (!first)
 						b.Append(", ");
+					first = false;
 					b.Append(each.Description);
 				}
 				b.Append(")");
 				return b.ToString();
 			}
 		}
-		
+		#region IHTMLRenderable Members
+
+		public void RenderToHTML(System.IO.TextWriter output)
+		{
+			output.WriteLine("<fieldset><legend>Composite</legend>");
+			output.WriteLine("<table width='100%' border=0 cellpadding=3 cellspacing=0>");
+			foreach (CacheRule each in _Children)
+			{
+				output.WriteLine("<tr><td valign='top' class='CompositeCacheRuleChild'>");
+				IHTMLRenderable child = (IHTMLRenderable)each;
+				child.RenderToHTML(output);
+				output.WriteLine("</tr>");
+			}
+			output.WriteLine("</table>");
+			output.WriteLine("</fieldset>");
+		}
+
+//		public void RenderToHTML(System.IO.TextWriter output)
+//		{
+//			output.WriteLine("<table width='100%' border=0 cellpadding=3 cellspacing=0>");
+//			foreach (CacheRule each in _Children)
+//			{
+//				output.WriteLine("<tr><td valign='top'>");
+//				IHTMLRenderable child = (IHTMLRenderable)each;
+//				child.RenderToHTML(output);
+//				output.WriteLine("</tr>");
+//			}
+//			output.WriteLine("</table>");
+//		}
+
+		#endregion
 	}
 }

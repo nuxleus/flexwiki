@@ -28,5 +28,7 @@ namespace FlexWiki
 		object this[string key] {get; set;}
 		void Put(string key, object val);
 		void Put(string key, object val, CacheRule rule);
+		void Clear();
+		void Remove(string key);
 	}
 }

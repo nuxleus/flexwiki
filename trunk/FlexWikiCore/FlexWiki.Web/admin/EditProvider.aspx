@@ -1,4 +1,4 @@
-<%@ Page language="c#" Codebehind="EditNamespace.aspx.cs" AutoEventWireup="false" Inherits="FlexWiki.Web.Admin.EditNamespace" %>
+<%@ Page language="c#" Codebehind="EditProvider.aspx.cs" AutoEventWireup="false" Inherits="FlexWiki.Web.Admin.EditProvider" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HTML>
 	<HEAD>
@@ -8,7 +8,7 @@
 		<meta name="Originator" content="Microsoft Visual Studio .NET 7.1">
 		<%= MainStylesheetReference() %>
 	</HEAD>
-	<body class='Dialog'>
+	<body>
 		<% ShowPage(); %>
 	</body>
 </HTML>

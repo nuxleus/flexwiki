@@ -100,13 +100,13 @@
                     HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Web.Services.dll"
                 />
                 <Reference
-                    Name = "FlexWiki.Web.Services"
-                    Project = "{374C1AEF-4BE6-41AA-9100-9BA48AEEBEF8}"
+                    Name = "FlexWikiSecurity"
+                    Project = "{F0146D3C-71FB-4C1F-B9E3-DA4B5FEC4AB9}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
                 <Reference
-                    Name = "FlexWikiSecurity"
-                    Project = "{F0146D3C-71FB-4C1F-B9E3-DA4B5FEC4AB9}"
+                    Name = "CalendarProvider"
+                    Project = "{5F81B8BC-C8F3-491A-8680-9531350E1744}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
             </References>
@@ -192,19 +192,8 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "EditService.asmx"
+                    RelPath = "EditNamespace.aspx"
                     BuildAction = "Content"
-                />
-                <File
-                    RelPath = "EditService.asmx.cs"
-                    DependentUpon = "EditService.asmx"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "EditService.asmx.resx"
-                    DependentUpon = "EditService.asmx.cs"
-                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Global.asax"
@@ -221,6 +210,16 @@
                     RelPath = "Global.asax.resx"
                     DependentUpon = "Global.asax.cs"
                     BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "HTMLStringWriter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "HTMLWriter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
                 <File
                     RelPath = "LastModified.aspx"
@@ -444,6 +443,41 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "UIColumn.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "UIResponse.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "UITable.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "UpdateMonitor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "UpgradeConfigurationFile.aspx"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "UpgradeConfigurationFile.aspx.cs"
+                    DependentUpon = "UpgradeConfigurationFile.aspx"
+                    SubType = "ASPXCodeBehind"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "UpgradeConfigurationFile.aspx.resx"
+                    DependentUpon = "UpgradeConfigurationFile.aspx.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Versions.aspx"
                     BuildAction = "Content"
                 />
@@ -509,6 +543,11 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "admin\ConfigurationChecker.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "admin\default.aspx"
                     BuildAction = "Content"
                 />
@@ -540,33 +579,18 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "admin\EditNamespace.aspx"
+                    RelPath = "admin\EditProvider.aspx"
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "admin\EditNamespace.aspx.cs"
-                    DependentUpon = "EditNamespace.aspx"
+                    RelPath = "admin\EditProvider.aspx.cs"
+                    DependentUpon = "EditProvider.aspx"
                     SubType = "ASPXCodeBehind"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "admin\EditNamespace.aspx.resx"
-                    DependentUpon = "EditNamespace.aspx.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "admin\Namespaces.aspx"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "admin\Namespaces.aspx.cs"
-                    DependentUpon = "Namespaces.aspx"
-                    SubType = "ASPXCodeBehind"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "admin\Namespaces.aspx.resx"
-                    DependentUpon = "Namespaces.aspx.cs"
+                    RelPath = "admin\EditProvider.aspx.resx"
+                    DependentUpon = "EditProvider.aspx.cs"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
@@ -586,6 +610,21 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "admin\Providers.aspx"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "admin\Providers.aspx.cs"
+                    DependentUpon = "Providers.aspx"
+                    SubType = "ASPXCodeBehind"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "admin\Providers.aspx.resx"
+                    DependentUpon = "Providers.aspx.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "admin\ShowCache.aspx"
                     BuildAction = "Content"
                 />
@@ -598,6 +637,36 @@
                 <File
                     RelPath = "admin\ShowCache.aspx.resx"
                     DependentUpon = "ShowCache.aspx.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "admin\ShowUpdates.aspx"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "admin\ShowUpdates.aspx.cs"
+                    DependentUpon = "ShowUpdates.aspx"
+                    SubType = "ASPXCodeBehind"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "admin\ShowUpdates.aspx.resx"
+                    DependentUpon = "ShowUpdates.aspx.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "admin\UpgradeConfigFile.aspx"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "admin\UpgradeConfigFile.aspx.cs"
+                    DependentUpon = "UpgradeConfigFile.aspx"
+                    SubType = "ASPXCodeBehind"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "admin\UpgradeConfigFile.aspx.resx"
+                    DependentUpon = "UpgradeConfigFile.aspx.cs"
                     BuildAction = "EmbeddedResource"
                 />
                 <File

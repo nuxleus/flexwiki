@@ -8,7 +8,7 @@
 		<meta name="Originator" content="Microsoft Visual Studio .NET 7.1">
 		<%= MainStylesheetReference() %>
 	</HEAD>
-	<body class='Dialog'>
+	<body>
 		<% ShowPage(); %>
 	</body>
 </HTML>

@@ -19,10 +19,15 @@ namespace FlexWiki
 	/// <summary>
 	/// Summary description for CacheRuleNever.
 	/// </summary>
-	public class CacheRuleNever : CacheRule
+	public class CacheRuleNever : CacheRule, IHTMLRenderable
 	{
 		public CacheRuleNever()
 		{
+		}
+
+		public override void SetupInvalidation(FederationCacheManager manager, string key)
+		{
+
 		}
 
 		public override string Description
@@ -31,11 +36,6 @@ namespace FlexWiki
 			{
 				return "never cache";
 			}
-		}
-
-		public override CacheDependency GetCacheDependency(CacheDependency inner)
-		{
-			return null;
 		}
 
 		public override bool IncludesNeverCacheRule 
@@ -54,5 +54,22 @@ namespace FlexWiki
 			}
 		}
 
+		public override bool Equals(object obj)
+		{
+			return obj is CacheRuleNever;
+		}
+
+		public override int GetHashCode()
+		{
+			return 0;	// all instances have the same hash
+		}
+		#region IHTMLRenderable Members
+
+		public void RenderToHTML(System.IO.TextWriter output)
+		{
+			output.WriteLine("<fieldset><legend>Federation Properties</legend></fieldset>");
+		}
+
+		#endregion
 	}
 }
