@@ -320,5 +320,20 @@ namespace FlexWiki
 				return DateTime.ToShortTimeString();
 			}
 		}		
+
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Determine whether this object is equal to another object")]
+		public override bool Equals(object obj)
+		{
+			if (!(obj is DateTime))
+				return false;
+			return this.DateTime.Equals(obj);
+		}
+
+		public override int GetHashCode()
+		{
+			return this.DateTime.GetHashCode();
+		}
+
+
 	}
 }

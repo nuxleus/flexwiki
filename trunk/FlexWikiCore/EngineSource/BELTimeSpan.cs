@@ -35,6 +35,20 @@ namespace FlexWiki
 			}
 		}
 
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Determine whether this object is equal to another object")]
+		public override bool Equals(object obj)
+		{
+			if (!(obj is TimeSpan))
+				return false;
+			return this.TimeSpan.Equals(obj);
+		}
+
+		public override int GetHashCode()
+		{
+			return this.TimeSpan.GetHashCode ();
+		}
+
+
 		public override string ToString()
 		{
 			return TimeSpan.ToString();

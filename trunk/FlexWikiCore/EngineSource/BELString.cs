@@ -103,6 +103,38 @@ namespace FlexWiki
 			else
 				return Value.Substring(index);
 		}
+
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Determine whether this object is equal to another object")]
+		public override bool Equals(object obj)
+		{
+			if (!(obj is string))
+				return false;
+			return Value.Equals(obj as string);
+		}
+		
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Determine whether this string is equal to another string (ignoring case)")]
+		public  bool EqualsCaseInsensitive(object obj)
+		{
+			if (!(obj is string))
+				return false;
+			return String.Compare(Value, obj as string, true) == 0;
+		}
+
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Determine whether this string contains another string")]
+		public  bool Contains(object obj)
+		{
+			if (!(obj is string))
+				return false;
+			return Value.IndexOf(obj as string) != -1;
+		}
+
+		public override int GetHashCode()
+		{
+			if (Value == null)
+				return 0;
+			return Value.GetHashCode();
+		}
+
 		#region IComparable Members
 
 		public int CompareTo(object obj)

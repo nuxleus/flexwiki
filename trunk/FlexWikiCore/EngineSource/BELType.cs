@@ -40,6 +40,22 @@ namespace FlexWiki
 			}
 		}
 
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Determine whether this object is equal to another object")]
+		public override bool Equals(object obj)
+		{
+			if (!(obj is Type))
+				return false;
+			return CLRType.Equals((obj as BELType).CLRType);
+		}
+
+		public override int GetHashCode()
+		{
+			return CLRType.GetHashCode ();
+		}
+
+
+
+
 		BELType _InstanceType;
 
 		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "For MetaTypes, answer the Type for instances")]		

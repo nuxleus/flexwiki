@@ -30,6 +30,20 @@ namespace FlexWiki
 			_Value = val;
 		}
 
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Determine whether this object is equal to another object")]
+		public override bool Equals(object obj)
+		{
+			if (!(obj is int))
+				return false;
+			return Value.Equals(obj);
+		}
+
+		public override int GetHashCode()
+		{
+			return Value.GetHashCode ();
+		}
+
+
 		int _Value;
 		public int Value
 		{

@@ -352,6 +352,45 @@ with(""short"")
 		}
 
 
+		[Test] public void TestStringEquals()
+		{
+			Assertion.AssertEquals("P(true)", Run(@"""hello"".Equals(""hello"")"));
+			Assertion.AssertEquals("P(false)", Run(@"""hello"".Equals(""goodbye"")"));
+		}
+
+		
+		[Test] public void TestStringEqualsCaseInsensitive()
+		{
+			Assertion.AssertEquals("P(true)", Run(@"""hello"".EqualsCaseInsensitive(""hello"")"));
+			Assertion.AssertEquals("P(true)", Run(@"""HELLO"".EqualsCaseInsensitive(""hello"")"));
+			Assertion.AssertEquals("P(false)", Run(@"""hello"".EqualsCaseInsensitive(""goodbye"")"));
+		}
+
+		[Test] public void TestStringContains()
+		{
+			Assertion.AssertEquals("P(true)", Run(@"""hello"".Contains(""ell"")"));
+			Assertion.AssertEquals("P(true)", Run(@"""hello"".Contains(""h"")"));
+			Assertion.AssertEquals("P(false)", Run(@"""hello"".Contains(""xl"")"));
+		}
+
+		[Test] public void TestBooleanEquals()
+		{
+			Assertion.AssertEquals("P(true)", Run(@"false.Not.Equals(true)"));
+			Assertion.AssertEquals("P(true)", Run(@"true.Equals(true)"));
+			Assertion.AssertEquals("P(true)", Run(@"false.Equals(false)"));
+			Assertion.AssertEquals("P(false)", Run(@"true.Equals(false)"));
+		}
+		
+		[Test] public void TestIntegerEquals()
+		{
+			Assertion.AssertEquals("P(true)", Run(@"100.Equals(100)"));
+			Assertion.AssertEquals("P(true)", Run(@"-100.Equals(-100)"));
+			Assertion.AssertEquals("P(false)", Run(@"20.Equals(10)"));
+			Assertion.AssertEquals("P(false)", Run(@"20.Equals(""blah"")"));
+		}
+
+
+
 		bool FindRule(ExecutionContext ctx, Type type)
 		{
 			foreach (CacheRule each in ctx.CacheRules)

@@ -51,6 +51,17 @@ namespace FlexWiki
 			return block.Value(ctx);
 		}
 
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Determine whether this object is equal to another object")]
+		public override bool Equals(object obj)
+		{
+			return base.Equals(obj);
+		}
+
+		public override int GetHashCode()
+		{
+			return base.GetHashCode ();
+		}
+
 
 		[ExposedMethod(ExposedMethodFlags.CachePolicyNone | ExposedMethodFlags.NeedContext, "If this object is null, answer the result of evaluating the first block; else answer the result of evaluating the second block" )]
 		public virtual IBELObject IfNullElse(ExecutionContext ctx, Block nullBlock, Block notNullBlock)

@@ -105,5 +105,19 @@ namespace FlexWiki
 				return UndefinedObject.Instance;
 		}
 
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Determine whether this object is equal to another object")]
+		public override bool Equals(object obj)
+		{
+			if (!(obj is Boolean))
+				return false;
+			return Value.Equals(obj);
+		}
+
+		public override int GetHashCode()
+		{
+			return Value.GetHashCode ();
+		}
+
+
 	}
 }
