@@ -1896,7 +1896,18 @@ aTopic|
 	namespace.Description,
 	Newline, ""----"", Newline, 
 	federation.About,
-	Newline, ""----"", Newline
+	Newline, ""----"", Newline,
+	""*Recent Topics*"",
+	Newline,
+	request.VisitorEvents.Snip(15).Collect
+	{ each |
+		[
+		Tab, 
+		""*"",
+		Presentations.Link(federation.LinkMaker.LinkToTopic(each.Fullname), each.Name),
+		Newline
+		]
+	}
 	]
 }
 

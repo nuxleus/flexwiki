@@ -124,6 +124,21 @@ namespace FlexWiki.Web
 		}
 
 		/// <summary>
+		/// Add a visitor event to the session state VisitorEvents
+		/// </summary>
+		/// <param name="e"></param>
+		protected void LogVisitorEvent(VisitorEvent e)
+		{
+			ArrayList list = (ArrayList)(System.Web.HttpContext.Current.Session["VisitorEvents"]);
+			if (list == null)
+			{
+				list = new ArrayList();
+				System.Web.HttpContext.Current.Session["VisitorEvents"] = list;
+			}
+			list.Insert(0, e);	// Adding to the front means we're keeping it sorted with latest first    
+		}
+
+		/// <summary>
 		/// Answer a string to identify the current visitor.  Is authentication is up and the user is authenticated, answer the
 		/// authenticated user's name (e.g., a Windows accoutn name).  Otherwise answer the IP address of the visitor (possibly 
 		/// with a user specified prefix).

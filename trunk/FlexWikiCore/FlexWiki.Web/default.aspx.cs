@@ -66,6 +66,8 @@ namespace FlexWiki.Web
 		protected void StartPage()
 		{
 			MainEvent = TheFederation.LogEventFactory.CreateAndStartEvent(Request.UserHostAddress, VisitorIdentityString, GetTopicName().ToString(), LogEvent.LogEventType.ReadTopic);
+			VisitorEvent e = new VisitorEvent(GetTopicName(), VisitorEvent.Read, DateTime.Now);
+			LogVisitorEvent(e);
 		}
 
 		protected void EndPage()

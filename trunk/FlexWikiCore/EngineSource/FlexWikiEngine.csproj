@@ -699,6 +699,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "VisitorEvent.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "WebApplicationLogSink.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

@@ -155,7 +155,7 @@ Role:Developer", author);
 			foreach (AbsoluteTopicName topic in _base.AllTopics(true))
 			{
 				Assertion.Assert("Looking for " + topic.ToString(), expecting.Contains(topic.Fullname));
-				expecting.Remove(topic.Fullname);
+				expecting.Remove(topic.Fullname); 
 			}
 			Assertion.AssertEquals(expecting.Count, 0);
 		}

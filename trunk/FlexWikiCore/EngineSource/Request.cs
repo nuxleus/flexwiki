@@ -37,6 +37,8 @@ namespace FlexWiki
 			}
 		}
 
+
+
 		IPrincipal User
 		{
 			get
@@ -65,6 +67,19 @@ namespace FlexWiki
 					return answer;
 				foreach (string s in HTTPRequest.QueryString.Keys)
 					answer.Add(s);
+				return answer;
+			}
+		}
+
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNever, "Answer an Array of VisitorEvents describing the current user's visits during the session")]
+		public ArrayList VisitorEvents
+		{
+			get
+			{
+				ArrayList answer = new ArrayList();
+				IEnumerable events = (IEnumerable)(System.Web.HttpContext.Current.Session["VisitorEvents"]);
+				foreach (VisitorEvent each in events)
+					answer.Add(each);
 				return answer;
 			}
 		}
