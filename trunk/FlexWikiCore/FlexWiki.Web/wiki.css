@@ -717,6 +717,21 @@ a.Anchor, a.Anchor:hover, a.Anchor:active
 	background: #f2f2f2;
 	color: black;
 }
+#topicversions li {
+		 border: 1px solid White; 
+	   line-height: 1.8em;
+	   margin: 2px; 
+	   padding: 0px;
+	   list-style-type: square;	   
+}
+#topicversions li.selected {
+    background-color:#f9f9f9;
+    border:1px dashed #808080;
+}
+#topicversions span.user {
+    margin-left: 1.8em;
+    margin-right: 0.8em;
+}
 
 .VersionBar
 {

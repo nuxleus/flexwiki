@@ -384,6 +384,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "FormCheckboxPresentation.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "FormEndPresentation.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -404,6 +409,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "FormRadioPresentation.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "FormResetButtonPresentation.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "FormSelectFieldPresentation.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -415,6 +430,11 @@
                 />
                 <File
                     RelPath = "FormSubmitButtonPresentation.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "FormTextareaPresentation.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -510,6 +530,11 @@
                 />
                 <File
                     RelPath = "IWikiToPresentation.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "LabelPresentation.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

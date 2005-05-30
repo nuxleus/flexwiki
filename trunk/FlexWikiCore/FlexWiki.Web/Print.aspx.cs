@@ -63,7 +63,7 @@ namespace FlexWiki.Web
 			Response.Write("<div style='font-family: Verdana'>");
 		
 			Response.Write("<div style='font-size: 18pt; font-weight: bold; '>");
-			Response.Write(topic.Name);
+			Response.Write(topic.FormattedName);
 			Response.Write("</div>");
 
 			Response.Write("<div style='font-size: 8pt'>");
@@ -77,7 +77,7 @@ namespace FlexWiki.Web
 
 			// TODO - enable diffs for print too!
 			// TODO - an opportunity for caching
-			Response.Write(Formatter.FormattedTopic(topic, OutputFormat.HTML, false, TheFederation, TheLinkMaker, null));
+			Response.Write(Formatter.FormattedTopic(topic, OutputFormat.HTML, null, TheFederation, TheLinkMaker, null));
 
 			Response.Write("</div>");
 		}

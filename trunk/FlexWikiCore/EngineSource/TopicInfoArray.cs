@@ -101,10 +101,10 @@ namespace FlexWiki
 
 		public void RenderToHTML(System.IO.TextWriter output)
 		{
-			output.WriteLine("<table width='100%' border=1 cellpadding=3 cellspacing=0>");
+			output.WriteLine("<table width=\"100%\" border=\"1\" cellpadding=\"3\" cellspacing=\"0\">");
 			foreach(TopicInfo each in Array)
 			{
-				output.WriteLine("<tr><td valign='top'>");
+				output.WriteLine("<tr><td valign=\"top\">");
 				IHTMLRenderable child = each as IHTMLRenderable;
 				if (child == null)
 					output.Write(FlexWiki.Formatting.Formatter.EscapeHTML(each.ToString()) + "<br />");

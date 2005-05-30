@@ -146,34 +146,43 @@ namespace FlexWiki.Web
 
 		protected void ProcessSave(bool back)
 		{
-			bool isDelete = Regex.IsMatch(PostedTopicText, "^delete$", RegexOptions.IgnoreCase);
-			LogEvent ev;
-			LogEvent.LogEventType evType = isDelete ? LogEvent.LogEventType.DeleteTopic : LogEvent.LogEventType.WriteTopic;
-			ev = TheFederation.LogEventFactory.CreateAndStartEvent(Request.UserHostAddress, VisitorIdentityString, TheTopic.ToString(), evType);
 			AbsoluteTopicName returnTo = null;
 
-			try
-			{
-				AbsoluteTopicName newVersionName = new AbsoluteTopicName(TheTopic.Name, TheTopic.Namespace);
-				newVersionName.Version = TopicName.NewVersionStringForUser(VisitorIdentityString);
-				ContentBase cb = TheFederation.ContentBaseForNamespace(TheTopic.Namespace);
-				cb.WriteTopicAndNewVersion(newVersionName.LocalName, PostedTopicText);		
-				returnTo = TheTopic;
+			//Check Null edits
+			string oldContent = string.Empty;
+			if (TheFederation.TopicExists(TheTopic))
+				oldContent = TheFederation.Read(TheTopic);
 
-				if (isDelete)
+			if (string.Compare(oldContent, PostedTopicText)!=0)
+			{
+				bool isDelete = Regex.IsMatch(PostedTopicText, "^delete$", RegexOptions.IgnoreCase);
+				LogEvent ev;
+				LogEvent.LogEventType evType = isDelete ? LogEvent.LogEventType.DeleteTopic : LogEvent.LogEventType.WriteTopic;
+				ev = TheFederation.LogEventFactory.CreateAndStartEvent(Request.UserHostAddress, VisitorIdentityString, TheTopic.ToString(), evType);
+				
+				try
 				{
-					returnTo = null;	// we won't be able to go back here because we're deleting it!
-					TheFederation.DeleteTopic(TheTopic);
-				}
+					AbsoluteTopicName newVersionName = new AbsoluteTopicName(TheTopic.Name, TheTopic.Namespace);
+					newVersionName.Version = TopicName.NewVersionStringForUser(VisitorIdentityString);
+					ContentBase cb = TheFederation.ContentBaseForNamespace(TheTopic.Namespace);
+					cb.WriteTopicAndNewVersion(newVersionName.LocalName, PostedTopicText);		
+					returnTo = TheTopic;
 
-				if (back && ReturnTopic != null)
-					returnTo = new AbsoluteTopicName(ReturnTopic);
-			}
-			finally
-			{
-				if (Federation.GetPerformanceCounter(Federation.PerformanceCounterNames.TopicWrite) != null)
-					Federation.GetPerformanceCounter(Federation.PerformanceCounterNames.TopicWrite).Increment();
-				ev.Record();
+					if (isDelete)
+					{
+						returnTo = null;	// we won't be able to go back here because we're deleting it!
+						TheFederation.DeleteTopic(TheTopic);
+					}
+
+					if (back && ReturnTopic != null)
+						returnTo = new AbsoluteTopicName(ReturnTopic);
+				}
+				finally
+				{
+					if (Federation.GetPerformanceCounter(Federation.PerformanceCounterNames.TopicWrite) != null)
+						Federation.GetPerformanceCounter(Federation.PerformanceCounterNames.TopicWrite).Increment();
+					ev.Record();
+				}
 			}
 
 			if (returnTo == null)

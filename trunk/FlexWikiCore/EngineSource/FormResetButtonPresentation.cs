@@ -18,45 +18,37 @@ namespace FlexWiki
 	/// <summary>
 	/// 
 	/// </summary>
-	[ExposedClass("FormStartPresentation", "Presents the start of a form")]
-	public class FormStartPresentation : FlexWiki.PresentationPrimitive
+	[ExposedClass("FormResetButtonPresentation", "Presents a form reset button")]
+	public class FormResetButtonPresentation : FlexWiki.PresentationPrimitive
 	{
-		public FormStartPresentation(string URI, string method)
+		public FormResetButtonPresentation(string fieldName, string label)
 		{
-			Init(URI, method, null);
+			Init(fieldName, label, null);
 		}
-		public FormStartPresentation(string URI, string method, string attributes)
+		public FormResetButtonPresentation(string fieldName, string label, string attributes)
 		{
-			Init(URI, method, attributes);
+			Init(fieldName, label, attributes);
 		}
-		private void Init(string URI, string method, string attributes)
+		private void Init(string fieldName, string label, string attributes)
 		{
-			_Method = method;
-			_URI = URI;
+			_fieldName = fieldName;
+			_Label = label;
 			_attributes = attributes;
 		}
 
-		public string _Method;
-		public string Method
-		{
-			get
-			{
-				return _Method;
-			}
-		}
 
-		public string _URI;
-		public string URI
+		public string _Label;
+		public string Label
 		{
 			get
 			{
-				return _URI;
+				return _Label;
 			}
 		}
 
 		public override void OutputTo(WikiOutput output)
 		{
-			output.FormStart(Method, URI, Attributes);
+			output.FormResetButton(FieldName, Label, Attributes);
 		}
 
 

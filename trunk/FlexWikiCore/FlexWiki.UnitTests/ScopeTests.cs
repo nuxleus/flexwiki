@@ -246,7 +246,7 @@ Color: red
 		{
 			AbsoluteTopicName tn = new AbsoluteTopicName(topic);
 			CompositeCacheRule rule = new CompositeCacheRule();
-			return Formatter.FormattedTopic(tn, OutputFormat.Testing, false, TheFederation, _lm, rule);
+			return Formatter.FormattedTopic(tn, OutputFormat.Testing, null, TheFederation, _lm, rule);
 		}
 
 	}

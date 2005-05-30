@@ -12,14 +12,8 @@
 
 using System;
 using System.Collections;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Web;
-using System.Web.SessionState;
 using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.HtmlControls;
+using System.Text;
 
 namespace FlexWiki.Web
 {
@@ -28,11 +22,11 @@ namespace FlexWiki.Web
 	/// </summary>
 	public class Versions : BasePage
 	{
-		private void Page_Load(object sender, System.EventArgs e)
-		{
-			// Put user code to initialize the page here
-		}
+		protected System.Web.UI.WebControls.PlaceHolder phResult;
 
+		private AbsoluteTopicName _TheTopic	= null;
+		private IEnumerable changeList		= null;
+		
 		#region Web Form Designer generated code
 		override protected void OnInit(EventArgs e)
 		{
@@ -53,47 +47,131 @@ namespace FlexWiki.Web
 		}
 		#endregion
 
-		protected void ShowPage()
+		private void Page_Load(object sender, System.EventArgs e)
 		{
-			string topicString = Request.QueryString["topic"];
-			AbsoluteTopicName topic = new AbsoluteTopicName(topicString);
-			Response.Write("<h1>All Versions for " + topic.Fullname + "</h1>");
-			
-			IEnumerable changeList = TheFederation.GetTopicChanges(topic);
+			changeList = TheFederation.GetTopicChanges(TheTopic);
+			ShowPage();
+		}
 
-			// Now generate the page!
-
-			bool first = true;
-			string mostRecentVersion = null;
-			foreach (TopicChange change in changeList)
+		protected string GetTitle()
+		{
+			string title = TheFederation.GetTopicProperty(TheTopic, "Title");
+			if (title == null || title == "")
 			{
-				if (first)
-					mostRecentVersion = change.Version;
-				string s = "";
-				if (change.Version == topic.Version || (first &&  topic.Version == null))
+				title = string.Format("{0} - {1}", GetTopicName().FormattedName, GetTopicName().Namespace);
+			}
+			return HTMLStringWriter.Escape(title) + " Versions ";
+		}
+		
+
+		protected AbsoluteTopicName TheTopic
+		{
+			get
+			{
+				if (_TheTopic != null)
 				{
-					s += "&rarr;&nbsp;";
+					return _TheTopic;
+				}
+				string topic;
+				if (IsPost)
+				{
+					topic = Request.Form["Topic"];
 				}
 				else
-					s += "&nbsp;&nbsp;&nbsp;&nbsp;";
-				if (change.Timestamp.Date == DateTime.Now.Date)
-					s += change.Timestamp.ToString("HH:mm");
-				else
 				{
-					if (change.Timestamp.Date.Year == DateTime.Now.Date.Year)
-						s += change.Timestamp.ToString("MMM d  H:mm");
-					else
-						s += change.Timestamp.ToString("MMM d yyyy  H:mm");
-				}	
-				s += "&nbsp;&nbsp;(" + change.Author + ")";	
-				AbsoluteTopicName linkTo = change.Topic;
-				if (first)
-					linkTo.Version = null;	// don't include the version for the latest one
-				Response.Write("<li><a href='" + TheLinkMaker.LinkToTopic(linkTo)  + "'>" + s + "</a>");
-				first = false;
+					topic = Request.QueryString["topic"];
+				}
+				_TheTopic = new AbsoluteTopicName(topic);
+				return _TheTopic;
+			}
+		}
+
+		protected string LinkToCompare()
+		{
+			return TheLinkMaker.LinkToCompare(TheTopic.Fullname, int.MinValue, int.MinValue);
+		}
+
+		protected void ShowPage()
+		{
+			
+			// Now generate the page!
+			string output = string.Empty;
+			if (changeList != null)
+			{
+				output += GenerateList();
 			}
 
+			phResult.Controls.Add(new LiteralControl(output + "\n"));
 		}
+
+		private string GenerateList ()
+		{
+			bool first = true;
+			StringBuilder output = new StringBuilder();
+			int row = 0;
+			int lastRow = ((ArrayList)changeList).Count -1;
+			
+			foreach (TopicChange change in changeList)
+			{
+				output.Append("<li>");
+				//logic for selecting two versions to compare
+				if (change.Version == TheTopic.Version || (first &&  TheTopic.Version == null))
+				{
+					output.Append(" (Current)");
+				}
+				else
+				{
+					output.AppendFormat(" (<a href='{0}' title='Show Difference with current version'>Current</a>)", TheLinkMaker.LinkToCompare(TheTopic.Fullname, 0, row));
+				}
+
+
+				if (row < lastRow)
+				{
+					output.AppendFormat(" (<a href='{0}' style='standardsButton' title='Show Difference with preceding version' tabindex={1}>Previous</a>)", TheLinkMaker.LinkToCompare(TheTopic.Fullname, row, row+1), row+1);
+				}
+				else
+				{
+					output.Append(" (Previous)");
+				}
+
+
+				output.AppendFormat(" <input type='radio'{1}name='oldid' value='{0}' title='Select an older version to compare'{2} />&nbsp;", row, ((first)? " style='visibility:hidden' " : ""), ((row==1)? "  checked='checked'" : ""));
+				output.AppendFormat(" <input type='radio' name='diff' value='{0}' title='Select a newer version to compare'{1} />", row, ((first)? "  checked='checked'" : ""));
+
+				if (change.Timestamp == DateTime.MinValue)
+				{
+					output.Append("???");
+				}
+				else 
+				{
+					output.Append("&nbsp;&nbsp;<span class='version'><a href='" + TheLinkMaker.LinkToTopic(change.Topic)  + "' title='Show this version' >");
+					if (change.Timestamp.Date == DateTime.Now.Date)
+					{
+						output.Append(" Today, " + change.Timestamp.ToString("HH:mm"));
+					}
+					else
+					{
+						if (change.Timestamp.Date.Year == DateTime.Now.Date.Year)
+						{
+							output.Append(change.Timestamp.ToString("MMM dd - HH:mm"));
+						}
+						else
+						{
+							output.Append(change.Timestamp.ToString("MMM dd yyyy - HH:mm"));
+						}
+					}
+					output.Append("</a></span>");
+				}
+
+
+				output.Append(" <span class='user'>" + change.Author + "</span>");
+				first = false;
+				output.Append("</li>");
+				row++;
+			}
+			return output.ToString();
+		}
+
 
 			
 	}

@@ -65,9 +65,7 @@ namespace PrintTopic
 
 		static void Print(Federation federation, AbsoluteTopicName topic)
 		{
-			bool diffs = false;
-
-			string formattedBody = federation.GetTopicFormattedContent(topic, diffs);
+			string formattedBody = federation.GetTopicFormattedContent(topic, null);
 
 			// Now calculate the borders
 			string leftBorder = federation.GetTopicFormattedBorder(topic, Border.Left);

@@ -131,6 +131,7 @@ namespace FlexWiki.Web
 			LinkMaker lm = TheLinkMaker;
 			AbsoluteTopicName topic = GetTopicName();	
 			bool diffs = Request.QueryString["diff"] == "y";
+			AbsoluteTopicName diffVersion = null;
 			bool restore = Request.QueryString["restore"] == "y";
 			if (restore==true)
 			{
@@ -144,6 +145,11 @@ namespace FlexWiki.Web
 				return;
 			}
 
+			if (diffs)
+			{
+				diffVersion = cb.VersionPreviousTo(topic.LocalName);
+			}
+
 			Response.Write("<body onclick='javascript: BodyClick()' ondblclick=\"location.href='" + this.TheLinkMaker.LinkToEditTopic(topic) + "'\" scroll='no'>");
 			Response.Write(@"<div id='TopicTip' class='TopicTip' ></div>");
 
@@ -155,7 +161,7 @@ namespace FlexWiki.Web
 			///
 
 			// Get the core data (the formatted topic and the list of changes) from the cache.  If it's not there, generate it!
-			string formattedBody = TheFederation.GetTopicFormattedContent(topic, diffs);
+			string formattedBody = TheFederation.GetTopicFormattedContent(topic, diffVersion);
 			IEnumerable changeList = TheFederation.GetTopicChanges(topic);
 
 			// Now generate the page!

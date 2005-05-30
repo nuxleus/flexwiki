@@ -86,10 +86,10 @@ namespace FlexWiki
 		public void RenderToHTML(System.IO.TextWriter output)
 		{
 			output.WriteLine("<fieldset><legend>Composite</legend>");
-			output.WriteLine("<table width='100%' border=0 cellpadding=3 cellspacing=0>");
+			output.WriteLine("<table width=\"100%\" border=\"0\" cellpadding=\"3\" cellspacing=\"0\">");
 			foreach (CacheRule each in _Children)
 			{
-				output.WriteLine("<tr><td valign='top' class='CompositeCacheRuleChild'>");
+				output.WriteLine("<tr><td valign=\"top\" class=\"CompositeCacheRuleChild\">");
 				IHTMLRenderable child = (IHTMLRenderable)each;
 				child.RenderToHTML(output);
 				output.WriteLine("</tr>");

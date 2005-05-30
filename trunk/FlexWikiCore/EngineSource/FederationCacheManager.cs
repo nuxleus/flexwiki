@@ -250,9 +250,9 @@ namespace FlexWiki
 			rule.SetupInvalidation(this, key);
 		}
 
-		public string GetCachedTopicFormattedContent(AbsoluteTopicName name, bool includeDiffs)
+		public string GetCachedTopicFormattedContent(AbsoluteTopicName name, AbsoluteTopicName withDiffsToThisTopic)
 		{
-			return (string)(Get(KeyForTopicFormattedContent(name, includeDiffs)));
+			return (string)(Get(KeyForTopicFormattedContent(name, withDiffsToThisTopic)));
 		}
 
 		public IList GetCachedNamespaceHistory(string ns)
@@ -270,9 +270,9 @@ namespace FlexWiki
 			rule.SetupInvalidation(this, key);
 		}
 
-		public void PutCachedTopicFormattedContent(AbsoluteTopicName name, bool includeDiffs, string val, CacheRule rule)
+		public void PutCachedTopicFormattedContent(AbsoluteTopicName name, AbsoluteTopicName withDiffsToThisTopic, string val, CacheRule rule)
 		{
-			string key = KeyForTopicFormattedContent(name, includeDiffs);
+			string key = KeyForTopicFormattedContent(name, withDiffsToThisTopic);
 			Put(key, val, rule);
 			rule.SetupInvalidation(this, key);
 		}
@@ -282,9 +282,9 @@ namespace FlexWiki
 			return "Formatted.Border." + name.FullnameWithVersion + "." + border.ToString();
 		}
 
-		static string KeyForTopicFormattedContent(AbsoluteTopicName name, bool includeDiffs)
+		static string KeyForTopicFormattedContent(AbsoluteTopicName name, AbsoluteTopicName withDiffsToThisTopic)
 		{
-			return "Formatted.Page." + name.FullnameWithVersion + (includeDiffs ? "/diff" : "");
+			return "Formatted.Page." + name.FullnameWithVersion + ( (withDiffsToThisTopic != null) ? "/diffTo" + withDiffsToThisTopic.FullnameWithVersion : "");
 		}
 
 		static string KeyForTopicInfo(AbsoluteTopicName name)

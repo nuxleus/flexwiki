@@ -170,6 +170,21 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Compare.aspx"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "Compare.aspx.cs"
+                    DependentUpon = "Compare.aspx"
+                    SubType = "ASPXCodeBehind"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Compare.aspx.resx"
+                    DependentUpon = "Compare.aspx.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "default.aspx"
                     SubType = "Form"
                     BuildAction = "Content"
@@ -208,7 +223,7 @@
                 <File
                     RelPath = "EditService.asmx.cs"
                     DependentUpon = "EditService.asmx"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File

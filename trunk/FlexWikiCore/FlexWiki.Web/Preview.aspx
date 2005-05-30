@@ -4,7 +4,7 @@
 	<HEAD>
 		<%= InsertStylesheetReferences() %>
 	</HEAD>
-	<body>
+	<body onload="focus();">
 		<% DoPage(); %>
 	</body>
 </html>

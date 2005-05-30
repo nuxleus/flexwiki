@@ -18,36 +18,54 @@ namespace FlexWiki
 	/// <summary>
 	/// 
 	/// </summary>
-	[ExposedClass("FormHiddenFieldPresentation", "Presents a hidden form field")]
-	public class FormHiddenFieldPresentation : FlexWiki.PresentationPrimitive
+	[ExposedClass("FormTextareaPresentation", "Presents a form textarea")]
+	public class FormTextareaPresentation : FlexWiki.PresentationPrimitive
 	{
-		public FormHiddenFieldPresentation(string fieldName, string fieldValue)
+		public FormTextareaPresentation(string fieldName, string fieldValue, int rows, int cols, string attributes)
 		{
-			Init(fieldName, fieldValue, null);
+			Init(fieldName, fieldValue, rows, cols, attributes);
 		}
-		public FormHiddenFieldPresentation(string fieldName, string fieldValue, string attributes)
-		{
-			Init(fieldName, fieldValue, attributes);
-		}
-		private void Init(string fieldName, string fieldValue, string attributes)
+
+		private void Init(string fieldName, string fieldValue, int rows, int cols, string attributes)
 		{
 			_fieldName = fieldName;
-			_FieldValue = fieldValue;
+			_fieldValue = fieldValue;
+			_rows = rows;
+			_cols = cols;
 			_attributes = attributes;
 		}
 
-		public string _FieldValue;
+		public int _rows;
+		public int Rows
+		{
+			get
+			{
+				return _rows;
+			}
+		}
+		public int _cols;
+		public int Cols
+		{
+			get
+			{
+				return _cols;
+			}
+		}
+
+
+
+		public string _fieldValue;
 		public string FieldValue
 		{
 			get
 			{
-				return _FieldValue;
+				return _fieldValue;
 			}
 		}
 
 		public override void OutputTo(WikiOutput output)
 		{
-			output.FormHiddenField(FieldName, FieldValue, Attributes);
+			output.FormTextarea(FieldName, FieldValue, Rows, Cols, Attributes);
 		}
 
 

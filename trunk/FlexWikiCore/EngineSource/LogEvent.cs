@@ -29,6 +29,7 @@ namespace FlexWiki
 			ReadTopic,
 			WriteTopic, 
 			DeleteTopic,
+			CompareTopic,
 			NewsletterGeneration
 		};
 
@@ -116,6 +117,10 @@ namespace FlexWiki
 
 				case LogEvent.LogEventType.DeleteTopic:
 					action = "delete";
+					break;
+
+				case LogEvent.LogEventType.CompareTopic:
+					action = "compare";
 					break;
 
 				case LogEvent.LogEventType.NewsletterGeneration:

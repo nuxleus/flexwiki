@@ -65,15 +65,16 @@ namespace FlexWiki.Formatting
 		/// <param name="showDiffs">true to show diffs</param>
 		/// <param name="accumulator">composite cache rule in which to accumulate cache rules</param>
 		/// <returns></returns>
-		public static string FormattedTopic(AbsoluteTopicName topic, OutputFormat format, bool showDiffs, Federation aFederation, LinkMaker lm, CompositeCacheRule accumulator)
+		public static string FormattedTopic(AbsoluteTopicName topic, OutputFormat format, AbsoluteTopicName previousVersion, Federation aFederation, LinkMaker lm, CompositeCacheRule accumulator)
 		{ 
 		
-			// Show the current topic (including diffs if there is a previous version)
-			AbsoluteTopicName previousVersion = null;
+//			// Show the current topic (including diffs if there is a previous version)
+//			AbsoluteTopicName previousVersion = null;
 			ContentBase relativeToBase = aFederation.ContentBaseForNamespace(topic.Namespace);
 
-			if (showDiffs)
-				previousVersion = relativeToBase.VersionPreviousTo(topic.LocalName);
+			//not used anymore
+//			if (withDiffsToThisTopic != null)
+//				previousVersion = relativeToBase.VersionPreviousTo(topic.LocalName);
 
 			return FormattedTopicWithSpecificDiffs(topic, format, previousVersion, aFederation, lm, accumulator);
 		}
@@ -1415,7 +1416,7 @@ namespace FlexWiki.Formatting
 		{
 			string str = input;
 			// deemphasis
-			str = Regex.Replace (str, "`{2}(.*?)`{2}", "<span class='Deemphasis'>$1</span>") ;
+			str = Regex.Replace (str, "`{2}(.*?)`{2}", "<span class=\"Deemphasis\">$1</span>") ;
 			// Bold
 			str = Regex.Replace (str, "'{3}(.*?)'{3}", "<strong>$1</strong>") ;
 			// Italic
@@ -1510,16 +1511,16 @@ namespace FlexWiki.Formatting
 							if ( insideSpan	)
 							{
 								newValue
-									=	"<span class='errormessage'>"
-									+		"<span class='errormessagetitle'>	Style	Format Error:</span>"
-									+		"<span class='errormessagebody'>"	+	"	More than	one	color	in \"" + match.Groups[0].Value + "\" " + "</span>"
+									=	"<span class=\"errormessage\">"
+									+		"<span class=\"errormessagetitle\">	Style	Format Error:</span>"
+									+		"<span class=\"errormessagebody\">"	+	"	More than	one	color	in \"" + match.Groups[0].Value + "\" " + "</span>"
 									+	"</span>"
 									;
 							}
 							else
 							{
 								insideSpan = true;
-								newValue +=	"<span style='color:"	+	match.Groups[i].Value.ToLower()	+	"'>";
+								newValue +=	"<span style=\"color:"	+	match.Groups[i].Value.ToLower()	+	"\">";
 							}
 						}
 					}
@@ -1566,9 +1567,9 @@ namespace FlexWiki.Formatting
 
 			// image links
 			str = Regex.Replace (str, @"([^""']|^)http(://\S*(\.jpg|\.gif|\.png|\.jpeg))",
-				"$1<img src=\"HTTPIMAGESOURCE:$2\">") ;
+				"$1<img src=\"HTTPIMAGESOURCE:$2\"/>") ;
 			str = Regex.Replace (str, @"([^""'])file(://\S*(\.jpg|\.gif|\.png|\.jpeg))",
-				"$1<img src=\"FILEIMAGESOURCE:$2\">") ;
+				"$1<img src=\"FILEIMAGESOURCE:$2\"/>") ;
 
 			// web links (including those surrounded by parens, brackets and curlies)
 			str = Regex.Replace (str, @"[(]" + urlPattern + "[)]", "(" + ObfuscatableLinkReplacementPattern("$1", "$1") + ")") ;
@@ -1603,7 +1604,7 @@ namespace FlexWiki.Formatting
 		{
 			string noFollow = "";
 			if (TheFederation.NoFollowExternalHyperlinks)
-				noFollow = " rel='nofollow' ";
+				noFollow = " rel=\"nofollow\" ";
 			return @"<a " + noFollow + @"href=""" + replacementURL + @""">" + replacementText + @"</a>";
 		}
 
@@ -1794,7 +1795,7 @@ namespace FlexWiki.Formatting
 					{
 						// It doesn't exist, so give the option to create it
 						AbsoluteTopicName abs = relName.AsAbsoluteTopicName(ContentBase.Namespace);
-						str = ReplaceMatch(answer, str, m, before + "<a title='Click here to create this topic' class=\"create\" href=\"" + LinkMaker().LinkToEditTopic(abs) + "\">" + displayname + "</a>" + after);
+						str = ReplaceMatch(answer, str, m, before + "<a title=\"Click here to create this topic\" class=\"create\" href=\"" + LinkMaker().LinkToEditTopic(abs) + "\">" + displayname + "</a>" + after);
 					}
 					else
 					{
@@ -1816,15 +1817,15 @@ namespace FlexWiki.Formatting
 							tipHTML = Formatter.EscapeHTML(tip);
 							if (defaultTip)
 							{
-								tipHTML = "<span class='DefaultTopicTipText'>" + tipHTML + "</span>";
+								tipHTML = "<span class=\"DefaultTopicTipText\">" + tipHTML + "</span>";
 							}
-							tipHTML += "<div class='TopicTipStats'>" + TheFederation.GetTopicModificationTime(abs).ToString() + " - " + TheFederation.GetTopicLastModifiedBy(abs) + "</div>";
-							tipHTML = "<div id=" + tipid +" style='display: none'>" + tipHTML + "</div>";
+							tipHTML += "<div class=\"TopicTipStats\">" + TheFederation.GetTopicModificationTime(abs).ToString() + " - " + TheFederation.GetTopicLastModifiedBy(abs) + "</div>";
+							tipHTML = "<div id=" + tipid +" style=\"display: none\">" + tipHTML + "</div>";
 							Output.AddToFooter(tipHTML);
 							string replacement = "<a ";
 							if (tip != null)
 							{
-								replacement += "onmouseover='TopicTipOn(this, \"" + tipid + "\", event);' onmouseout='TopicTipOff();' ";
+								replacement += "onmouseover=\"TopicTipOn(this, \"" + tipid + "\", event);\" onmouseout=\"TopicTipOff();\" ";
 							}
 							replacement += "href=\"" + LinkMaker().LinkToTopic(abs);
 							if (anchor.Length > 0)
@@ -1842,7 +1843,7 @@ namespace FlexWiki.Formatting
 						{
 							// There's more than one; we need to generate a dynamic menu
 							string clickEvent;
-							clickEvent = "onclick='javascript:LinkMenu(new Array(";
+							clickEvent = "onclick=\"javascript:LinkMenu(new Array(";
 							bool first = true;
 							foreach (AbsoluteTopicName eachAbs in absoluteNames)
 							{	
@@ -1851,9 +1852,9 @@ namespace FlexWiki.Formatting
 								first = false;
 								clickEvent += "new Array(\"" + eachAbs + "\", \"" + LinkMaker().LinkToTopic(eachAbs) + "\")";
 							}
-							clickEvent += "));'";
+							clickEvent += "));\"";
 
-							str = ReplaceMatch(answer, str, m, before + "<a title='Different versions of this topic exist.  Click to pick one.' " + clickEvent + ">" + displayname + "</a>" + after) ;
+							str = ReplaceMatch(answer, str, m, before + "<a title=\"Different versions of this topic exist.  Click to pick one.\" " + clickEvent + ">" + displayname + "</a>" + after) ;
 						}
 					}
 				}

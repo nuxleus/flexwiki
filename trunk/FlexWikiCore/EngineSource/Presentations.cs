@@ -26,33 +26,57 @@ namespace FlexWiki
 		}
 
 		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Present an image")]
-		public static ImagePresentation Image(ExecutionContext ctx, string URL, [ExposedParameter(true)] string title, [ExposedParameter(true)] string linkToURL, [ExposedParameter(true)] string height, [ExposedParameter(true)] string width)
+		public static ImagePresentation Image(ExecutionContext ctx, string URL, [ExposedParameter(true)] string title, [ExposedParameter(true)] string linkToURL, [ExposedParameter(true)] string height, [ExposedParameter(true)] string width, [ExposedParameter(true)] string attributes)
 		{
-			return new ImagePresentation(title, URL, linkToURL, height, width);
+			return new ImagePresentation(title, URL, linkToURL, height, width, attributes);
 		}
 
 		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Present a hyperlink")]
-		public static LinkPresentation Link(ExecutionContext ctx, string URL, string content, [ExposedParameter(true)] string tip)
+		public static LinkPresentation Link(ExecutionContext ctx, string URL, string content, [ExposedParameter(true)] string tip, [ExposedParameter(true)] string attributes)
 		{
-			return new LinkPresentation(content, URL, tip);
+			return new LinkPresentation(content, URL, tip, attributes);
 		}
 
 		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Present a hidden field")]
-		public static FormHiddenFieldPresentation HiddenField(string fieldName, string fieldValue)
+		public static FormHiddenFieldPresentation HiddenField(ExecutionContext ctx, string fieldName, string fieldValue, [ExposedParameter(true)] string attributes)
 		{
-			return new FormHiddenFieldPresentation(fieldName, fieldValue);
+			return new FormHiddenFieldPresentation(fieldName, fieldValue, attributes);
 		}
 
 		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Present an input field")]
-		public static FormInputFieldPresentation InputField(string fieldName, string fieldValue, int fieldLength)
+		public static FormInputFieldPresentation InputField(ExecutionContext ctx, string fieldName, string fieldValue, [ExposedParameter(true)] int fieldLength, [ExposedParameter(true)] string attributes)
 		{
-			return new FormInputFieldPresentation(fieldName, fieldValue, fieldLength);
+			return new FormInputFieldPresentation(fieldName, fieldValue, fieldLength, attributes);
+		}
+
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Present a textarea")]
+		public static FormTextareaPresentation Textarea(ExecutionContext ctx, string fieldName, string fieldValue, [ExposedParameter(true)] int rows, [ExposedParameter(true)] int columns, [ExposedParameter(true)] string attributes)
+		{
+			return new FormTextareaPresentation(fieldName, fieldValue, rows, columns, attributes);
+		}
+
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Present a checkbox")]
+		public static FormCheckboxPresentation Checkbox(ExecutionContext ctx, string fieldName, string fieldValue, bool isChecked, [ExposedParameter(true)] string attributes)
+		{
+			return new FormCheckboxPresentation(fieldName, fieldValue, isChecked, attributes);
+		}
+
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Present a radio")]
+		public static FormRadioPresentation Radio(ExecutionContext ctx, string fieldName, string fieldValue, bool isChecked, [ExposedParameter(true)] string attributes)
+		{
+			return new FormRadioPresentation(fieldName, fieldValue, isChecked, attributes);
+		}
+
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Present a label")]
+		public static LabelPresentation Label(ExecutionContext ctx, string forId, string text, [ExposedParameter(true)] string attributes)
+		{
+			return new LabelPresentation(forId, text, attributes);
 		}
 
 		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Start a form")]
-		public static FormStartPresentation FormStart(string URI, string method)
+		public static FormStartPresentation FormStart(ExecutionContext context, string URI, string method, [ExposedParameter(true)] string attributes)
 		{
-			return new FormStartPresentation(URI, method);
+			return new FormStartPresentation(URI, method, attributes);
 		}
 
 		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "End a form")]
@@ -62,21 +86,27 @@ namespace FlexWiki
 		}
 
 		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Present a submit button")]
-		public static FormSubmitButtonPresentation SubmitButton(string fieldName, string label)
+		public static FormSubmitButtonPresentation SubmitButton(ExecutionContext ctx, string fieldName, string label, [ExposedParameter(true)] string attributes)
 		{
-			return new FormSubmitButtonPresentation(fieldName, label);
+			return new FormSubmitButtonPresentation(fieldName, label, attributes);
+		}
+
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Present a reset button")]
+		public static FormResetButtonPresentation ResetButton(ExecutionContext ctx, string fieldName, string label, [ExposedParameter(true)] string attributes)
+		{
+			return new FormResetButtonPresentation(fieldName, label, attributes);
 		}
 
 		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Present an image button")]
-		public static FormImageButtonPresentation ImageButton(string fieldName, string imageURI, string tipString)
+		public static FormImageButtonPresentation ImageButton(ExecutionContext ctx, string fieldName, string imageURI, string tipString, [ExposedParameter(true)] string attributes)
 		{
-			return new FormImageButtonPresentation(fieldName, imageURI, tipString);
+			return new FormImageButtonPresentation(fieldName, imageURI, tipString, attributes);
 		}
 
 		[ExposedMethod(ExposedMethodFlags.NeedContext, "Present a combobox select field")]
 		public static FormSelectFieldPresentation ComboSelectField(ExecutionContext context, string fieldName, ArrayList options,
 			[ExposedParameter(true)] string selectedOption, [ExposedParameter(true)] ArrayList values,
-			[ExposedParameter(true)] object selectedValue)
+			[ExposedParameter(true)] object selectedValue, [ExposedParameter(true)] string attributes)
 		{
 			if (true == context.TopFrame.WasParameterSupplied(4))
 			{
@@ -85,13 +115,14 @@ namespace FlexWiki
 					throw new ArgumentException("The values array does not contain the same number of items as the options array", "values");
 				}
 			}
-			return new FormSelectFieldPresentation(fieldName, 1, false, options, selectedOption, values, selectedValue);
+			return new FormSelectFieldPresentation(fieldName, 1, false, options, selectedOption, values, selectedValue, attributes);
 		}
 
 		[ExposedMethod(ExposedMethodFlags.NeedContext, "Present a listbox select field")]
 		public static FormSelectFieldPresentation ListSelectField(ExecutionContext context, string fieldName,  
 			int size, bool multiple, ArrayList options, [ExposedParameter(true)] string selectedOption,	 
-			[ExposedParameter(true)] ArrayList values, [ExposedParameter(true)] object selectedValue)
+			[ExposedParameter(true)] ArrayList values, [ExposedParameter(true)] object selectedValue,
+			[ExposedParameter(true)] string attributes)
 		{
 			if (true == context.TopFrame.WasParameterSupplied(6))
 			{
@@ -100,7 +131,8 @@ namespace FlexWiki
 					throw new ArgumentException("The values array does not contain the same number of items as the options array", "values");
 				}
 			}
-			return new FormSelectFieldPresentation(fieldName, size, multiple, options, selectedOption, values, selectedValue);
+			return new FormSelectFieldPresentation(fieldName, size, multiple, options, selectedOption, values, selectedValue, attributes);
 		}
+
 	}
 }

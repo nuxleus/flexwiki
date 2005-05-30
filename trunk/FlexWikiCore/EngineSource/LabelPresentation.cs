@@ -18,47 +18,44 @@ namespace FlexWiki
 	/// <summary>
 	/// 
 	/// </summary>
-	[ExposedClass("FormStartPresentation", "Presents the start of a form")]
-	public class FormStartPresentation : FlexWiki.PresentationPrimitive
+	[ExposedClass("LabelPresentation", "Presents a label")]
+	public class LabelPresentation : PresentationPrimitive
 	{
-		public FormStartPresentation(string URI, string method)
+
+		public LabelPresentation(string forId, string content, string attributes)
 		{
-			Init(URI, method, null);
+			Init(forId, content, attributes);
 		}
-		public FormStartPresentation(string URI, string method, string attributes)
+		private void Init(string forId, string content, string attributes)
 		{
-			Init(URI, method, attributes);
-		}
-		private void Init(string URI, string method, string attributes)
-		{
-			_Method = method;
-			_URI = URI;
+			_text = content;
+			_for = forId;
 			_attributes = attributes;
 		}
 
-		public string _Method;
-		public string Method
+		private string _for;
+		public string ForId
 		{
 			get
 			{
-				return _Method;
+				return _for;
 			}
 		}
 
-		public string _URI;
-		public string URI
+		private string _text;
+		public string Text
 		{
 			get
 			{
-				return _URI;
+				return _text;
 			}
 		}
+
 
 		public override void OutputTo(WikiOutput output)
 		{
-			output.FormStart(Method, URI, Attributes);
+			output.WriteLabel(ForId, Text, Attributes);
 		}
-
 
 	}
 }

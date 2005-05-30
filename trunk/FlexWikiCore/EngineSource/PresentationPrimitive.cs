@@ -20,8 +20,37 @@ namespace FlexWiki
 	[ExposedClass("PresentationPrimitive", "Presents something specific (see subtypes for details")]
 	public abstract class PresentationPrimitive : Presentation
 	{
+		protected string	_attributes = string.Empty;
+		protected string	_fieldName	= string.Empty;
+
+
 		public PresentationPrimitive()
 		{
+		}
+		public PresentationPrimitive(string fielName)
+		{
+			_fieldName = fielName;
+		}
+		public PresentationPrimitive(string fielName, string attributes)
+		{
+			_fieldName = fielName;
+			_attributes = attributes;
+		}
+
+		public string Attributes
+		{
+			get
+			{
+				return _attributes;
+			}
+		}
+
+		public string FieldName
+		{
+			get
+			{
+				return _fieldName;
+			}
 		}
 	}
 }

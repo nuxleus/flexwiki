@@ -164,6 +164,7 @@ namespace FlexWiki.Newsletters
       Header.Append(DateTime.Now.ToString("ddd, d M y H:m:s z" ));
       Header.Append("\r\n");
       Header.Append("Subject: " + message.Subject+ "\r\n");
+	  Header.Append("MIME-Version: 1.0\r\n");
       Header.Append( "X-Mailer: FlexWiki\r\n" );
       string MsgBodyBeforePeriodEscaping = message.Body;
       string MsgBody = "";

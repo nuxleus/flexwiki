@@ -234,6 +234,7 @@ function tbinput()
 			LinkMaker lm = TheLinkMaker;
 			AbsoluteTopicName topic = GetTopicName();	
 			bool diffs = Request.QueryString["diff"] == "y";
+			AbsoluteTopicName diffVersion = null;
 			bool restore = (Request.RequestType == "POST" && Request.Form["RestoreTopic"] != null);
 			bool isBlacklistedRestore = false;
 			bool editOnDoubleClick = true;
@@ -257,6 +258,11 @@ function tbinput()
 				return;
 			}
 
+			if (diffs)
+			{
+				diffVersion = cb.VersionPreviousTo(topic.LocalName);
+			}
+
 			// check to see if edit-on-double-click should be enabled
 			if ( System.Configuration.ConfigurationSettings.AppSettings["DoubleClickToEdit"] != null )
 			{
@@ -277,7 +283,7 @@ function tbinput()
 			///
 
 			// Get the core data (the formatted topic and the list of changes) from the cache.  If it's not there, generate it!
-			string formattedBody = TheFederation.GetTopicFormattedContent(topic, diffs);
+			string formattedBody = TheFederation.GetTopicFormattedContent(topic, diffVersion);
 
 			// Now calculate the borders
 			int span = 1;

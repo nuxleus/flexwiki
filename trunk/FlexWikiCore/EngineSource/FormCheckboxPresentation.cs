@@ -18,45 +18,44 @@ namespace FlexWiki
 	/// <summary>
 	/// 
 	/// </summary>
-	[ExposedClass("FormStartPresentation", "Presents the start of a form")]
-	public class FormStartPresentation : FlexWiki.PresentationPrimitive
+	[ExposedClass("FormCheckboxPresentation", "Presents a checkbox")]
+	public class FormCheckboxPresentation : FlexWiki.PresentationPrimitive
 	{
-		public FormStartPresentation(string URI, string method)
+		public FormCheckboxPresentation(string fieldName, string fieldValue, bool isChecked, string attributes)
 		{
-			Init(URI, method, null);
+			Init(fieldName, fieldValue, isChecked, attributes);
 		}
-		public FormStartPresentation(string URI, string method, string attributes)
+		private void Init(string fieldName, string fieldValue, bool isChecked, string attributes)
 		{
-			Init(URI, method, attributes);
-		}
-		private void Init(string URI, string method, string attributes)
-		{
-			_Method = method;
-			_URI = URI;
+			_fieldName = fieldName;
+			_FieldValue = fieldValue;
+			_isChecked = isChecked;
 			_attributes = attributes;
 		}
 
-		public string _Method;
-		public string Method
+
+		public bool _isChecked;
+		public bool IsChecked
 		{
 			get
 			{
-				return _Method;
+				return _isChecked;
 			}
 		}
 
-		public string _URI;
-		public string URI
+
+		public string _FieldValue;
+		public string FieldValue
 		{
 			get
 			{
-				return _URI;
+				return _FieldValue;
 			}
 		}
 
 		public override void OutputTo(WikiOutput output)
 		{
-			output.FormStart(Method, URI, Attributes);
+			output.FormCheckbox(FieldName, FieldValue, IsChecked, Attributes);
 		}
 
 

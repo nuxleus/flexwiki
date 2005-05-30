@@ -247,7 +247,7 @@ namespace FlexWiki.UnitTests
 		{
 			AbsoluteTopicName tn = new AbsoluteTopicName(topic);
 			CompositeCacheRule rule = new CompositeCacheRule();
-			Formatter.FormattedTopic(tn, OutputFormat.Testing, false, TheFederation, _lm, rule);
+			Formatter.FormattedTopic(tn, OutputFormat.Testing, null, TheFederation, _lm, rule);
 			return rule;
 		}
 

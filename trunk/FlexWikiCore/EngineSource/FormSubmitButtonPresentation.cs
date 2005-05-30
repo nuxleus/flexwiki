@@ -23,17 +23,17 @@ namespace FlexWiki
 	{
 		public FormSubmitButtonPresentation(string fieldName, string label)
 		{
-			_FieldName = fieldName;
-			_Label = label;
+			Init(fieldName, label, null);
 		}
-
-		public string _FieldName;
-		public string FieldName
+		public FormSubmitButtonPresentation(string fieldName, string label, string attributes)
 		{
-			get
-			{
-				return _FieldName;
-			}
+			Init(fieldName, label, attributes);
+		}
+		private void Init(string fieldName, string label, string attributes)
+		{
+			_fieldName = fieldName;
+			_Label = label;
+			_attributes = attributes;
 		}
 
 		public string _Label;
@@ -47,7 +47,7 @@ namespace FlexWiki
 
 		public override void OutputTo(WikiOutput output)
 		{
-			output.FormSubmitButton(FieldName, Label);
+			output.FormSubmitButton(FieldName, Label, Attributes);
 		}
 
 

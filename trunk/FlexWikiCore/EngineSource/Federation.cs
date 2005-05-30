@@ -345,6 +345,7 @@ namespace FlexWiki
 			public static string TopicReads = "Topic reads";
 			public static string TopicWrite = "Topic writes";
 			public static string TopicFormat = "Topic formats";
+			public static string TopicsCompared = "Topics compared";
 			public static string MethodInvocation = "WikiTalk method invocations";
 		};
 
@@ -419,6 +420,7 @@ namespace FlexWiki
 			SetupCounter(PerformanceCounterNames.TopicReads);
 			SetupCounter(PerformanceCounterNames.TopicWrite);
 			SetupCounter(PerformanceCounterNames.TopicFormat);
+			SetupCounter(PerformanceCounterNames.TopicsCompared);
 			SetupCounter(PerformanceCounterNames.MethodInvocation);
 		}
 
@@ -582,13 +584,17 @@ namespace FlexWiki
 			return false;
 		}
 
-		public string GetTopicFormattedContent(AbsoluteTopicName name, bool includeDiffs)
+		public string GetTopicFormattedContent(AbsoluteTopicName name, AbsoluteTopicName withDiffsToThisTopic)
 		{
 			string answer = null;
 			if (CacheManager != null)
-				answer = (string)CacheManager.GetCachedTopicFormattedContent(name, includeDiffs);
+			{
+				answer = (string)CacheManager.GetCachedTopicFormattedContent(name, withDiffsToThisTopic);
+			}
 			if (answer != null)
+			{
 				return answer;
+			}
 			CompositeCacheRule rule = new CompositeCacheRule();				
 
 			// If the content is blacklisted and this is a historical version, answer dummy content
@@ -598,9 +604,13 @@ namespace FlexWiki
 					Format, this.ContentBaseForTopic(name), LinkMaker, rule);
 			}
 			else
-				answer = Formatter.FormattedTopic(name, Format, includeDiffs,  this, LinkMaker, rule);
+			{
+				answer = Formatter.FormattedTopic(name, Format, withDiffsToThisTopic,  this, LinkMaker, rule);
+			}
 			if (CacheManager != null)
-				CacheManager.PutCachedTopicFormattedContent(name, includeDiffs, answer, rule);
+			{
+				CacheManager.PutCachedTopicFormattedContent(name, withDiffsToThisTopic, answer, rule);
+			}
 			return answer;
 		}
 
@@ -608,9 +618,13 @@ namespace FlexWiki
 		{
 			string answer = null;
 			if (CacheManager != null)
+			{
 				answer = (string)CacheManager.GetCachedTopicFormattedBorder(name, border);
+			}
 			if (answer != null)
+			{
 				return answer;
+			}
 			// OK, we need to figure it out.  
 			CompositeCacheRule rule = new CompositeCacheRule();				
 			IEnumerable borderText = BorderText(name, border, rule);

@@ -86,6 +86,12 @@ namespace FlexWiki
 			return SimpleLinkTo("versions.aspx" + (fullTopicName != null ? "?topic=" + HttpUtility.UrlEncode(fullTopicName) : "") );
 		}
 
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a link to compare two versions for the given topic")]
+		public string LinkToCompare(string fullTopicName, int diff, int oldid)
+		{
+			return SimpleLinkTo("compare.aspx" + (fullTopicName != null ? "?topic=" + HttpUtility.UrlEncode(fullTopicName) : "") + ((diff>=0)?"&diff=" + diff.ToString():string.Empty) + ((oldid>=0)?"&oldid=" + oldid.ToString():string.Empty));
+		}
+
 		public string LinkToQuicklink()
 		{
 			return SimpleLinkTo("quicklink.aspx");

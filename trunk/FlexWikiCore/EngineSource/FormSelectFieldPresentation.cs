@@ -24,7 +24,6 @@ namespace FlexWiki
 	public class FormSelectFieldPresentation : FlexWiki.PresentationPrimitive
 	{
 		#region Class data
-		private string _FieldName;
 		private int _Size;
 		private bool _Multiple;
 		private ArrayList _Options;
@@ -34,26 +33,29 @@ namespace FlexWiki
 		#endregion
 
 		#region Constructors
-		public FormSelectFieldPresentation(string fieldName, int size, bool multiple, 
-			ArrayList options, string selectedOption, 
-			ArrayList values, object selectedValue)
+		public FormSelectFieldPresentation(string fieldName, int size, bool multiple, ArrayList options, string selectedOption, ArrayList values, object selectedValue)
 		{
-			_FieldName = fieldName;
+			Init(fieldName, size, multiple, options, selectedOption, values, selectedValue, null);
+		}
+		public FormSelectFieldPresentation(string fieldName, int size, bool multiple, ArrayList options, string selectedOption, ArrayList values, object selectedValue, string attributes)
+		{
+			Init(fieldName, size, multiple, options, selectedOption, values, selectedValue, attributes);
+		}
+
+		private void Init(string fieldName, int size, bool multiple, ArrayList options, string selectedOption, ArrayList values, object selectedValue, string attributes)
+		{
+			_fieldName = fieldName;
 			_Size = size;
 			_Multiple = multiple;
 			_Options = options;
 			_SelectedOption = selectedOption;
 			_Values = values;
 			_SelectedValue = selectedValue;
+			_attributes = attributes;
 		}
 		#endregion
 
 		#region Public Properties
-		public string FieldName
-		{
-			get { return _FieldName; }
-		}
-
 		public int Size
 		{
 			get { return _Size; }
@@ -88,7 +90,7 @@ namespace FlexWiki
 		#region Presentation overrides
 		public override void OutputTo(WikiOutput output)
 		{
-			output.FormSelectField(FieldName, Size, Multiple, Options, SelectedOption, Values, SelectedValue);
+			output.FormSelectField(FieldName, Size, Multiple, Options, SelectedOption, Values, SelectedValue, Attributes);
 		}
 		#endregion
 	}

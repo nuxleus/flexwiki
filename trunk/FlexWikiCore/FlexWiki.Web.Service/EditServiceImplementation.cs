@@ -341,7 +341,7 @@ namespace FlexWiki.Web.Services
 
       if (version != null && version == topicName.Version)
       {
-        return FlexWiki.Formatting.Formatter.FormattedTopic(topicName, Formatting.OutputFormat.HTML, false,  TheFederation, _linkMaker, null);
+        return FlexWiki.Formatting.Formatter.FormattedTopic(topicName, Formatting.OutputFormat.HTML, null,  TheFederation, _linkMaker, null);
       }
       else
       {
@@ -352,11 +352,11 @@ namespace FlexWiki.Web.Services
         {
           if (change.Version == version)
           {
-            return FlexWiki.Formatting.Formatter.FormattedTopic(change.Topic, Formatting.OutputFormat.HTML, false,  TheFederation, _linkMaker, null);
+            return FlexWiki.Formatting.Formatter.FormattedTopic(change.Topic, Formatting.OutputFormat.HTML, null,  TheFederation, _linkMaker, null);
           }
         }
 
-        return FlexWiki.Formatting.Formatter.FormattedTopic(topicName, Formatting.OutputFormat.HTML, false,  TheFederation, _linkMaker, null);
+        return FlexWiki.Formatting.Formatter.FormattedTopic(topicName, Formatting.OutputFormat.HTML, null,  TheFederation, _linkMaker, null);
       }
     }
 

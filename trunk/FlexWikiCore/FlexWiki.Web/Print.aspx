@@ -8,13 +8,10 @@
 		</title>
 		<%= InsertStylesheetReferences() %>
 		<style type="text/css">
-			body 
-			{
-				margin: 4px;
-			}
+			body { margin: 4px; }
 		</style>
 	</HEAD>
-	<body>
+	<body onload="focus();">
 		<% DoPage(); %>
 	</body>
 </HTML>

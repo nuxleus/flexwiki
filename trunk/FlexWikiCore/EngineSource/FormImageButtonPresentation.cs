@@ -23,18 +23,18 @@ namespace FlexWiki
 	{
 		public FormImageButtonPresentation(string fieldName, string imageURI, string tipString)
 		{
-			_FieldName = fieldName;
+			Init(fieldName, imageURI, tipString, null);
+		}
+		public FormImageButtonPresentation(string fieldName, string imageURI, string tipString, string attributes)
+		{
+			Init(fieldName, imageURI, tipString, attributes);
+		}
+		private void Init(string fieldName, string imageURI, string tipString, string attributes)
+		{
+			_fieldName = fieldName;
 			_ImageURI = imageURI;
 			_TipString = tipString;
-		}
-
-		public string _FieldName;
-		public string FieldName
-		{
-			get
-			{
-				return _FieldName;
-			}
+			_attributes = attributes;
 		}
 
 		public string _TipString;
@@ -58,7 +58,7 @@ namespace FlexWiki
 
 		public override void OutputTo(WikiOutput output)
 		{
-			output.FormImageButton(FieldName, ImageURI, TipString);
+			output.FormImageButton(FieldName, ImageURI, TipString, Attributes);
 		}
 
 

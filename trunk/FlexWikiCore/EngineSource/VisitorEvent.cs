@@ -23,6 +23,7 @@ namespace FlexWiki
 	{
 		public static string Read = "read";
 		public static string Write = "write";
+		public static string Compare = "compare";
 
 		AbsoluteTopicName _Topic;
 		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a the (full)name of the topic")]

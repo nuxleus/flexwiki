@@ -56,7 +56,7 @@ namespace FlexWiki.Formatting
 					break;
 			}			
 			if (styles.Length > 0)
-				styles = " style='" + styles + "'";
+				styles = " style=\"" + styles + "\"";
 			return styles;
 		}
 
@@ -69,7 +69,7 @@ namespace FlexWiki.Formatting
 		void WriteScripts()
 		{
 Write(@"
-<script type=""text/javascript"" language='javascript'>
+<script type=""text/javascript"" language=""javascript"">
 			function LinkMenu(anArray)
 			{
 				var src = """";
@@ -195,14 +195,14 @@ Write(@"
 				obj.className = 'MenuItemNormal';
 			}
 </script>	
-<span style='display:none'>.</span>
+<span style=""display:none"">.</span>
 ");
 	// not sure why we need the extra span, but we get display bugs on some pages
 		}
 
 		public override void WriteRule()
 		{
-			Write("<div class='Rule'></div>");
+			Write("<div class=\"Rule\"></div>");
 		}
 
 
@@ -243,7 +243,7 @@ Write(@"
 
 				case TableCellInfo.AlignOption.Left:
 					styles += ";margin-left: 0; float: left ";
-					Write(" align='left' ");
+					Write(" align=\"left\" ");
 					break;
 
 				case TableCellInfo.AlignOption.Right:
@@ -251,15 +251,15 @@ Write(@"
 					break;
 
 				case TableCellInfo.AlignOption.Center:
-					Write(" align='center' ");
+					Write(" align=\"center\" ");
 					break;
 			}
 			if (width > 0)
-				Write(" width='" + width + "%' ");
+				Write(" width=\"" + width + "%\" ");
 			string cls = "TableClass";
 			if (!hasBorder)
 				cls = "TableWithoutBorderClass";
-			WriteLine("cellpadding='2' cellspacing='1' class='" + cls + "'" + css(styles) + ">");
+			WriteLine("cellpadding=\"2\" cellspacing=\"1\" class=\"" + cls + "\"" + css(styles) + ">");
 		}
 
 		override public void WriteCloseTable()
@@ -277,17 +277,23 @@ Write(@"
 			Write("</tr>");
 		}
 
-		public override void WriteLink(string URL, string tip, string content)
+		public override void WriteLink(string URL, string tip, string content, string attributes)
 		{
 			Write("<a href=\"" + URL + "\" ");
 			if (tip!= null)
 				Write("title=\"" + Formatter.EscapeHTML(tip) + "\"");
+			Write(GetAttributeString(attributes));
 			Write(">");
 			Write(Formatter.EscapeHTML(content));
 			Write("</a>");
 		}
 
-		public override void WriteImage(string title, string URL, string linkToURL, string height, string width)
+		override public void WriteLabel(string forId, string text, string attributes)
+		{
+			Write(string.Format("<label{0} for=\"{1}\">{2}</label>", GetAttributeString(attributes), forId, Formatter.EscapeHTML(text)));
+		}
+
+		public override void WriteImage(string title, string URL, string linkToURL, string height, string width, string attributes)
 		{
 			if (linkToURL != null)
 			{
@@ -296,17 +302,14 @@ Write(@"
 					Write("title=\"" + Formatter.EscapeHTML(title) + "\"");
 				Write(">");
 			}
-			Write("<img ");
-			if (linkToURL != null)
-				Write("border='0' "); 
-			Write("src=\"" + URL + "\" ");
-			if (title != null)
-				Write("alt=\"" + Formatter.EscapeHTML(title) + "\"");
-			if (width != null)
-				Write(" width=\"" + width + "\"");
-			if (height != null)
-				Write(" height=\"" + height + "\"");
-			Write(">");
+			Write(string.Format("<img src=\"{0}\" {1}alt=\"{2}\"{3}{4}{5}/>", 
+				URL, 
+				((linkToURL != null) ? "border=\"0\" " : string.Empty), 
+				Formatter.EscapeHTML(title),
+				((width != null) ? " width=\"" + width + "\"" : string.Empty ),
+				((height != null) ? " height=\"" + height + "\"" : string.Empty ),
+				GetAttributeString(attributes)
+			));
 			if (linkToURL != null)
 			{
 				Write("</a>");
@@ -315,16 +318,16 @@ Write(@"
 
 		public override void WriteErrorMessage(string title, string body)
 		{
-			Write("<span class='ErrorMessage'>");
+			Write("<span class=\"ErrorMessage\">");
 			if (title != null)
 			{
-				Write("<span class='ErrorMessageTitle'>" + Formatter.EscapeHTML(title));
+				Write("<span class=\"ErrorMessageTitle\">" + Formatter.EscapeHTML(title));
 				if (body != null)
 					Write(" ");
 				Write("</span>");
 			}
 			if (body != null)
-				Write("<span class='ErrorMessageBody'>" + Formatter.EscapeHTML(body) + "</span>");
+				Write("<span class=\"ErrorMessageBody\">" + Formatter.EscapeHTML(body) + "</span>");
 			Write("</span>");
 		}
 
@@ -335,22 +338,22 @@ Write(@"
 			if (isHighlighted)
 			{
 				if (hasBorder)
-					Write("class='TableCellHighlighted'");
+					Write("class=\"TableCellHighlighted\"");
 				else
-					Write("class='TableCellHighlightedNoBorder'");
+					Write("class=\"TableCellHighlightedNoBorder\"");
 			}			
 			else
 			{
 				if (hasBorder)
-					Write("class='TableCell'");
+					Write("class=\"TableCell\"");
 				else
-					Write("class='TableCellNoBorder'");
+					Write("class=\"TableCellNoBorder\"");
 			}
 
 			if (!allowBreaks)
 				Write(" nowrap ");
 			if (width > 0)
-				Write(" width='" + width + "%' ");
+				Write(" width=\"" + width + "%\" ");
 
 			switch (alignment)
 			{
@@ -358,22 +361,22 @@ Write(@"
 					break;
 
 				case TableCellInfo.AlignOption.Left:
-					Write(" align='left' ");
+					Write(" align=\"left\" ");
 					break;
 
 				case TableCellInfo.AlignOption.Right:
-					Write(" align='right' ");
+					Write(" align=\"right\" ");
 					break;
 
 				case TableCellInfo.AlignOption.Center:
-					Write(" align='center' ");
+					Write(" align=\"center\" ");
 					break;
 			}
 
 			if (colSpan != 1)
-				Write(" colspan='" + colSpan + "' ");
+				Write(" colspan=\"" + colSpan + "\" ");
 			if (rowSpan != 1)
-				Write(" rowspan='" + rowSpan + "' ");
+				Write(" rowspan=\"" + rowSpan + "\" ");
 				
 			WriteLine(css() + ">" + s + "</td>");
 		}
@@ -447,8 +450,9 @@ Write(@"
 
 		override public void WriteOpenProperty(string name)
 		{
-			WriteLine("<fieldset " + css() + " class='Property' style='width: auto'>");
-			WriteLine("<legend class='PropertyName'>" + name + "</legend> <span class='PropertyValue'>");
+			Write("<fieldset " + css() + " class=\"Property\" style=\"width: auto\">");
+			Write("<legend class=\"PropertyName\">" + name + "</legend>");
+			Write("<span class=\"PropertyValue\">");
 		}
 
 		override public void WriteCloseProperty()
@@ -459,17 +463,17 @@ Write(@"
 
 		override public void WriteOpenAnchor(string name)
 		{
-			WriteLine("<a name=\"" + name + "\" class=\"Anchor\">");
+			Write("<a name=\"" + name + "\" class=\"Anchor\">");
 		}
 
 		override public void WriteCloseAnchor()
 		{
-			WriteLine("</a>");
+			Write("</a>");
 		}
 		
-		override public void FormStart(string method, string URI)
+		override public void FormStart(string method, string URI, string attributes)
 		{
-			WriteLine("<form method='" + method + "' action='" + URI + "'>");
+			WriteLine(string.Format("<form action=\"{0}\" method=\"{1}\" {2}>", URI, method, GetAttributeString(attributes)));
 		}
 
 		override public void FormEnd()
@@ -477,28 +481,56 @@ Write(@"
 			WriteLine("</form>");
 		}
 
-		override public void FormImageButton(string FieldName, string ImageURI, string TipString)
+		override public void FormImageButton(string FieldName, string ImageURI, string TipString, string attributes)
 		{
-			WriteLine("<INPUT type='image' src='" + ImageURI + @"' title='" + Formatter.EscapeHTML(TipString) + "'>");
+			Write("<input type=\"image\" src=\"" + ImageURI + "\"" + GetAttributeString(attributes) + " title=\"" + Formatter.EscapeHTML(TipString) + "\" />");
 		}
 
-		override public void FormSubmitButton(string FieldName, string label)
+		override public void FormSubmitButton(string FieldName, string label, string attributes)
 		{
-			WriteLine("<INPUT name='" + FieldName + "' value ='" + Formatter.EscapeHTML(label) + @"' type='submit'>");
+			Write("<input type=\"submit\" name=\"" + FieldName + "\"" + GetAttributeString(attributes) + " value=\"" + Formatter.EscapeHTML(label) + "\" />");
 		}
 
-		override public void FormInputBox(string FieldName, string fieldValue, int fieldLength)
+		override public void FormResetButton(string FieldName, string label, string attributes)
 		{
-			WriteLine("<input size='" + fieldLength + "' type='text'  name='" + FieldName + "' value ='" + Formatter.EscapeHTML(fieldValue) + @"'>");
+			Write("<input type=\"reset\" name=\"" + FieldName + "\"" + GetAttributeString(attributes) + " value=\"" + Formatter.EscapeHTML(label) + "\" />");
 		}
 
+		override public void FormInputBox(string FieldName, string fieldValue, int fieldLength, string attributes)
+		{
+			Write("<input type=\"text\" name=\"" + FieldName + "\" id=\"" + FieldName + "\"");
+			Write((fieldLength>0)?" size=\"" + fieldLength.ToString() + "\"":string.Empty);
+			Write(GetAttributeString(attributes));
+			Write(" value=\"" + Formatter.EscapeHTML(fieldValue) + "\" />");
+		}
+
+		override public void FormTextarea(string FieldName, string fieldValue, int rows, int cols, string attributes)
+		{
+			
+			Write("<textarea name=\"" + FieldName + "\"" 
+				+ ((rows>0)?" rows=\"" + rows.ToString() + "\"" : string.Empty)
+				+ ((cols>0)?" cols=\"" + cols.ToString() + "\"" : string.Empty) 
+				+ GetAttributeString(attributes)
+				+ ">"
+				+ Formatter.EscapeHTML(fieldValue) 
+				+ "</textarea>");
+		}
+
+		override public void FormCheckbox(string fieldName, string fieldValue, bool isChecked, string attributes)
+		{
+			Write("<input type=\"checkbox\" name=\"" + fieldName + "\" value=\"" + Formatter.EscapeHTML(fieldValue) + "\"" + GetAttributeString(attributes) + ((isChecked)?" checked=\"true\"" : string.Empty) + "/>");
+		}
+		override public void FormRadio(string fieldName, string fieldValue, bool isChecked, string attributes)
+		{
+			Write("<input type=\"radio\" name=\"" + fieldName + "\" value=\"" + Formatter.EscapeHTML(fieldValue) + "\"" + GetAttributeString(attributes) + ((isChecked)?" checked=\"true\" " : string.Empty) + "/>");
+		}
 		
-		override public void FormHiddenField(string FieldName, string fieldValue)
+		override public void FormHiddenField(string FieldName, string fieldValue, string attributes)
 		{
-			WriteLine("<input style='display: none' type='text'  name='" + FieldName + "' value ='" + Formatter.EscapeHTML(fieldValue) + @"'>");
+			Write("<input style=\"display: none\" type=\"text\" name=\"" + FieldName + "\" value=\"" + Formatter.EscapeHTML(fieldValue) + "\"" + GetAttributeString(attributes) + " />");
 		}
 
-		public override void FormSelectField(string fieldName, int size, bool multiple, ArrayList options, string selectedOption, ArrayList values, object selectedValue)
+		public override void FormSelectField(string fieldName, int size, bool multiple, ArrayList options, string selectedOption, ArrayList values, object selectedValue, string attributes)
 		{
 			StringBuilder stringBuilder = new StringBuilder();
 			// Start the select field.
@@ -508,6 +540,7 @@ Write(@"
 			{
 				stringBuilder.Append(" multiple=\"multiple\"");
 			}
+			stringBuilder.Append(GetAttributeString(attributes));
 			stringBuilder.Append(">"); // End the select element.
 			// Add the options.
 			if (null != values)
@@ -540,6 +573,14 @@ Write(@"
 			stringBuilder.Append("</select>");
 			string selectField = stringBuilder.ToString();
 			Write(selectField);
+		}
+
+		private string GetAttributeString (string attr)
+		{
+			if (attr == null || attr.IndexOf(">") > 0)
+				return string.Empty;
+			
+			return " " + attr;
 		}
 
 

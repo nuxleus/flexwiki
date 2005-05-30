@@ -60,7 +60,7 @@ namespace FlexWiki.Web
 
 			string body = Request.Form["body"];
 			string ns = Request.Form["defaultNamespace"];
-			Response.Write("<div class='PreviewMain'>");			
+			Response.Write("<div class='PreviewMain'>");
 			Response.Write(Formatter.FormattedString(body, OutputFormat.HTML, TheFederation.ContentBaseForNamespace(ns), TheLinkMaker, null));
 			Response.Write("</div>");			
 		}

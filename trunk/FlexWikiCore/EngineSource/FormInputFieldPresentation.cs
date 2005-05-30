@@ -21,44 +21,49 @@ namespace FlexWiki
 	[ExposedClass("FormInputFieldPresentation", "Presents a form input field")]
 	public class FormInputFieldPresentation : FlexWiki.PresentationPrimitive
 	{
+		private int		_fieldLength;
+		private string	_fieldValue;
+
+		public FormInputFieldPresentation(string fieldName, string fieldValue)
+		{
+			Init(fieldName, fieldValue, int.MinValue, null);
+		}
 		public FormInputFieldPresentation(string fieldName, string fieldValue, int fieldLength)
 		{
-			_FieldName = fieldName;
-			_FieldValue = fieldValue;
-			_FieldLength = fieldLength;
+			Init(fieldName, fieldValue, fieldLength, null);
 		}
-
-		public string _FieldName;
-		public string FieldName
+		public FormInputFieldPresentation(string fieldName, string fieldValue, int fieldLength, string attributes)
 		{
-			get
-			{
-				return _FieldName;
-			}
+			Init(fieldName, fieldValue, fieldLength, attributes);
+		}
+		private void Init(string fieldName, string fieldValue, int fieldLength, string attributes)
+		{
+			_fieldName = fieldName;
+			_fieldValue = fieldValue;
+			_fieldLength = fieldLength;
+			_attributes = attributes;
 		}
 
-		public int _FieldLength;
+
 		public int FieldLength
 		{
 			get
 			{
-				return _FieldLength;
+				return _fieldLength;
 			}
 		}
 
-
-		public string _FieldValue;
 		public string FieldValue
 		{
 			get
 			{
-				return _FieldValue;
+				return _fieldValue;
 			}
 		}
 
 		public override void OutputTo(WikiOutput output)
 		{
-			output.FormInputBox(FieldName, FieldValue, FieldLength);
+			output.FormInputBox(FieldName, FieldValue, FieldLength, Attributes);
 		}
 
 

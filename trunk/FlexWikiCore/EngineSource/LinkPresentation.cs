@@ -23,10 +23,20 @@ namespace FlexWiki
 	{
 		public LinkPresentation(string content, string URL, string tip)
 		{
+			Init(content, URL, tip, null);
+		}
+		public LinkPresentation(string content, string URL, string tip, string attributes)
+		{
+			Init(content, URL, tip, attributes);
+		}
+		private void Init(string content, string URL, string tip, string attributes)
+		{
 			_Tip = tip;
 			_URL = URL;
 			_Content = content;
+			_attributes = attributes;
 		}
+
 
 		string _Tip;
 		string _URL;
@@ -58,7 +68,7 @@ namespace FlexWiki
 
 		public override void OutputTo(WikiOutput output)
 		{
-			output.WriteLink(URL, Tip, Content);
+			output.WriteLink(URL, Tip, Content, Attributes);
 		}
 
 	}

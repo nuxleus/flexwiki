@@ -201,13 +201,9 @@ lenSpanning=@@topics.TopicWithBehaviorProperties.FaceSpanningLines(""parsing is 
 		{
 			FormatTest(
 				@"Singleline: single line property",
-				@"<a name=""Singleline"" class=""Anchor"">
-<fieldset  class='Property' style='width: auto'>
-<legend class='PropertyName'>Singleline</legend> <span class='PropertyValue'>
-single line property</span>
+				@"<a name=""Singleline"" class=""Anchor""><fieldset  class=""Property"" style=""width: auto""><legend class=""PropertyName"">Singleline</legend><span class=""PropertyValue"">single line property</span>
 </fieldset>
 </a>
-
 ");
 		}
 
@@ -215,13 +211,9 @@ single line property</span>
 		{
 			FormatTest(
 				@"Singleline: '''bold''' ''italics'' -deleted-",
-				@"<a name=""Singleline"" class=""Anchor"">
-<fieldset  class='Property' style='width: auto'>
-<legend class='PropertyName'>Singleline</legend> <span class='PropertyValue'>
-<strong>bold</strong> <em>italics</em> <del>deleted</del></span>
+				@"<a name=""Singleline"" class=""Anchor""><fieldset  class=""Property"" style=""width: auto""><legend class=""PropertyName"">Singleline</legend><span class=""PropertyValue""><strong>bold</strong> <em>italics</em> <del>deleted</del></span>
 </fieldset>
 </a>
-
 ");
 		}
 
@@ -232,15 +224,11 @@ single line property</span>
 first line
 second line
 ]",
-				@"<a name=""Multiline"" class=""Anchor"">
-<fieldset  class='Property' style='width: auto'>
-<legend class='PropertyName'>Multiline</legend> <span class='PropertyValue'>
-<p>first line</p>
+				@"<a name=""Multiline"" class=""Anchor""><fieldset  class=""Property"" style=""width: auto""><legend class=""PropertyName"">Multiline</legend><span class=""PropertyValue""><p>first line</p>
 <p>second line</p>
 </span>
 </fieldset>
-</a>
-");
+</a>");
 		}
 
 		[Test] public void FormattedMultilinePropertyTest()
@@ -250,16 +238,12 @@ second line
 !Heading1
 '''bold''' ''italics'' -deleted-
 ]",
-				@"<a name=""Multiline"" class=""Anchor"">
-<fieldset  class='Property' style='width: auto'>
-<legend class='PropertyName'>Multiline</legend> <span class='PropertyValue'>
-<h1>Heading1</h1>
+				@"<a name=""Multiline"" class=""Anchor""><fieldset  class=""Property"" style=""width: auto""><legend class=""PropertyName"">Multiline</legend><span class=""PropertyValue""><h1>Heading1</h1>
 
 <p><strong>bold</strong> <em>italics</em> <del>deleted</del></p>
 </span>
 </fieldset>
-</a>
-");
+</a>");
 		}
 		#endregion
 
@@ -358,7 +342,7 @@ second line
 		
 		[Test] public void WikiURIForImageResource()
 		{
-			FormatTest(@"wiki://ResourceReference/Cookies.gif", @"<p><img src=""http://www.google.com/Cookies.gif""></p>
+			FormatTest(@"wiki://ResourceReference/Cookies.gif", @"<p><img src=""http://www.google.com/Cookies.gif""/></p>
 ");
 		}
 
@@ -386,7 +370,7 @@ second line
 		[Test] public void IncludeFailure()
 		{
 			FormatTest(@"{{NoSuchTopic}}", 
-				@"<p>{{<a title='Click here to create this topic' class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("NoSuchTopic")) + @""">NoSuchTopic</a>}}</p>
+				@"<p>{{<a title=""Click here to create this topic"" class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("NoSuchTopic")) + @""">NoSuchTopic</a>}}</p>
 ");
 
 		}
@@ -585,7 +569,7 @@ second line
 			}
 			FormatTest(
 				@s,
-				@"<p><a title='Click here to create this topic' class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor(topicName)) + @""">" + topicName + @"</a></p>
+				@"<p><a title=""Click here to create this topic"" class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor(topicName)) + @""">" + topicName + @"</a></p>
 ");
 		}
 
@@ -625,9 +609,9 @@ second line
 				@"Some VerySimpleLinksFatPig
 StartOfLineShouldLink blah blah blah
 blah blah EndOfLineShouldLink",
-				@"<p>Some <a title='Click here to create this topic' class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("VerySimpleLinksFatPig")) + @""">VerySimpleLinksFatPig</a></p>
-<p><a title='Click here to create this topic' class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("StartOfLineShouldLink")) + @""">StartOfLineShouldLink</a> blah blah blah</p>
-<p>blah blah <a title='Click here to create this topic' class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("EndOfLineShouldLink")) + @""">EndOfLineShouldLink</a></p>
+				@"<p>Some <a title=""Click here to create this topic"" class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("VerySimpleLinksFatPig")) + @""">VerySimpleLinksFatPig</a></p>
+<p><a title=""Click here to create this topic"" class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("StartOfLineShouldLink")) + @""">StartOfLineShouldLink</a> blah blah blah</p>
+<p>blah blah <a title=""Click here to create this topic"" class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("EndOfLineShouldLink")) + @""">EndOfLineShouldLink</a></p>
 ");
 		}
 
@@ -659,7 +643,7 @@ blah blah EndOfLineShouldLink",
 		{
 			FormatTest(
 				@"!HelloWorld",
-				@"<h1><a title='Click here to create this topic' class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("HelloWorld")) + @""">HelloWorld</a></h1>
+				@"<h1><a title=""Click here to create this topic"" class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("HelloWorld")) + @""">HelloWorld</a></h1>
 
 ");
 		}
@@ -687,8 +671,8 @@ blah blah EndOfLineShouldLink",
 
 		[Test] public void Rule()
 		{
-			FormatTestContains("----", "<div class='Rule'></div>");
-			FormatTestContains("------------------------", "<div class='Rule'></div>");
+			FormatTestContains("----", "<div class=\"Rule\"></div>");
+			FormatTestContains("------------------------", "<div class=\"Rule\"></div>");
 		}
 
 		[Test] public void HeadingTests()
@@ -797,7 +781,7 @@ Test for case-insensitivity, such as CAPS@BAF, or some such nonsense.",
 		{
 			FormatTest(
 				@"some leading text http://msdn.microsoft.com/library/en-us/dnpag/html/ch01---engineering-for-perf.gif some trailing text",
-				@"<p>some leading text <img src=""http://msdn.microsoft.com/library/en-us/dnpag/html/ch01---engineering-for-perf.gif""> some trailing text</p>
+				@"<p>some leading text <img src=""http://msdn.microsoft.com/library/en-us/dnpag/html/ch01---engineering-for-perf.gif""/> some trailing text</p>
 ");
 		}
 
@@ -856,7 +840,7 @@ file://servername/umuff&#126;/folder%20name/file.txt",
 		{
 			FormatTest(
 				@"LinkThis, AndLinkThis, dontLinkThis, (LinkThis), _LinkAndEmphasisThis_ *LinkAndBold* (LinkThisOneToo)",
-				@"<p><a title='Click here to create this topic' class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("LinkThis")) + @""">LinkThis</a>, <a title='Click here to create this topic' class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("AndLinkThis")) + @""">AndLinkThis</a>, dontLinkThis, (<a title='Click here to create this topic' class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("LinkThis")) + @""">LinkThis</a>), <em>LinkAndEmphasisThis</em> <strong>LinkAndBold</strong> (<a title='Click here to create this topic' class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("LinkThisOneToo")) + @""">LinkThisOneToo</a>)</p>
+				@"<p><a title=""Click here to create this topic"" class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("LinkThis")) + @""">LinkThis</a>, <a title=""Click here to create this topic"" class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("AndLinkThis")) + @""">AndLinkThis</a>, dontLinkThis, (<a title=""Click here to create this topic"" class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("LinkThis")) + @""">LinkThis</a>), <em>LinkAndEmphasisThis</em> <strong>LinkAndBold</strong> (<a title=""Click here to create this topic"" class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("LinkThisOneToo")) + @""">LinkThisOneToo</a>)</p>
 ");
 		}
 
@@ -879,9 +863,9 @@ file://servername/umuff&#126;/folder%20name/file.txt",
 
 			FormatTest(
 				@"||t1||",
-				@"<table cellpadding='2' cellspacing='1' class='TableClass'>
+				@"<table cellpadding=""2"" cellspacing=""1"" class=""TableClass"">
 <tr>
-<td  class='TableCell'>t1</td>
+<td  class=""TableCell"">t1</td>
 </tr>
 </table>
 ");
@@ -900,16 +884,16 @@ file://servername/umuff&#126;/folder%20name/file.txt",
 				@"||''table''||'''more'''||columns||
 ||1||2||3||
 ",
-				@"<table cellpadding='2' cellspacing='1' class='TableClass'>
+				@"<table cellpadding=""2"" cellspacing=""1"" class=""TableClass"">
 <tr>
-<td  class='TableCell'><em>table</em></td>
-<td  class='TableCell'><strong>more</strong></td>
-<td  class='TableCell'>columns</td>
+<td  class=""TableCell""><em>table</em></td>
+<td  class=""TableCell""><strong>more</strong></td>
+<td  class=""TableCell"">columns</td>
 </tr>
 <tr>
-<td  class='TableCell'>1</td>
-<td  class='TableCell'>2</td>
-<td  class='TableCell'>3</td>
+<td  class=""TableCell"">1</td>
+<td  class=""TableCell"">2</td>
+<td  class=""TableCell"">3</td>
 </tr>
 </table>
 ");
@@ -919,9 +903,9 @@ file://servername/umuff&#126;/folder%20name/file.txt",
 		{
 			FormatTest(
 				@"||:-)||",
-				@"<table cellpadding='2' cellspacing='1' class='TableClass'>
+				@"<table cellpadding=""2"" cellspacing=""1"" class=""TableClass"">
 <tr>
-<td  class='TableCell'><img src=""" + _lm.LinkToImage("emoticons/regular_smile.gif") + @"""></td>
+<td  class=""TableCell""><img src=""" + _lm.LinkToImage("emoticons/regular_smile.gif") + @"""/></td>
 </tr>
 </table>
 ");
@@ -937,9 +921,9 @@ file://servername/umuff&#126;/folder%20name/file.txt",
 		{
 			FormatTest(
 				@"||http://www.yahoo.com/foo.html||",
-				@"<table cellpadding='2' cellspacing='1' class='TableClass'>
+				@"<table cellpadding=""2"" cellspacing=""1"" class=""TableClass"">
 <tr>
-<td  class='TableCell'><a href=""http://www.yahoo.com/foo.html"">http://www.yahoo.com/foo.html</a></td>
+<td  class=""TableCell""><a href=""http://www.yahoo.com/foo.html"">http://www.yahoo.com/foo.html</a></td>
 </tr>
 </table>
 ");
@@ -949,7 +933,7 @@ file://servername/umuff&#126;/folder%20name/file.txt",
 		{
 			FormatTest(
 				@":-) :-(",
-				@"<p><img src=""" + _lm.LinkToImage("emoticons/regular_smile.gif") + @"""> <img src=""" + _lm.LinkToImage("emoticons/sad_smile.gif") + @"""></p>
+				@"<p><img src=""" + _lm.LinkToImage("emoticons/regular_smile.gif") + @"""/> <img src=""" + _lm.LinkToImage("emoticons/sad_smile.gif") + @"""/></p>
 ");
 		}
 
@@ -959,7 +943,7 @@ file://servername/umuff&#126;/folder%20name/file.txt",
 		{
 			string s = FormattedTestText(@"[BigBox] summer [eDocuments] and [e] and [HelloWorld] and [aZero123]");
 			AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_cb.TopicNameFor("BigBox")) + @""">BigBox</a>");
-			AssertStringContains(s, @"<a title='Click here to create this topic' class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("eDocuments")) + @""">eDocuments</a> and <a title='Click here to create this topic' class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("e")) + @""">e</a> and <a title='Click here to create this topic' class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("HelloWorld")) + @""">HelloWorld</a> and <a title='Click here to create this topic' class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("aZero123")) + @""">aZero123</a>");
+			AssertStringContains(s, @"<a title=""Click here to create this topic"" class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("eDocuments")) + @""">eDocuments</a> and <a title=""Click here to create this topic"" class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("e")) + @""">e</a> and <a title=""Click here to create this topic"" class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("HelloWorld")) + @""">HelloWorld</a> and <a title=""Click here to create this topic"" class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("aZero123")) + @""">aZero123</a>");
 		}
 
 		[Test] public void CodeFormatting()
@@ -984,19 +968,19 @@ And the text in the parens and brackets should be code formatted:
 		{
 			FormatTest(
 				@"http://www.microsoft.com/billgates/images/sofa-bill.jpg",
-				@"<p><img src=""http://www.microsoft.com/billgates/images/sofa-bill.jpg""></p>
+				@"<p><img src=""http://www.microsoft.com/billgates/images/sofa-bill.jpg""/></p>
 ");
 			FormatTest(
 				@"http://www.microsoft.com/billgates/images/sofa-bill.png",
-				@"<p><img src=""http://www.microsoft.com/billgates/images/sofa-bill.png""></p>
+				@"<p><img src=""http://www.microsoft.com/billgates/images/sofa-bill.png""/></p>
 ");
 			FormatTest(
 				@"http://www.microsoft.com/billgates/images/sofa-bill.gif",
-				@"<p><img src=""http://www.microsoft.com/billgates/images/sofa-bill.gif""></p>
+				@"<p><img src=""http://www.microsoft.com/billgates/images/sofa-bill.gif""/></p>
 ");
 			FormatTest(
 				@"http://www.microsoft.com/billgates/images/sofa-bill.jpeg",
-				@"<p><img src=""http://www.microsoft.com/billgates/images/sofa-bill.jpeg""></p>
+				@"<p><img src=""http://www.microsoft.com/billgates/images/sofa-bill.jpeg""/></p>
 ");
 			// Make sure we really need the period before the trigger extensions...
 			// Look for a hyperlink, not an <img>
@@ -1022,26 +1006,26 @@ And the text in the parens and brackets should be code formatted:
 		[Test] public void ImageBehaviorTwoParamTest() 
 		{
 			FormatTest("@@Image(\"http://server/image.jpg\", \"Alternative text\")@@",
-				"<p><img src=\"http://server/image.jpg\" alt=\"Alternative text\"></p>\n");
+				"<p><img src=\"http://server/image.jpg\" alt=\"Alternative text\"/></p>\n");
 		}
 
 		[Test] public void ImageBehaviorFourParamTest() 
 		{
 			FormatTest("@@Image(\"http://server/image.jpg\", \"Alternative text\", \"500\", \"400\")@@",
 				"<p><img src=\"http://server/image.jpg\" alt=\"Alternative text\" " +
-				"width=\"500\" height=\"400\"></p>\n");
+				"width=\"500\" height=\"400\"/></p>\n");
 		}
 
 		[Test] public void ImageBehaviorEmbeddedQuotationMarks() 
 		{
 			FormatTest(@"@@Image(""http://server/image.jpg"", ""Alt \""text\"""")@@",
-				"<p><img src=\"http://server/image.jpg\" alt=\"Alt &quot;text&quot;\"></p>\n");
+				"<p><img src=\"http://server/image.jpg\" alt=\"Alt &quot;text&quot;\"/></p>\n");
 		}
 
 		[Test] public void ImageBehaviorTwoPerLineTest()
 		{
 			FormatTest("@@Image(\"http://server/image.jpg\", \"alt\")@@ and @@Image(\"http://server/image2.jpg\", \"alt2\")@@",
-				"<p><img src=\"http://server/image.jpg\" alt=\"alt\"> and <img src=\"http://server/image2.jpg\" alt=\"alt2\"></p>\n");
+				"<p><img src=\"http://server/image.jpg\" alt=\"alt\"/> and <img src=\"http://server/image2.jpg\" alt=\"alt2\"/></p>\n");
 		}
 
 		[Test] public void XmlTransformBehaviorTwoParamTest() 
@@ -1051,7 +1035,27 @@ And the text in the parens and brackets should be code formatted:
 			string xslPath = testRssXslPath.Replace(@"\", @"\\");
 
 			FormatTest("@@XmlTransform(\"" + xmlPath + "\", \"" + xslPath + "\")@@",
-				"<p><h1>Weblogs @ ASP.NET</h1>\n\n<table cellpadding='2' cellspacing='1' class='TableClass'>\n<tr>\n<td  class='TableCell'><strong>Published Date</strong></td>\n<td  class='TableCell'><strong>Title</strong></td>\n</tr>\n<tr>\n<td  class='TableCell'>Wed, 07 Jan 2004 05:45:00 GMT</td>\n<td  class='TableCell'><a href=\"http://weblogs.asp.net/aconrad/archive/2004/01/06/48205.aspx\">Fast Chicken</a></td>\n</tr>\n<tr>\n<td  class='TableCell'>Wed, 07 Jan 2004 03:36:00 GMT</td>\n<td  class='TableCell'><a href=\"http://weblogs.asp.net/CSchittko/archive/2004/01/06/48178.aspx\">Are You Linked In?</a></td>\n</tr>\n<tr>\n<td  class='TableCell'>Wed, 07 Jan 2004 03:27:00 GMT</td>\n<td  class='TableCell'><a href=\"http://weblogs.asp.net/francip/archive/2004/01/06/48172.aspx\">Whidbey configuration APIs</a></td>\n</tr>\n</table></p>\n");
+				@"<p><h1>Weblogs @ ASP.NET</h1>
+
+<table cellpadding=""2"" cellspacing=""1"" class=""TableClass"">
+<tr>
+<td  class=""TableCell""><strong>Published Date</strong></td>
+<td  class=""TableCell""><strong>Title</strong></td>
+</tr>
+<tr>
+<td  class=""TableCell"">Wed, 07 Jan 2004 05:45:00 GMT</td>
+<td  class=""TableCell""><a href=""http://weblogs.asp.net/aconrad/archive/2004/01/06/48205.aspx"">Fast Chicken</a></td>
+</tr>
+<tr>
+<td  class=""TableCell"">Wed, 07 Jan 2004 03:36:00 GMT</td>
+<td  class=""TableCell""><a href=""http://weblogs.asp.net/CSchittko/archive/2004/01/06/48178.aspx"">Are You Linked In?</a></td>
+</tr>
+<tr>
+<td  class=""TableCell"">Wed, 07 Jan 2004 03:27:00 GMT</td>
+<td  class=""TableCell""><a href=""http://weblogs.asp.net/francip/archive/2004/01/06/48172.aspx"">Whidbey configuration APIs</a></td>
+</tr>
+</table></p>
+");
 		}
 
 		[Test] public void XmlTransformBehaviorXmlParamNotFoundTest() 
@@ -1478,30 +1482,30 @@ No key case
 ");
 			FormatTest(
 				@"%red% red %% and now %% by itself",
-				@"<p><span style='color:red'> red </span> and now %% by itself</p>
+				@"<p><span style=""color:red""> red </span> and now %% by itself</p>
 ");
 			FormatTest(
 				@"%red%red %blue%blue%% but this text is normal.",
-				@"<p><span style='color:red'>red </span><span style='color:blue'>blue</span> but this text is normal.</p>
+				@"<p><span style=""color:red"">red </span><span style=""color:blue"">blue</span> but this text is normal.</p>
 ");
 			FormatTest(
 				@"%red%Red and no %big%closing %small%percentpercent
 Normal again
 ",
-				@"<p><span style='color:red'>Red and no </span><big>closing </big><small>percentpercent</small></p>
+				@"<p><span style=""color:red"">Red and no </span><big>closing </big><small>percentpercent</small></p>
 <p>Normal again</p>
 ");
 			FormatTest(
 				@"Strange %#13579B%Color %dima% non-color",
-				@"<p>Strange <span style='color:#13579b'>Color </span><span style='color:dima'> non-color</span></p>
+				@"<p>Strange <span style=""color:#13579b"">Color </span><span style=""color:dima""> non-color</span></p>
 ");
 			FormatTest(
 				@"'''%red big%Big bold red text''' %small green%''Small green italic''%%normal",
-				@"<p><strong><span style='color:red'><big>Big bold red text</strong> </big></span><small><span style='color:green'><em>Small green italic</em></small></span>normal</p>
+				@"<p><strong><span style=""color:red""><big>Big bold red text</strong> </big></span><small><span style=""color:green""><em>Small green italic</em></small></span>normal</p>
 ");
 			FormatTest(
 				@"normal %big big%Very big %% normal %small small% very small %blue% normal size blue",
-				@"<p>normal <big><big>Very big </big></big> normal <small><small> very small </small></small><span style='color:blue'> normal size blue</span></p>
+				@"<p>normal <big><big>Very big </big></big> normal <small><small> very small </small></small><span style=""color:blue""> normal size blue</span></p>
 ");
 		}
 
@@ -1525,7 +1529,7 @@ Normal again
 		{
 			FormatTest(
 				@"@@Presentations.ComboSelectField(""selectTest"", [""one"", ""two"", ""three""], null, [1, 2])@@",
-				@"<p><span class='ErrorMessage'><span class='ErrorMessageBody'>Error evaluating expression: The values array does not contain the same number of items as the options array
+				@"<p><span class=""ErrorMessage""><span class=""ErrorMessageBody"">Error evaluating expression: The values array does not contain the same number of items as the options array
 Parameter name: values</span></span></p>
 ");
 		}
@@ -1551,6 +1555,89 @@ Parameter name: values</span></span></p>
 ");
 		}
 		#endregion
+
+		#region Additional form element tests
+		[Test] public void FormCheckboxTest()
+		{
+			FormatTest(
+				@"@@Presentations.Checkbox(""checkboxTest2"", ""99"", false)@@",
+				@"<p><input type=""checkbox"" name=""checkboxTest2"" value=""99""/></p>
+");
+			FormatTest(
+				@"@@Presentations.Checkbox(""checkboxTest"", ""999"", true, ""class='myChxbx'"")@@",
+				@"<p><input type=""checkbox"" name=""checkboxTest"" value=""999"" class='myChxbx' checked=""true""/></p>
+");
+		}
+		[Test] public void FormRadioButtonTest()
+		{
+			FormatTest(
+				@"@@Presentations.Radio(""radioTest1"", ""421"", false)@@",
+				@"<p><input type=""radio"" name=""radioTest1"" value=""421""/></p>
+");
+
+			FormatTest(
+				@"@@Presentations.Radio(""radioTest"", ""42"", true, ""class='myRdbx'"")@@",
+				@"<p><input type=""radio"" name=""radioTest"" value=""42"" class='myRdbx' checked=""true"" /></p>
+");
+		}
+		[Test] public void FormLabelTest()
+		{
+			FormatTest(
+				@"@@Presentations.Label(""forInputXY"", ""This is the label text"")@@",
+				@"<p><label for=""forInputXY"">This is the label text</label></p>
+");
+			FormatTest(
+				@"@@Presentations.Label(""forInputXY2"", ""This is the label text"", ""class='myLabels'"")@@",
+				@"<p><label class='myLabels' for=""forInputXY2"">This is the label text</label></p>
+");
+		}
+		[Test] public void FormInputFieldTest()
+		{
+			FormatTest(
+				@"@@Presentations.InputField(""myText"", ""This is the default text"", 100, ""class='mytxt'"")@@",
+				@"<p><input type=""text"" name=""myText"" id=""myText"" size=""100"" class='mytxt' value=""This is the default text"" /></p>
+");
+			FormatTest(
+				@"@@Presentations.InputField(""myText"", ""This is the default text"")@@",
+				@"<p><input type=""text"" name=""myText"" id=""myText"" value=""This is the default text"" /></p>
+");
+		}
+		[Test] public void FormHiddenFieldTest()
+		{
+			FormatTest(
+				@"@@Presentations.HiddenField(""myHidden"", ""param"", ""class='mytxt'"")@@",
+				@"<p><input style=""display: none"" type=""text"" name=""myHidden"" value=""param"" class='mytxt' /></p>
+");
+			FormatTest(
+				@"@@Presentations.HiddenField(""myHidden"", ""param"")@@",
+				@"<p><input style=""display: none"" type=""text"" name=""myHidden"" value=""param"" /></p>
+");
+		}
+		[Test] public void FormResetButtonTest()
+		{
+			FormatTest(
+				@"@@Presentations.ResetButton(""myCncl"", ""Cancel"", ""class='mytxt'"")@@",
+				@"<p><input type=""reset"" name=""myCncl"" class='mytxt' value=""Cancel"" /></p>
+");
+			FormatTest(
+				@"@@Presentations.ResetButton(""myCncl"", ""Cancel"")@@",
+				@"<p><input type=""reset"" name=""myCncl"" value=""Cancel"" /></p>
+");
+		}
+		[Test] public void FormTextareaTest()
+		{
+			FormatTest(
+				@"@@Presentations.Textarea(""txtName"", ""This is the label text"", 10, 40, ""class='myTxtarea'"")@@",
+				@"<p><textarea name=""txtName"" rows=""10"" cols=""40"" class='myTxtarea'>This is the label text</textarea></p>
+");
+			FormatTest(
+				@"@@Presentations.Textarea(""txtName"", ""This is the label text"", 80)@@",
+				@"<p><textarea name=""txtName"" rows=""80"">This is the label text</textarea></p>
+");
+
+		}
+		#endregion
+
 		#region Multi-line (listbox) tests
 		[Test] public void SelectFieldMultilineTest()
 		{
@@ -1577,7 +1664,7 @@ Parameter name: values</span></span></p>
 		{
 			FormatTest(
 				@"@@Presentations.ListSelectField(""selectTest"", 2, true, [""one"", ""two"", ""three""], null, [1, 2])@@",
-				@"<p><span class='ErrorMessage'><span class='ErrorMessageBody'>Error evaluating expression: The values array does not contain the same number of items as the options array
+				@"<p><span class=""ErrorMessage""><span class=""ErrorMessageBody"">Error evaluating expression: The values array does not contain the same number of items as the options array
 Parameter name: values</span></span></p>
 ");
 		}
@@ -1729,9 +1816,9 @@ b
 			// Inserts oldest should have the 
 			VersionCompare("TopicOne", (string)_versions[_versions.Count - 2], @"<p>1</p>
 <p>2</p>
-<p style='background: palegreen'>a</p>
-<p style='background: palegreen'>b</p>
-<p style='background: palegreen'>c</p>
+<p style=""background: palegreen"">a</p>
+<p style=""background: palegreen"">b</p>
+<p style=""background: palegreen"">c</p>
 <p>3</p>
 <p>4</p>
 <p>5</p>
@@ -1748,10 +1835,10 @@ b
 <p>2</p>
 <p>a</p>
 <p>b</p>
-<p style='color: silver; text-decoration: line-through'>c</p>
-<p style='color: silver; text-decoration: line-through'>3</p>
-<p style='color: silver; text-decoration: line-through'>4</p>
-<p style='color: silver; text-decoration: line-through'>5</p>
+<p style=""color: silver; text-decoration: line-through"">c</p>
+<p style=""color: silver; text-decoration: line-through"">3</p>
+<p style=""color: silver; text-decoration: line-through"">4</p>
+<p style=""color: silver; text-decoration: line-through"">5</p>
 <p>6</p>
 <p>7</p>
 <p>8</p>
@@ -1763,7 +1850,10 @@ b
 		{
 			AbsoluteTopicName abs = ContentBase().TopicNameFor(topic);
 			abs.Version = version;
-			string got = Formatter.FormattedTopic(abs, OutputFormat.Testing, true, TheFederation, _lm, null);
+			AbsoluteTopicName oldTopic = ContentBase().VersionPreviousTo(abs.LocalName); 
+
+
+			string got = Formatter.FormattedTopic(abs, OutputFormat.Testing, oldTopic, TheFederation, _lm, null);
 			got = got.Replace("\r", "");
 			string o2 = expecting.Replace("\r", "");
 

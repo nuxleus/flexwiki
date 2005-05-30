@@ -22,20 +22,29 @@ namespace FlexWiki
 	public class ImagePresentation : PresentationPrimitive
 	{
 
+		private string _Title;
+		private string _URL;
+		private string _Height;
+		private string _Width;
+		private string _LinkToURL;
+
 		public ImagePresentation(string title, string URL, string linkToURL, string height, string width)
+		{
+			Init(title, URL, linkToURL, height, width, null);
+		}
+		public ImagePresentation(string title, string URL, string linkToURL, string height, string width, string attributes)
+		{
+			Init(title, URL, linkToURL, height, width, attributes);
+		}
+		private void Init(string title, string URL, string linkToURL, string height, string width, string attributes)
 		{
 			_LinkToURL = linkToURL;
 			_Title = title;
 			_URL = URL;
 			_Height = height;
 			_Width = width;
+			_attributes = attributes;
 		}
-
-		string _Title;
-		string _URL;
-		string _Height;
-		string _Width;
-		string _LinkToURL;
 
 		string LinkToURL
 		{
@@ -79,7 +88,7 @@ namespace FlexWiki
 
 		public override void OutputTo(WikiOutput output)
 		{
-			output.WriteImage(Title, URL, LinkToURL, Height, Width);
+			output.WriteImage(Title, URL, LinkToURL, Height, Width, Attributes);
 		}
 
 	}

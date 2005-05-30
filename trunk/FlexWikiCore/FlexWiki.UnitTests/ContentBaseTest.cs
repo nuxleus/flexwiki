@@ -33,6 +33,7 @@ namespace FlexWiki.UnitTests
 		const string _bh = "http://boo/";
 		LinkMaker _lm;
 		
+		
 		[SetUp] public void Init()
 		{
 			string author = "tester-joebob";
@@ -72,6 +73,8 @@ Role:Developer", author);
 			WriteTestTopicAndNewVersion(_other2, "OtherTwoGoodbye", @"goodbye", author);
 
 			WriteTestTopicAndNewVersion(_other3, "OtherThreeTest", @"yo", author);
+
+			
 
 			WriteTestTopicAndNewVersion(_cb5, "AbsRef", @"Other2.OtherTwoHello", author);
 
@@ -147,10 +150,11 @@ Role:Developer", author);
 			_cb5.Delete();
 		}
 
+
 		void CompareTopic(string topic, string outputMustContain)
 		{	
 			AbsoluteTopicName abs = _base.UnambiguousTopicNameFor(new RelativeTopicName(topic));
-			string o = Formatter.FormattedTopic(abs, OutputFormat.HTML, false, TheFederation, _lm, null);
+			string o = Formatter.FormattedTopic(abs, OutputFormat.HTML, null, TheFederation, _lm, null);
 			string o1 = o.Replace("\r", "");
 			string o2 = outputMustContain.Replace("\r", "");
 			bool pass = o1.IndexOf(o2) >= 0;
@@ -244,11 +248,14 @@ Role:Developer", author);
 	[TestFixture] public class ContentBaseTests : WikiTests
 	{
 		protected ContentBase	_base;
+		private LinkMaker _lm;
 
 		[SetUp] public void Init()
 		{
-			TheFederation = new Federation(OutputFormat.HTML, new LinkMaker("http://boobar"));
 			string author = "tester-joebob";
+			_lm = new LinkMaker("http://boobar");
+
+			TheFederation = new Federation(OutputFormat.HTML, _lm);
 
 			_base = CreateStore("FlexWiki.Base");
 
@@ -517,8 +524,7 @@ Change2: new value
 			CompareFederationUpdates(expected, _Events, false, true);
 		}
 
-		
-		
+
 		public static void CompareFederationUpdates(FederationUpdate expected, IList events, bool considerTopicChanges, bool considerPropertyChanges)
 		{
 			Assert.IsTrue(events.Count > 0, "Did not get any federation update events");
@@ -589,7 +595,7 @@ Change2: new value
 					s += ", ";
 				s += p;
 			}
-			Assertion.Fail("Unexpected " + verb + " property notifications for: " + s);
+			Assert.Fail("Unexpected " + verb + " property notifications for: " + s);
 		}
 
 		void FederationUpdateMonitor(object sender, FederationUpdateEventArgs  e) 
@@ -836,48 +842,77 @@ There";
 			Assert.IsTrue(ContentBase().TopicExists(ContentBase().TopicNameFor("TopicOne")));
 		}
 
-    [Test] public void LatestVersionForTopic()
-    {
-      string author = "LatestVersionForTopicTest"; 
-      WriteTestTopicAndNewVersion(_base, "TopicOne", @"A Change", author);
-      WriteTestTopicAndNewVersion(_base, "TopicTwo", @"A Change", author);
-      WriteTestTopicAndNewVersion(_base, "TopicThree", @"A Change", author);
+		[Test] public void LatestVersionForTopic()
+		{
+		string author = "LatestVersionForTopicTest"; 
+		WriteTestTopicAndNewVersion(_base, "TopicOne", @"A Change", author);
+		WriteTestTopicAndNewVersion(_base, "TopicTwo", @"A Change", author);
+		WriteTestTopicAndNewVersion(_base, "TopicThree", @"A Change", author);
 
-      ContentBase cb = ContentBase(); 
-      
-      LocalTopicName atn1 = new LocalTopicName("TopicOne"); 
-      LocalTopicName atn2 = new LocalTopicName("TopicTwo"); 
-      LocalTopicName atn3 = new LocalTopicName("TopicThree"); 
+		ContentBase cb = ContentBase(); 
+	      
+		LocalTopicName atn1 = new LocalTopicName("TopicOne"); 
+		LocalTopicName atn2 = new LocalTopicName("TopicTwo"); 
+		LocalTopicName atn3 = new LocalTopicName("TopicThree"); 
 
-      IEnumerable versions1 = cb.AllVersionsForTopic(atn1); 
-      IEnumerable versions2 = cb.AllVersionsForTopic(atn2); 
-      IEnumerable versions3 = cb.AllVersionsForTopic(atn3); 
+		IEnumerable versions1 = cb.AllVersionsForTopic(atn1); 
+		IEnumerable versions2 = cb.AllVersionsForTopic(atn2); 
+		IEnumerable versions3 = cb.AllVersionsForTopic(atn3); 
 
-      string version1 = null; 
-      string version2 = null; 
-      string version3 = null; 
+		string version1 = null; 
+		string version2 = null; 
+		string version3 = null; 
 
-      foreach (AbsoluteTopicName atn in versions1)
+		foreach (AbsoluteTopicName atn in versions1)
+		{
+			version1 = atn.Version; 
+			break;
+		}
+		foreach (AbsoluteTopicName atn in versions2)
+		{
+			version2 = atn.Version; 
+			break;
+		}
+		foreach (AbsoluteTopicName atn in versions3)
+		{
+			version3 = atn.Version; 
+			break;
+		}
+
+		Assert.AreEqual(version1, cb.LatestVersionForTopic(atn1), "Checking that latest version is calculated correctly"); 
+		Assert.AreEqual(version2, cb.LatestVersionForTopic(atn2), "Checking that latest version is calculated correctly"); 
+		Assert.AreEqual(version3, cb.LatestVersionForTopic(atn3), "Checking that latest version is calculated correctly"); 
+
+		}
+
+		[Test] public void CompareTwoTopicVersions()
+		{
+			AbsoluteTopicName newestTopicVersion = null;
+			AbsoluteTopicName oldTopicVersion	 = null;
+
+			oldTopicVersion = WriteTestTopicAndNewVersion(_base, "Versioned", "Original version", "CompareTest");
+			System.Threading.Thread.Sleep(100); // need the newer one to be newer enough!
+			newestTopicVersion = WriteTestTopicAndNewVersion(_base, "Versioned", "Compare this version with an other.", "CompareTest");
+			
+			Assert.IsNotNull(newestTopicVersion, "Have not found the newer version of topic");
+			Assert.IsNotNull(oldTopicVersion, "Have not found the older version of topic");
+
+			string[] outputMustContainList = new string[] { @"<p style=""background: palegreen"">Compare this version with an other.</p>", 
+                                                      @"<p style=""color: silver; text-decoration: line-through"">Original version</p>" };
+
+      foreach (string outputMustContain in outputMustContainList)
       {
-        version1 = atn.Version; 
-        break;
-      }
-      foreach (AbsoluteTopicName atn in versions2)
-      {
-        version2 = atn.Version; 
-        break;
-      }
-      foreach (AbsoluteTopicName atn in versions3)
-      {
-        version3 = atn.Version; 
-        break;
+        string o = TheFederation.GetTopicFormattedContent(newestTopicVersion, oldTopicVersion);
+        bool pass = o.IndexOf(outputMustContain) >= 0;
+        if (!pass)
+        {
+          Console.Error.WriteLine("Got     : " + o);
+          Console.Error.WriteLine("But Couldn't Find: " + outputMustContain);
+        }
+        Assert.IsTrue(pass, "The result of the compare is not as expected.");
       }
 
-      Assert.AreEqual(version1, cb.LatestVersionForTopic(atn1), "Checking that latest version is calculated correctly"); 
-      Assert.AreEqual(version2, cb.LatestVersionForTopic(atn2), "Checking that latest version is calculated correctly"); 
-      Assert.AreEqual(version3, cb.LatestVersionForTopic(atn3), "Checking that latest version is calculated correctly"); 
-
-    }
+		}
 
 
 	}

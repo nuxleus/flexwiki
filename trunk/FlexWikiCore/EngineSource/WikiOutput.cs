@@ -128,15 +128,20 @@ namespace FlexWiki.Formatting
 		abstract public void WriteCloseTableRow();
 		abstract public void WriteTableCell(string s,  bool isHighlighted, TableCellInfo.AlignOption alignment, int colSpan, int RowSpan, bool hasBorder, bool allowBreaks, int Width);
 		abstract public OutputFormat Format { get; }
-		abstract public void WriteImage(string title, string URL, string linkToURL, string height, string width);
-		abstract public void WriteLink(string URL, string tip, string content);
-		abstract public void FormStart(string method, string URI);
+		abstract public void WriteImage(string title, string URL, string linkToURL, string height, string width, string attributes);
+		abstract public void WriteLink(string URL, string tip, string content, string attributes);
+		abstract public void WriteLabel(string forId, string text, string attributes);
+		abstract public void FormStart(string method, string URI, string attributes);
 		abstract public void FormEnd();
-		abstract public void FormImageButton(string FieldName, string ImageURI, string TipString);
-		abstract public void FormSubmitButton(string FieldName, string label);
-		abstract public void FormInputBox(string FieldName, string fieldValue, int fieldLength);
-		abstract public void FormHiddenField(string FieldName, string fieldValue);
-		abstract public void FormSelectField(string fieldName, int size, bool multiple, ArrayList options, string selectedOption, ArrayList values, object selectedValue);
+		abstract public void FormImageButton(string FieldName, string ImageURI, string TipString, string attributes);
+		abstract public void FormSubmitButton(string FieldName, string label, string attributes);
+		abstract public void FormResetButton(string FieldName, string label, string attributes);
+		abstract public void FormInputBox(string FieldName, string fieldValue, int fieldLength, string attributes);
+		abstract public void FormCheckbox(string FieldName, string fieldValue, bool isChecked, string attributes);
+		abstract public void FormRadio(string FieldName, string fieldValue, bool isChecked, string attributes);
+		abstract public void FormTextarea(string FieldName, string fieldValue, int rows, int cols, string attributes);
+		abstract public void FormHiddenField(string FieldName, string fieldValue, string attributes);
+		abstract public void FormSelectField(string fieldName, int size, bool multiple, ArrayList options, string selectedOption, ArrayList values, object selectedValue, string attributes);
 
 
 		private TextWriter	_TextWriter;
