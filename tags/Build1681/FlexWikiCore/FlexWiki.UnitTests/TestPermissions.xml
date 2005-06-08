@@ -1,0 +1,75 @@
+<?xml version="1.0" standalone="yes"?>
+<Permissions>
+  <xs:schema id="Permissions" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xs:element name="Permissions" msdata:IsDataSet="true">
+      <xs:complexType>
+        <xs:choice maxOccurs="unbounded">
+          <xs:element name="Permissions">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="NameSpace" type="xs:string" minOccurs="0" />
+                <xs:element name="UserID" type="xs:int" minOccurs="0" />
+                <xs:element name="RoleID" type="xs:int" minOccurs="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+    </xs:element>
+  </xs:schema>
+  <Permissions>
+    <NameSpace>SecureNameSpace</NameSpace>
+    <UserID>1</UserID>
+    <RoleID>1</RoleID>
+  </Permissions>
+  <Permissions>
+    <NameSpace>SecureNameSpace</NameSpace>
+    <UserID>1</UserID>
+    <RoleID>2</RoleID>
+  </Permissions>
+  <Permissions>
+    <NameSpace>SecureNameSpace</NameSpace>
+    <UserID>1</UserID>
+    <RoleID>3</RoleID>
+  </Permissions>
+  <Permissions>
+    <NameSpace>SecureNameSpace</NameSpace>
+    <UserID>1</UserID>
+    <RoleID>4</RoleID>
+  </Permissions>
+  <Permissions>
+    <NameSpace>SecureNameSpace</NameSpace>
+    <UserID>2</UserID>
+    <RoleID>1</RoleID>
+  </Permissions>
+  <Permissions>
+    <NameSpace>SecureNameSpace</NameSpace>
+    <UserID>3</UserID>
+    <RoleID>1</RoleID>
+  </Permissions>
+  <Permissions>
+    <NameSpace>SecureNameSpace</NameSpace>
+    <UserID>3</UserID>
+    <RoleID>2</RoleID>
+  </Permissions>
+  <Permissions>
+    <NameSpace>SecureNameSpace</NameSpace>
+    <UserID>4</UserID>
+    <RoleID>1</RoleID>
+  </Permissions>
+  <Permissions>
+    <NameSpace>SecureNameSpace</NameSpace>
+    <UserID>4</UserID>
+    <RoleID>2</RoleID>
+  </Permissions>
+  <Permissions>
+    <NameSpace>SecureNameSpace</NameSpace>
+    <UserID>4</UserID>
+    <RoleID>3</RoleID>
+  </Permissions>
+  <Permissions>
+    <NameSpace>SecureNameSpace</NameSpace>
+    <UserID>5</UserID>
+    <RoleID>4</RoleID>
+  </Permissions>
+</Permissions>

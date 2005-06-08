@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FederationConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <DefaultNamespace>MyWiki</DefaultNamespace>
+  <About>If you are new to Wiki, read OneMinuteWiki or VisitorWelcome.</About>
+  <WikiTalkVersion>1</WikiTalkVersion>
+  <DefaultDirectoryForNewNamespaces>.</DefaultDirectoryForNewNamespaces>
+  <NamespaceProviders>
+    <Provider Id="B75C029B-EE08-4a07-BFBD-F59E99DEA564" Type="FlexWiki.FileSystemNamespaceProvider" AssemblyName="FlexWiki, Version=1.0.10.4515, Culture=neutral, PublicKeyToken=null">
+      <Parameters>
+        <Parameter Name="Root" Value=".\MyWiki" />
+        <Parameter Name="Namespace" Value="MyWiki" />
+      </Parameters>
+    </Provider>
+  </NamespaceProviders>
+  <Namespaces />
+</FederationConfiguration>
