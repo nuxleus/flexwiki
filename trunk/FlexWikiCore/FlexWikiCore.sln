@@ -16,10 +16,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wikidpad2flexwiki", "wikidp
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexWikiSecurity", "FlexWikiSecurity\FlexWikiSecurity.csproj", "{F0146D3C-71FB-4C1F-B9E3-DA4B5FEC4AB9}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexBehaviorDebugger", "FlexBehaviorDebugger\FlexBehaviorDebugger.csproj", "{3452C68D-ED7B-4976-94B1-D6DBF3F7B723}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
@@ -86,10 +82,6 @@ Global
 		{1A5B0074-9DF7-41B8-9857-F5A11A641F5B}.Debug.Build.0 = Debug|.NET
 		{1A5B0074-9DF7-41B8-9857-F5A11A641F5B}.Release.ActiveCfg = Release|.NET
 		{1A5B0074-9DF7-41B8-9857-F5A11A641F5B}.Release.Build.0 = Release|.NET
-		{F0146D3C-71FB-4C1F-B9E3-DA4B5FEC4AB9}.Debug.ActiveCfg = Debug|.NET
-		{F0146D3C-71FB-4C1F-B9E3-DA4B5FEC4AB9}.Debug.Build.0 = Debug|.NET
-		{F0146D3C-71FB-4C1F-B9E3-DA4B5FEC4AB9}.Release.ActiveCfg = Release|.NET
-		{F0146D3C-71FB-4C1F-B9E3-DA4B5FEC4AB9}.Release.Build.0 = Release|.NET
 		{3452C68D-ED7B-4976-94B1-D6DBF3F7B723}.Debug.ActiveCfg = Debug|.NET
 		{3452C68D-ED7B-4976-94B1-D6DBF3F7B723}.Debug.Build.0 = Debug|.NET
 		{3452C68D-ED7B-4976-94B1-D6DBF3F7B723}.Release.ActiveCfg = Release|.NET

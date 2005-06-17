@@ -23,16 +23,6 @@ namespace FlexWiki.UnitTests
       //WriteFromResource("FlexWiki.UnitTests.dll.config");
     }
 
-    public static void WritePermissionsFile()
-    {
-      WriteFromResource("TestPermissions.xml", "PermissionsData.config");
-    }
-
-    public static void WriteUserFile()
-    {
-      WriteFromResource("TestUser.xml", "UserData.config"); 
-    }
-
     private static void WriteFromResource(string resourceName)
     {
       WriteFromResource(resourceName, resourceName); 

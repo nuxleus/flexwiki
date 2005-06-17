@@ -114,6 +114,21 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "AuthorizationConfiguration.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "AuthorizationConfigurationProviderBase.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "AuthorizationHelper.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "BackingTopic.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -250,6 +265,11 @@
                 />
                 <File
                     RelPath = "ContentBase.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "DefaultSecurityConfigurationProvider.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -615,6 +635,11 @@
                 />
                 <File
                     RelPath = "ParseTreeNode.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Permission.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

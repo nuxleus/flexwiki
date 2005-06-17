@@ -80,11 +80,6 @@
                     HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
                 />
                 <Reference
-                    Name = "FlexWikiSecurity"
-                    Project = "{F0146D3C-71FB-4C1F-B9E3-DA4B5FEC4AB9}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
                     Name = "FlexWikiEngine"
                     Project = "{7362F597-DAB3-437E-8A07-37D8D2FE6E56}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
@@ -113,17 +108,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "AuthorizationHelperTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "CachingTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ConfiguredDataProviderTests.cs"
+                    RelPath = "ContentBaseTest.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ContentBaseTest.cs"
+                    RelPath = "DefaultAuthorizationConfigurationProviderTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -143,13 +143,23 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "postbuild.cmd"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "RoleTests.cs"
+                    RelPath = "MockAnonymousIdentity.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "MockAnonymousPrincipal.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "MockWikiAuthorizationConfigurationProvider.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "postbuild.cmd"
+                    BuildAction = "None"
                 />
                 <File
                     RelPath = "ScannerTests.cs"
@@ -168,34 +178,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "SimplePermissionsDataProviderTests.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "SimpleRoleDataProviderTests.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "SimpleUserDataProviderTests.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "SitePrincipalTests.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TestPermissions.xml"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "TestUser.xml"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
                     RelPath = "TestUtilities.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -212,11 +194,6 @@
                 />
                 <File
                     RelPath = "TopicNameTest.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "UserTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

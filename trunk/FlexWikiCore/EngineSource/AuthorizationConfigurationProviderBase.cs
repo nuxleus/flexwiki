@@ -10,10 +10,25 @@
 // You must not remove this notice, or any other, from this software.
 #endregion
 
-using System.Reflection;
-using System.Runtime.CompilerServices;
+using System;
 
-// Attributes common to all assemblies (such as version) are set in SharedAssemblyInfo.cs, 
-// which is linked to this project. Only set attributes that are specific to this project in 
-// this file
+namespace FlexWiki
+{
+	public abstract class AuthorizationConfigurationProviderBase
+	{
+    private Federation _federation; 
 
+    public abstract AuthorizationConfiguration WikiConfiguration { get; }
+
+    protected Federation Federation
+    {
+      get { return _federation; }
+    }
+
+    public abstract AuthorizationConfiguration GetNamespaceConfiguration(string nmspc); 
+    public virtual void Initialize(Federation federation)
+    {
+      _federation = federation; 
+    }
+	}
+}

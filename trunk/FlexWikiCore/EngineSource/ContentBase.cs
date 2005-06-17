@@ -111,6 +111,7 @@ namespace FlexWiki
 
 		
     private static string  s_anonymousUserName = "anonymous";
+    private static string s_DefinitionTopicLocalName = "_ContentBaseDefinition";
     /// <summary>
     /// The name of the topic that contains external wiki definitions
     /// </summary>
@@ -134,7 +135,6 @@ namespace FlexWiki
     
     private Hashtable _BackingTopics;
     private string _Contact;
-    public static string DefinitionTopicLocalName = "_ContentBaseDefinition";
     private string _Description;
     private bool _DisplaySpacesInWikiLinks;
     private Federation _Federation;
@@ -147,10 +147,7 @@ namespace FlexWiki
 
     public static string AnonymousUserName 
     {
-      get 
-      {
-        return s_anonymousUserName; 
-      }
+      get { return s_anonymousUserName; }
     }
     [XmlIgnore]
     public Hashtable BackingTopics
@@ -396,6 +393,11 @@ request.AreDifferencesShown.IfTrue
       }
     }
 
+    public static string DefinitionTopicLocalName
+    {
+      get { return s_DefinitionTopicLocalName; }
+    }
+
     /// <summary>
     /// Answer the description for the namespace (or null if none)
     /// </summary>
@@ -532,7 +534,9 @@ request.AreDifferencesShown.IfTrue
         {
           ContentBase cb = Federation.ContentBaseForNamespace(ns);
           if (cb != null)
+          {
             answer.Add(cb);
+          }
         }
         return answer;
       }
@@ -612,24 +616,6 @@ request.AreDifferencesShown.IfTrue
       }		
     }
 
-    /// <summary>
-    /// Answer a collection of namespaces in which the topic actually exists
-    /// </summary>
-    /// <param name="topic">The topic you want to search for in all namespaces (might be relative, in which case it's relative to this content base)</param>
-    /// <returns>A list of namespaces (as strings); empty if none</returns>
-    public IList TopicNamespaces(TopicName topic)
-    {
-      ArrayList answer = new ArrayList();
-      foreach (AbsoluteTopicName each in topic.AllAbsoluteTopicNamesFor(this))
-      {
-        if (TopicExists(each))
-        {
-          answer.Add(each.Namespace);
-        }
-      }
-      return answer;
-    }
-
 		
 
     public event FederationUpdateEventHandler FederationUpdated;
@@ -644,7 +630,9 @@ request.AreDifferencesShown.IfTrue
     {
       ArrayList answer = new ArrayList();
       foreach (string ns in TopicNamespaces(topic))
+      {
         answer.Add(new AbsoluteTopicName(topic.Name, ns));
+      }
       return answer;
     }
 
@@ -687,7 +675,9 @@ request.AreDifferencesShown.IfTrue
       IEnumerable topicList;
 
       if (filterToTopic == null)
+      {
         topicList = AllTopics(false);
+      }
       else 
       {
         ArrayList list = new ArrayList();
@@ -729,7 +719,9 @@ request.AreDifferencesShown.IfTrue
             {
               absoluteNames.AddRange(relName.AllAbsoluteTopicNamesFor(this));
               foreach (TopicName alternate in relName.AlternateForms)
+              {
                 absoluteNames.AddRange(alternate.AllAbsoluteTopicNamesFor(this));
+              }
             }
           }
           allReferencedTopicsFromTopic.AddRange(absoluteNames);
@@ -746,18 +738,25 @@ request.AreDifferencesShown.IfTrue
     /// <returns>Enumeration of AbsoluteTopicNames</returns>
     public IEnumerable AllTopics(bool includeImports)
     {
-      IEnumerable a = AllTopicsUnsorted();
+      IEnumerable unsortedTopics = AllTopicsUnsorted();
       if (!includeImports)
-        return a;
+      {
+        return unsortedTopics;
+      }
 
       // If we're asked for imports, it's more complex
       ArrayList answer = new ArrayList();
-      foreach (object each in a)
-        answer.Add(each);
-      foreach (ContentBase each in ImportedContentBases)
+      foreach (object topic in unsortedTopics)
       {
-        foreach (object each2 in each.AllTopics(false))
-          answer.Add(each2);
+        answer.Add(topic);
+      }
+
+      foreach (ContentBase contentBase in ImportedContentBases)
+      {
+        foreach (object topic in contentBase.AllTopics(false))
+        {
+          answer.Add(topic);
+        }
       }
 
       return answer;
@@ -771,13 +770,17 @@ request.AreDifferencesShown.IfTrue
     {
       ArrayList answer = new ArrayList();
       foreach (AbsoluteTopicName name in AllTopics(true))
+      {
         answer.Add(new TopicInfo(Federation, name));
+      }
 
       // Add cache rules for all the topics in the namespaces and for the definition (in case the imports change)
       ctx.AddCacheRule(new AllTopicsInNamespaceCacheRule(Federation, Namespace));
       ctx.AddCacheRule(CacheRuleForDefinition);
       foreach (string ns in ImportedNamespaces)
+      {
         ctx.AddCacheRule(new AllTopicsInNamespaceCacheRule(Federation, ns));
+      }
 
       return answer;
     }
@@ -815,7 +818,9 @@ request.AreDifferencesShown.IfTrue
     {
       TopicsCacheRule rule = new TopicsCacheRule(Federation);
       foreach (AbsoluteTopicName possible in aName.AllAbsoluteTopicNamesFor(this))
+      {
         rule.AddTopic(possible);
+      }
 
       CompositeCacheRule answer = new CompositeCacheRule();
       answer.Add(rule);
@@ -890,7 +895,9 @@ request.AreDifferencesShown.IfTrue
       ctx.AddCacheRule(CacheRuleForDefinition);
       ArrayList answer = new ArrayList();
       foreach (ContentBase cb in ImportedContentBases)
+      {
         answer.Add(cb);
+      }
       return answer;
     }
 
@@ -932,7 +939,9 @@ request.AreDifferencesShown.IfTrue
           {
             string includedDelim = "";
             if (IsBehaviorPropertyDelimiter(delim))
+            {
               includedDelim = delim;
+            }
             answer[inMultiline] = answer[inMultiline].ToString().Trim() + includedDelim;
             inMultiline = null;
             continue;
@@ -947,7 +956,9 @@ request.AreDifferencesShown.IfTrue
           inMultiline = each;
           delim = m.Groups["delim"].Value;
           if (IsBehaviorPropertyDelimiter(delim))
+          {
             val = delim + val;
+          }
           delim = ClosingDelimiterForOpeningMultilinePropertyDelimiter(delim);
           answer[each] = val;
         }
@@ -1004,7 +1015,9 @@ request.AreDifferencesShown.IfTrue
     public Hashtable GetFieldsForTopic(LocalTopicName topic)
     {
       if (!TopicExistsLocally(topic))
+      {
         return null;
+      }
 
       string allLines = Read(topic);
       Hashtable answer = ExtractExplicitFieldsFromTopicBody(allLines);	
@@ -1068,12 +1081,16 @@ request.AreDifferencesShown.IfTrue
       answer = GetTopicLastWriteTime(mostRecentlyChangedTopic.LocalName);
 
       if (!includeImports)
+      {
         return answer;
+      }
       foreach (ContentBase each in ImportedContentBases)
       {
         DateTime thatOne = each.LastModified(false);
         if (thatOne < answer)
+        {
           answer = thatOne;
+        }
       }
       return answer;
     }
@@ -1088,7 +1105,9 @@ request.AreDifferencesShown.IfTrue
       using (TextReader st = TextReaderForTopic(topic))
       {
         if (st == null)
+        {
           return null;
+        }
         return st.ReadToEnd();
       }
     }
@@ -1130,7 +1149,9 @@ request.AreDifferencesShown.IfTrue
 
         bool hit = (relName.Name == oldName.Name) && (relName.Namespace == null || relName.Namespace ==  oldName.Namespace);
         if (!hit)
+        {
           continue;
+        }
 
         // Now see if we got any hits or not
         string rep = Formatter.beforeWikiName + "(" + Formatter.RegexEscapeTopic(each) + ")" + Formatter.afterWikiName;
@@ -1166,7 +1187,9 @@ request.AreDifferencesShown.IfTrue
       // Multiline values need to end a complete line
       string repWithLineEnd = rep;
       if (!repWithLineEnd.EndsWith("\n"))
+      {
         repWithLineEnd = repWithLineEnd + "\n";
+      }
       bool newValueIsMultiline = rep.IndexOf("\n") > 0;
 
       string simpleField = "(?<name>(" + field + ")):(?<val>[^\\[].*)";
@@ -1176,30 +1199,49 @@ request.AreDifferencesShown.IfTrue
       if (new Regex(simpleField).IsMatch(original))
       {
         if (newValueIsMultiline)
+        {
           update = Regex.Replace (original, simpleField, "${name}:[ " + repWithLineEnd + "]");
+        }
         else
+        {
           update = Regex.Replace (original, simpleField, "${name}: " + rep);
+        }
       }
       else if (new Regex(multiLineField).IsMatch(original))
       {
         if (newValueIsMultiline)
+        {
           update = Regex.Replace (original, multiLineField, "${name}:[ " + repWithLineEnd + "]");
+        }
         else
+        {
           update = Regex.Replace (original, multiLineField, "${name}: " + rep);
+        }
       }
       else
       {
         if (!update.EndsWith("\n"))
+        {
           update = update + "\n";
+        }
+
         if (rep.IndexOf("\n") == -1)
+        {
           update += field + ": " + repWithLineEnd;
+        }
         else
+        {
           update += field + ":[ " + repWithLineEnd + "]\n";
+        }
       }
       if (writeNewVersion)
+      {
         WriteTopicAndNewVersion(topic, update);
+      }
       else
+      {
         WriteTopic(topic, update);
+      }
     }
 
     /// <summary>
@@ -1209,36 +1251,48 @@ request.AreDifferencesShown.IfTrue
     /// <exception cref="TopicNotFoundException">Thrown when the topic doesn't exist</exception>
     /// <returns>TextReader</returns>
     public abstract TextReader TextReaderForTopic(LocalTopicName topic);
-    [ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Gets the topics with the specified property and value (excluding those in the imported namespaces).  If desiredValue is omitted, all topics with the property are answered.")]
-      /// <summary>
-      /// Answer true if the given topic exists in this ContentBase or in an imported namespace (if it's relative), or any namespace (if it's absolute)
-      /// </summary>
-      /// <param name="topic">The topic to check for</param>
-      /// <returns>true if the topic exists</returns>
+    /// <summary>
+    /// Answer true if the given topic exists in this ContentBase or in an imported namespace (if it's relative), or any namespace (if it's absolute)
+    /// </summary>
+    /// <param name="topic">The topic to check for</param>
+    /// <returns>true if the topic exists</returns>
     public bool TopicExists(TopicName topic)
     {
       // Is it here?
       if (topic.Namespace == Namespace)
+      {
         return TopicExistsLocally(topic.LocalName);
+      }
 
       // Is it absolute, so we can just ask the Fed?
       if (topic.Namespace != null)
+      {
         return Federation.TopicExists(topic.AsAbsoluteTopicName(Namespace));
+      }
 
       // If the namespace is unspecified, it could just be in this one
       if (topic.Namespace == null && TopicExistsLocally(topic.LocalName))
+      {
         return true;
+      }
 
       // Is it in an imported namespace?
       foreach (string ns in ImportedNamespaces)
       {
         if (topic.Namespace != null && ns != topic.Namespace)
+        {
           continue;
+        }
+
         ContentBase cb = Federation.ContentBaseForNamespace(ns);
         if (cb == null)
+        {
           continue;
+        }
         if (cb.TopicExistsLocally(topic.LocalName))
+        {
           return true;
+        }
       }
       return false;
     }
@@ -1269,19 +1323,39 @@ request.AreDifferencesShown.IfTrue
       return new AbsoluteTopicName(localTopicName, Namespace);
     }
 
+    /// <summary>
+    /// Answer a collection of namespaces in which the topic actually exists
+    /// </summary>
+    /// <param name="topic">The topic you want to search for in all namespaces (might be relative, in which case it's relative to this content base)</param>
+    /// <returns>A list of namespaces (as strings); empty if none</returns>
+    public IList TopicNamespaces(TopicName topic)
+    {
+      ArrayList answer = new ArrayList();
+      foreach (AbsoluteTopicName each in topic.AllAbsoluteTopicNamesFor(this))
+      {
+        if (TopicExists(each))
+        {
+          answer.Add(each.Namespace);
+        }
+      }
+      return answer;
+    }
+
     [ExposedMethod(ExposedMethodFlags.CachePolicyNone | ExposedMethodFlags.NeedContext, "Answer a list of all topic in this namespace (excluding imported namespaces)")]
     public ArrayList Topics(ExecutionContext ctx)
     {
       ArrayList answer = new ArrayList();
       foreach (AbsoluteTopicName name in AllTopics(false))
+      {
         answer.Add(new TopicInfo(Federation, name));
+      }
 
       // Add cache rules for all the topics in the namespaces and for the definition (in case the imports change)
       ctx.AddCacheRule(new AllTopicsInNamespaceCacheRule(Federation, Namespace));
 			
       return answer;
     }
-
+    [ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Gets the topics with the specified property and value (excluding those in the imported namespaces).  If desiredValue is omitted, all topics with the property are answered.")]
     public TopicInfoArray TopicsWith(ExecutionContext ctx, string property, [ExposedParameter(true)] string desiredValue)
 		{
 			ctx.AddCacheRule(new PropertyCacheRule(this.Federation, property));
@@ -1298,9 +1372,13 @@ request.AreDifferencesShown.IfTrue
     {
       IList list = TopicNamespaces(topic);
       if (list.Count == 0)
+      {
         return null;
+      }
       if (list.Count > 1)
+      {
         throw TopicIsAmbiguousException.ForTopic(topic);
+      }
       return new AbsoluteTopicName(topic.Name, (string)list[0]);
     }
 			
@@ -1313,12 +1391,18 @@ request.AreDifferencesShown.IfTrue
     {
       IList list = TopicNamespaces(topic);
       if (list.Count == 0)
+      {
         return null;
+      }
       if (list.Count > 1)
+      {
         throw TopicIsAmbiguousException.ForTopic(topic);
+      }
       string answer = null;
       foreach (string ns in list)
+      {
         answer = ns;
+      }
       return answer;
     }
 
@@ -1337,11 +1421,17 @@ request.AreDifferencesShown.IfTrue
       {
         answer.Version = ver.Version;
         if (next)
+        {
           return answer;
+        }
         if (topic.Version == null && !first)	// The version prior to the most recent is the second in line
+        {
           return answer;
+        }
         if (ver.Version == topic.Version)
+        {
           next = true;
+        }
         first = false;
       }
       return null;
@@ -1398,14 +1488,18 @@ request.AreDifferencesShown.IfTrue
           }
         }
         else
+        {
           batch.RecordPropertyChange(topic, e.Key.ToString(), FederationUpdate.PropertyChangeType.PropertyRemove);
+        }
       }
 
       // And also find the added ones by identifying those that are in the new set, but not the old
       foreach (DictionaryEntry e in newProps)
       {
         if (!oldProps.ContainsKey(e.Key))
+        {
           batch.RecordPropertyChange(topic, e.Key.ToString(), FederationUpdate.PropertyChangeType.PropertyAdd);
+        }
       }
     }
 
@@ -1418,7 +1512,9 @@ request.AreDifferencesShown.IfTrue
     protected virtual void OnFederationUpdated(FederationUpdateEventArgs e) 
     {
       if (FederationUpdated != null)
+      {
         FederationUpdated(this, e);
+      }
     }
 
     protected void SetFederation(Federation aFed)
@@ -1460,25 +1556,33 @@ request.AreDifferencesShown.IfTrue
 			}
 
 			// OK.  Now we've got the baseline set (and it's cached for future use).  Now filter out if needed based on desiredValue and includeImports
-			if (desiredValue == null && includeImports)
-				return all;	// quick exit -- no filtering needed
+      if (desiredValue == null && includeImports)
+      {
+        return all;	// quick exit -- no filtering needed
+      }
 
 			TopicInfoArray answer = new TopicInfoArray();
 			for (int i = 0; i < all.Count; i++)
 			{
 				TopicInfo each = (TopicInfo)(all.Item(i));
-				if (!includeImports && (each.Fullname.Namespace != Namespace))
-					continue;
+        if (!includeImports && (each.Fullname.Namespace != Namespace))
+        {
+          continue;
+        }
 				if (desiredValue == null)
 				{
 					answer.Add(each);
 					continue;
 				}
 				object propertyValue = Federation.GetTopicProperty(each.Fullname, property);
-				if (propertyValue == null)
-					continue;
-				if (((string)(propertyValue)).ToLower() != desiredValue.ToLower())
-					continue;
+        if (propertyValue == null)
+        {
+          continue;
+        }
+        if (((string)(propertyValue)).ToLower() != desiredValue.ToLower())
+        {
+          continue;
+        }
 				answer.Add(each);
 			}
 			return answer;
@@ -1520,31 +1624,6 @@ request.AreDifferencesShown.IfTrue
 
       gen.Pop();
     }
-
-
-
-
-
-
-
-
-
-		
-		
-		
-		
-
-
-
-
-
-
-
-
-
-
-
-
 
 	}
 }

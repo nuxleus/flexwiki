@@ -25,7 +25,6 @@ using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 using System.Text.RegularExpressions;
 using FlexWiki.Formatting;
-using FlexWikiSecurity;
 
 namespace FlexWiki.Web
 {
@@ -78,56 +77,6 @@ namespace FlexWiki.Web
 
 		private void logonButton_Click(object sender, System.EventArgs e)
 		{
-			// Use application configuration to determine if the credentials are kept in the web config or a 
-			// data provider.
-			string security=ConfigurationSettings.AppSettings["Security"];
-			Msg.Text = "Invalid login crudentials";
-			if (security=="webconfig")
-			{
-				// Get credentials from the web.config
-				if (FormsAuthentication.Authenticate(userEmail.Text,userPassword.Text))
-				{
-					Msg.Text = "";
-					FormsAuthentication.RedirectFromLoginPage(userEmail.Text, userPersist.Checked);
-				}
-			}
-			else
-			{
-				// Get credentials from the data provider
-				SitePrincipal sitePrincipal = SitePrincipal.ValidateLogin(Request.QueryString["NameSpace"],userEmail.Text,userPassword.Text);
-				if (sitePrincipal !=null)
-				{
-					// Create and tuck away the cookie
-					FormsAuthenticationTicket authTicket = 
-						new FormsAuthenticationTicket(1,
-						userEmail.Text, 
-						DateTime.Now, 
-						DateTime.Now.AddMinutes(15), 
-						false,
-						"SomeData");
-					string encTicket = FormsAuthentication.Encrypt(authTicket);
-					HttpCookie faCookie = 
-						new HttpCookie(FormsAuthentication.FormsCookieName, encTicket);
-					Response.Cookies.Add(faCookie);
-
-					// And send the user where they were heading
-					string redirectUrl = 
-						FormsAuthentication.GetRedirectUrl(userEmail.Text, true);
-					Context.User = sitePrincipal;
-				
-					String returnUrl;
-					if (Request.QueryString["ReturnURL"] == null)
-					{
-						returnUrl = "default.aspx";
-					}
-					else
-					{
-						returnUrl = Request.QueryString["ReturnURL"];
-					}
-					Msg.Text="";				
-					FormsAuthentication.RedirectFromLoginPage(userEmail.Text, userPersist.Checked);
-				}
-			}
 
 		}
 

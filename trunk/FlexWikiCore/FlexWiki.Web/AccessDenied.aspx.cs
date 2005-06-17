@@ -24,7 +24,6 @@ using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 using System.Text.RegularExpressions;
 using FlexWiki.Formatting;
-using FlexWikiSecurity;
 
 namespace FlexWiki.Web
 {

@@ -95,11 +95,6 @@
                     HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Web.Services.dll"
                 />
                 <Reference
-                    Name = "FlexWikiSecurity"
-                    Project = "{F0146D3C-71FB-4C1F-B9E3-DA4B5FEC4AB9}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
                     Name = "CalendarProvider"
                     Project = "{5F81B8BC-C8F3-491A-8680-9531350E1744}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
@@ -223,7 +218,7 @@
                 <File
                     RelPath = "EditService.asmx.cs"
                     DependentUpon = "EditService.asmx"
-                    SubType = "Code"
+                    SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
