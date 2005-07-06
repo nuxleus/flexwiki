@@ -621,8 +621,12 @@
   </target>
 
   <!-- The verify target verifies the build by running tests against 
-        an installed version -->
-  <target name="verify" depends="install" unless="${verify.skip}">
+        an installed version. Call verify when you want to do everything
+        that verify depends on, and run-verify when you *only* want to 
+        verify. -->
+  <target name="verify" depends="install run-verify" unless="${verify.skip}" />
+  
+  <target name="run-verify">
     
     <property name="verify.config.path" 
         value="${path::combine(targetdir, 'BuildVerificationTests.dll.config')}" />
