@@ -2,11 +2,8 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HTML>
 	<HEAD>
-		<title></title>
-		<meta name="GENERATOR" content="Microsoft Visual Studio .NET 7.1">
-		<meta name="ProgId" content="VisualStudio.HTML">
-		<meta name="Originator" content="Microsoft Visual Studio .NET 7.1">
-		<%= MainStylesheetReference() %>
+		<title>FlexWiki Administration: Edit Provider</title>
+		<LINK href="admin.css" type="text/css" rel="stylesheet">
 	</HEAD>
 	<body>
 		<% ShowPage(); %>

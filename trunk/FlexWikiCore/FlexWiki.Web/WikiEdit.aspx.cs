@@ -239,6 +239,8 @@ namespace FlexWiki.Web
 			<form id='Form2' method='post' target='previewWindow' ACTION='preview.aspx'>
 				<textarea id='body' name='body'></textarea>
 				<input  type='text' id='Text1' name='defaultNamespace' value ='" + TheTopic.Namespace  + @"'>
+				<input  type='text' id='Text2' name='topic' value ='" + TheTopic.Name  + @"'>
+
 			</form>
 		</div>
 		<div class='EditZone' id='EditZone' >

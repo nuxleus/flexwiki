@@ -151,8 +151,8 @@ namespace FlexWiki
 
 
 
-		Home _Home;
-		Home Home
+		private Home _Home;
+		public Home Home
 		{
 			get
 			{
@@ -172,10 +172,16 @@ namespace FlexWiki
 		{
 			IBELObject answer = null;
 
+      if (name == Home.ExternalTypeName)
+      {
+        return Home;
+      }
 			// Before we check anything else, we check the language builtin
 			answer = Home.ValueOf(name, args, this);
-			if (answer != null)
-				return answer;
+      if (answer != null)
+      {
+        return answer;
+      }
 
 			// OK, not a builtin -- look into the current scope (and the containing scopes)
 			if (TopFrame != null)
@@ -184,8 +190,10 @@ namespace FlexWiki
 				while (scope != null)
 				{
 					answer = scope.ValueOf(name, args, this);
-					if (answer != null)
-						return answer;
+          if (answer != null)
+          {
+            return answer;
+          }
 					scope = scope.ContainingScope;
 				}
 			}

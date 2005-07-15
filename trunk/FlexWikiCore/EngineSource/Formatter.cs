@@ -34,29 +34,37 @@ namespace FlexWiki.Formatting
 	public class Formatter : IWikiToPresentation
 	{
 
+		#region FormattedString
 		/// <summary>
 		/// Format a string of wiki content in a given OutputFormat with references all being relative to a given namespace
 		/// </summary>
+		/// <param name="topic">Topic context</param>
 		/// <param name="input">The input wiki text</param>
 		/// <param name="format">The desired output format</param>
 		/// <param name="relativeToContentBase">References will be relative to this namespace</param>
 		/// <param name="lm">Link maker (unless no relativeTo content base is provide)</param>
 		/// <param name="accumulator">composite cache rule in which to accumulate cache rules</param>
 		/// <returns></returns>
-		public static string FormattedString(string input, OutputFormat format, ContentBase relativeToContentBase, LinkMaker lm, CompositeCacheRule accumulator)
+		public static string FormattedString(AbsoluteTopicName topic, string input, OutputFormat format, ContentBase relativeToContentBase, LinkMaker lm, CompositeCacheRule accumulator)
 		{
 			// TODO -- some of the cases in which this call happens actually *are* nested, even though the false arg
 			// below says that they aren't.  This causes scripts to be emitted multiple times -- should clean up.
 			WikiOutput output = WikiOutput.ForFormat(format, null);	
 			Hashtable ew;
-			if (relativeToContentBase != null)
-				ew = relativeToContentBase.ExternalWikiHash();
-			else
-				ew = new Hashtable();
-			Format(null, input, output, relativeToContentBase, lm, ew, 0, accumulator);
+      if (relativeToContentBase != null)
+      {
+        ew = relativeToContentBase.ExternalWikiHash();
+      }
+      else
+      {
+        ew = new Hashtable();
+      }
+			Format(topic, input, output, relativeToContentBase, lm, ew, 0, accumulator);
 			return output.ToString();
 		}
+		#endregion
 
+		#region FormattedTopic
 		/// <summary>
 		/// Answer the formatted text for a given topic, formatted using a given OutputFormat and possibly showing diffs with the previous revision
 		/// </summary>
@@ -67,18 +75,12 @@ namespace FlexWiki.Formatting
 		/// <returns></returns>
 		public static string FormattedTopic(AbsoluteTopicName topic, OutputFormat format, AbsoluteTopicName previousVersion, Federation aFederation, LinkMaker lm, CompositeCacheRule accumulator)
 		{ 
-		
-//			// Show the current topic (including diffs if there is a previous version)
-//			AbsoluteTopicName previousVersion = null;
 			ContentBase relativeToBase = aFederation.ContentBaseForNamespace(topic.Namespace);
-
-			//not used anymore
-//			if (withDiffsToThisTopic != null)
-//				previousVersion = relativeToBase.VersionPreviousTo(topic.LocalName);
-
 			return FormattedTopicWithSpecificDiffs(topic, format, previousVersion, aFederation, lm, accumulator);
 		}
+		#endregion
  
+		#region FormattedTopicWithSpecificDiffs
 		/// <summary>
 		/// Answer the formatted text for a given topic, formatted using a given OutputFormat and possibly showing diffs
 		/// with a specified revision
@@ -144,30 +146,31 @@ namespace FlexWiki.Formatting
 
 			return output.ToString();
 		}
+		#endregion
 		
 		/// <summary>
 		/// The source data for formatting: a list of StyledLines 
 		/// </summary>
-		IList										_Source; 
+		private IList								_Source; 
 		/// <summary>
 		/// The output is being sent out using this object.
 		/// </summary>
-		WikiOutput								_Output;
+		private WikiOutput							_Output;
 		/// <summary>
 		/// An object that is used to make links
 		/// </summary>
-		LinkMaker								_LinkMaker;
+		private LinkMaker							_LinkMaker;
 		/// <summary>
 		/// The content base that the source content resides in
 		/// </summary>
-		ContentBase							_ContentBase;
+		private ContentBase							_ContentBase;
 
 		/// <summary>
 		/// Topic name for which we're doing formatting (if known; can be null)
 		/// </summary>
-		AbsoluteTopicName				_Topic;
+		private AbsoluteTopicName				_Topic;
 
-		AbsoluteTopicName				CurrentTopic
+		private AbsoluteTopicName				CurrentTopic
 		{
 			get
 			{
@@ -175,8 +178,9 @@ namespace FlexWiki.Formatting
 			}
 		}
 
-		TopicInfo	_CurrentTopicInfo;
-		TopicInfo  CurrentTopicInfo
+		#region CurrentTopicInfo
+		private TopicInfo	_CurrentTopicInfo;
+		private TopicInfo  CurrentTopicInfo
 		{
 			get
 			{
@@ -188,11 +192,13 @@ namespace FlexWiki.Formatting
 				return _CurrentTopicInfo;
 			}
 		}
+		#endregion
 
-			/// <summary>
-			///  The content base that the source content resides in
-			/// </summary>
-			public ContentBase ContentBase
+		#region ContentBase
+		/// <summary>
+		///  The content base that the source content resides in
+		/// </summary>
+		public ContentBase ContentBase
 		{
 			get
 			{
@@ -203,25 +209,28 @@ namespace FlexWiki.Formatting
 				_ContentBase = value;
 			}
 		}
+		#endregion
 
 		/// <summary>
 		/// The current line number
 		/// </summary>
-		int											_CurrentLineIndex;
+		private int										_CurrentLineIndex;
 
 		/// <summary>
 		/// The map to external Wikis that is generated by locally-defined external Wiki map entries
 		/// </summary>
-		Hashtable								_ExternalWikiMap;
+		private Hashtable								_ExternalWikiMap;
 
 		/// <summary>
 		/// The relative base for heading nesting (normally 0, but can be higher for nested topic include)
 		/// </summary>
-		int											_HeadingLevelBase;
+		private int										_HeadingLevelBase;
 
+		#region Format
 		/// <summary>
 		/// Format a given input string to the given output
 		/// </summary>
+		/// <param name="topic">Topic context</param>
 		/// <param name="source">Input wiki string</param>
 		/// <param name="output">Output object to which output is sent</param>
 		/// <param name="contentBase">The ContentBase that contains the wiki string text</param>
@@ -234,14 +243,6 @@ namespace FlexWiki.Formatting
 			Formatter f = new Formatter(topic, source, output, contentBase, maker, external,  headingLevelBase, accumulator);
 			f.Format();
 		}
-
-		static public IWikiToPresentation WikiToPresentation(AbsoluteTopicName topic, WikiOutput output, ContentBase contentBase, LinkMaker maker, Hashtable external, int headingLevelBase, CompositeCacheRule accumulator)
-		{
-			ArrayList lines = new ArrayList();
-			lines.Add(new StyledLine("", LineStyle.Unchanged));
-			return new Formatter(topic, lines, output, contentBase, maker, external,  headingLevelBase, accumulator);
-		}
-
 
 		/// <summary>
 		/// Format a given input string to the given output
@@ -259,7 +260,18 @@ namespace FlexWiki.Formatting
 			Formatter f = new Formatter(topic, source, output, contentBase, maker, external, headingLevelBase, accumulator);
 			f.Format();
 		}
+		#endregion
 
+		#region WikiToPresentation
+		static public IWikiToPresentation WikiToPresentation(AbsoluteTopicName topic, WikiOutput output, ContentBase contentBase, LinkMaker maker, Hashtable external, int headingLevelBase, CompositeCacheRule accumulator)
+		{
+			ArrayList lines = new ArrayList();
+			lines.Add(new StyledLine("", LineStyle.Unchanged));
+			return new Formatter(topic, lines, output, contentBase, maker, external,  headingLevelBase, accumulator);
+		}
+		#endregion
+
+		#region Ctor
 		/// <summary>
 		/// Create a new formatter for a string of input content.
 		/// </summary>
@@ -305,16 +317,20 @@ namespace FlexWiki.Formatting
 			_HeadingLevelBase = headingLevelBase;
 			_CacheRuleAccumulator = accumulator;
 		}
+		#endregion
 
-		CompositeCacheRule _CacheRuleAccumulator;
-		CompositeCacheRule CacheRuleAccumulator
+		#region CacheRuleAccumulator
+		private CompositeCacheRule _CacheRuleAccumulator;
+		private CompositeCacheRule CacheRuleAccumulator
 		{
 			get
 			{
 				return _CacheRuleAccumulator;
 			}
 		}
+		#endregion
 
+		#region AddCacheRule
 		/// <summary>
 		/// Add a cache rule to the cache rule accumulator (or ignore if we aren't accumulating)
 		/// </summary>
@@ -324,6 +340,7 @@ namespace FlexWiki.Formatting
 			if (CacheRuleAccumulator != null)
 				CacheRuleAccumulator.Add(aRule);
 		}
+		#endregion
 
 		/// <summary>
 		/// string pattern for what comes before a wiki name
@@ -356,31 +373,32 @@ namespace FlexWiki.Formatting
 		/// <summary>
 		/// string pattern for legal namespace names
 		/// </summary>
-		static string namespaceName = AZ + "[\\w]+";
+		private static string namespaceName = AZ + "[\\w]+";
 
-		static string startsWithMulticaps = "(" + AZ + "{2,}" + az09 + "+" + Az09 + "*)";
-		static string startsWithOneCap = "(" + AZ + az09 + "+" + Az09 + "*" + AZ + "+" + Az09 + "*)";
-		static string unbracketedWikiName = "(?:_?" + startsWithMulticaps + "|" + startsWithOneCap + ")";
+		private static string startsWithMulticaps = "(" + AZ + "{2,}" + az09 + "+" + Az09 + "*)";
+		private static string startsWithOneCap = "(" + AZ + az09 + "+" + Az09 + "*" + AZ + "+" + Az09 + "*)";
+		private static string unbracketedWikiName = "(?:_?" + startsWithMulticaps + "|" + startsWithOneCap + ")";
 
-		static string bracketedWikiName = "\\[(?:[\\w]+)\\]"; // \w is a word character (A-z0-9_)
-		static string unqualifiedWikiName = "(?:" + "(?:" + unbracketedWikiName + ")|(?:" + bracketedWikiName + ")" + ")";
-		static string qualifiedWikiName = "(?:" + namespaceName + "\\.)*"  + unqualifiedWikiName;
-		static string forcedLocalWikiName = "\\."  + unqualifiedWikiName;
+		private static string bracketedWikiName = "\\[(?:[\\w ]+)\\]"; // \w is a word character (A-z0-9_)
+		private static string unqualifiedWikiName = "(?:" + "(?:" + unbracketedWikiName + ")|(?:" + bracketedWikiName + ")" + ")";
+		private static string qualifiedWikiName = "(?:" + namespaceName + "\\.)*"  + unqualifiedWikiName;
+		private static string forcedLocalWikiName = "\\."  + unqualifiedWikiName;
 		public static string wikiName = "(?:" + "(?:" + qualifiedWikiName + ")|(?:" + unqualifiedWikiName + ")|(?:" + forcedLocalWikiName + ")" + ")";
-		static string relabelPrefix = "(\"(?<relabel>[^\"]+)\"\\:)";
+		private static string relabelPrefix = "(\"(?<relabel>[^\"]+)\"\\:)";
 		
 		// A wiki name is a topic name, possibly with a namespace
 		public static string extractWikiNamesString = beforeWikiName + "(?<topic>" + wikiName + ")"  + afterWikiName;
 		public static Regex extractWikiNames = new Regex(extractWikiNamesString) ;
 
 		// A wiki link is a wiki name, possible prefixed by a relabel
-		static string beforeOrRelabel = "(" + relabelPrefix + "|" + beforeWikiName + ")";
+		private static string beforeOrRelabel = "(" + relabelPrefix + "|" + beforeWikiName + ")";
 		public static string extractWikiLinksString = beforeOrRelabel + "(?<topic>" + wikiName + ")"  + wikiNameAnchor + afterWikiName;
 		public static Regex extractWikiLinks = new Regex(extractWikiLinksString) ;
 
-		static string emailAddressString = @"([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)";
-		static Regex emailAddress = new Regex(emailAddressString);
+		private static string emailAddressString = @"([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)";
+		private static Regex emailAddress = new Regex(emailAddressString);
 
+		#region Output
 		/// <summary>
 		/// Answer the object to which output is being written
 		/// </summary>
@@ -391,8 +409,10 @@ namespace FlexWiki.Formatting
 				return _Output;
 			}
 		}
+		#endregion
 
-		static IList SplitStringIntoStyledLines(string input, LineStyle aStyle)
+		#region SplitStringIntoStyledLines
+		private static IList SplitStringIntoStyledLines(string input, LineStyle aStyle)
 		{
 			string sp;
 			ArrayList answer = new ArrayList();
@@ -404,14 +424,16 @@ namespace FlexWiki.Formatting
 				answer.Add(new StyledLine(s, aStyle));
 			return MergeStyledBehaviorLines(answer);
 		}
+		#endregion
 
+		#region MergeStyledBehaviorLines
 		/// <summary>
 		/// Take a list of styled lines as input and produce a new list where contiguous lines representing a behavior expression that spans lines
 		/// have been combined into a single line.
 		/// </summary>
 		/// <param name="input"></param>
 		/// <returns></returns>
-		static IList MergeStyledBehaviorLines(IList input)
+		private static IList MergeStyledBehaviorLines(IList input)
 		{
 			ArrayList answer = new ArrayList();
 			// We do a fancy thing here.  If there is an unterminated behavior that starts on a line, we suck up all following 
@@ -441,14 +463,16 @@ namespace FlexWiki.Formatting
 			}
 			return answer;
 		}
+		#endregion
 
+		#region MergeBehaviorLines
 		/// <summary>
 		/// Take a list of lines of text as input and produce a new list where contiguous lines representing a behavior expression that spans lines
 		/// have been combined into a single line.
 		/// </summary>
 		/// <param name="input">IList of strings</param>
 		/// <returns></returns>
-		static IList MergeBehaviorLines(IList input)
+		private static IList MergeBehaviorLines(IList input)
 		{
 			ArrayList answer = new ArrayList();
 			for (int lineNumber = 0; lineNumber < input.Count; lineNumber++)
@@ -472,17 +496,22 @@ namespace FlexWiki.Formatting
 			}
 			return answer;
 		}
+		#endregion
 
-		LinkMaker LinkMaker()
+
+		#region LinkMaker
+		private LinkMaker LinkMaker()
 		{
 			return _LinkMaker;
 		}
+		#endregion
 
+		#region IsNextLinePre
 		/// <summary>
 		/// Answer true if the next line is pre-formatted
 		/// </summary>
 		/// <returns></returns>
-		bool IsNextLinePre()
+		private bool IsNextLinePre()
 		{
 			if (_CurrentLineIndex + 1 <  _Source.Count)
 			{
@@ -492,13 +521,15 @@ namespace FlexWiki.Formatting
 			}        
 			return false;
 		}
+		#endregion
 
+		#region CloseLists
 		/// <summary>
 		/// Close out any open lists and decrement associated counters
 		/// </summary>
 		/// <param name="listNest"></param>
 		/// <param name="olistNest"></param>
-		void CloseLists(ref int listNest, ref int olistNest)
+		private void CloseLists(ref int listNest, ref int olistNest)
 		{
 			int jj;
 			// if we're in a list, close all the <ul>s
@@ -513,11 +544,15 @@ namespace FlexWiki.Formatting
 				olistNest--;
 			}
 		}
+		#endregion
 
+
+		#region private state classes
+		#region class State
 		/// <summary>
 		/// Abstract superclass for the various states that the state machine can be in
 		/// </summary>
-		abstract class State
+		private abstract class State
 		{
 			Formatter _Formatter;
 
@@ -543,7 +578,9 @@ namespace FlexWiki.Formatting
 			}
 
 		}
-
+		#endregion
+		
+		#region class TableState
 		class TableState : State
 		{
 			public TableState(Formatter f) : base (f)
@@ -562,7 +599,9 @@ namespace FlexWiki.Formatting
 			public bool HasBorder;
 
 		}
+		#endregion
 
+		#region class PreState
 		class PreState : State
 		{
 			public PreState(Formatter f) : base (f)
@@ -579,7 +618,9 @@ namespace FlexWiki.Formatting
 				Output.WriteOpenPreformatted();
 			}
 		}
+		#endregion
 	
+		#region class ListState
 		abstract class ListState : State
 		{
 			protected int listNest = 0;
@@ -609,7 +650,9 @@ namespace FlexWiki.Formatting
 				}
 			}
 		}
+		#endregion
 
+		#region class UnorderedListState
 		class UnorderedListState : ListState
 		{
 			public UnorderedListState(Formatter f) : base (f)
@@ -638,7 +681,9 @@ namespace FlexWiki.Formatting
 				SetNesting(1);
 			}
 		}
+		#endregion 
 
+		#region class OrderedListState
 		class OrderedListState : ListState
 		{
 			public OrderedListState(Formatter f) : base (f)
@@ -668,21 +713,26 @@ namespace FlexWiki.Formatting
 			}
 
 		}
+		#endregion 
 
+		#region class NeutralState
 		class NeutralState : State
 		{
 			public NeutralState(Formatter f) : base (f)
 			{
 			}
 		}
+		#endregion 
 
-		State _CurrentState;
-
+		#endregion 
+				
+		#region CurrentState
+		private State _CurrentState;
 
 		/// <summary>
 		/// Get and set the current state of the state machine; when transitioning, make sure state.Enter() and state.Exit() get called
 		/// </summary>
-		State CurrentState
+		private State CurrentState
 		{
 			get
 			{
@@ -697,19 +747,23 @@ namespace FlexWiki.Formatting
 					_CurrentState.Enter();
 			}
 		}
+		#endregion 
 
+		#region Ensure
 		/// <summary>
 		/// Make sure we're in a particular state and if we aren't create that state and enter it
 		/// </summary>
 		/// <param name="aType"></param>
-		void Ensure(Type aType)
+		private void Ensure(Type aType)
 		{
 			if (CurrentState != null && CurrentState.GetType() == aType)
 				return;	// already what's requested
 			CurrentState = (State)(Activator.CreateInstance(aType, new object[]{this}));	
 		}
+		#endregion 
 
-		static int CountOccurrences(string lookIn, string lookFor)
+		#region CountOccurrences
+		private static int CountOccurrences(string lookIn, string lookFor)
 		{
 			int answer = 0;
 			int offset = 0;
@@ -723,8 +777,10 @@ namespace FlexWiki.Formatting
 			}
 			return answer;
 		}
+		#endregion
 
-		const int MaxiumuNestingDepth = 20;
+		#region IsBeyondSafeNestingDepth
+		private const int MaxiumuNestingDepth = 20;
 
 		public bool IsBeyondSafeNestingDepth
 		{
@@ -733,7 +789,9 @@ namespace FlexWiki.Formatting
 				return _Output.GetNestingLevel() > MaxiumuNestingDepth;		// No more nesting that N deep
 			}
 		}
+		#endregion
 
+		#region Format
 		/// <summary>
 		/// Main formatting function.  The process of formatting the input to the output starts here.
 		/// </summary>
@@ -748,8 +806,8 @@ namespace FlexWiki.Formatting
 			bool inMultilineProperty = false;
 			bool currentMultilinePropertyIsHidden = false;
 			string multiLinePropertyDelim = null;
-            bool inPreBlock=false;
-            string preBlockKey=null;
+			bool inPreBlock=false;
+			string preBlockKey=null;
 
 			_Output.Begin();
 
@@ -872,7 +930,7 @@ namespace FlexWiki.Formatting
 					Ensure(typeof(NeutralState));
 					_Output.WriteRule();
 				}
-				// insert topic -- {{IncludeSomeTopic}} ?
+					// insert topic -- {{IncludeSomeTopic}} ?
 				else if ((!each.StartsWith(" ") & Regex.IsMatch(each, @"^[\t]*\{\{" + wikiName + @"\}\}[\s]*$")) && 
 					(false == currentMultilinePropertyIsHidden))
 				{
@@ -905,7 +963,7 @@ namespace FlexWiki.Formatting
 						EnsureParaClose();
 					}
 				}
-				// line begins with a space, it's PRE time!
+					// line begins with a space, it's PRE time!
 				else if ((each.StartsWith(" ") || Regex.IsMatch(each, "^[ \t]+[^ \t*1]")) && 
 					(false == currentMultilinePropertyIsHidden))
 				{
@@ -1073,10 +1131,12 @@ namespace FlexWiki.Formatting
 
 			CurrentState = null;	// Make sure to do this so the last state gets Exit()
 		}
+		#endregion
 
-		static string doubleQuote = "\"\"";
+		private static string doubleQuote = "\"\"";
 
-		string ProcessLineElements(string line)
+		#region ProcessLineElements
+		private string ProcessLineElements(string line)
 		{
 			// Break the line into parts, recognizing escape quotes ("")
 			StringBuilder builder = new StringBuilder();
@@ -1133,8 +1193,10 @@ namespace FlexWiki.Formatting
 			}
 			return builder.ToString();
 		}
+		#endregion
 
-		static bool IsInsideBehavior(int dq, IList behaviors)
+		#region IsInsideBehavior
+		private static bool IsInsideBehavior(int dq, IList behaviors)
 		{
 			foreach (IList each in behaviors)
 			{
@@ -1147,16 +1209,18 @@ namespace FlexWiki.Formatting
 			}
 			return false;
 		}
+		#endregion 
 
-		static string BehaviorDelimiter = "@@";
+		private static string BehaviorDelimiter = "@@";
 
+		#region TranslateBehaviorsAndEverythingElse
 		/// <summary>
 		/// Break the supplied line into BeL sequences and non-BeL sequences.  Run the BeL interpreter to process
 		/// the BeL sequences and do regular wiki processing on the non-BeL sequences
 		/// </summary>
 		/// <param name="line"></param>
 		/// <returns></returns>
-		string TranslateBehaviorsAndEverythingElse(string input)
+		private string TranslateBehaviorsAndEverythingElse(string input)
 		{
 			// Convert foo@bar external ref syntax to standardized InterWiki behavior
 			// This must happen here because the actual interpretation of these is as a behavior
@@ -1206,22 +1270,34 @@ namespace FlexWiki.Formatting
 			}
 			return str;
 		}
+		#endregion 
 
-		string TranslateLineElements(string line)
+		#region TranslateLineElements
+		private string TranslateLineElements(string line)
 		{
 			string answer = line;
 			answer = ConvertEmoticons(answer);	// needs to come before textile because of precedence in overlappign formatting rules
 			answer = SentencePairedDelimiters(answer);
 			answer = TextileFormat(answer);
 			answer = LinkHyperLinks(answer);
-            answer = ColorsEtcFormat(answer);
-			answer = LinkWikiNames(answer);
-			answer = ProcessWikiLinks(answer);
+			answer = ColorsEtcFormat(answer);
+			if (answer.IndexOf("<nowiki>") < 0)
+			{
+				answer = LinkWikiNames(answer);
+				answer = ProcessWikiLinks(answer);
+			}
+			else
+			{
+				answer = answer.Replace("<nowiki>", "");
+			}
 			return answer;
 		}
+		#endregion
 
-		static Regex externalWikiRef = new Regex(@"(\s)*(?<param>[\w\d\.]+)@(?<behavior>[\w\d]+([\w\d]{1,})+)([\w\d\.])*(\s)*");
 
+		private static Regex externalWikiRef = new Regex(@"(\s)*(?<param>[\w\d\.]+)@(?<behavior>[\w\d]+([\w\d]{1,})+)([\w\d\.])*(\s)*");
+
+		#region ErrorMessage
 		public string ErrorMessage(string title, string body)
 		{
 			// We can't use the fancy ErrorString method -- it didn't exist in v0
@@ -1229,7 +1305,9 @@ namespace FlexWiki.Formatting
 			nOut.WriteErrorMessage(title, body);
 			return nOut.ToString();
 		}
+		#endregion 
 
+		#region externalWikiRefMatch
 		private string externalWikiRefMatch(Match match)
 		{
 			// match.Value may contain some additional leading and/or trailing white space that we don't want to lose.
@@ -1245,17 +1323,21 @@ namespace FlexWiki.Formatting
 			}
 			return result;
 		}
+		#endregion 
 
-		Federation TheFederation
+		#region TheFederation
+		private Federation TheFederation
 		{
 			get
 			{
 				return ContentBase.Federation;
 			}
 		}
+		#endregion
 
 
-		string IncludedTopic(TopicName  topic, int headingLevelBase)
+		#region IncludedTopic
+		private string IncludedTopic(TopicName topic, int headingLevelBase)
 		{
 			// TODO: how do we identify specific versions? [maybe this just works now? since versionids are a formal part of a wikiname???]
 			// TODO: how do we show diffs?
@@ -1267,14 +1349,16 @@ namespace FlexWiki.Formatting
 			Formatter.Format(abs, content, output, ContentBase, LinkMaker(), _ExternalWikiMap, headingLevelBase, CacheRuleAccumulator);
 			return output.ToString().Trim();
 		}
+		#endregion
 
 
+		#region NestedFormat
 		/// <summary>
 		/// Format the supplied string with the current settings of the Formatter (including to the same Output and cache rule accumulator)
 		/// </summary>
 		/// <param name="input"></param>
 		/// <returns></returns>
-		public string NestedFormat(string input, WikiOutput parent)
+		private string NestedFormat(string input, WikiOutput parent)
 		{
 			WikiOutput output = WikiOutput.ForFormat(_Output.Format, parent);
 			if (!IsBeyondSafeNestingDepth)
@@ -1311,8 +1395,10 @@ namespace FlexWiki.Formatting
 
 			return str;
 		}
+		#endregion 
 
-		string ConvertEmoticons(string input)
+		#region ConvertEmoticons
+		private string ConvertEmoticons(string input)
 		{
 			string str = input;
 			str = Emote(str, "(Y)", "emoticons/thumbs_up.gif");
@@ -1393,13 +1479,17 @@ namespace FlexWiki.Formatting
 			str = Emote(str, "(m)", "emoticons/messenger.gif");
 			return str;
 		}
+		#endregion
 
-		string Emote(string input, string text, string image)
+		#region Emote
+		private string Emote(string input, string text, string image)
 		{
 			return input.Replace (text, LinkMaker().LinkToImage(image)) ;			
 		}
+		#endregion
 
-		static string StripHTMLSpecialCharacters(string input)
+		#region StripHTMLSpecialCharacters
+		private static string StripHTMLSpecialCharacters(string input)
 		{
 			// replace HTML special characters with character entities
 			// this has the side-effect of stripping all markup from text
@@ -1411,8 +1501,10 @@ namespace FlexWiki.Formatting
 			str = Regex.Replace (str, ">", "&gt;") ;
 			return str;
 		}
+		#endregion
 
-		static string SentencePairedDelimiters(string input)
+		#region SentencePairedDelimiters
+		private static string SentencePairedDelimiters(string input)
 		{
 			string str = input;
 			// deemphasis
@@ -1423,8 +1515,10 @@ namespace FlexWiki.Formatting
 			str = Regex.Replace (str, "'{2}(.*?)'{2}", "<em>$1</em>") ;
 			return str;
 		}
+		#endregion
     
-		string TextileFormat(string input)
+		#region TextileFormat
+		private string TextileFormat(string input)
 		{
 			string str = input;
 			// _emphasis_
@@ -1448,14 +1542,16 @@ namespace FlexWiki.Formatting
 			// The regex is a bit special because it needs to start with a zero-width negative lookbehind assertion (because we 
 			// need to be sure we don't consume WikiBehaviors @@Whatever@@
 			str = Regex.Replace (str, "(^|\\s|\\(|\\[)@([^@]+)@", "$1<code>$2</code>") ;
-			// "link text":url 
-			str = Regex.Replace (str, "\"([^\"(]+)( \\(([^\\)]+)\\))?\":" + urlPattern, ObfuscatableLinkReplacementPattern("$1", "$4"));
-			// "link text":url for mail and news
-			str = Regex.Replace (str, "\"([^\"(]+)( \\(([^\\)]+)\\))?\":" + mailAndNewsPattern, ObfuscatableLinkReplacementPattern("$1", "${uri}"));
+//			// "link text":url 
+//			str = Regex.Replace (str, "\"([^\"(]+)( \\(([^\\)]+)\\))?\":" + urlPattern, ObfuscatableLinkReplacementPattern("$1", "$4"));
+//			// "link text":url for mail and news
+//			str = Regex.Replace (str, "\"([^\"(]+)( \\(([^\\)]+)\\))?\":" + mailAndNewsPattern, ObfuscatableLinkReplacementPattern("$1", "${uri}"));
 
 			return str;
 		}
+		#endregion
 
+		#region ColorsEtcFormat
 		static string	ColorsEtcFormat( string	input	)
 		{
 			string str = input;
@@ -1557,25 +1653,61 @@ namespace FlexWiki.Formatting
 
 			return str;	//	+	debugString;
 		}
+		#endregion
 
-		static string urlPattern = @"((https?|ftp|gopher|telnet|file):(//)+[\w\d:#@%/;$()~_?\+-=\\\.&]*)";
+		static string urlPattern = @"((https?|ftp|gopher|telnet|file|notes|ms-help):((//)|(\\\\))+[\w\d:#@%/;$()~_?\+-=\\\.&]*)";
+		static string urlPatternInBrackets = @"((https?|ftp|gopher|telnet|file|notes|ms-help):((//)|(\\\\))+[\w\d:#@%/;$() ~_?\+-=\\\.& ]*)";
 		static string mailAndNewsPattern = @"(?<ignore>(^|\s|\W)[\W*])?(?<uri>((mailto|news){1}:[^(//\s,)][\w\d:#@%/;$()~_?\+-=\\\.&]+))";
 
-		string LinkHyperLinks (string input)
+		private static string bracketedUrlPattern = "\\[(?:"+ urlPatternInBrackets + ")\\]";
+		private static string bracketedmailAndNewsPattern = "\\[(?:"+ mailAndNewsPattern + ")\\]";
+		private static string unqualifiedUrlPattern = "(?:" + "(?:" + bracketedUrlPattern + ")|(?:" + urlPattern + ")" + ")|(?:" + mailAndNewsPattern + ")|(?:" + bracketedmailAndNewsPattern + ")";
+		
+		private static string mustHaverelabelPrefix = "(\"(?<relabel>[^\"]+)\"\\:)";
+		private static string urlbeforeOrRelabel = "(" + mustHaverelabelPrefix + "|(" + mustHaverelabelPrefix + "|" + beforeWikiName + "))";
+		public static string extractUrlLinksString = mustHaverelabelPrefix + "(?<uri>" + unqualifiedUrlPattern + ")" + wikiNameAnchor + afterWikiName;
+		public static Regex extractUrlLinks = new Regex(extractUrlLinksString) ;
+
+
+		#region LinkHyperLinks
+		private string LinkHyperLinks (string input)
 		{
-			string str = input;
+			string str = string.Empty;
+			str = ProcessExternalRelabledLinks(input);
+			if (str == string.Empty)
+				str = input;
 
 			// image links
-			str = Regex.Replace (str, @"([^""']|^)http(://\S*(\.jpg|\.gif|\.png|\.jpeg))",
+			str = Regex.Replace (str, @"([^""']|^)http(://\S*(?i:\.jpg|\.gif|\.png|\.jpeg))",
 				"$1<img src=\"HTTPIMAGESOURCE:$2\"/>") ;
-			str = Regex.Replace (str, @"([^""'])file(://\S*(\.jpg|\.gif|\.png|\.jpeg))",
+			str = Regex.Replace (str, @"([^""'])file(://\S*(?i:\.jpg|\.gif|\.png|\.jpeg|\.doc|\.xls|\.ppt|\.txt))",
 				"$1<img src=\"FILEIMAGESOURCE:$2\"/>") ;
 
 			// web links (including those surrounded by parens, brackets and curlies)
 			str = Regex.Replace (str, @"[(]" + urlPattern + "[)]", "(" + ObfuscatableLinkReplacementPattern("$1", "$1") + ")") ;
 			str = Regex.Replace (str, @"[{]" + urlPattern + "[}]", "{" + ObfuscatableLinkReplacementPattern("$1", "$1") + "}") ;
-			str = Regex.Replace (str, @"[\\[]" + urlPattern + "[\\]]", "[" + ObfuscatableLinkReplacementPattern("$1", "$1") + "]") ;
 			str = Regex.Replace (str, @"(^|\s)" + urlPattern, "$1" + ObfuscatableLinkReplacementPattern("$2", "$2"));
+			str = Regex.Replace (str, @"[\\[]" + urlPatternInBrackets + "[\\]]", ObfuscatableLinkReplacementPattern("$1", "$1")) ;
+			if (str != input)
+			{
+				int start = str.IndexOf("href=\"");;
+				int len = 0;
+				while (start > 0)
+				{
+					len = str.IndexOf("\"", start+6) - start;
+					if (len > 0)
+					{
+						string hrefUri = str.Substring(start, len);
+						str = str.Replace(hrefUri, hrefUri.Replace(" ", "%20"));
+						start = str.IndexOf("href=\"", start+len+1);
+					}
+					else
+					{
+						break;
+					}
+				}
+			
+			}
 
 			// mail and news links (including those surrounded by parens, brackets and curlies)
 			str = Regex.Replace (str, @"[(]" + mailAndNewsPattern + "[)]", "(" + ObfuscatableLinkReplacementPattern("${uri}", "${uri}") + ")") ;
@@ -1595,23 +1727,78 @@ namespace FlexWiki.Formatting
 					}
 				}
 			}
-
 			str = FinalizeImageLinks(str);
+
+
 			return str;
 		}
+		#endregion
 
-		string ObfuscatableLinkReplacementPattern(string replacementText, string replacementURL)
+		#region ProcessExternalRelabledLinks
+		private string ProcessExternalRelabledLinks(string input)
+		{
+			StringBuilder answer = new StringBuilder();
+			string str = input;
+
+			while (str.Length > 0)
+			{
+				Match m = extractUrlLinks.Match(str);
+        if (!m.Success)
+        {
+          break;
+        }
+
+				string uri = m.Groups["uri"].ToString();
+				string before = m.Groups["before"].ToString();
+				string after = m.Groups["after"].ToString();
+				string relabel = m.Groups["relabel"].ToString();
+				string anchor = m.Groups["anchor"].ToString();
+
+        if (relabel != string.Empty)
+        {
+          uri = uri.Replace("[", "");
+          uri = uri.Replace("]", "");
+          uri = uri.Replace(" ", "%20");
+          if (anchor != string.Empty)
+          {
+            uri += "#" + anchor;
+          }
+
+          string noFollow = " ";
+          if (TheFederation.NoFollowExternalHyperlinks)
+          {
+            noFollow = " rel=\"nofollow\" ";
+          }
+					
+          str = ReplaceMatch(answer, str, m, before + "<nowiki><a class=\"externalLink\"" + noFollow + "href=\"" + uri + "\">" + relabel + "</a>" + after);
+        }
+        else
+        {
+          break;
+        }
+				
+			}
+			answer.Append(str);
+			return answer.ToString();
+		}
+		#endregion
+	
+
+		#region ObfuscatableLinkReplacementPattern
+		private string ObfuscatableLinkReplacementPattern(string replacementText, string replacementURL)
 		{
 			string noFollow = "";
 			if (TheFederation.NoFollowExternalHyperlinks)
 				noFollow = " rel=\"nofollow\" ";
-			return @"<a " + noFollow + @"href=""" + replacementURL + @""">" + replacementText + @"</a>";
+			return @"<a class=""externalLink"" " + noFollow + @"href=""" + replacementURL + @""">" + replacementText + @"</a>";
 		}
+		#endregion
 
-		static string wikiURIPattern = @"(^|\s+)(?<uri>wiki://(?<authority>" + unbracketedWikiName + @")(?<path>/[a-zA-Z0-9:@%/~_?\-=\\\.]*)?(#(?<fragment>[a-zA-Z0-9:@%/~_?\-=\\\.]*))?)";
-		static Regex wikiURIRegex = new Regex(wikiURIPattern);
+		private static string wikiURIPattern = @"(^|\s+)(?<uri>wiki://(?<authority>" + unbracketedWikiName + @")(?<path>/[a-zA-Z0-9:@%/~_?\-=\\\.]*)?(#(?<fragment>[a-zA-Z0-9:@%/~_?\-=\\\.]*))?)";
+		private static Regex wikiURIRegex = new Regex(wikiURIPattern);
 
-		string ProcessWikiLinks(string str)
+		#region ProcessWikiLinks
+		private string ProcessWikiLinks(string str)
 		{
 			MatchCollection matches = wikiURIRegex.Matches(str);
 			ArrayList processed = new ArrayList();
@@ -1715,8 +1902,10 @@ namespace FlexWiki.Formatting
 			}
 			return answer;
 		}
+		#endregion
 
-		string FinalizeImageLinks(string input)
+		#region FinalizeImageLinks
+		private string FinalizeImageLinks(string input)
 		{
 			// finalise image links
 			string str = input;
@@ -1724,32 +1913,41 @@ namespace FlexWiki.Formatting
 			str = Regex.Replace (str, "FILEIMAGESOURCE::(//\\S*)", "file:$1") ;
 			return str;
 		}
+		#endregion
 
-		static string ReplaceMatch (StringBuilder resultQueue, string old, Match m, string rep)
+		#region ReplaceMatch 
+		private static string ReplaceMatch (StringBuilder resultQueue, string old, Match m, string rep)
 		{
 			resultQueue.Append(old.Substring(0, m.Index) + rep);
 			return old.Substring(m.Index + m.Length);
 		}
+		#endregion
 
-		static int unique = 0;
-		string NewUniqueIdentifier()
+		#region NewUniqueIdentifier
+		private static int unique = 0;
+		private string NewUniqueIdentifier()
 		{
-
 			unique++;
-			if (unique > 100000)		// wrap ever 100000; nothing magic about this number
-				unique = 0;
+      if (unique > 100000)		// wrap ever 100000; nothing magic about this number
+      {
+        unique = 0;
+      }
 			return "id" + unique.ToString();
 		}
+		#endregion
 
-		string TipForTopic(AbsoluteTopicName topic)
+		#region TipForTopic
+		private string TipForTopic(AbsoluteTopicName topic)
 		{
 			string answer = TheFederation.GetTopicProperty(topic, "Summary");
 			if (answer == "")
 				answer = null;
 			return answer;
 		}
+		#endregion
 
-		string LinkWikiNames (string input)
+		#region LinkWikiNames
+		private string LinkWikiNames (string input)
 		{
 			StringBuilder answer = new StringBuilder();
 
@@ -1825,7 +2023,7 @@ namespace FlexWiki.Formatting
 							string replacement = "<a ";
 							if (tip != null)
 							{
-								replacement += "onmouseover=\"TopicTipOn(this, \"" + tipid + "\", event);\" onmouseout=\"TopicTipOff();\" ";
+								replacement += "onmouseover=\"TopicTipOn(this, '" + tipid + "', event);\" onmouseout=\"TopicTipOff();\" ";
 							}
 							replacement += "href=\"" + LinkMaker().LinkToTopic(abs);
 							if (anchor.Length > 0)
@@ -1850,9 +2048,9 @@ namespace FlexWiki.Formatting
 								if (!first)
 									clickEvent += ", ";
 								first = false;
-								clickEvent += "new Array(\"" + eachAbs + "\", \"" + LinkMaker().LinkToTopic(eachAbs) + "\")";
+								clickEvent += "new Array('" + eachAbs + "', '" + LinkMaker().LinkToTopic(eachAbs) + "')";
 							}
-							clickEvent += "));\"";
+							clickEvent += "), event);\"";
 
 							str = ReplaceMatch(answer, str, m, before + "<a title=\"Different versions of this topic exist.  Click to pick one.\" " + clickEvent + ">" + displayname + "</a>" + after) ;
 						}
@@ -1868,8 +2066,9 @@ namespace FlexWiki.Formatting
 			answer.Append(str);
 			return answer.ToString();
 		}
+		#endregion
 
-
+		#region RegexEscapeTopic
 		/// <summary>
 		/// Turn a topic (maybe fully-qualified; maybe with brackets) into a legit regex by escaping special regex chars like . and [ and ]
 		/// </summary>
@@ -1883,20 +2082,21 @@ namespace FlexWiki.Formatting
 			answer = answer.Replace("]", "\\]");
 			return answer;
 		}
+		#endregion
 
-		bool paraOpen = false;
+		private bool paraOpen = false;
    
-		void EnsureParaOpen()
+		private void EnsureParaOpen()
 		{
 			if (!paraOpen) { _Output.WriteOpenPara(); paraOpen = true; }
 		}
 		
-		void EnsureParaClose()
+		private void EnsureParaClose()
 		{
 			if (paraOpen) { _Output.WriteClosePara(); paraOpen = false; }
 		}
 	
-		static Regex externalWikiDef = new Regex("^@(" + Az09 + "+)=(.*)$");
+		private static Regex externalWikiDef = new Regex("^@(" + Az09 + "+)=(.*)$");
 		public static bool StripExternalWikiDef(Hashtable table, string content)
 		{
 			Match m = externalWikiDef.Match(content);

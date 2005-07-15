@@ -211,7 +211,8 @@ namespace FlexWiki
       get
       {
         return @"
-@flexWiki=http://www.flexwiki.com/default.aspx/$$$
+@flexWiki=http://www.flexwiki.com/default.aspx/FlexWiki/$$$.html
+
 
 !About Wiki
 If you're new to WikiWiki@flexWiki, you should read the VisitorWelcome@flexWiki or OneMinuteWiki@flexWiki .  The two most important things to know are 
@@ -1320,6 +1321,7 @@ request.AreDifferencesShown.IfTrue
     /// <returns>An AbsoluteTopicName</returns>
     public AbsoluteTopicName TopicNameFor(string localTopicName)
     {
+
       return new AbsoluteTopicName(localTopicName, Namespace);
     }
 

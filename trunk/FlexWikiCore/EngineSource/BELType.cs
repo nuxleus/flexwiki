@@ -215,7 +215,7 @@ namespace FlexWiki
 		//			}
 		//		}
 		//
-		Hashtable _Members = null;
+		private Hashtable _Members = null;
 		public Hashtable BELMembers
 		{
 			get
@@ -231,7 +231,7 @@ namespace FlexWiki
 		}
 
 		
-		void AddTypeMembers(Hashtable answer)
+		private void AddTypeMembers(Hashtable answer)
 		{
 			Type instanceCLRType = InstanceType.CLRType;
 			foreach (MemberInfo each in instanceCLRType.GetMembers())

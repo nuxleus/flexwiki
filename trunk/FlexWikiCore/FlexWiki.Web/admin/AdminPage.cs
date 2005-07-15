@@ -34,6 +34,7 @@ namespace FlexWiki.Web.Admin
 			}
 		}
 
+
 		protected void ShowAdminMenu()
 		{
 			UIResponse.WriteStartMenu("Administration");

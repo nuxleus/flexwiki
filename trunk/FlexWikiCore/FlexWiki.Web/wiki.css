@@ -15,139 +15,6 @@ a.Anchor, a.Anchor:hover, a.Anchor:active
 } 
 
 
-.GenericRow
-{
-
-}
-
-.GenericCell
-{
-	font-size: .88em;
-	border-collapse: collapse;
-	border: #909090 1px solid;
-}
-
-.GenericKVKey
-{
-	font-size: .75em;
-	border-collapse: collapse;
-	border: #909090 1px solid;
-	background-color: #e0e0e0;
-	font-weight: bold;
-}
-
-.GenericKVValue
-{
-	font-size: .75em;
-	border-collapse: collapse;
-	border: #909090 1px solid;
-}
-
-
-.GenericKVTable  
-{
-	padding-top: 6px;
-	padding-bottom: 6px;
-	background-color: #f8f8c0;
-}
-
-.GenericTable  
-{
-	padding-top: 6px;
-	padding-bottom: 6px;
-	background-color: #f8f8f8;
-}
-
-.GenericHeaderRow
-{
-
-}
-
-.GenericHeaderCell
-{
-	background-color: #e0e0e0;
-	font-size: .88em;
-	font-weight: bold;
-	border-collapse: collapse;
-	border: #909090 1px solid;
-}
-
-.GenericEmptyHeaderCell
-{
-	font-size: .88em;
-	font-weight: bold;
-	border-collapse: collapse;
-
-}
-
-.GenericPageTitle
-{
-	background-color: royalblue;
-	color: white;
-	font-size: 1.3em;
-	font-weight: bold;
-}
-
-.GenericMenuTable
-{
-	padding-top: 1li;
-	padding-bottom: 1li;
-	background-color: darkblue;
-	border: darkblue 1px solid;
-}
-
-.GenericMenuHeaderRow
-{
-}
-
-.GenericMenuHeaderLeft
-{
-	font-size: .88em;
-	font-weight: bold;
-	color: white;
-}
-
-.GenericMenuHeaderText
-{
-	font-size: .88em;
-	font-weight: bold;
-	color: white;
-}
-
-.GenericMenuRow
-{
-}
-
-.GenericMenuLeft
-{
-	font-size: .88em;
-}
-
-.GenericMenuText
-{
-	background-color: royalblue;
-	color: white;
-	font-size: .88em;
-}
-
-.GenericMenuText a
-{
-	background-color: royalblue;
-	color: white;
-}
-
-.GenericMenuText a:hover
-{
-	background-color: yellow;
-	color: blue;
-}
-
-.GenericPageMenuColumn
-{
-	background-color: gray;
-
-}
-
 .UpdateDivider
 {
 	font-size: .8em;
@@ -626,35 +493,36 @@ a.Anchor, a.Anchor:hover, a.Anchor:active
 	border: solid 12px #404040;
 }
 
-.Menu
-{
-	border-right: #3333cc thin solid;
-	border-top: #66ccff thin solid;
-	display: none;
-	background: #ccffcc;
-	border-left: #66ccff thin solid;
-	cursor: hand;
-	padding: 2px;
-	color: blue;
-	border-bottom: #3333cc thin solid;
-	position: absolute;
-}
-
 .ReadOnlyStripe
 {
 	color: red;
 	font-weight: bold;
 }
 
+.Menu
+{
+	display: none;
+	background: #f8f8f8;
+	cursor: hand;
+	padding: 2px;
+	color: blue;
+	border: #2FA7FB 1px solid;
+	position: absolute;
+}
+
 .MenuItemNormal
 {
-	background: #ccffcc;
+	font-size: .8em;
+	color: black;
+	text-decoration:none;
+  
 }
 
 .MenuItemHover
 {
-	background: #3300cc;
-	color: #ffff99;
+	color: royalblue;
+	font-size: .8em;
+	text-decoration:underline;
 }
 
 
@@ -754,7 +622,6 @@ a.Anchor, a.Anchor:hover, a.Anchor:active
 .searchHitBody p
 {
    line-height: 1em;
-   margin-top: .8em;
    margin-bottom: .8em;
 }
 

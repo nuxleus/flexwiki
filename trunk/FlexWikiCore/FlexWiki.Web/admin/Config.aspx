@@ -4,7 +4,7 @@
 <html>
  <HEAD>
 		<title>FlexWiki Configuration</title>
-		<LINK href='<%= RootUrl(Request) %>../wiki.css' type='text/css' rel='stylesheet'>
+		<LINK href="admin.css" type="text/css" rel="stylesheet">
 	</HEAD>
 	<body>
 		<% 

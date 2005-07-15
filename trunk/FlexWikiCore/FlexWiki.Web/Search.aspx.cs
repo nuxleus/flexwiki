@@ -135,7 +135,7 @@ namespace FlexWiki.Web
 							{
 								if (Regex.IsMatch(each, search, RegexOptions.IgnoreCase))
 								{
-									Response.Write(Formatter.FormattedString(each, OutputFormat.HTML, cb, TheLinkMaker, null));
+									Response.Write(Formatter.FormattedString(topic, each, OutputFormat.HTML, cb, TheLinkMaker, null));
 								}
 							}
 							Response.Write("</div>");

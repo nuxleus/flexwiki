@@ -26,116 +26,23 @@ using NUnit.Framework;
 
 namespace FlexWiki.UnitTests
 {
-	[TestFixture] public class TableFormattingOptionsTests 
-	{
-		public void TestDefaults()
-		{
-			TableCellInfo info = new TableCellInfo();
-			info.Parse("");
-			Assert.IsTrue(info.HasBorder);
-			Assert.IsTrue(!info.IsHighlighted);
-		}
-
-		public void TestError()
-		{
-			TableCellInfo info = new TableCellInfo();
-			Assert.IsTrue(info.Parse("T%") != null);
-		}
-
-
-		public void TestTable()
-		{
-			TableCellInfo info = new TableCellInfo();
-			info.Parse("T-T]");
-			Assert.IsTrue(!info.HasBorder);
-			Assert.AreEqual(info.TableAlignment, TableCellInfo.AlignOption.Right);
-			info.Parse("T[");
-			Assert.AreEqual(info.TableAlignment, TableCellInfo.AlignOption.Left);
-			info.Parse("T^");
-			Assert.AreEqual(info.TableAlignment, TableCellInfo.AlignOption.Center);
-		}
-
-		public void TestCellAlignment()
-		{
-			TableCellInfo info = new TableCellInfo();
-			info.Parse("]");
-			Assert.AreEqual(info.CellAlignment, TableCellInfo.AlignOption.Right);
-			info.Parse("[");
-			Assert.AreEqual(info.CellAlignment, TableCellInfo.AlignOption.Left);
-			info.Parse("^");
-			Assert.AreEqual(info.CellAlignment, TableCellInfo.AlignOption.Center);
-		}
-
-		public void TestHighlight()
-		{
-			TableCellInfo info = new TableCellInfo();
-			info.Parse("!");
-			Assert.IsTrue(info.IsHighlighted);
-		}
-
-		public void TestSpans()
-		{
-			TableCellInfo info = new TableCellInfo();
-			info.Parse("C10!R5T-");
-			Assert.IsTrue(info.IsHighlighted);
-			Assert.AreEqual(info.ColSpan, 10);
-			Assert.AreEqual(info.RowSpan, 5);
-		}
-
-		public void TestWidths()
-		{
-			TableCellInfo info = new TableCellInfo();
-			info.Parse("");
-			Assert.IsTrue(info.TableWidth == TableCellInfo.UnspecifiedWidth);
-			Assert.IsTrue(info.CellWidth == TableCellInfo.UnspecifiedWidth);
-			info.Parse("TW1");
-			Assert.AreEqual(1, info.TableWidth);
-			info.Parse("TW100");
-			Assert.AreEqual(100, info.TableWidth);
-			info.Parse("TW100C2");
-			Assert.AreEqual(100, info.TableWidth);
-			info.Parse("W1");
-			Assert.AreEqual(1, info.CellWidth);
-			info.Parse("W100");
-			Assert.AreEqual(100, info.CellWidth);
-			info.Parse("W100C2");
-			Assert.AreEqual(100, info.CellWidth);
-			info.Parse("W100TW200C2");
-			Assert.AreEqual(100, info.CellWidth);
-			Assert.AreEqual(200, info.TableWidth);
-
-
-		}
-
-		public void TestErrorOnMissingIntegers()
-		{
-			TableCellInfo info = new TableCellInfo();
-			string missing = "Missing";
-			Assert.IsTrue(info.Parse("TW").StartsWith(missing));
-			Assert.IsTrue(info.Parse("R").StartsWith(missing));
-			Assert.IsTrue(info.Parse("C").StartsWith(missing));
-			Assert.IsTrue(info.Parse("W").StartsWith(missing));
-		}
-
-
-	}
-
 	[TestFixture] public class FormattingTests : WikiTests
 	{
-		ContentBase _cb;
-		const string _base = "http://boo/";
-		Hashtable _externals;
-		LinkMaker _lm;
-		string user = "joe";
+		private ContentBase _cb;
+		private const string _base = "http://boo/";
+		private Hashtable _externals;
+		private LinkMaker _lm;
+		private string user = "joe";
 
 		// At runtime we dump the contents of the embedded resources to a directory so 
 		// we don't have to rely on an Internet connection or a hardcoded path to 
 		// retrieve the XML when testing behaviors that pull it in. These variables hold
 		// the paths to the XML that we write to disk at Init time. 
-		string testRssXmlPath; 
-		string testRssXslPath; 
-		string meerkatRssPath; 
+		private string testRssXmlPath; 
+		private string testRssXslPath; 
+		private string meerkatRssPath; 
 
+		#region Init
 		[SetUp] public void Init()
 		{
 			// Dump the contents of the embedded resources to a file so we can read them 
@@ -195,6 +102,16 @@ lenSpanning=@@topics.TopicWithBehaviorProperties.FaceSpanningLines(""parsing is 
 
 			_externals = new Hashtable();
 		}
+		#endregion
+
+		#region Deinit
+		[TearDown] public void Deinit()
+		{
+			_cb.Delete();
+		}
+		#endregion
+
+
 
 		#region WikiPageProperty Tests
 		[Test] public void SinglineLinePropertyTest()
@@ -289,6 +206,7 @@ second line
 		}
 		#endregion
 
+		#region TestInlineWikiTalk
 		[Test] public void TestInlineWikiTalk()
 		{
 			WikiOutput output = WikiOutput.ForFormat(OutputFormat.HTML, null);
@@ -297,76 +215,84 @@ second line
 			string result = output.ToString();
 			Assert.IsTrue(result.IndexOf("aaa foo zzz") >= 0);
 		}
+		#endregion
 
+		#region TopicBehaviorProperty
 		[Test] public void TopicBehaviorProperty()
 		{
 			FormattedTopicContainsTest(new AbsoluteTopicName("TestTopicWithBehaviorProperties", _cb.Namespace), "len=5");
 			FormattedTopicContainsTest(new AbsoluteTopicName("TestTopicWithBehaviorProperties", _cb.Namespace), "lenWith=6");
 			FormattedTopicContainsTest(new AbsoluteTopicName("TestTopicWithBehaviorProperties", _cb.Namespace), "lenSpanning=20");
 		}
+		#endregion
 
+		#region TestAllNamespacesBehavior
 		[Test] public void TestAllNamespacesBehavior()
 		{
 			FormatTestContains("@@AllNamespacesWithDetails@@", "FlexWiki");
 			FormatTestContains("@@AllNamespacesWithDetails@@", "Friendly Title");
 		}
+		#endregion
 
-		[TearDown] public void Deinit()
-		{
-			_cb.Delete();
-		}
-
+		#region NamespaceAsTopicPreceedsQualifiedNames
 		[Test] public void NamespaceAsTopicPreceedsQualifiedNames()
 		{
 			string s = FormattedTestText(@"FlexWiki bad FlexWiki.OneMinuteWiki");
 			AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_cb.TopicNameFor("FlexWiki")) + @""">FlexWiki</a> bad");
 			AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_cb.TopicNameFor("OneMinuteWiki")) + @""">OneMinuteWiki</a>");
 		}
+		#endregion
 
-		void AssertStringContains(string container, string find)
-		{
-			Assert.IsTrue(container.IndexOf(find) != -1, "Searching for " + find + " in " + container);
-		}
-
+		#region WikiURIForTopic
 		[Test] public void WikiURIForTopic()
 		{
 			string s = FormattedTestText("wiki://IncludeNestURI");
 			AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_cb.TopicNameFor("IncludeNestURI")) + @""">IncludeNestURI</a>");
 		} 
+		#endregion
 
+		#region WikiURIForResource
 		[Test] public void WikiURIForResource()
 		{
-			FormatTest(@"wiki://ResourceReference/Cookies", @"<p><a href=""http://www.google.com/Cookies"">http://www.google.com/Cookies</a></p>
+			FormatTest(@"wiki://ResourceReference/Cookies", @"<p><a class=""externalLink"" href=""http://www.google.com/Cookies"">http://www.google.com/Cookies</a></p>
 ");
 		}
+		#endregion
 		
+		#region WikiURIForImageResource
 		[Test] public void WikiURIForImageResource()
 		{
 			FormatTest(@"wiki://ResourceReference/Cookies.gif", @"<p><img src=""http://www.google.com/Cookies.gif""/></p>
 ");
 		}
+		#endregion
 
+		#region PropertyBehavior
 		[Test] public void PropertyBehavior()
 		{
 			FormatTest(@"@@Property(""TopicWithColor"", ""Color"")@@", @"<p>Yellow</p>
 ");
 		}
+		#endregion
 
+		#region WikiURIForTopicProperty
 		[Test] public void WikiURIForTopicProperty()
 		{
 			FormatTest(@"wiki://TopicWithColor/#Color", @"<p>Yellow</p>
 ");
 		}
+		#endregion
 
+		#region NestedWikiSpec
 		[Test] public void NestedWikiSpec()
 		{
 			FormatTest(@"		{{IncludeNest}}", @"<h5>hey there</h5>
 <h6>black dog</h6>
 ");
 		}
-
-
-
+		#endregion
+ 
+		#region IncludeFailure
 		[Test] public void IncludeFailure()
 		{
 			FormatTest(@"{{NoSuchTopic}}", 
@@ -374,7 +300,9 @@ second line
 ");
 
 		}
+		#endregion
 
+		#region SimpleWikiSpec
 		[Test] public void SimpleWikiSpec()
 		{
 			FormatTest(@"!Head1
@@ -390,18 +318,24 @@ second line
 <h2>inc4</h2>
 ");
 		}
+		#endregion
 
+		#region PlainInOut
 		[Test] public void PlainInOut()
 		{
 			FormatTest("Hello there", "<p>Hello there</p>\n");
 		}
-
+		#endregion
+ 
+		#region RelabelTests
 		[Test] public void RelabelTests()
 		{
 			string s = FormattedTestText(@"""tell me about dogs"":BigDog");
 			AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_cb.TopicNameFor("BigDog")) + @""">tell me about dogs</a>");
 		}
+		#endregion
 
+		#region TopicNameRegexTests
 		[Test] public void TopicNameRegexTests()
 		{
 			ShouldBeTopicName("AaA");
@@ -424,7 +358,9 @@ second line
 			ShouldNotBeTopicName("about");
 			ShouldNotBeTopicName("Hello");
 		}
+		#endregion
 
+		#region NonAsciiTopicNameRegexTest
 		[Test] public void NonAsciiTopicNameRegexTest() 
 		{
 			ShouldBeTopicName("DistribuciónTécnica");
@@ -443,7 +379,9 @@ second line
 			ShouldNotBeTopicName("Ølle");
 			ShouldNotBeTopicName("ølle");
 		}
+		#endregion
 
+		#region TopicNameWithAnchorRegexTests
 		[Test] public void TopicNameWithAnchorRegexTests()
 		{
 			ShouldBeTopicName("AaA#Anchor");
@@ -520,7 +458,9 @@ second line
 			ShouldNotBeTopicName("Hello#TestAnchor");
 			ShouldNotBeTopicName("Hello#testAnchor");
 		}
+		#endregion
 
+		#region NonAsciiTopicNameWithAnchorRegexTest
 		[Test] public void NonAsciiTopicNameWithAnchorRegexTest() 
 		{
 			ShouldBeTopicName("DistribuciónTécnica#Distribución");
@@ -558,51 +498,27 @@ second line
 			ShouldNotBeTopicName("Ølle#Ølle");
 			ShouldNotBeTopicName("ølle#ølle");
 		}
+		#endregion
 
-		void ShouldBeTopicName(string s)
-		{
-			string topicName = s;
-			int hashIndex = s.IndexOf("#");
-			if (hashIndex > -1)
-			{
-				topicName = s.Substring(0, hashIndex);
-			}
-			FormatTest(
-				@s,
-				@"<p><a title=""Click here to create this topic"" class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor(topicName)) + @""">" + topicName + @"</a></p>
-");
-		}
-
-		void ShouldNotBeTopicName(string s)
-		{
-			FormatTest(
-				@s,
-				@"<p>" + s + @"</p>
-");
-		}
-
-		//  commented out - david ornstein; 2/24/2004 need to figure out a better way to make this work that doesn't cause massive strikethrough bug
-		//		[Test] public void FormattedLinkTests()
-		//		{
-		//			FormatTestContains(
-		//				@"''BigBox''",
-		//				@"href=""" + _lm.LinkToTopic(_cb.TopicNameFor("BigBox")) + @""">BigBox</a>");
-		//		}
-
+		#region RealTopicWithAnchorTest
 		[Test] public void RealTopicWithAnchorTest()
 		{
 			FormatTestContains(
 				"HomePage#Anchor",
 				"href=\"" + _lm.LinkToTopic(_cb.TopicNameFor("HomePage")) + "#Anchor\">HomePage#Anchor</a>");
 		}
+		#endregion
 
+		#region RealTopicWithAnchorRelabelTest
 		[Test] public void RealTopicWithAnchorRelabelTest()
 		{
 			FormatTestContains(
 				"\"Relabel\":HomePage#Anchor",
 				"href=\"" + _lm.LinkToTopic(_cb.TopicNameFor("HomePage")) + "#Anchor\">Relabel</a>");
 		}
+		#endregion
 
+		#region SimpleLinkTests
 		[Test] public void SimpleLinkTests()
 		{
 			FormatTest(
@@ -614,7 +530,9 @@ blah blah EndOfLineShouldLink",
 <p>blah blah <a title=""Click here to create this topic"" class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("EndOfLineShouldLink")) + @""">EndOfLineShouldLink</a></p>
 ");
 		}
+		#endregion
 
+		#region SimpleEscapeTest
 		[Test] public void SimpleEscapeTest()
 		{
 			FormatTest(@"Hello """" World", @"<p>Hello """" World</p>
@@ -638,7 +556,9 @@ blah blah EndOfLineShouldLink",
 			FormatTest(@"("""")", @"<p>("""")</p>
 ");
 		}
+		#endregion
 
+		#region LinkAfterBangTests
 		[Test] public void LinkAfterBangTests()
 		{
 			FormatTest(
@@ -647,7 +567,114 @@ blah blah EndOfLineShouldLink",
 
 ");
 		}
+		#endregion
 
+		#region ExternalLinks
+		[Test] public void ExternalLinks()
+		{
+			FormatTest(
+				@"A ""xxxx FooBar 0x"":http://localhost link.",
+				@"<p>A <a class=""externalLink"" href=""http://localhost"">xxxx FooBar 0x</a> link.</p>
+");
+
+			FormatTestContains(
+				@"A ""xxxx FooBar 01"":HomePage link",
+				@"href=""" + _lm.LinkToTopic(_cb.TopicNameFor("HomePage")) + @""">xxxx FooBar 01</a> link");
+
+			FormatTestContains(
+				@"A ""MyHomePage"":HomePage2 topic",
+				@"href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("HomePage2")) + @""">MyHomePage</a> topic");
+
+			FormatTest(
+				@"A ""xxxx FooBar 1x"":[http://server1], ""xxxx FooBar 11"":[http://server2] link.",
+				@"<p>A <a class=""externalLink"" href=""http://server1"">xxxx FooBar 1x</a>, <a class=""externalLink"" href=""http://server2"">xxxx FooBar 11</a> link.</p>
+");
+
+			FormatTest(
+				@"My ""xxxx FooBar 2x"":[https://www.flexwiki.com] link",
+				@"<p>My <a class=""externalLink"" href=""https://www.flexwiki.com"">xxxx FooBar 2x</a> link</p>
+");
+			
+			FormatTest(
+				@"""xxxx FooBar 21"":[notes:\\servername]",
+				@"<p><a class=""externalLink"" href=""notes:\\servername"">xxxx FooBar 21</a></p>
+");
+
+			FormatTest(
+				@"""xxxx FooBar 23"":[file:\\xyz\asdf.doc]",
+				@"<p><a class=""externalLink"" href=""file:\\xyz\asdf.doc"">xxxx FooBar 23</a></p>
+");
+
+			FormatTest(
+				@"""xxxx FooBar 24"":[mailto:info@flexwiki.com]",
+				@"<p><a class=""externalLink"" href=""mailto:info@flexwiki.com"">xxxx FooBar 24</a></p>
+");
+		
+			FormatTest(
+				@"""xxxx FooBar 25"":mailto:info@flexwiki.com",
+				@"<p><a class=""externalLink"" href=""mailto:info@flexwiki.com"">xxxx FooBar 25</a></p>
+");
+
+			FormatTest(
+				@"mailto:info@flexwiki.com",
+				@"<p><a class=""externalLink"" href=""mailto:info@flexwiki.com"">mailto:info@flexwiki.com</a></p>
+");
+
+
+			FormatTest(
+				@"""xxxx FooBar 3x"":[notes://Server/file.nsf/viename?openView]",
+				@"<p><a class=""externalLink"" href=""notes://Server/file.nsf/viename?openView"">xxxx FooBar 3x</a></p>
+");
+
+			FormatTest(
+				@"""asfasdf asdasfd (asdf) asdf"":http://localhost",
+				@"<p><a class=""externalLink"" href=""http://localhost"">asfasdf asdasfd (asdf) asdf</a></p>
+");
+		}
+
+		#endregion
+		#region SpaceInLinks
+		[Test] public void SpaceInLinks()
+		{
+			FormatTestContains(
+				@"A [test test] new topic",
+				@"href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("test test")) + @""">test test</a> new topic");
+
+			FormatTestContains(
+				@"A ""NewTest"":[test test] new topic",
+				@"href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("test test")) + @""">NewTest</a> new topic");
+
+//			FormatTest(
+//				@"""Spacelink"":http://localhost/space in link/test.htm",
+//				@"<p><a class=""externalLink"" href=""http://localhost/space%20in%20link/test.htm"">Spacelink</a></p>
+//");
+
+			FormatTest(
+				@"""Correct link"":[http://localhost/link to a page/test.htm]",
+				@"<p><a class=""externalLink"" href=""http://localhost/link%20to%20a%20page/test.htm"">Correct link</a></p>
+");
+			FormatTest(
+				@"[http://localhost/link to a page/test2.htm]",
+				@"<p><a class=""externalLink"" href=""http://localhost/link%20to%20a%20page/test2.htm"">http://localhost/link to a page/test2.htm</a></p>
+");
+			FormatTest(
+				@"[http://localhost/link to a page/test3.htm] and [http://localhost/link to a page/test4.htm]",
+				@"<p><a class=""externalLink"" href=""http://localhost/link%20to%20a%20page/test3.htm"">http://localhost/link to a page/test3.htm</a> and <a class=""externalLink"" href=""http://localhost/link%20to%20a%20page/test4.htm"">http://localhost/link to a page/test4.htm</a></p>
+");
+
+		}
+		#endregion
+		#region NumberInTopicName
+		[Test] public void NumberInTopicName()
+		{
+			FormatTest(
+				@"This is Some2Link to a topic.",
+				@"<p>This is <a title=""Click here to create this topic"" class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("Some2Link")) + @""">Some2Link</a> to a topic.</p>
+");
+		}
+		#endregion
+
+		#region PluralLinkTests
 		[Test] public void PluralLinkTests()
 		{
 			FormatTestContains(
@@ -668,13 +695,17 @@ blah blah EndOfLineShouldLink",
 			AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_cb.TopicNameFor("BigBox")) + @""">BigBoxes</a>");
 			AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_cb.TopicNameFor("BigBox")) + @""">BigBox</a>");
 		}
+		#endregion
 
+		#region Rule
 		[Test] public void Rule()
 		{
 			FormatTestContains("----", "<div class=\"Rule\"></div>");
 			FormatTestContains("------------------------", "<div class=\"Rule\"></div>");
 		}
+		#endregion
 
+		#region HeadingTests
 		[Test] public void HeadingTests()
 		{
 			FormatTest("!Hey Dog", @"<h1>Hey Dog</h1>
@@ -699,8 +730,9 @@ blah blah EndOfLineShouldLink",
 
 ");
 		}
+		#endregion
 
-
+		#region ListTests
 		[Test] public void ListTests()
 		{
 			FormatTest(
@@ -736,7 +768,9 @@ blah blah EndOfLineShouldLink",
 </ul>
 ");
 		}
+		#endregion
 
+		#region UnderEmphasis
 		[Test] public void UnderEmphasis()
 		{
 			FormatTest(
@@ -744,7 +778,9 @@ blah blah EndOfLineShouldLink",
 				@"<p>This should be <em>emphasised</em> however, id_Foo and id_Bar should not be.</p>
 ");
 		}
+		#endregion
 
+		#region InlineExternalReference
 		[Test] public void InlineExternalReference()
 		{
 			FormatTest(
@@ -768,15 +804,19 @@ Test for case-insensitivity, such as CAPS@BAF, or some such nonsense.",
 				@"<p>Test for case-insensitivity, such as <a class=ExternalLink title=""External link to BAF"" target=""ExternalLinks"" href=""http://www.baf.com/CAPS"">CAPS</a>, or some such nonsense.</p>
 ");
 		}
+		#endregion
 
+		#region UnusualCharactersInLinkTest
 		[Test] public void UnusualCharactersInLinkTest()
 		{
 			FormatTest(
 				@"some leading text http://www.lemonde.fr/web/article/0,1-0@2-3212,36-358279,0.htm some trailing text",
-				@"<p>some leading text <a href=""http://www.lemonde.fr/web/article/0,1-0@2-3212,36-358279,0.htm"">http://www.lemonde.fr/web/article/0,1-0@2-3212,36-358279,0.htm</a> some trailing text</p>
+				@"<p>some leading text <a class=""externalLink"" href=""http://www.lemonde.fr/web/article/0,1-0@2-3212,36-358279,0.htm"">http://www.lemonde.fr/web/article/0,1-0@2-3212,36-358279,0.htm</a> some trailing text</p>
 ");
 		}
+		#endregion
 
+		#region HyphensInImageLinkTest
 		[Test] public void HyphensInImageLinkTest()
 		{
 			FormatTest(
@@ -784,58 +824,120 @@ Test for case-insensitivity, such as CAPS@BAF, or some such nonsense.",
 				@"<p>some leading text <img src=""http://msdn.microsoft.com/library/en-us/dnpag/html/ch01---engineering-for-perf.gif""/> some trailing text</p>
 ");
 		}
+		#endregion
 
+		#region TextileHyphensInLinkTest
 		[Test] public void TextileHyphensInLinkTest()
 		{
 			FormatTest(
 				@"some leading text ""textile"":http://www.amazon.com/exec/obidos/tg/detail/-/0735617228/qid=1080277573/sr=8-1/ref=pd_ka_1/102-9825269-6457731?v=glance&s=books&n=50784 some trailing text",
-				@"<p>some leading text <a href=""http://www.amazon.com/exec/obidos/tg/detail/-/0735617228/qid=1080277573/sr=8-1/ref=pd_ka_1/102-9825269-6457731?v=glance&s=books&n=50784"">textile</a> some trailing text</p>
+				@"<p>some leading text <a class=""externalLink"" href=""http://www.amazon.com/exec/obidos/tg/detail/-/0735617228/qid=1080277573/sr=8-1/ref=pd_ka_1/102-9825269-6457731?v=glance&s=books&n=50784"">textile</a> some trailing text</p>
 ");
 		}
+		#endregion
 
+		#region SpaceInHyperlinkTextTest
+		[Test] public void SpaceInHyperlinkTextTest()
+		{
+			FormatTest(
+				@"My ""xxx FooBar xxx"":[http://www.flexwiki.com/FooBar/default.aspx] link.",
+				@"<p>My <a class=""externalLink"" href=""http://www.flexwiki.com/FooBar/default.aspx"">xxx FooBar xxx</a> link.</p>
+");
+			FormatTest(
+				@"My ""xxx FooBar xxx"":http://www.flexwiki.com/FooBar/default.aspx link.",
+				@"<p>My <a class=""externalLink"" href=""http://www.flexwiki.com/FooBar/default.aspx"">xxx FooBar xxx</a> link.</p>
+");
+		}
+		#endregion
+
+		#region DollarInLinkTest
 		[Test] public void DollarInLinkTest()
 		{
 			FormatTest(
 				@"""Main directory"":file://servername/umuff$/folder%20name/file.txt
+""Main directory"":[file://servername/umuff$/folder%20name/file.txt]
 file://servername/umuff$/folder%20name/file.txt",
-				@"<p><a href=""file://servername/umuff$/folder%20name/file.txt"">Main directory</a></p>
-<p><a href=""file://servername/umuff$/folder%20name/file.txt"">file://servername/umuff$/folder%20name/file.txt</a></p>
+				@"<p><a class=""externalLink"" href=""file://servername/umuff$/folder%20name/file.txt"">Main directory</a></p>
+<p><a class=""externalLink"" href=""file://servername/umuff$/folder%20name/file.txt"">Main directory</a></p>
+<p><a class=""externalLink"" href=""file://servername/umuff$/folder%20name/file.txt"">file://servername/umuff$/folder%20name/file.txt</a></p>
 ");
 		}
+		#endregion
 
+		#region TildeInLinkTest
 		[Test] public void TildeInLinkTest()
 		{
 			FormatTest(
 				@"""Main directory"":file://servername/umuff~/folder%20name/file.txt
+""Main directory"":[file://servername/umuff~/folder%20name/file.txt]
 file://servername/umuff~/folder%20name/file.txt",
-				@"<p><a href=""file://servername/umuff~/folder%20name/file.txt"">Main directory</a></p>
-<p><a href=""file://servername/umuff~/folder%20name/file.txt"">file://servername/umuff~/folder%20name/file.txt</a></p>
+				@"<p><a class=""externalLink"" href=""file://servername/umuff~/folder%20name/file.txt"">Main directory</a></p>
+<p><a class=""externalLink"" href=""file://servername/umuff~/folder%20name/file.txt"">Main directory</a></p>
+<p><a class=""externalLink"" href=""file://servername/umuff~/folder%20name/file.txt"">file://servername/umuff~/folder%20name/file.txt</a></p>
 ");
 		}
+		#endregion
 
+		#region EmphaisInLinkTest
+		[Ignore("This test shows an bug in link. Should be fixed in next patch. --ChristianMetz")]
+		[Test] public void EmphaisInLinkTest()
+		{
+			FormatTest(
+				@"http://localhost/_default/orange_futurism/portal.jpg",
+				@"<p><img src=""http://localhost/_default/orange_futurism/portal.jpg"" /></p>
+");
+
+			FormatTest(
+				@"""Main directory"":file://servername/_default/orange_futurism/file.txt",
+				@"<p><a class=""externalLink"" href=""file://servername/_default/orange_futurism/file.txt"">Main directory</a></p>
+");
+			FormatTest(
+				@"""Main directory"":[file://servername/_default/orange_futurism/file.txt]",
+				@"<p><a class=""externalLink"" href=""file://servername/_default/orange_futurism/file.txt"">Main directory</a></p>
+");
+			FormatTest(
+				@"file://servername/_default/orange_futurism/file.txt",
+				@"<p><a class=""externalLink"" href=""file://servername/_default/orange_futurism/file.txt"">file://servername/umuff~/folder%20name/file.txt</a></p>
+");
+		}
+		
+
+		#endregion
+
+		#region Hash126InLink
 		[Test] public void Hash126InLink()
 		{
 			FormatTest(
 				@"""Main directory"":file://servername/umuff&#126;/folder%20name/file.txt
+""Main directory"":[file://servername/umuff&#126;/folder%20name/file.txt]
 file://servername/umuff&#126;/folder%20name/file.txt",
-				@"<p><a href=""file://servername/umuff&#126;/folder%20name/file.txt"">Main directory</a></p>
-<p><a href=""file://servername/umuff&#126;/folder%20name/file.txt"">file://servername/umuff&#126;/folder%20name/file.txt</a></p>
+				@"<p><a class=""externalLink"" href=""file://servername/umuff&#126;/folder%20name/file.txt"">Main directory</a></p>
+<p><a class=""externalLink"" href=""file://servername/umuff&#126;/folder%20name/file.txt"">Main directory</a></p>
+<p><a class=""externalLink"" href=""file://servername/umuff&#126;/folder%20name/file.txt"">file://servername/umuff&#126;/folder%20name/file.txt</a></p>
 ");
 		}
+		#endregion
 
+		#region MailToLink
 		[Test] public void MailToLink()
 		{
 			FormatTest(
 				@"Please send mailto:person@domain.com some email!",
-				@"<p>Please send <a href=""mailto:person@domain.com"">mailto:person@domain.com</a> some email!</p>
+				@"<p>Please send <a class=""externalLink"" href=""mailto:person@domain.com"">mailto:person@domain.com</a> some email!</p>
 ");
 
 			FormatTest(
 				@"Please send ""person"":mailto:person@domain.com some email!",
-				@"<p>Please send <a href=""mailto:person@domain.com"">person</a> some email!</p>
+				@"<p>Please send <a class=""externalLink"" href=""mailto:person@domain.com"">person</a> some email!</p>
+");
+			FormatTest(
+				@"Please send ""person"":[mailto:person@domain.com] some email!",
+				@"<p>Please send <a class=""externalLink"" href=""mailto:person@domain.com"">person</a> some email!</p>
 ");
 		}
+		#endregion
 
+		#region BasicWikinames
 		[Test] public void BasicWikinames()
 		{
 			FormatTest(
@@ -843,7 +945,9 @@ file://servername/umuff&#126;/folder%20name/file.txt",
 				@"<p><a title=""Click here to create this topic"" class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("LinkThis")) + @""">LinkThis</a>, <a title=""Click here to create this topic"" class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("AndLinkThis")) + @""">AndLinkThis</a>, dontLinkThis, (<a title=""Click here to create this topic"" class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("LinkThis")) + @""">LinkThis</a>), <em>LinkAndEmphasisThis</em> <strong>LinkAndBold</strong> (<a title=""Click here to create this topic"" class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("LinkThisOneToo")) + @""">LinkThisOneToo</a>)</p>
 ");
 		}
+		#endregion
 
+		#region PreNoformatting
 		[Test] public void PreNoformatting()
 		{
 			FormatTest(
@@ -853,7 +957,9 @@ file://servername/umuff&#126;/folder%20name/file.txt",
 </pre>
 ");			
 		}
+		#endregion
 
+		#region TableTests
 		[Test] public void TableTests()
 		{
 			FormatTest(
@@ -898,7 +1004,9 @@ file://servername/umuff&#126;/folder%20name/file.txt",
 </table>
 ");
 		}
+		#endregion
 
+		#region EmoticonInTableTest
 		[Test] public void EmoticonInTableTest()
 		{
 			FormatTest(
@@ -910,25 +1018,31 @@ file://servername/umuff&#126;/folder%20name/file.txt",
 </table>
 ");
 		}
+		#endregion
 
+		#region WikinameInTableTest
 		[Test] public void WikinameInTableTest()
 		{
 			string s = FormattedTestText(@"||BigDog||");
 			AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_cb.TopicNameFor("BigDog")) + @""">BigDog</a>");
 		}
+		#endregion
 
+		#region HyperlinkInTableTest
 		[Test] public void HyperlinkInTableTest()
 		{
 			FormatTest(
 				@"||http://www.yahoo.com/foo.html||",
 				@"<table cellpadding=""2"" cellspacing=""1"" class=""TableClass"">
 <tr>
-<td  class=""TableCell""><a href=""http://www.yahoo.com/foo.html"">http://www.yahoo.com/foo.html</a></td>
+<td  class=""TableCell""><a class=""externalLink"" href=""http://www.yahoo.com/foo.html"">http://www.yahoo.com/foo.html</a></td>
 </tr>
 </table>
 ");
 		}
+		#endregion
 
+		#region EmoticonTest
 		[Test] public void EmoticonTest()
 		{
 			FormatTest(
@@ -936,16 +1050,18 @@ file://servername/umuff&#126;/folder%20name/file.txt",
 				@"<p><img src=""" + _lm.LinkToImage("emoticons/regular_smile.gif") + @"""/> <img src=""" + _lm.LinkToImage("emoticons/sad_smile.gif") + @"""/></p>
 ");
 		}
+		#endregion
 
-
-
+		#region BracketedLinks
 		[Test] public void BracketedLinks()
 		{
 			string s = FormattedTestText(@"[BigBox] summer [eDocuments] and [e] and [HelloWorld] and [aZero123]");
 			AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_cb.TopicNameFor("BigBox")) + @""">BigBox</a>");
 			AssertStringContains(s, @"<a title=""Click here to create this topic"" class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("eDocuments")) + @""">eDocuments</a> and <a title=""Click here to create this topic"" class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("e")) + @""">e</a> and <a title=""Click here to create this topic"" class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("HelloWorld")) + @""">HelloWorld</a> and <a title=""Click here to create this topic"" class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("aZero123")) + @""">aZero123</a>");
 		}
+		#endregion
 
+		#region CodeFormatting
 		[Test] public void CodeFormatting()
 		{
 			FormatTest(
@@ -963,7 +1079,9 @@ And the text in the parens and brackets should be code formatted:
 <p>(<code>hello</code>) [<code>world</code>] [<code>hello world</code>]</p>
 ");
 		}
+		#endregion
 
+		#region ImageLink
 		[Test] public void ImageLink()
 		{
 			FormatTest(
@@ -971,30 +1089,100 @@ And the text in the parens and brackets should be code formatted:
 				@"<p><img src=""http://www.microsoft.com/billgates/images/sofa-bill.jpg""/></p>
 ");
 			FormatTest(
+				@"http://www.microsoft.com/billgates/images/sofa-bill.JPG",
+				@"<p><img src=""http://www.microsoft.com/billgates/images/sofa-bill.JPG""/></p>
+");
+			FormatTest(
 				@"http://www.microsoft.com/billgates/images/sofa-bill.png",
 				@"<p><img src=""http://www.microsoft.com/billgates/images/sofa-bill.png""/></p>
+");
+			FormatTest(
+				@"http://www.microsoft.com/billgates/images/sofa-bill.PNG",
+				@"<p><img src=""http://www.microsoft.com/billgates/images/sofa-bill.PNG""/></p>
 ");
 			FormatTest(
 				@"http://www.microsoft.com/billgates/images/sofa-bill.gif",
 				@"<p><img src=""http://www.microsoft.com/billgates/images/sofa-bill.gif""/></p>
 ");
 			FormatTest(
+				@"http://www.microsoft.com/billgates/images/SOFA-BILL.GIF",
+				@"<p><img src=""http://www.microsoft.com/billgates/images/SOFA-BILL.GIF""/></p>
+");
+			FormatTest(
 				@"http://www.microsoft.com/billgates/images/sofa-bill.jpeg",
 				@"<p><img src=""http://www.microsoft.com/billgates/images/sofa-bill.jpeg""/></p>
+");
+			FormatTest(
+				@"http://www.microsoft.com/billgates/images/SOFA-BILL.JPEG",
+				@"<p><img src=""http://www.microsoft.com/billgates/images/SOFA-BILL.JPEG""/></p>
 ");
 			// Make sure we really need the period before the trigger extensions...
 			// Look for a hyperlink, not an <img>
 			FormatTestContains(
 				@"http://www.microsoft.com/billgates/images/sofa-billjpeg",
-				@"<a href");
+				@"<a class=""externalLink"" href");
 		}
+		#endregion
 
+		#region FileLinks
+		[Test] public void FileLinks()
+		{
+			FormatTest(
+				@"http://www.microsoft.com/download/word.doc",
+				@"<p><a class=""externalLink"" href=""http://www.microsoft.com/download/word.doc"">http://www.microsoft.com/download/word.doc</a></p>
+");
+
+			FormatTest(
+				@"http://www.microsoft.com/download/excel.xls",
+				@"<p><a class=""externalLink"" href=""http://www.microsoft.com/download/excel.xls"">http://www.microsoft.com/download/excel.xls</a></p>
+");
+
+			FormatTest(
+				@"http://www.microsoft.com/download/powerpoint.ppt",
+				@"<p><a class=""externalLink"" href=""http://www.microsoft.com/download/powerpoint.ppt"">http://www.microsoft.com/download/powerpoint.ppt</a></p>
+");
+
+			FormatTest(
+				@"file:\\server\share\directory\mydoc.doc",
+				@"<p><a class=""externalLink"" href=""file:\\server\share\directory\mydoc.doc"">file:\\server\share\directory\mydoc.doc</a></p>
+");
+
+			FormatTest(
+				@"file://server\share\directory\mydoc1.jpg",
+				@"<p><a class=""externalLink"" href=""file://server\share\directory\mydoc1.jpg"">file://server\share\directory\mydoc1.jpg</a></p>
+");
+
+			FormatTest(
+				@"file:\\server\share\directory\mydoc2.doc",
+				@"<p><a class=""externalLink"" href=""file:\\server\share\directory\mydoc2.doc"">file:\\server\share\directory\mydoc2.doc</a></p>
+");
+
+			FormatTest(
+				@"file://server\share\directory\mydoc3.jpg",
+				@"<p><a class=""externalLink"" href=""file://server\share\directory\mydoc3.jpg"">file://server\share\directory\mydoc3.jpg</a></p>
+");
+
+			FormatTest(
+				@"notes://Server/file.nsf/viename?openView",
+				@"<p><a class=""externalLink"" href=""notes://Server/file.nsf/viename?openView"">notes://Server/file.nsf/viename?openView</a></p>
+");
+
+			FormatTest(
+				@"ms-help:\\Server\file.nsf\viename?openView",
+				@"<p><a class=""externalLink"" href=""ms-help:\\Server\file.nsf\viename?openView"">ms-help:\\Server\file.nsf\viename?openView</a></p>
+");
+		}
+		#endregion
+
+		#region BehaviorTest
 		[Test] public void BehaviorTest()
 		{
 			string s = FormattedTestText(@"@@ProductName@@");
 			AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_cb.TopicNameFor("FlexWiki")) + @""">FlexWiki</a>");
 		}
+		#endregion
 
+		#region BehaviorWithLineBreak
 		[Test] public void BehaviorWithLineBreak()
 		{
 			string s = FormattedTestText(@"@@[100, 200
@@ -1002,32 +1190,42 @@ And the text in the parens and brackets should be code formatted:
 300]@@");
 			AssertStringContains(s, @"100200300");
 		}
+		#endregion
 
+		#region ImageBehaviorTwoParamTest
 		[Test] public void ImageBehaviorTwoParamTest() 
 		{
 			FormatTest("@@Image(\"http://server/image.jpg\", \"Alternative text\")@@",
 				"<p><img src=\"http://server/image.jpg\" alt=\"Alternative text\"/></p>\n");
 		}
+		#endregion
 
+		#region ImageBehaviorFourParamTest
 		[Test] public void ImageBehaviorFourParamTest() 
 		{
 			FormatTest("@@Image(\"http://server/image.jpg\", \"Alternative text\", \"500\", \"400\")@@",
 				"<p><img src=\"http://server/image.jpg\" alt=\"Alternative text\" " +
 				"width=\"500\" height=\"400\"/></p>\n");
 		}
+		#endregion
 
+		#region ImageBehaviorEmbeddedQuotationMarks
 		[Test] public void ImageBehaviorEmbeddedQuotationMarks() 
 		{
 			FormatTest(@"@@Image(""http://server/image.jpg"", ""Alt \""text\"""")@@",
 				"<p><img src=\"http://server/image.jpg\" alt=\"Alt &quot;text&quot;\"/></p>\n");
 		}
+		#endregion
 
+		#region ImageBehaviorTwoPerLineTest
 		[Test] public void ImageBehaviorTwoPerLineTest()
 		{
 			FormatTest("@@Image(\"http://server/image.jpg\", \"alt\")@@ and @@Image(\"http://server/image2.jpg\", \"alt2\")@@",
 				"<p><img src=\"http://server/image.jpg\" alt=\"alt\"/> and <img src=\"http://server/image2.jpg\" alt=\"alt2\"/></p>\n");
 		}
+		#endregion
 
+		#region XmlTransformBehaviorTwoParamTest
 		[Test] public void XmlTransformBehaviorTwoParamTest() 
 		{
 			// Need to escape all the backslashes in the path
@@ -1044,25 +1242,30 @@ And the text in the parens and brackets should be code formatted:
 </tr>
 <tr>
 <td  class=""TableCell"">Wed, 07 Jan 2004 05:45:00 GMT</td>
-<td  class=""TableCell""><a href=""http://weblogs.asp.net/aconrad/archive/2004/01/06/48205.aspx"">Fast Chicken</a></td>
+<td  class=""TableCell""><a class=""externalLink"" href=""http://weblogs.asp.net/aconrad/archive/2004/01/06/48205.aspx"">Fast Chicken</a></td>
 </tr>
 <tr>
 <td  class=""TableCell"">Wed, 07 Jan 2004 03:36:00 GMT</td>
-<td  class=""TableCell""><a href=""http://weblogs.asp.net/CSchittko/archive/2004/01/06/48178.aspx"">Are You Linked In?</a></td>
+<td  class=""TableCell""><a class=""externalLink"" href=""http://weblogs.asp.net/CSchittko/archive/2004/01/06/48178.aspx"">Are You Linked In?</a></td>
 </tr>
 <tr>
 <td  class=""TableCell"">Wed, 07 Jan 2004 03:27:00 GMT</td>
-<td  class=""TableCell""><a href=""http://weblogs.asp.net/francip/archive/2004/01/06/48172.aspx"">Whidbey configuration APIs</a></td>
+<td  class=""TableCell""><a class=""externalLink"" href=""http://weblogs.asp.net/francip/archive/2004/01/06/48172.aspx"">Whidbey configuration APIs</a></td>
 </tr>
 </table></p>
 ");
 		}
+		#endregion
 
+		#region XmlTransformBehaviorXmlParamNotFoundTest
 		[Test] public void XmlTransformBehaviorXmlParamNotFoundTest() 
 		{
 			FormatTestContains("@@XmlTransform(\"file://noWayThisExists\", \"Alternative text\")@@",
 				"Failed to load XML parameter");
 		}
+		#endregion
+
+		#region XmlTransformBehaviorXslParamNotFoundTest
 		[Ignore("This test fails on the build machine. Not sure why, but it's blocking deployment of CruiseControl, so I'll come back to it later. --CraigAndera")]
 		[Test] public void XmlTransformBehaviorXslParamNotFoundTest() 
 		{
@@ -1072,115 +1275,195 @@ And the text in the parens and brackets should be code formatted:
 			FormatTestContains("@@XmlTransform(\"" + xmlPath + "\", \"file://noWayThisExists\")@@",
 				"Failed to load XSL parameter");
 		}
+		#endregion
 
+		#region BracketedHyperLinks
 		[Test] public void BracketedHyperLinks()
 		{
 			FormatTest(
 				@"(http://www.msn.com) (http://www.yahoo.com) (http://www.yahoo.com)",
-				@"<p>(<a href=""http://www.msn.com"">http://www.msn.com</a>) (<a href=""http://www.yahoo.com"">http://www.yahoo.com</a>) (<a href=""http://www.yahoo.com"">http://www.yahoo.com</a>)</p>
+				@"<p>(<a class=""externalLink"" href=""http://www.msn.com"">http://www.msn.com</a>) (<a class=""externalLink"" href=""http://www.yahoo.com"">http://www.yahoo.com</a>) (<a class=""externalLink"" href=""http://www.yahoo.com"">http://www.yahoo.com</a>)</p>
 ");
 			FormatTest(
 				@"[http://www.msn.com] [http://www.yahoo.com] [http://www.yahoo.com]",
-				@"<p>[<a href=""http://www.msn.com"">http://www.msn.com</a>] [<a href=""http://www.yahoo.com"">http://www.yahoo.com</a>] [<a href=""http://www.yahoo.com"">http://www.yahoo.com</a>]</p>
+				@"<p><a class=""externalLink"" href=""http://www.msn.com"">http://www.msn.com</a> <a class=""externalLink"" href=""http://www.yahoo.com"">http://www.yahoo.com</a> <a class=""externalLink"" href=""http://www.yahoo.com"">http://www.yahoo.com</a></p>
 ");
 			FormatTest(
 				@"{http://www.msn.com} {http://www.yahoo.com} {http://www.yahoo.com}",
-				@"<p>{<a href=""http://www.msn.com"">http://www.msn.com</a>} {<a href=""http://www.yahoo.com"">http://www.yahoo.com</a>} {<a href=""http://www.yahoo.com"">http://www.yahoo.com</a>}</p>
+				@"<p>{<a class=""externalLink"" href=""http://www.msn.com"">http://www.msn.com</a>} {<a class=""externalLink"" href=""http://www.yahoo.com"">http://www.yahoo.com</a>} {<a class=""externalLink"" href=""http://www.yahoo.com"">http://www.yahoo.com</a>}</p>
 ");
 		}
+		#endregion
 
+		#region BasicHyperLinks
 		[Test] public void BasicHyperLinks()
 		{
 			FormatTest(
 				@"http://www.msn.com http://www.yahoo.com",
-				@"<p><a href=""http://www.msn.com"">http://www.msn.com</a> <a href=""http://www.yahoo.com"">http://www.yahoo.com</a></p>
+				@"<p><a class=""externalLink"" href=""http://www.msn.com"">http://www.msn.com</a> <a class=""externalLink"" href=""http://www.yahoo.com"">http://www.yahoo.com</a></p>
 ");
 			FormatTest(
 				@"ftp://feeds.scripting.com",
-				@"<p><a href=""ftp://feeds.scripting.com"">ftp://feeds.scripting.com</a></p>
+				@"<p><a class=""externalLink"" href=""ftp://feeds.scripting.com"">ftp://feeds.scripting.com</a></p>
 ");
 			FormatTest(
 				@"gopher://feeds.scripting.com",
-				@"<p><a href=""gopher://feeds.scripting.com"">gopher://feeds.scripting.com</a></p>
+				@"<p><a class=""externalLink"" href=""gopher://feeds.scripting.com"">gopher://feeds.scripting.com</a></p>
 ");
 			FormatTest(
 				@"telnet://melvyl.ucop.edu/",
-				@"<p><a href=""telnet://melvyl.ucop.edu/"">telnet://melvyl.ucop.edu/</a></p>
+				@"<p><a class=""externalLink"" href=""telnet://melvyl.ucop.edu/"">telnet://melvyl.ucop.edu/</a></p>
 ");
 			FormatTest(
 				@"news:comp.infosystems.www.servers.unix",
-				@"<p><a href=""news:comp.infosystems.www.servers.unix"">news:comp.infosystems.www.servers.unix</a></p>
+				@"<p><a class=""externalLink"" href=""news:comp.infosystems.www.servers.unix"">news:comp.infosystems.www.servers.unix</a></p>
 ");
 			FormatTest(
 				@"https://server/directory",
-				@"<p><a href=""https://server/directory"">https://server/directory</a></p>
+				@"<p><a class=""externalLink"" href=""https://server/directory"">https://server/directory</a></p>
 ");
 			FormatTest(
 				@"http://www.msn:8080/ http://www.msn:8080",
-				@"<p><a href=""http://www.msn:8080/"">http://www.msn:8080/</a> <a href=""http://www.msn:8080"">http://www.msn:8080</a></p>
+				@"<p><a class=""externalLink"" href=""http://www.msn:8080/"">http://www.msn:8080/</a> <a class=""externalLink"" href=""http://www.msn:8080"">http://www.msn:8080</a></p>
 ");
-			
+			FormatTest(
+				@"notes://server/directory",
+				@"<p><a class=""externalLink"" href=""notes://server/directory"">notes://server/directory</a></p>
+");
+			FormatTest(
+				@"ms-help://server/directory",
+				@"<p><a class=""externalLink"" href=""ms-help://server/directory"">ms-help://server/directory</a></p>
+");			
 		}
+		#endregion
+
+		#region NamedHyperLinks
 		[Test] public void NamedHyperLinks()
 		{
 			FormatTest(
 				@"""msn"":http://www.msn.com ""yahoo"":http://www.yahoo.com",
-				@"<p><a href=""http://www.msn.com"">msn</a> <a href=""http://www.yahoo.com"">yahoo</a></p>
+				@"<p><a class=""externalLink"" href=""http://www.msn.com"">msn</a> <a class=""externalLink"" href=""http://www.yahoo.com"">yahoo</a></p>
 ");
 			FormatTest(
 				@"""ftp link"":ftp://feeds.scripting.com",
-				@"<p><a href=""ftp://feeds.scripting.com"">ftp link</a></p>
+				@"<p><a class=""externalLink"" href=""ftp://feeds.scripting.com"">ftp link</a></p>
 ");
 			FormatTest(
 				@"""gopher link"":gopher://feeds.scripting.com",
-				@"<p><a href=""gopher://feeds.scripting.com"">gopher link</a></p>
+				@"<p><a class=""externalLink"" href=""gopher://feeds.scripting.com"">gopher link</a></p>
 ");
 			FormatTest(
 				@"""telnet link"":telnet://melvyl.ucop.edu/",
-				@"<p><a href=""telnet://melvyl.ucop.edu/"">telnet link</a></p>
+				@"<p><a class=""externalLink"" href=""telnet://melvyl.ucop.edu/"">telnet link</a></p>
 ");
 			FormatTest(
 				@"""news group link"":news:comp.infosystems.www.servers.unix",
-				@"<p><a href=""news:comp.infosystems.www.servers.unix"">news group link</a></p>
+				@"<p><a class=""externalLink"" href=""news:comp.infosystems.www.servers.unix"">news group link</a></p>
 ");
 			FormatTest(
 				@"""secure link"":https://server/directory",
-				@"<p><a href=""https://server/directory"">secure link</a></p>
+				@"<p><a class=""externalLink"" href=""https://server/directory"">secure link</a></p>
 ");
 			FormatTest(
 				@"""port link"":http://www.msn:8080/ ""port link"":http://www.msn:8080",
-				@"<p><a href=""http://www.msn:8080/"">port link</a> <a href=""http://www.msn:8080"">port link</a></p>
+				@"<p><a class=""externalLink"" href=""http://www.msn:8080/"">port link</a> <a class=""externalLink"" href=""http://www.msn:8080"">port link</a></p>
+");
+			FormatTest(
+				@"""notes link"":notes://server/directory",
+				@"<p><a class=""externalLink"" href=""notes://server/directory"">notes link</a></p>
+");
+			FormatTest(
+				@"""ms-help link"":ms-help://server/directory",
+				@"<p><a class=""externalLink"" href=""ms-help://server/directory"">ms-help link</a></p>
 ");
 		}
+		#endregion
+
+		#region NamedHyperLinksWithBrackets
+		[Test] public void NamedHyperLinksWithBrackets()
+		{
+			FormatTest(
+				@"""msn"":[http://www.msn.com] ""yahoo"":[http://www.yahoo.com]",
+				@"<p><a class=""externalLink"" href=""http://www.msn.com"">msn</a> <a class=""externalLink"" href=""http://www.yahoo.com"">yahoo</a></p>
+");
+			FormatTest(
+				@"""ftp link"":[ftp://feeds.scripting.com]",
+				@"<p><a class=""externalLink"" href=""ftp://feeds.scripting.com"">ftp link</a></p>
+");
+			FormatTest(
+				@"""gopher link"":[gopher://feeds.scripting.com]",
+				@"<p><a class=""externalLink"" href=""gopher://feeds.scripting.com"">gopher link</a></p>
+");
+			FormatTest(
+				@"""telnet link"":[telnet://melvyl.ucop.edu/]",
+				@"<p><a class=""externalLink"" href=""telnet://melvyl.ucop.edu/"">telnet link</a></p>
+");
+			FormatTest(
+				@"""news group link"":[news:comp.infosystems.www.servers.unix]",
+				@"<p><a class=""externalLink"" href=""news:comp.infosystems.www.servers.unix"">news group link</a></p>
+");
+			FormatTest(
+				@"""secure link"":[https://server/directory]",
+				@"<p><a class=""externalLink"" href=""https://server/directory"">secure link</a></p>
+");
+			FormatTest(
+				@"""port link"":[http://www.msn:8080/] ""port link"":[http://www.msn:8080]",
+				@"<p><a class=""externalLink"" href=""http://www.msn:8080/"">port link</a> <a class=""externalLink"" href=""http://www.msn:8080"">port link</a></p>
+");
+			FormatTest(
+				@"""notes link"":[notes://server/directory]",
+				@"<p><a class=""externalLink"" href=""notes://server/directory"">notes link</a></p>
+");
+			FormatTest(
+				@"""ms-help link"":[ms-help://server/directory]",
+				@"<p><a class=""externalLink"" href=""ms-help://server/directory"">ms-help link</a></p>
+");
+		}
+		#endregion
+
+		#region PoundHyperLinks
 		[Test] public void PoundHyperLinks()
 		{
 			FormatTest(
 				@"http://www.msn.com#hello",
-				@"<p><a href=""http://www.msn.com#hello"">http://www.msn.com#hello</a></p>
+				@"<p><a class=""externalLink"" href=""http://www.msn.com#hello"">http://www.msn.com#hello</a></p>
 ");
 			FormatTest(
 				@"http://www.msn.com#hello",
-				@"<p><a href=""http://www.msn.com#hello"">http://www.msn.com#hello</a></p>
+				@"<p><a class=""externalLink"" href=""http://www.msn.com#hello"">http://www.msn.com#hello</a></p>
+");
+			FormatTest(
+				@"ms-help://server/directory#hello",
+				@"<p><a class=""externalLink"" href=""ms-help://server/directory#hello"">ms-help://server/directory#hello</a></p>
 ");
 		}
+		#endregion
+
+		#region PlusSignHyperLinks
 		[Test] public void PlusSignHyperLinks()
 		{
 			FormatTest(
 				@"http://www.google.com/search?q=wiki+url+specification",
-				@"<p><a href=""http://www.google.com/search?q=wiki+url+specification"">http://www.google.com/search?q=wiki+url+specification</a></p>
+				@"<p><a class=""externalLink"" href=""http://www.google.com/search?q=wiki+url+specification"">http://www.google.com/search?q=wiki+url+specification</a></p>
 ");
 		}
+		#endregion
+
+		#region PercentSignHyperLinks
 		[Test] public void PercentSignHyperLinks()
 		{
 			FormatTest(
 				@"file://server/directory/file%20GM%.doc",
-				@"<p><a href=""file://server/directory/file%20GM%.doc"">file://server/directory/file%20GM%.doc</a></p>
+				@"<p><a class=""externalLink"" href=""file://server/directory/file%20GM%.doc"">file://server/directory/file%20GM%.doc</a></p>
 ");
 			FormatTest(
 				@"""Sales 20% Markup"":file://server/directory/sales%2020%%20Markup.doc",
-				@"<p><a href=""file://server/directory/sales%2020%%20Markup.doc"">Sales 20% Markup</a></p>
+				@"<p><a class=""externalLink"" href=""file://server/directory/sales%2020%%20Markup.doc"">Sales 20% Markup</a></p>
 ");
 		}
+		#endregion
+
+		#region DoNotConvertIntoLinks
 		[Test] public void DoNotConvertIntoLinks()
 		{
 			FormatTest(
@@ -1235,44 +1518,75 @@ And the text in the parens and brackets should be code formatted:
 				@"telnet:",
 				@"<p>telnet:</p>
 ");
+			FormatTest(
+				@"ms-help:",
+				@"<p>ms-help:</p>
+");
+			FormatTest(
+				@"ms-help",
+				@"<p>ms-help</p>
+");
+			FormatTest(
+				@"notes",
+				@"<p>notes</p>
+");
+			FormatTest(
+				@"notes:",
+				@"<p>notes:</p>
+");
 		}
+		#endregion
+
+		#region ParensHyperLinks
 		[Test] public void ParensHyperLinks()
 		{
 			FormatTest(
 				@"file://servername/directory/File%20(1420).txt",
-				@"<p><a href=""file://servername/directory/File%20(1420).txt"">file://servername/directory/File%20(1420).txt</a></p>
+				@"<p><a class=""externalLink"" href=""file://servername/directory/File%20(1420).txt"">file://servername/directory/File%20(1420).txt</a></p>
 ");
 		}
+		#endregion
+
+		#region SemicolonHyperLinks
 		[Test] public void SemicolonHyperLinks()
 		{
 			FormatTest(
 				@"http://servername/directory/File.html?test=1;test2=2",
-				@"<p><a href=""http://servername/directory/File.html?test=1;test2=2"">http://servername/directory/File.html?test=1;test2=2</a></p>
+				@"<p><a class=""externalLink"" href=""http://servername/directory/File.html?test=1;test2=2"">http://servername/directory/File.html?test=1;test2=2</a></p>
 ");
 		}
+		#endregion
+
+		#region DollarSignHyperLinks
 		[Test] public void DollarSignHyperLinks()
 		{
 			FormatTest(
 				@"http://feeds.scripting.com/discuss/msgReader$4",
-				@"<p><a href=""http://feeds.scripting.com/discuss/msgReader$4"">http://feeds.scripting.com/discuss/msgReader$4</a></p>
+				@"<p><a class=""externalLink"" href=""http://feeds.scripting.com/discuss/msgReader$4"">http://feeds.scripting.com/discuss/msgReader$4</a></p>
 ");
 			FormatTest(
 				@"file://machine/user$/folder/file",
-				@"<p><a href=""file://machine/user$/folder/file"">file://machine/user$/folder/file</a></p>
+				@"<p><a class=""externalLink"" href=""file://machine/user$/folder/file"">file://machine/user$/folder/file</a></p>
 ");
 		}
+		#endregion
+
+		#region TildeHyperLinks
 		[Test] public void TildeHyperLinks()
 		{
 			// Collides with textile subscript markup
 			FormatTest(
 				@"""TildeLink"":http://servername/~mike",
-				@"<p><a href=""http://servername/~mike"">TildeLink</a></p>
+				@"<p><a class=""externalLink"" href=""http://servername/~mike"">TildeLink</a></p>
 ");
 			FormatTest(
 				@"http://servername/~mike",
-				@"<p><a href=""http://servername/~mike"">http://servername/~mike</a></p>
+				@"<p><a class=""externalLink"" href=""http://servername/~mike"">http://servername/~mike</a></p>
 ");
-		}			
+		}
+		#endregion
+	
+		#region TextileFormat
 		[Test] public void TextileFormat()
 		{
 			// _emphasis_
@@ -1312,6 +1626,9 @@ And the text in the parens and brackets should be code formatted:
 ");
 
 		}
+		#endregion
+
+		#region WikiSignatureWithHyphenDates
 		[Test] public void WikiSignatureWithHyphenDates()
 		{
 			FormatTest(
@@ -1319,15 +1636,21 @@ And the text in the parens and brackets should be code formatted:
 				@"<p>Test comment. -- Derek Lakin [28-Jan-2005]</p>
 ");
 		}
+		#endregion
+
+		#region MultipleParametersHyperLinks
 		[Test] public void MultipleParametersHyperLinks()
 		{
 			// This test verifies the & sign can work in a URL
 			FormatTest(
 				@"http://www.google.com/search?sourceid=navclient&ie=UTF-8&oe=UTF-8",
-				@"<p><a href=""http://www.google.com/search?sourceid=navclient&ie=UTF-8&oe=UTF-8"">http://www.google.com/search?sourceid=navclient&ie=UTF-8&oe=UTF-8</a></p>
+				@"<p><a class=""externalLink"" href=""http://www.google.com/search?sourceid=navclient&ie=UTF-8&oe=UTF-8"">http://www.google.com/search?sourceid=navclient&ie=UTF-8&oe=UTF-8</a></p>
 ");
 
 		}
+		#endregion
+
+		#region Ambersand
 		[Test] public void Ambersand()
 		{
 			// Since & sign is not a valid html character also veryify that the & sign is correct when it is not in a URL
@@ -1336,6 +1659,9 @@ And the text in the parens and brackets should be code formatted:
 				@"<p>this test should make the &amp; sign a freindly HTML element</p>
 ");
 		}
+		#endregion
+
+		#region ListAfterPreTest
 		[Test] public void ListAfterPreTest()
 		{
 			FormatTest(
@@ -1353,8 +1679,9 @@ And the text in the parens and brackets should be code formatted:
 </ul>
 ");
 		}
+		#endregion
 
-
+		#region PreTest
 		[Test] public void PreTest()
 		{
 			FormatTest(
@@ -1376,54 +1703,9 @@ And the text in the parens and brackets should be code formatted:
 </pre>
 ");
 		}
+		#endregion
 
-		string FormattedTestText(string inputString)
-		{
-			return FormattedTestText(inputString, null);
-		}
-
-		string FormattedTestText(string inputString, AbsoluteTopicName top)
-		{
-			WikiOutput output = WikiOutput.ForFormat(OutputFormat.Testing, null);
-			Formatter.Format(top, inputString, output,  _cb, _lm, _externals, 0, null);
-			string o = output.ToString();
-			string o1 = o.Replace("\r", "");
-			return o1;
-		}
-
-		string FormattedTopic(AbsoluteTopicName top)
-		{
-			return FormattedTestText(TheFederation.ContentBaseForTopic(top).Read(top.LocalName), top);
-		}
-
-		void FormattedTopicContainsTest(AbsoluteTopicName top, string find)
-		{
-			FormatTestContains(FormattedTopic(top), find);
-		}
-
-		void FormatTestContains(string inputString, string find)
-		{
-			string s = FormattedTestText(inputString);
-			AssertStringContains(s, find);
-		}
-
-		void FormatTest(string inputString, string outputString)
-		{
-			FormatTest(inputString, outputString, null);
-		}
-
-		void FormatTest(string inputString, string outputString, AbsoluteTopicName top)
-		{
-			string o1 = FormattedTestText(inputString, top);
-			string o2 = outputString.Replace("\r", "");
-			if (o1 != o2)
-			{
-				Console.Error.WriteLine("Got     : " + o1);
-				Console.Error.WriteLine("Expected: " + o2);
-			}
-			Assert.AreEqual(o2, o1);
-		}			
-
+		#region PreFormattedBlockTests
 		[Test] public void PreFormattedBlockTests()
 		{
 			FormatTest(
@@ -1473,7 +1755,9 @@ No key case
 <p>Normal again</p>
 ");
 		}
+		#endregion 
 
+		#region ColorAndTextSizeTests
 		[Test] public void ColorAndTextSizeTests()
 		{
 			FormatTest(
@@ -1508,6 +1792,7 @@ Normal again
 				@"<p>normal <big><big>Very big </big></big> normal <small><small> very small </small></small><span style=""color:blue""> normal size blue</span></p>
 ");
 		}
+		#endregion 
 
 		#region FormSelectFieldPresentation tests
 		#region Single-line (combo) tests
@@ -1691,178 +1976,87 @@ Parameter name: values</span></span></p>
 		}
 		#endregion
 		#endregion
-	}
-
-	[TestFixture] public class NameMatches
-	{
-		// Tests to make sure the wikiname extraction work correctly
-		[Test] public void TestNames()
-		{
-			ExtractName("HelloThere029.1BigDog", "HelloThere029");
-			ExtractName("HelloThere.BigDog", "HelloThere.BigDog");
-			ExtractName("Hey.BigDog", "Hey.BigDog");
-			ExtractName(".BigDog", ".BigDog");
-			ExtractName("This.Long.NameHere.BigDog", "This.Long.NameHere.BigDog");
-			ExtractName("Hello.Big", null);
-			ExtractName("HelloT22here.BigD11og", "HelloT22here.BigD11og");
-			ExtractName("Some VerySimpleLinksFatPig", "VerySimpleLinksFatPig");	
-		}
-
-		[Test] public void TestBracketNames()
-		{
-			ExtractName(".[name]", ".[name]");
-			ExtractName("[name]", "[name]");
-			ExtractName("Name.[name]", "Name.[name]");
-			ExtractName("Name.[Hot]", "Name.[Hot]");
-			ExtractName("Name.[HotDog]", "Name.[HotDog]");
-		}
-
-		void ExtractName(string input, string match)
-		{
-			Regex m = new Regex(Formatter.extractWikiNamesString);
-			if (match != null)
-			{
-				Assert.AreEqual(1, m.Matches(input).Count, match);
-				Assert.AreEqual(match, m.Matches(input)[0].Groups["topic"].Value, match);
-			}
-			else
-			{
-				Assert.AreEqual(0, m.Matches(input).Count, match);
-			}
-		}
+	
 
 
-	}
-
-	[TestFixture] public class FormattingServicesTests : WikiTests
-	{
-		ContentBase	_base;
-		ArrayList _versions;
-		LinkMaker _lm;
-
-		[SetUp] public void Init()
-		{
-			string author = "tester-joebob";
-			_lm = new LinkMaker("http://bogusville");
-			TheFederation = new Federation(OutputFormat.HTML, _lm);
-
-			_versions = new ArrayList();
-			_base = CreateStore("FlexWiki.Base");
-
-			WriteTestTopicAndNewVersion(_base, "TopicOne", @"1
-2
-3
-4
-5
-6
-7
-8
-9", author);
-			System.Threading.Thread.Sleep(100); // need the newer one to be newer enough!
-			WriteTestTopicAndNewVersion(_base, "TopicOne", @"1
-2
-a
-b
-c
-3
-4
-5
-6
-7
-8
-9", author);
-			System.Threading.Thread.Sleep(100); // need the newer one to be newer enough!
-			WriteTestTopicAndNewVersion(_base, "TopicOne", @"1
-2
-a
-b
-6
-7
-8
-9", author);
-
-			foreach (TopicChange change in _base.AllChangesForTopic(new LocalTopicName("TopicOne")))
-				_versions.Add(change.Version);
-		}
-
-		[TearDown] public void DeInit()
-		{
-			_base.Delete();
-		}
-
+		#region Private Methodes
 		
-		ContentBase ContentBase()
+		#region ShouldBeTopicName
+		private void ShouldBeTopicName(string s)
 		{
-			return _base;
-		}
-
-		[Test] public void OldestTest()
-		{
-			// Test the oldest; should have no markers
-			VersionCompare("TopicOne", (string)_versions[_versions.Count - 1], @"<p>1</p>
-<p>2</p>
-<p>3</p>
-<p>4</p>
-<p>5</p>
-<p>6</p>
-<p>7</p>
-<p>8</p>
-<p>9</p>
-");
-		}
-
-		[Test] public void InsertTest()
-		{
-			// Inserts oldest should have the 
-			VersionCompare("TopicOne", (string)_versions[_versions.Count - 2], @"<p>1</p>
-<p>2</p>
-<p style=""background: palegreen"">a</p>
-<p style=""background: palegreen"">b</p>
-<p style=""background: palegreen"">c</p>
-<p>3</p>
-<p>4</p>
-<p>5</p>
-<p>6</p>
-<p>7</p>
-<p>8</p>
-<p>9</p>
-");
-		}
-
-		[Test] public void DeleteTest()
-		{
-			VersionCompare("TopicOne", (string)_versions[_versions.Count - 3], @"<p>1</p>
-<p>2</p>
-<p>a</p>
-<p>b</p>
-<p style=""color: silver; text-decoration: line-through"">c</p>
-<p style=""color: silver; text-decoration: line-through"">3</p>
-<p style=""color: silver; text-decoration: line-through"">4</p>
-<p style=""color: silver; text-decoration: line-through"">5</p>
-<p>6</p>
-<p>7</p>
-<p>8</p>
-<p>9</p>
-");
-		}
-
-		void VersionCompare(string topic, string version, string expecting)
-		{
-			AbsoluteTopicName abs = ContentBase().TopicNameFor(topic);
-			abs.Version = version;
-			AbsoluteTopicName oldTopic = ContentBase().VersionPreviousTo(abs.LocalName); 
-
-
-			string got = Formatter.FormattedTopic(abs, OutputFormat.Testing, oldTopic, TheFederation, _lm, null);
-			got = got.Replace("\r", "");
-			string o2 = expecting.Replace("\r", "");
-
-			if (got != o2)
+			string topicName = s;
+			int hashIndex = s.IndexOf("#");
+			if (hashIndex > -1)
 			{
-				Console.Error.WriteLine("Got     : " + got);
+				topicName = s.Substring(0, hashIndex);
+			}
+			FormatTest(
+				@s,
+				@"<p><a title=""Click here to create this topic"" class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor(topicName)) + @""">" + topicName + @"</a></p>
+");
+		}
+		#endregion
+
+		#region ShouldBeTopicName
+		private void ShouldNotBeTopicName(string s)
+		{
+			FormatTest(
+				@s,
+				@"<p>" + s + @"</p>
+");
+		}
+		#endregion
+
+		private void AssertStringContains(string container, string find)
+		{
+			Assert.IsTrue(container.IndexOf(find) != -1, "Searching for " + find + " in " + container);
+		}
+		private string FormattedTestText(string inputString)
+		{
+			return FormattedTestText(inputString, null);
+		}
+
+		private string FormattedTestText(string inputString, AbsoluteTopicName top)
+		{
+			WikiOutput output = WikiOutput.ForFormat(OutputFormat.Testing, null);
+			Formatter.Format(top, inputString, output,  _cb, _lm, _externals, 0, null);
+			string o = output.ToString();
+			string o1 = o.Replace("\r", "");
+			return o1;
+		}
+
+		private string FormattedTopic(AbsoluteTopicName top)
+		{
+			return FormattedTestText(TheFederation.ContentBaseForTopic(top).Read(top.LocalName), top);
+		}
+
+		private void FormattedTopicContainsTest(AbsoluteTopicName top, string find)
+		{
+			FormatTestContains(FormattedTopic(top), find);
+		}
+
+		private void FormatTestContains(string inputString, string find)
+		{
+			string s = FormattedTestText(inputString);
+			AssertStringContains(s, find);
+		}
+
+		private void FormatTest(string inputString, string outputString)
+		{
+			FormatTest(inputString, outputString, null);
+		}
+
+		private void FormatTest(string inputString, string outputString, AbsoluteTopicName top)
+		{
+			string o1 = FormattedTestText(inputString, top);
+			string o2 = outputString.Replace("\r", "");
+			if (o1 != o2)
+			{
+				Console.Error.WriteLine("Got     : " + o1);
 				Console.Error.WriteLine("Expected: " + o2);
 			}
-			Assert.AreEqual(o2, got);
+			Assert.AreEqual(o2, o1);
 		}
+		#endregion
 	}
 }

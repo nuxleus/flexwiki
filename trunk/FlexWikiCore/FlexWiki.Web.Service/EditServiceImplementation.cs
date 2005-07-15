@@ -174,7 +174,7 @@ namespace FlexWiki.Web.Services
       // OmarS: why do I have to do this?
       ContentBase relativeToBase = TheFederation.ContentBaseForNamespace(topicName.Namespace);
 			
-      return FlexWiki.Formatting.Formatter.FormattedString(textToFormat, Formatting.OutputFormat.HTML,  relativeToBase, _linkMaker, null);
+      return FlexWiki.Formatting.Formatter.FormattedString(null, textToFormat, Formatting.OutputFormat.HTML,  relativeToBase, _linkMaker, null);
     }
 
     /// <summary>

@@ -81,7 +81,7 @@ namespace FlexWiki.Web
 					string fieldValue = TheFederation.GetTopicProperty(abs, fieldName);
 					string s1;
 					if (fieldName == "_Body")
-						s1 = Formatter.FormattedString(fieldValue, OutputFormat.HTML, TheFederation.ContentBaseForNamespace(ns), TheLinkMaker, null);
+						s1 = Formatter.FormattedString(abs, fieldValue, OutputFormat.HTML, TheFederation.ContentBaseForNamespace(ns), TheLinkMaker, null);
 					else
 						s1 = fieldValue;
 					// YUCK!  We need to wrap the enclosing <p> (if present) and replace it with the <div>

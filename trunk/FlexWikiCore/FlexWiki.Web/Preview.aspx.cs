@@ -60,9 +60,14 @@ namespace FlexWiki.Web
 
 			string body = Request.Form["body"];
 			string ns = Request.Form["defaultNamespace"];
+			string tn = Request.Form["topic"];
+
+			AbsoluteTopicName topicName = new AbsoluteTopicName(tn, ns);
+
 			Response.Write("<div class='PreviewMain'>");
-			Response.Write(Formatter.FormattedString(body, OutputFormat.HTML, TheFederation.ContentBaseForNamespace(ns), TheLinkMaker, null));
-			Response.Write("</div>");			
+			Response.Write(Formatter.FormattedString(topicName, body, OutputFormat.HTML, TheFederation.ContentBaseForNamespace(ns), TheLinkMaker, null));
+			Response.Write("</div>");
+			Response.Write(@"<div id='TopicTip' class='TopicTip' ></div>");
 		}
 	}
 }

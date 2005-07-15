@@ -70,13 +70,13 @@ namespace FlexWiki.Formatting
 		{
 Write(@"
 <script type=""text/javascript"" language=""javascript"">
-			function LinkMenu(anArray)
+			function LinkMenu(anArray, e)
 			{
 				var src = """";
 				var h = 0;
 				var w = 0;
 
-				window.event.cancelBubble = 'true';
+				e.cancelBubble = 'true';
 
 				
 				var menu = document.getElementById(""LinkMenu"");
@@ -93,21 +93,21 @@ Write(@"
 					var pair = anArray[i];
 					var each = """";
 					var itemName = 'LinkMenu' + i;
-					each += '<DIV class=""MenuItemNormal"" onmouseover=""MenuItemIn(this);"" onmouseout=""MenuItemOut(this);"">';
-					each += '<SPAN id=""' + itemName + '"" onclick=""MenuClick(' + ""'"" + pair[1] + ""'"" + ')"">' + pair[0] + '</SPAN>';
-					each += '</DIV>';
+					each += '<div class=""MenuItemNormal"" onmouseover=""MenuItemIn(this);"" onmouseout=""MenuItemOut(this);"">';
+					each += '<span id=""' + itemName + '"" onclick=""MenuClick(' + ""'"" + pair[1] + ""'"" + ')"">' + pair[0] + '<' + '/span>';
+					each += '<' + '/div>';
 					menu.innerHTML += each;
 					var item = document.getElementById(itemName);
 					if (item.offsetWidth > w)
 						w = item.offsetWidth;
 					h += item.offsetHeight;
 				}
-				menu.innerHTML = '<div onmouseover=""MenuIn(this);"" onmouseout=""MenuOut(this);"">' + menu.innerHTML + '</div>';
-				menu.style.left = event.clientX;
-				menu.style.top = event.clientY;
+				menu.innerHTML = '<div class=""MenuItems"" onmouseover=""MenuIn(this);"" onmouseout=""MenuOut(this);"">' + menu.innerHTML + '<' + '/div>';
+				menu.style.left = document.body.scrollLeft + e.clientX;
+				menu.style.top = document.body.scrollTop + e.clientY;
 				menu.style.height = h;
 				menu.style.width = w;
-				timeout = null;
+				timeout = window.setTimeout(""MenuTimeout()"", 4000, ""JavaScript"");
 				menu.style.display = 'block';
 			}
 			
@@ -141,7 +141,7 @@ Write(@"
 			function MenuClick(url)
 			{
 				MenuHide();
-				window.navigate(url);
+				document.location.href = url;
 			}
 			
 			function MenuIn(obj)

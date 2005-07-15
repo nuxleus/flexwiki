@@ -29,8 +29,19 @@ namespace FlexWiki.Web
 	/// </summary>
 	public class LastModified : BasePage
 	{
+		private string preferredNamespace = string.Empty;
+		private ArrayList uniqueNamespaces;
+
 		private void Page_Load(object sender, System.EventArgs e)
 		{
+			uniqueNamespaces = new ArrayList(TheFederation.Namespaces);
+			uniqueNamespaces.Sort();
+			
+			preferredNamespace = Request.QueryString["namespace"];
+			if (preferredNamespace == null)
+				preferredNamespace  = DefaultNamespace;
+
+
 		}
 
 		#region Web Form Designer generated code
@@ -66,17 +77,22 @@ namespace FlexWiki.Web
 			return str;
 		}
 
+		protected string NamespaceFilter()
+		{
+			string result = "<select onchange='changeNamespace()' class='SearchColumnFilterBox' id='NamespaceFilter'>";
+			foreach (string ns in uniqueNamespaces)
+			{
+				string sel = (ns == preferredNamespace) ? " selected " : "";
+				result += "<option " + sel + " value='"+ ns + "'>" + ns + "</option>";
+			}
+			result += "</select>";
+			return result;
+		}
 
 		protected void DoSearch()
 		{
 			LinkMaker lm = TheLinkMaker;
-			ArrayList uniqueNamespaces = new ArrayList(TheFederation.Namespaces);
-			uniqueNamespaces.Sort();
-
-			string preferredNamespace = Request.QueryString["namespace"];
-			if (preferredNamespace == null)
-				preferredNamespace  = DefaultNamespace;
-
+			
 			ContentBase cb = TheFederation.ContentBaseForNamespace(preferredNamespace);
 
 			// Get the list of topics and authors from the cache (or generate if needed)
@@ -110,55 +126,13 @@ namespace FlexWiki.Web
 			ArrayList uniqueAuthors = new ArrayList(uniqueAuthorsHash.Keys);
 			uniqueAuthors.Sort();
 
-			Response.Write(@"
-<script  type=""text/javascript"" language='javascript'>
-
-function filter()
-{
-	var author = AuthorFilter.options[AuthorFilter.selectedIndex].text;
-	var table = document.getElementById('MainTable');
-	for (var i = 0; i < table.rows.length; i++)
-	{
-		var row = table.rows.item(i);
-		var authorcell = row.cells.item(2);
-		var show = true;
-		if (author != '" + All + @"' && authorcell.innerText != author)
-			show = false;
-		if (show)
-			row.style.display = 'block';
-		else
-			row.style.display = 'none';
-	}
-}
-
-
-function changeNamespace()
-{
-	var ns = NamespaceFilter.options[NamespaceFilter.selectedIndex].text;
-	var newURL = '" + lm.LinkToRecentChanges(null) + @"?namespace=' + ns;
-	window.location = newURL;	
-}
-
-</script>
-<fieldset>
-<legend class='DialogTitle'>Recent Changes</legend>
-
-");
-
-			Response.Write("<p>Namespace: <select onchange='changeNamespace()' class='SearchColumnFilterBox' id='NamespaceFilter'>");
-			foreach (string ns in uniqueNamespaces)
-			{
-				string sel = (ns == preferredNamespace) ? " selected " : "";
-				Response.Write("<option " + sel + " value='"+ ns + "'>" + ns + "</option>");
-			}
-			Response.Write(@"</select></p>");		
 
 
 			Response.Write("<table cellspacing='0' cellpadding='2' border='0'>");
 			Response.Write("<thead>");
-			Response.Write("<td class='SearchColumnHeading'>Topic</td>");
-			Response.Write("<td class='SearchColumnHeading'>Modified</td>");
-			Response.Write("<td class='SearchColumnHeading'>Author: ");
+			Response.Write("<td class=\"SearchColumnHeading\" width=\"300\">Topic</td>");
+			Response.Write("<td class=\"SearchColumnHeading\" width=\"100\">Modified</td>");
+			Response.Write("<td class=\"SearchColumnHeading\" width=\"200\">Author: ");
 			Response.Write("<select  onchange='filter()' class='SearchColumnFilterBox' id='AuthorFilter'>");
 			Response.Write("<option value='"+ All + "'>" + All + "</option>");
 			foreach (string author in uniqueAuthors)
@@ -166,16 +140,16 @@ function changeNamespace()
 			Response.Write(@"</select>");
 			Response.Write("</td>");
 
-			Response.Write("</thead><tbody id='MainTable'>");
+			Response.Write("</thead><tbody id=\"MainTable\">");
 
 			int row = 0;
 			foreach (AbsoluteTopicName  topic in topics)
 			{
-				Response.Write("<tr id='row" + row + "' style='display: block' class='" + (((row & 1) == 0) ? "SearchOddRow" : "SearchEvenRow") + "'>");
+				Response.Write("<tr id=\"row" + row + "\" class=\"" + (((row & 1) == 0) ? "SearchOddRow" : "SearchEvenRow") + "\">");
 				row++;
 
 				Response.Write("<td>");
-				Response.Write("<b><a  title=\"" + topic.Fullname + "\"  href=\"" + lm.LinkToTopic(topic) + "\">");
+				Response.Write("<b><a title=\"" + topic.Fullname + "\"  href=\"" + lm.LinkToTopic(topic) + "\">");
 				Response.Write(topic.Name);
 				Response.Write("</a></b>");
 				Response.Write("</td>");
@@ -193,7 +167,6 @@ function changeNamespace()
 				Response.Write("</tr>");            
 			}
 			Response.Write("</tbody></table>");
-			Response.Write("</fieldset>");
 
 		}
 	}

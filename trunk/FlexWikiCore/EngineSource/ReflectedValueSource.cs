@@ -21,7 +21,7 @@ namespace FlexWiki
 	{
 		public IBELObject ValueOf(string name, ArrayList arguments, ExecutionContext ctx)
 		{
-			BELMember mi = (BELMember)(Type.BELMembers[name]);
+			BELMember mi = Type.BELMembers[name] as BELMember;
 			if (mi== null)
 				return null;
 

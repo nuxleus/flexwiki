@@ -141,17 +141,39 @@ namespace FlexWiki
 			// OK, maybe a number
 			if (Char.IsDigit(c) || (c == '-' && (_Pos < _Input.Length) && Char.IsDigit(_Input[_Pos])))
 			{
+				bool isInt = true;
 				StringBuilder s = new StringBuilder();
 				s.Append(c);
 				while (_Pos < _Input.Length)
 				{
 					char next = _Input[_Pos];
 					if (!Char.IsDigit(next))
-						break;
+					{
+						isInt = false;
+						//maybe an identifier
+						if  (!Char.IsLetter(next))
+							break;
+					}
 					s.Append(next);
 					_Pos++;
 				}
-				return new Token(TokenType.TokenInteger, s.ToString());
+				if (isInt)
+				{
+					return new Token(TokenType.TokenInteger, s.ToString());
+				}
+				else
+				{
+					try
+					{
+						int integer = int.Parse(s.ToString());
+						//if ok, it should be an Integer
+						return new Token(TokenType.TokenInteger, s.ToString());
+					}
+					catch 
+					{
+						return new Token(TokenType.TokenIdentifier, s.ToString());
+					}
+				}
 			}
 
 			// A string literal?

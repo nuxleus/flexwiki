@@ -308,7 +308,7 @@ function tbinput()
 			OpenPane(Response.Output, cb1.FriendlyTitle, lm.LinkToImage("images/home.gif"), lm.LinkToTopic(new AbsoluteTopicName(cb1.HomePage, cb1.Namespace)), "Go to the home page");
 			if (cb1.ImageURL != null)
 				Response.Write("<img align='right' src='" + cb1.ImageURL + "'>");
-			Response.Write(Formatter.FormattedString(cb1.Description, OutputFormat.HTML, cb1, lm, null));
+			Response.Write(Formatter.FormattedString(topic, cb1.Description, OutputFormat.HTML, cb1, lm, null));
 			ClosePane(Response.Output);
 
 			/////////////////////////////
@@ -372,7 +372,7 @@ function tbinput()
 			if (about != null)
 			{
 				OpenPane(Response.Output, "About", lm.LinkToImage("images/help.gif"), null, null);
-				Response.Write(Formatter.FormattedString(about, OutputFormat.HTML, TheFederation.DefaultContentBase, lm, null));
+				Response.Write(Formatter.FormattedString(topic, about, OutputFormat.HTML, TheFederation.DefaultContentBase, lm, null));
 				ClosePane(Response.Output);
 			}
 			Response.Write("</td></tr>");
