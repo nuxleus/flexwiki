@@ -636,6 +636,12 @@
     <xmlpoke file="${verify.config.path}"
       xpath="/configuration/appSettings/add[@key='InstallationUri']/@value"
       value="http://localhost/${install.vdir.name}/" />
+
+    <!-- Turn off performance counters for this part of the build - slows things down
+          and causes problems. -->
+    <xmlpoke file="${path::combine(installdir, 'web.config')}"
+        xpath="/configuration/appSettings/add[@key='DisablePerformanceCounters']/@value"
+        value="true" />
       
     <!-- Update the config file with the location of the install so the verification 
           tests can find it -->

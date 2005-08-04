@@ -12,6 +12,7 @@
 
 using System;
 using System.Collections;
+using System.Configuration; 
 using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
@@ -258,6 +259,46 @@ namespace FlexWiki
         RecordFederationPropertiesChanged();
       }
     }
+
+
+    /// <summary>
+    /// Gets a value indicating if the FlexWiki performance counters are configured
+    /// to be enabled or disabled.
+    /// </summary>
+    /// <remarks>
+    /// <p>
+    /// This property looks at the <b>DisablePerformanceCounter</b> configuration
+    /// key. If set to <b>true</b>, performance counters are disabled. If absent or 
+    /// set to any other value, performance counters are enabled.
+    /// </p>
+    /// <p>
+    /// This feature was added because performance counters occasionally cause
+    /// huge delays in FlexWiki. At the time of this writing, the exact cause is 
+    /// unknown, although it is probably related to this: 
+    /// http://pluralsight.com/blogs/craig/archive/2005/06/22/11709.aspx
+    /// </p>
+    /// </remarks>
+    public static bool PerformanceCountersEnabled
+    {
+      get 
+      {
+        string value = ConfigurationSettings.AppSettings["DisablePerformanceCounters"];
+
+        if (value == null)
+        {
+          return true;
+        }
+
+        if (value.Length == 0)
+        {
+          return true;
+        }
+       
+        return !Convert.ToBoolean(value);
+
+      }
+    }
+
 
     [ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the current version of the WikITalk language enabled for use in this Federation")]
     public int WikiTalkVersion
@@ -1163,8 +1204,12 @@ namespace FlexWiki
     }
     private static void InitializePerformanceCounters()
     {
-      SetupPerformanceCounters();
+      if (PerformanceCountersEnabled)
+      {
+        SetupPerformanceCounters();
+      }
     }
+
 
     /// <summary>
     /// Create a namespace provider for the description and then give it a chance to create its namespace(s)
