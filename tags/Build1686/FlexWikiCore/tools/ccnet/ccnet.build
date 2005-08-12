@@ -1,0 +1,15 @@
+<project name="ccnet" default="go">
+  <target name="go">
+    <exec program="cvs.exe"
+	  workingdir="build">
+      <arg value="update" /> <!-- Command -->
+      <arg value="-P" /> <!-- Prune empty dirs -->
+      <arg value="-R" /> <!-- Recursive -->
+      <arg value="-C" /> <!-- Overwrite modified files -->
+      <arg value="-d" /> <!-- Create new repository directories -->
+    </exec>
+    <nant buildfile="build\flexwikicore.build"
+	  inheritall="true"
+	  target="clean dist" />
+  </target>
+</project>
