@@ -103,20 +103,45 @@ namespace FlexWiki.Web
 			}
 		}
 
-		protected string RootUrl(HttpRequest req)
-		{
-			string full = req.Url.ToString();
-			if (req.Url.Query != null && req.Url.Query.Length > 0)
-			{
-				full = full.Substring(0, full.Length - req.Url.Query.Length);
-			}
-			if (req.PathInfo != null && req.PathInfo.Length > 0)
-			{
-				full = full.Substring(0, full.Length - (req.PathInfo.Length + 1));
-			}
-			full = full.Substring(0, full.LastIndexOf('/') + 1);
 
-			return full + RelativeBase;
+    /// <summary>
+    /// Returns the URL suitable for composition with FlexWiki web pages to create
+    /// valid FlexWiki links. This method *does* return the scheme, servername, 
+    /// and port. 
+    /// </summary>
+    /// <param name="req">An <see cref="HttpRequest"/> object to use to determine
+    /// the root URL.</param>
+    /// <returns>A string representing the root URL for the application.</returns>
+    private string FullRootUrl(HttpRequest req)
+    {
+      string full = req.Url.ToString();
+      if (req.Url.Query != null && req.Url.Query.Length > 0)
+      {
+        full = full.Substring(0, full.Length - req.Url.Query.Length);
+      }
+      if (req.PathInfo != null && req.PathInfo.Length > 0)
+      {
+        full = full.Substring(0, full.Length - (req.PathInfo.Length + 1));
+      }
+      full = full.Substring(0, full.LastIndexOf('/') + 1);
+
+      return full + RelativeBase; 
+
+    }
+
+    /// <summary>
+    /// Returns the URL suitable for composition with FlexWiki web pages to create
+    /// valid FlexWiki links. This method does *not* return the scheme, servername, 
+    /// or port. 
+    /// </summary>
+    /// <param name="req">An <see cref="HttpRequest"/> object to use to determine
+    /// the root URL.</param>
+    /// <returns>A string representing the root URL for the application.</returns>
+    protected string RootUrl(HttpRequest req)
+		{
+      Uri fullUri = new Uri(FullRootUrl(req)); 
+      string url = fullUri.AbsolutePath.ToString(); 
+			return url + RelativeBase;
 		}
 
 		protected virtual string RelativeBase
@@ -423,7 +448,7 @@ namespace FlexWiki.Web
         System.Diagnostics.Debug.WriteLine(ex.ToString()); 
       }
 
-			NewsletterDaemon daemon = new NewsletterDaemon(TheFederation, TheLinkMaker.SiteURL(), 
+			NewsletterDaemon daemon = new NewsletterDaemon(TheFederation, FullRootUrl(Request), 
         newslettersFrom, styles, sendAsAttachments);
 			TheNewsletterDaemon = daemon;
 			daemon.SMTPServer = SMTPServer;

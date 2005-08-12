@@ -372,6 +372,8 @@ namespace FlexWiki.Web.Services
         full = full.Substring(0, full.Length - (req.PathInfo.Length + 1));
       }
       full = full.Substring(0, full.LastIndexOf('/') + 1);
+      Uri fullUri = new Uri(full); 
+      full = fullUri.AbsolutePath.ToString(); 
       return full;
     }
 
