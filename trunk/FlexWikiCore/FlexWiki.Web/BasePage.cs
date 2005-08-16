@@ -448,7 +448,22 @@ namespace FlexWiki.Web
         System.Diagnostics.Debug.WriteLine(ex.ToString()); 
       }
 
-			NewsletterDaemon daemon = new NewsletterDaemon(TheFederation, FullRootUrl(Request), 
+      // Use the NewsletterRootUrl config entry as the base URL for newsletters if present, otherwise
+      // default to whatever URL was used for this request. 
+      string rootUrl = ConfigurationSettings.AppSettings["NewsletterRootUrl"];
+
+      if (rootUrl == null || rootUrl.Length == 0)
+      {
+        rootUrl = FullRootUrl(Request); 
+      }
+
+      // Make sure it ends with a trailing slash
+      if (!rootUrl.EndsWith("/"))
+      {
+        rootUrl += "/"; 
+      }
+
+			NewsletterDaemon daemon = new NewsletterDaemon(TheFederation, rootUrl, 
         newslettersFrom, styles, sendAsAttachments);
 			TheNewsletterDaemon = daemon;
 			daemon.SMTPServer = SMTPServer;
