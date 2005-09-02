@@ -112,7 +112,7 @@ namespace FlexWiki.Web
     /// <param name="req">An <see cref="HttpRequest"/> object to use to determine
     /// the root URL.</param>
     /// <returns>A string representing the root URL for the application.</returns>
-    private string FullRootUrl(HttpRequest req)
+    protected string FullRootUrl(HttpRequest req)
     {
       string full = req.Url.ToString();
       if (req.Url.Query != null && req.Url.Query.Length > 0)

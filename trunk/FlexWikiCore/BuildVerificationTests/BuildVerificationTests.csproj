@@ -9,7 +9,7 @@
             <Settings
                 ApplicationIcon = ""
                 AssemblyKeyContainerName = ""
-                AssemblyName = "BuildVerificationTests"
+                AssemblyName = "FlexWiki.BuildVerificationTests"
                 AssemblyOriginatorKeyFile = ""
                 DefaultClientScript = "JScript"
                 DefaultHTMLPageLayout = "Grid"
@@ -18,7 +18,7 @@
                 OutputType = "Library"
                 PreBuildEvent = ""
                 PostBuildEvent = "cmd.exe /c $(ProjectDir)postbuild.cmd $(ProjectDir) $(TargetDir) $(TargetPath)"
-                RootNamespace = "BuildVerificationTests"
+                RootNamespace = "FlexWiki.BuildVerificationTests"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
             >
@@ -129,6 +129,11 @@
                 <File
                     RelPath = "postbuild.cmd"
                     BuildAction = "None"
+                />
+                <File
+                    RelPath = "RssTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
                 <File
                     RelPath = "SharedAssemblyInfo.cs"

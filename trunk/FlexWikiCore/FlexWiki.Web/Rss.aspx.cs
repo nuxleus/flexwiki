@@ -105,7 +105,7 @@ namespace FlexWiki.Web
 			newsletter.WriteElementString("title", newsletterName);
 			newsletter.WriteElementString("description", desc);
 
-			Uri link = new Uri(TheLinkMaker.LinkToTopic(info.Fullname, true), false);
+			Uri link = new Uri(new Uri(FullRootUrl(Request)), TheLinkMaker.LinkToTopic(info.Fullname, true), false);
 			newsletter.WriteElementString("link", link.AbsoluteUri);
 
 			DateTime last = DateTime.MinValue;
@@ -141,16 +141,17 @@ namespace FlexWiki.Web
 			newsletter.WriteElementString("description", cb.Description);
 
 			Uri link = new Uri(
+        new Uri(FullRootUrl(Request)),
 				TheLinkMaker.LinkToTopic(
-				new AbsoluteTopicName(
-				preferredNamespace + 
-				"." + 
-				TheFederation.ContentBaseForNamespace(preferredNamespace).HomePage
-				),
-				true
+				  new AbsoluteTopicName(
+				    preferredNamespace + 
+				    "." + 
+				    TheFederation.ContentBaseForNamespace(preferredNamespace).HomePage
+				  ),
+			  	true
 				),
 				false
-				);
+			);
 
 			newsletter.WriteElementString("link", link.AbsoluteUri);
 
@@ -199,7 +200,7 @@ namespace FlexWiki.Web
 				TheFederation.GetTopicCreationTime(topic).ToUniversalTime().ToString("r")
 				);
 	 
-			Uri link = new Uri(TheLinkMaker.LinkToTopic(topic, true), false);
+			Uri link = new Uri(new Uri(FullRootUrl(Request)), TheLinkMaker.LinkToTopic(topic, true), false);
 			newsletter.WriteElementString("link", link.AbsoluteUri);
 
 			newsletter.WriteElementString(
@@ -247,7 +248,7 @@ namespace FlexWiki.Web
 
 			if (useHTML)
 			{
-				Uri link = new Uri(TheLinkMaker.LinkToTopic(topic, true), false);
+				Uri link = new Uri(new Uri(FullRootUrl(Request)), TheLinkMaker.LinkToTopic(topic, true), false);
 				newsletter.WriteStartElement("a");
 				newsletter.WriteAttributeString("title", HTMLWriter.Escape(topic.Fullname));
 				newsletter.WriteAttributeString("href", link.AbsoluteUri);
@@ -295,7 +296,7 @@ namespace FlexWiki.Web
 			if (useHTML)
 			{
 				newsletter.WriteEndElement();
-				Uri link = new Uri(TheLinkMaker.LinkToVersions(topic.ToString()), false);
+				Uri link = new Uri(new Uri(FullRootUrl(Request)), TheLinkMaker.LinkToVersions(topic.ToString()), false);
 
 				newsletter.WriteString("View the ");
 				newsletter.WriteStartElement("a");
