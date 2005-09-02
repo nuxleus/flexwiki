@@ -1484,7 +1484,8 @@ namespace FlexWiki.Formatting
 		#region Emote
 		private string Emote(string input, string text, string image)
 		{
-			return input.Replace (text, LinkMaker().LinkToImage(image)) ;			
+      string img = string.Format("<img src=\"{0}\"/>", LinkMaker().LinkToImage(image)); 
+			return input.Replace (text, img) ;			
 		}
 		#endregion
 

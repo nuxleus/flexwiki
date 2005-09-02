@@ -29,7 +29,7 @@ namespace FlexWiki.UnitTests
 	[TestFixture] public class FormattingTests : WikiTests
 	{
 		private ContentBase _cb;
-		private const string _base = "http://boo/";
+		private const string _base = "/formattingtestswiki/";
 		private Hashtable _externals;
 		private LinkMaker _lm;
 		private string user = "joe";

@@ -28,7 +28,7 @@ namespace FlexWiki.UnitTests
 	[TestFixture] public class CachingTests : WikiTests
 	{
 		ContentBase _cb, _cb2;
-		const string _base = "http://boo/";
+		const string _base = "/cachingtests/";
 		LinkMaker _lm;
 		string user = "joe";
 

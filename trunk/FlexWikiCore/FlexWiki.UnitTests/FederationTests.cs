@@ -29,7 +29,7 @@ namespace FlexWiki.UnitTests
 
 		[SetUp] public void Init()
 		{
-			TheFederation = new Federation(OutputFormat.HTML, new LinkMaker("http://boobar"));
+			TheFederation = new Federation(OutputFormat.HTML, new LinkMaker("/federationtests/"));
 			string author = "tester-joebob";
 
 			_base = CreateStore("FlexWiki.Base"); 

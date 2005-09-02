@@ -30,7 +30,7 @@ namespace FlexWiki.UnitTests
 		ContentBase	_other2;
 		ContentBase	_other3;
 		ContentBase	_cb5;
-		const string _bh = "http://boo/";
+		const string _bh = "/registrytests/";
 		LinkMaker _lm;
 		
 		
@@ -253,7 +253,7 @@ Role:Developer", author);
 		[SetUp] public void Init()
 		{
 			string author = "tester-joebob";
-			_lm = new LinkMaker("http://boobar");
+			_lm = new LinkMaker("/contentbasetests/");
 
 			TheFederation = new Federation(OutputFormat.HTML, _lm);
 
@@ -923,7 +923,7 @@ There";
 
 		[SetUp] public void Init()
 		{
-			TheFederation = new Federation(OutputFormat.HTML, new LinkMaker("http://boobar"));
+			TheFederation = new Federation(OutputFormat.HTML, new LinkMaker("/infiniterecursiontests/"));
 			_base = CreateStore("FlexWiki.Projects.Wiki");
 			_imp1 = CreateStore("FlexWiki.Projects.Wiki1");
 			_imp2 = CreateStore("FlexWiki.Projects.Wiki2");
@@ -965,7 +965,7 @@ Import: FlexWiki.Projects.Wiki", author);
 
 		[SetUp] public void Init()
 		{
-			TheFederation = new Federation(OutputFormat.HTML, new LinkMaker("http://boobar"));
+			TheFederation = new Federation(OutputFormat.HTML, new LinkMaker("/morecontentbasetests/"));
 			_base = CreateStore("FlexWiki.Projects.Wiki");
 			_imp1 = CreateStore("FlexWiki.Projects.Wiki1");
 			_imp2 = CreateStore("FlexWiki.Projects.Wiki2");
