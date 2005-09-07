@@ -420,7 +420,7 @@
       <exclude name="Interop.ShDocVw.dll" />
       <exclude name="Microsoft.mshtml.dll" />
       <exclude name="nunit.framework.dll" />
-      <exclude name="BuildVerificationTests.*" />
+      <exclude name="FlexWiki.BuildVerificationTests.*" />
       <exclude name="FlexBehaviorDebugger.pdb" />
       <exclude name="FlexWiki.SqlStoreManagerLib.dll" />
       <exclude name="PrintTopic.pdb" />
