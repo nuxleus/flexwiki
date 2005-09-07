@@ -1,0 +1,4 @@
+Title: MyWiki
+Description: Welcome to MyWiki
+Namespace: MyWiki
+ 
