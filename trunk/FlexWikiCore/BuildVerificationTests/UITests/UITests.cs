@@ -39,7 +39,9 @@ Hello
 
 Title: This fat hen
 
-")),
+"),
+      new TestTopic("RenameableTopic", "This topic can be renamed.")
+      ),
 			new TestNamespace("NamespaceTwo",
 			new TestTopic("TopicOne", "This is some test content in NamespaceTwo"),
 			new TestTopic("TopicThree", "This is yet more content in NamespaceTwo"),

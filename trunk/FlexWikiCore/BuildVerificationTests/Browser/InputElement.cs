@@ -34,6 +34,23 @@ namespace FlexWiki.BuildVerificationTests
 		{
 		}
 
+    public bool Checked
+    {
+      get 
+      {
+        return TypedElement.@checked; 
+      }
+      set
+      {
+        TypedElement.@checked = value; 
+      }
+    }
+
+    public FormElement Form
+    {
+      get { return new FormElement(TypedElement.form, base.Document); }
+    }
+
 		/// <summary>
 		/// Get or set the value of the input field
 		/// </summary>

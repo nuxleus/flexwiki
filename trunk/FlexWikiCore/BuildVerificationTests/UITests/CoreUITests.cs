@@ -91,6 +91,38 @@ namespace FlexWiki.BuildVerificationTests
 			Assert.IsTrue(exists);
 		}
 
+    [Test]
+    public void Rename()
+    {
+      AbsoluteTopicName before = new AbsoluteTopicName("RenameableTopic", "NamespaceOne"); 
+      string renameUrl = TheLinkMaker.LinkToRename(before.Fullname); 
+      DocumentElement doc = TheBrowser.Navigate(renameUrl, true); 
+
+      InputElement newName = doc.GetElementByName("newName") as InputElement; 
+      newName.Value = "RenamedTopic"; 
+
+      InputElement fixup = doc.GetElementByName("fixup") as InputElement; 
+      fixup.Checked = true; 
+
+      fixup.Form.Submit(); 
+
+      // Give the filesystem a chance to flush the changes, even though I hate having 
+      // tests that are timing-dependent.
+      Thread.Sleep(3000); 
+
+      AbsoluteTopicName after = new AbsoluteTopicName("RenamedTopic", "NamespaceOne"); 
+
+      Assert.IsTrue(TheFederation.TopicExists(after)); 
+      string beforeContents = TheFederation.ContentBaseForNamespace(before.Namespace).TextReaderForTopic(before.LocalName).ReadToEnd(); 
+      string afterContents = TheFederation.ContentBaseForNamespace(after.Namespace).TextReaderForTopic(after.LocalName).ReadToEnd(); 
+
+      Assert.AreEqual("RenamedTopic", TheFederation.GetTopicProperty(before, "Redirect"), 
+        "Checking that the redirect was put in place"); 
+      Assert.AreEqual("This topic can be renamed.", afterContents, 
+        "Checking that the renamed topic has the correct contents."); 
+      
+    }
+
 		[Test]
 		public void TestNamespaceContents()
 		{

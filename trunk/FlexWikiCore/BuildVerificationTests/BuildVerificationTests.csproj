@@ -187,6 +187,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Browser\FormElement.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Browser\HTMLElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

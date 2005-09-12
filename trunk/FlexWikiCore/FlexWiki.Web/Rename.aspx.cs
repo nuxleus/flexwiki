@@ -124,6 +124,18 @@ namespace FlexWiki.Web
 			string newName = NewName;
 			string newAppearsAs = (oldName.Namespace == defaultNamespace) ? newName : Namespace + "." + newName;
 
+      if (cb == null)
+      {
+        Response.Write("<b>No namespace was specified. Please try again.</b>"); 
+        return; 
+      }
+
+      if (newName == null || newName.Length == 0)
+      {
+        Response.Write("<b>No name was specified. Please try again.</b>"); 
+        return; 
+      }
+
 			// See if the new name already exists
 			if (cb.TopicExistsLocally(newName))
 			{

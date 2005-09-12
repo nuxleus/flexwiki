@@ -105,10 +105,7 @@ namespace FlexWiki.BuildVerificationTests
 		{
 			if (TypedElement == null)
 				return null;
-			IHTMLElementCollection collection = TypedElement.getElementsByName(id) as IHTMLElementCollection;
-			if (collection == null || collection.length == 0)
-				return null;
-			IHTMLElement element = collection.item(0, 0) as IHTMLElement;
+			IHTMLElement element = TypedElement.getElementById(id) as IHTMLElement;
 			if (element == null)
 				return null;
 			return element;

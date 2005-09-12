@@ -111,7 +111,7 @@ namespace FlexWiki.Web
 
 					if (all.Count == 1) 
 					{
-						URI = new UriBuilder(lm.LinkToTopic((TopicName)(all[0]), false, Request.QueryString));
+						URI = new UriBuilder(new Uri(new Uri(FullRootUrl(Request)), lm.LinkToTopic((TopicName)(all[0]), false, Request.QueryString)));
 					}
 					else
 					{
