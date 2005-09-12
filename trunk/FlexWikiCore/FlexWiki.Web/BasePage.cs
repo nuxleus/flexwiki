@@ -114,19 +114,9 @@ namespace FlexWiki.Web
     /// <returns>A string representing the root URL for the application.</returns>
     protected string FullRootUrl(HttpRequest req)
     {
-      string full = req.Url.ToString();
-      if (req.Url.Query != null && req.Url.Query.Length > 0)
-      {
-        full = full.Substring(0, full.Length - req.Url.Query.Length);
-      }
-      if (req.PathInfo != null && req.PathInfo.Length > 0)
-      {
-        full = full.Substring(0, full.Length - (req.PathInfo.Length + 1));
-      }
-      full = full.Substring(0, full.LastIndexOf('/') + 1);
-
-      return full + RelativeBase; 
-
+      UriBuilder builder = new UriBuilder(req.Url.Scheme, req.Url.Authority, req.Url.Port, 
+        req.ApplicationPath); 
+      return builder.ToString() + "/"; 
     }
 
     /// <summary>
@@ -139,9 +129,7 @@ namespace FlexWiki.Web
     /// <returns>A string representing the root URL for the application.</returns>
     protected string RootUrl(HttpRequest req)
 		{
-      Uri fullUri = new Uri(FullRootUrl(req)); 
-      string url = fullUri.AbsolutePath.ToString(); 
-			return url + RelativeBase;
+      return req.ApplicationPath + "/"; 
 		}
 
 		protected virtual string RelativeBase

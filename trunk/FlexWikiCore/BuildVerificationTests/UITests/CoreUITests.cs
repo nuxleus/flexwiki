@@ -14,7 +14,9 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Threading;
+
 using NUnit.Framework;
+
 using FlexWiki;
 
 namespace FlexWiki.BuildVerificationTests

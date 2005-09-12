@@ -77,7 +77,7 @@ namespace FlexWiki.BuildVerificationTests
         provider.Root = Path.Combine(contentDir, ns.Name); 
         provider.Namespace = ns.Name; 
         NamespaceProviderDefinition definition = new NamespaceProviderDefinition();
-		definition.Id = Guid.NewGuid().ToString();
+        definition.Id = Guid.NewGuid().ToString();
         provider.SavePersistentParametersToDefinition(definition); 
         definition.Type = provider.GetType().FullName; 
         definition.AssemblyName = provider.GetType().Assembly.FullName; 

@@ -595,6 +595,7 @@
 	      basedir="${basedir}/tools/reskit" 
 	      workingdir="${installdir}">
       <arg value="." />
+      <arg value="/T" />
       <arg value="/E" />
       <arg value="/G" />
       <arg value="NETWORK SERVICE:F" />
@@ -609,7 +610,8 @@
 	      basedir="${basedir}/tools/reskit" 
 	      workingdir="${installdir}"
 	      unless="${automated.build}">
-      <arg value="." />
+      <arg value="." /> 
+      <arg value="/T" />
       <arg value="/E" />
       <arg value="/G" />
       <arg value="IUSR_${sys.env.COMPUTERNAME}:F" /> 

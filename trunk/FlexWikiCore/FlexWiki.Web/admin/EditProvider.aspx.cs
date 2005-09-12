@@ -196,7 +196,7 @@ namespace FlexWiki.Web.Admin
 
 			UIResponse.WriteStartForm("EditProvider.aspx");
 			UIResponse.WriteStartFields();
-
+  
 			if (errors != null)
 			{
 				foreach (string s in errors)
