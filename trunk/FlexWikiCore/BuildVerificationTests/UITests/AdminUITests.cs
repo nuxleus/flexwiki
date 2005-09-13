@@ -53,7 +53,6 @@ namespace FlexWiki.BuildVerificationTests
       string contents = doc.Body.InnerHTML; 
       Uri correctUri = new Uri(TheLinkMaker.LinkToTopic(new AbsoluteTopicName("HomePage", "NewNamespace"))); 
       string correctLink = correctUri.PathAndQuery; 
-      Console.WriteLine(contents); 
       Assert.IsTrue(contents.IndexOf(correctLink) != -1, "Checking that correct link was emitted."); 
     }
   }
