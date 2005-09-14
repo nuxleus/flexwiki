@@ -58,27 +58,28 @@ namespace FlexWiki.FwDocGen
 
       try
       {
-        XmlDocument doc = new XmlDocument(); 
-        doc.Load(stmxslt);
-  
-        string path = Path.Combine(templateDir, transformName); 
-        StreamWriter wtr = new StreamWriter(path, false,
-          System.Text.Encoding.UTF8); 
+        StreamReader reader = new StreamReader(stmxslt);
         try
         {
-          XmlTextWriter xmlwtr = new XmlTextWriter(wtr); 
+          string path = Path.Combine(templateDir, transformName); 
+          StreamWriter wtr = new StreamWriter(path, false,
+            System.Text.Encoding.UTF8); 
           try
           {
-            doc.WriteTo(xmlwtr);   
+            string line = null; 
+            while ((line = reader.ReadLine()) != null)
+            {
+              wtr.WriteLine(line); 
+            }
           }
           finally
           {
-            xmlwtr.Close(); 
+            wtr.Close(); 
           }
         }
         finally
         {
-          wtr.Close(); 
+          reader.Close(); 
         }
       }
       finally
