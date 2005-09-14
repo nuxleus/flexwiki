@@ -116,7 +116,15 @@ namespace FlexWiki.Web
     {
       UriBuilder builder = new UriBuilder(req.Url.Scheme, req.Url.Authority, req.Url.Port, 
         req.ApplicationPath); 
-      return builder.ToString() + "/"; 
+      string path = builder.ToString(); 
+      if (path.EndsWith("/"))
+      {
+        return path; 
+      }
+      else
+      {
+        return path + "/"; 
+      }
     }
 
     /// <summary>
@@ -129,7 +137,15 @@ namespace FlexWiki.Web
     /// <returns>A string representing the root URL for the application.</returns>
     protected string RootUrl(HttpRequest req)
 		{
-      return req.ApplicationPath + "/"; 
+      string path = req.ApplicationPath; 
+      if (path.EndsWith("/"))
+      {
+        return path; 
+      }
+      else
+      {
+        return path + "/"; 
+      }
 		}
 
 		protected virtual string RelativeBase
