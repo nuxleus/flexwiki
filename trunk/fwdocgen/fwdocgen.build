@@ -2,12 +2,12 @@
  
   <include buildfile="common/common.build" />
 
-  <fileset id="dist.files" basedir="${targetdir}">
+  <fileset id="dist.binfiles" basedir="${targetdir}">
     <include name="fwdocgen.exe" />
     <include name="fwdocgen.pdb" />
   </fileset>
 
-  <fileset id="dist.sources" basedir="${nant.project.basedir}">
+  <zipfileset id="dist.sources" basedir="${nant.project.basedir}">
     <include name="**/*" />
     <exclude name="dist/**" />
     <exclude name="bin/**" />
@@ -15,6 +15,6 @@
     <exclude name="*.suo" />
     <exclude name="*.user" />
     <exclude name="*~" />
-  </fileset>
+  </zipfileset>
 
 </project>

@@ -34,7 +34,7 @@
   </ifnot>
 
   <ifnot test="${property::exists('release.dir')}">
-    <property name="release.dir" value="release" />
+    <property name="release.dir" value="${path::combine(basedir, 'release')}" />
   </ifnot>
 
   <ifnot test="${property::exists('build.skip')}">
@@ -62,8 +62,8 @@
 
     <asminfo output="AssemblyAttributes.cs" language="CSharp">
       <imports>
-        <import name="System" />
-        <import name="System.Reflection" />
+        <import namespace="System" />
+        <import namespace="System.Reflection" />
       </imports>
       <attributes>
         <attribute type="AssemblyVersionAttribute"
@@ -111,7 +111,7 @@
 	      value="${distdir}/${nant.project.name}-${vermajor}.${verminor}.${verbuild}.${verrevision}-src.zip" />
     <zip zipfile="${dist.binzip}">
       <fileset basedir="${stagingdir}">
-	<include name="**\*" />
+        <include name="**\*" />
       </fileset>
     </zip>
     <zip zipfile="${dist.srczip}">
@@ -132,14 +132,14 @@
   </target>
 
   <target name="clean">
-    <delete dir="${targetdir}" />
-    <delete dir="${distdir}" />
-    <delete dir="${diffdir}" />
-    <delete dir="${release.dir}" />
+    <delete dir="${targetdir}" if="${directory::exists(targetdir)}" />
+    <delete dir="${distdir}" if="${directory::exists(distdir)}"/>
+    <delete dir="${diffdir}" if="${directory::exists(diffdir)}"/>
+    <delete dir="${release.dir}" if="${directory::exists(release.dir)}"/>
   </target>
 
   <target name="release">
-    <delete dir="${release.dir}" failonerror="false" />
+    <delete dir="${release.dir}" if="${directory::exists(release.dir)}" />
     <mkdir dir="${release.dir}" />
 
     <exec program="cvs.exe">
