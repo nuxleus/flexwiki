@@ -1,79 +1,76 @@
 <project name="fwcontrib-common" default="test">
   
   <sysinfo />
-  <version startDate="2002-11-01" />
-  
-  <regex input="${sys.version}"
-	 pattern="(?'vermajor'\d+).(?'verminor'\d+).(?'verbuild'\d+).(?'verrevision'\d+)" />
 
+  <xmlpeek file="version.xml" property="vermajor" xpath="/version/major" />
+  <xmlpeek file="version.xml" property="verminor" xpath="/version/minor" />
+  <xmlpeek file="version.xml" property="verbuild" xpath="/version/build" />
+  <xmlpeek file="version.xml" property="verrevision" xpath="/version/revision" />
+  
   <echo message="Building version ${vermajor}.${verminor}.${verbuild}.${verrevision}" />
 
-  <ifnot propertyexists="configuration">
+  <ifnot test="${property::exists('configuration')}">
     <property name="configuration"
 	      value="Debug" />
   </ifnot>
 
-  <ifnot propertyexists="basedir">
+  <ifnot test="${property::exists('basedir')}">
     <property name="basedir" 
 	      value="${nant.project.basedir}" />
   </ifnot>
 
-  <ifnot propertyexists="targetdir">
+  <ifnot test="${property::exists('targetdir')}">
     <property name="targetdir" 
 	      value="${nant.project.basedir}/bin/${configuration}" />
   </ifnot>
 
-  <ifnot propertyexists="distdir">
+  <ifnot test="${property::exists('distdir')}">
     <property name="distdir"
 	      value="${nant.project.basedir}/dist" />
   </ifnot>
 
-  <ifnot propertyexists="diffdir">
+  <ifnot test="${property::exists('diffdir')}">
     <property name="diffdir" value="diff" />
   </ifnot>
 
-  <ifnot propertyexists="release.dir">
+  <ifnot test="${property::exists('release.dir')}">
     <property name="release.dir" value="release" />
   </ifnot>
 
-  <ifnot propertyexists="build.skip">
+  <ifnot test="${property::exists('build.skip')}">
     <property name="build.skip" value="false" />
   </ifnot>
 
-  <ifnot propertyexists="test.skip">
+  <ifnot test="${property::exists('test.skip')}">
     <property name="test.skip" value="false" />
   </ifnot>
 
-  <ifnot propertyexists="dist.skip">
+  <ifnot test="${property::exists('dist.skip')}">
     <property name="dist.skip" value="false" />
   </ifnot>
 
-  <ifnot propertyexists="upload.skip">
+  <ifnot test="${property::exists('upload.skip')}">
     <property name="upload.skip" value="false" />
   </ifnot>
 
-  <ifnot propertyexists="cvs.root">
+  <ifnot test="${property::exists('cvs.root')}">
     <property name="cvs.root" value=":ext:candera@SourceForgeCVS:/cvsroot/fwcontrib" />
   </ifnot>
 
   <target name="init">
     <mkdir dir="${targetdir}" />
 
-    <ifnot uptodatefile="AssemblyAttributes.cs" 
-	   comparefile="build.number">
-      <asminfo output="AssemblyAttributes.cs"
-	       language="CSharp">
-	<imports>
-	  <import name="System" />
-	  <import name="System.Reflection" />
-	</imports>
-	<attributes>
-	  <attribute type="AssemblyVersionAttribute"
-		     value="${vermajor}.${verminor}.${verbuild}.${verrevision}"
+    <asminfo output="AssemblyAttributes.cs" language="CSharp">
+      <imports>
+        <import name="System" />
+        <import name="System.Reflection" />
+      </imports>
+      <attributes>
+        <attribute type="AssemblyVersionAttribute"
+            value="${vermajor}.${verminor}.${verbuild}.${verrevision}"
 		     />
-	</attributes>
-      </asminfo>
-    </ifnot>
+      </attributes>
+    </asminfo>
   </target>
 
   <target name="build" depends="init" unless="${build.skip}">
@@ -98,10 +95,7 @@
     <mkdir dir="${distdir}" />
 
     <property name="stagingdir" value="${distdir}\staging" />
-    <available property="dist.stagingdir.available" 
-	       type="Directory"
-	       resource="${stagingdir}" />
-    <delete dir="${stagingdir}" if="${dist.stagingdir.available}" />
+    <delete dir="${stagingdir}" if="${directory::exists(stagingdir)}" />
     <mkdir dir="${stagingdir}" />
 
     <property name="todir" value="${stagingdir}\Help" />
@@ -117,7 +111,7 @@
 	      value="${distdir}/${nant.project.name}-${vermajor}.${verminor}.${verbuild}.${verrevision}-src.zip" />
     <zip zipfile="${dist.binzip}">
       <fileset basedir="${stagingdir}">
-	<includes name="**\*" />
+	<include name="**\*" />
       </fileset>
     </zip>
     <zip zipfile="${dist.srczip}">
@@ -211,20 +205,13 @@
 
   <target name="copyhelpdir">
     <property name="helpdir" value="${basedir}\Help" />
-    <available property="helpdir.available"
-	       type="Directory"
-	       resource="${helpdir}" />
-
-    <if propertytrue="helpdir.available">
-      <available property="todir.available" 
-		 type="Directory"
-		 resource="${todir}" />
-      <delete dir="${todir}" if="${todir.available}" />
+    <if test="${directory::exists(helpdir)}">
+      <delete dir="${todir}" if="${directory::exists(todir)}" />
       <mkdir dir="${todir}" />
       <copy todir="${todir}">
-	<fileset basedir="${helpdir}">
-	  <includes name="**\*" />
-	</fileset>
+        <fileset basedir="${helpdir}">
+          <include name="**\*" />
+        </fileset>
       </copy>
     </if>
   </target>

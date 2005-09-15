@@ -1,21 +1,20 @@
 <project name="fwdocgen" default="test">
  
-  
   <include buildfile="common/common.build" />
 
   <fileset id="dist.files" basedir="${targetdir}">
-    <includes name="fwdocgen.exe" />
-    <includes name="fwdocgen.pdb" />
+    <include name="fwdocgen.exe" />
+    <include name="fwdocgen.pdb" />
   </fileset>
 
   <fileset id="dist.sources" basedir="${nant.project.basedir}">
-    <includes name="**/*" />
-    <excludes name="dist/**" />
-    <excludes name="bin/**" />
-    <excludes name="obj/**" />
-    <excludes name="*.suo" />
-    <excludes name="*.user" />
-    <excludes name="*~" />
+    <include name="**/*" />
+    <exclude name="dist/**" />
+    <exclude name="bin/**" />
+    <exclude name="obj/**" />
+    <exclude name="*.suo" />
+    <exclude name="*.user" />
+    <exclude name="*~" />
   </fileset>
 
 </project>
