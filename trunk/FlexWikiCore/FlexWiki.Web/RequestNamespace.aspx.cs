@@ -13,6 +13,7 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
 using System.Drawing;
 using System.Web;
@@ -114,6 +115,19 @@ namespace FlexWiki.Web.Admin
 			DoCreate(values);
 		}
 
+		string AddressToSendMailFrom(string contact)
+		{
+			string pref = (string)(ConfigurationSettings.AppSettings["SendNamespaceRequestMailFrom"]);
+			if (pref == null || pref == "")
+			{
+				return contact;
+			}
+			else
+			{
+				return pref;
+			}
+		}
+
 		void DoCreate(FormValues values)
 		{
 			MailMessage msg = new MailMessage();
@@ -128,7 +142,7 @@ namespace FlexWiki.Web.Admin
 
 			msg.To = adminMail;
 			msg.BodyFormat = MailFormat.Html;
-			msg.From = values.Contact;
+			msg.From = AddressToSendMailFrom(values.Contact);
 			msg.Subject = "FlexWiki namespace request - " + values.Namespace;
 			msg.Body = @"<p>You have received a request to create a FlexWiki namespace.
 
@@ -153,7 +167,7 @@ namespace FlexWiki.Web.Admin
 			MailMessage msg2 = new MailMessage();
 
 			msg2.To = values.Contact;
-			msg2.From = values.Contact;
+			msg2.From = AddressToSendMailFrom(values.Contact);
 			msg2.Subject = "FlexWiki namespace request - " + values.Namespace;
 			msg2.BodyFormat = MailFormat.Html;
 			msg2.Body = @"<p>This message is confirmation of your request to create a FlexWiki namespace.  
