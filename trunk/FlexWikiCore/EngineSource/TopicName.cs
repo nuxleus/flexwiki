@@ -107,7 +107,7 @@ namespace FlexWiki
 
 		public override int GetHashCode()
 		{
-			return Fullname.GetHashCode ();
+			return FullnameWithVersion.GetHashCode ();
 		}
 
 		/// <summary>

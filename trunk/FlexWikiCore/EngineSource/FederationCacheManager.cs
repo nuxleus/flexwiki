@@ -151,7 +151,10 @@ namespace FlexWiki
 			}
 		}
 
-		Hashtable _TopicToKeys = new Hashtable();
+		// While we don't really understand why this happens, apparently in larger
+		// wikis starting with the default settings for Hashtable capacity causes
+		// 100% CPU utilization
+		Hashtable _TopicToKeys = new Hashtable(20000);
 		/// <summary>
 		/// Answer a read-write list of the cache keys that should be invalidated for the given topic
 		/// </summary>
