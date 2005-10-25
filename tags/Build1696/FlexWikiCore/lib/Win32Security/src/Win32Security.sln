@@ -1,0 +1,21 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Win32Security", "Win32Security.csproj", "{79981FF2-BB63-47C8-937C-88792A800E2F}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{79981FF2-BB63-47C8-937C-88792A800E2F}.Debug.ActiveCfg = Debug|.NET
+		{79981FF2-BB63-47C8-937C-88792A800E2F}.Debug.Build.0 = Debug|.NET
+		{79981FF2-BB63-47C8-937C-88792A800E2F}.Release.ActiveCfg = Release|.NET
+		{79981FF2-BB63-47C8-937C-88792A800E2F}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
