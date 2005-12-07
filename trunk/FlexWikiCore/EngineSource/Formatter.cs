@@ -94,7 +94,7 @@ namespace FlexWiki.Formatting
 		{ 
 
 			// Setup a special link maker that knows what to make the edit links return to 
-			LinkMaker linker = new LinkMaker(lm.SiteURL());
+			LinkMaker linker = lm.Clone();
 			linker.ReturnToTopicForEditLinks = topic;
 			ContentBase relativeToBase = aFederation.ContentBaseForNamespace(topic.Namespace);
 

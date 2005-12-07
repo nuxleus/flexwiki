@@ -13,6 +13,7 @@
 using System;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Configuration; 
 using System.Text;
 using System.Web;
 
@@ -26,15 +27,39 @@ namespace FlexWiki
 	public class LinkMaker : BELObject
 	{
 		private string	_SiteURL;
+		bool _MakeAbsoluteURLs = false;
 
 		public LinkMaker(string siteURL)
 		{
 			_SiteURL = siteURL;
+			_MakeAbsoluteURLs = ConfigurationSettings.AppSettings["MakeAbsoluteURLs"].Equals("true");
+		}
+
+		bool MakeAbsoluteURLs
+		{
+			get
+			{
+				return _MakeAbsoluteURLs;
+			}
 		}
 
 		public string SiteURL()
 		{
-			return _SiteURL;
+			if (MakeAbsoluteURLs)
+			{
+				HttpRequest r = 	System.Web.HttpContext.Current.Request;
+				string answer = new UriBuilder(r.Url.Scheme, r.Url.Host, r.Url.Port, _SiteURL).ToString();
+				return answer;
+			}
+			else
+			{
+				return _SiteURL;
+			}
+		}
+
+		public LinkMaker Clone()
+		{
+			return new LinkMaker(_SiteURL);
 		}
 
 		AbsoluteTopicName _ReturnToTopicForEditLinks;
