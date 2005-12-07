@@ -32,7 +32,9 @@ namespace FlexWiki
 		public LinkMaker(string siteURL)
 		{
 			_SiteURL = siteURL;
-			_MakeAbsoluteURLs = ConfigurationSettings.AppSettings["MakeAbsoluteURLs"].Equals("true");
+			string mau = ConfigurationSettings.AppSettings["MakeAbsoluteURLs"];
+			if (mau != null && mau.Equals("true"))
+				_MakeAbsoluteURLs = true;
 		}
 
 		bool MakeAbsoluteURLs
