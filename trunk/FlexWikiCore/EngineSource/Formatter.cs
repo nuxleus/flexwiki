@@ -2121,6 +2121,8 @@ namespace FlexWiki.Formatting
 
 		static protected string escape(string input) 
 		{
+			if (input == null)
+				return "";
 			// replace HTML special characters with character entities
 			// this has the side-effect of stripping all markup from text
 			string str = input;
