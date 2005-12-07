@@ -1,0 +1,186 @@
+body {
+   font-family: Arial, Sans-Serif;
+   font-size: small;
+   background:white;
+   margin: 0;
+   padding: 0;
+}
+
+td {
+   color:black;
+}
+
+p
+{
+	font-size: 0.76em;
+	line-height: 1.35em;
+	font-family: Arial, Sans-Serif;
+}
+a {
+   color: royalblue;
+   text-decoration:none;
+}
+a:hover {
+   color: royalblue;
+   text-decoration:underline;
+}
+
+
+.GenericRow
+{
+
+}
+
+.GenericCell
+{
+	font-size: .88em;
+	border-collapse: collapse;
+	border: #909090 1px solid;
+}
+
+.GenericKVKey
+{
+	font-size: .75em;
+	border-collapse: collapse;
+	border: #909090 1px solid;
+	background-color: #e0e0e0;
+	font-weight: bold;
+}
+
+.GenericKVValue
+{
+	font-size: .75em;
+	border-collapse: collapse;
+	border: #909090 1px solid;
+}
+
+
+.GenericKVTable  
+{
+	padding-top: 6px;
+	padding-bottom: 6px;
+	background-color: #f8f8c0;
+}
+
+.GenericTable  
+{
+	padding-top: 6px;
+	padding-bottom: 6px;
+	background-color: #f8f8f8;
+}
+
+.GenericHeaderRow
+{
+
+}
+
+.GenericHeaderCell
+{
+	background-color: #e0e0e0;
+	font-size: .88em;
+	font-weight: bold;
+	border-collapse: collapse;
+	border: #909090 1px solid;
+}
+
+.GenericEmptyHeaderCell
+{
+	font-size: .88em;
+	font-weight: bold;
+	border-collapse: collapse;
+
+}
+
+.GenericPageTitle
+{
+	background-color: royalblue;
+	color: white;
+	font-size: 1.3em;
+	font-weight: bold;
+}
+
+.GenericMenuTable
+{
+	padding-top: 1li;
+	padding-bottom: 1li;
+	background-color: darkblue;
+	border: darkblue 1px solid;
+}
+
+.GenericMenuHeaderRow
+{
+}
+
+.GenericMenuHeaderLeft
+{
+	font-size: .88em;
+	font-weight: bold;
+	color: white;
+}
+
+.GenericMenuHeaderText
+{
+	font-size: .88em;
+	font-weight: bold;
+	color: white;
+}
+
+.GenericMenuRow
+{
+}
+
+.GenericMenuLeft
+{
+	font-size: .88em;
+}
+
+.GenericMenuText
+{
+	background-color: royalblue;
+	color: white;
+	font-size: .88em;
+}
+
+.GenericMenuText a
+{
+	background-color: royalblue;
+	color: white;
+}
+
+.GenericMenuText a:hover
+{
+	background-color: yellow;
+	color: blue;
+}
+
+.GenericPageMenuColumn
+{
+	background-color: gray;
+
+}
+
+.Menu
+{
+	border-right: #3333cc thin solid;
+	border-top: #66ccff thin solid;
+	display: none;
+	background: #ccffcc;
+	border-left: #66ccff thin solid;
+	cursor: hand;
+	padding: 2px;
+	color: blue;
+	border-bottom: #3333cc thin solid;
+	position: absolute;
+}
+
+.MenuItemNormal
+{
+	border-top: 1px solid grey;
+	font-size: .8em;
+	color: Gray;
+}
+
+.MenuItemHover
+{
+	color: #ffff99;
+}
