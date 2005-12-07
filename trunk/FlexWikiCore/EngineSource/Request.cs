@@ -90,7 +90,10 @@ namespace FlexWiki
 			get
 			{
 				ArrayList answer = new ArrayList();
-				IEnumerable events = (IEnumerable)(System.Web.HttpContext.Current.Session["VisitorEvents"]);
+				System.Web.HttpContext ctx = System.Web.HttpContext.Current;
+				if (ctx == null)
+					return answer;
+				IEnumerable events = (IEnumerable)(ctx.Session["VisitorEvents"]);
 				Set seen = new Set();
 				foreach (VisitorEvent currentEvent in events)
 				{

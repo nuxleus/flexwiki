@@ -29,7 +29,7 @@ namespace FlexWiki.UnitTests
 
 		string Run(string input)
 		{
-			BehaviorParser parser = new BehaviorParser();
+			BehaviorParser parser = new BehaviorParser("Scope Tests");
 			ExposableParseTreeNode obj = parser.Parse(input);
 			Assert.IsNotNull(obj);
 			ExecutionContext ctx = new ExecutionContext();

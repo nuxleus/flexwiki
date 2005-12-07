@@ -20,7 +20,7 @@ namespace FlexWiki
 	/// </summary>
 	public class ArrayPTN : ExposableParseTreeNode
 	{
-		public ArrayPTN()
+		public ArrayPTN(BELLocation loc) : base(loc)
 		{
 		}
 
@@ -48,7 +48,17 @@ namespace FlexWiki
 		{
 			BELArray a = new BELArray();
 			foreach (ExposableParseTreeNode each in _Array)
-				a.Add(each.Expose(ctx));
+			{
+				try
+				{
+					ctx.PushLocation(each.Location);
+					a.Add(each.Expose(ctx));
+				}
+				finally
+				{
+					ctx.PopLocation();
+				}
+			}
 			return a;
 		}
 

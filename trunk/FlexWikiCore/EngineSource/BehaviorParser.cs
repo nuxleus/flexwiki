@@ -20,20 +20,38 @@ namespace FlexWiki
 	/// </summary>
 	public class BehaviorParser
 	{
-		public BehaviorParser()
+		public BehaviorParser(string contextString)
 		{
+			_ContextString = contextString;
+		}
+
+		string _ContextString;
+		public string ContextString
+		{
+			get
+			{
+				return _ContextString;
+			}
 		}
 
 		Scanner _Scanner;
 
+		BELLocation LocationFromToken(Token t)
+		{
+			return new BELLocation(_ContextString, t.Line, t.Column);
+		}
+
 		public ExposableParseTreeNode Parse(string input)
 		{
 			_Scanner = new Scanner(input);
-			ExposableParseTreeNode answer = Expression();
+			ExposableParseTreeNode answer = ExpressionChain();
 			if (answer == null)
-				throw new ExpectedTokenParseException(ExpectedWhat, ButGotToken);
+				throw new ExpectedTokenParseException(LocationFromToken(ButGotToken), ExpectedWhat, ButGotToken);
 			if (!Scanner.AtEnd)
-				throw new UnexpectedTokenParseException(Scanner.Next());
+			{
+				Token x = Scanner.Next();
+				throw new UnexpectedTokenParseException(LocationFromToken(x), x);
+			}
 			return answer;
 		}
 
@@ -64,6 +82,31 @@ namespace FlexWiki
  *  scanner positioned on next (i.e., nothing consumed)
  *  -- if the scanner can't be properly positioned because we looked too far ahead, we throw a parse exception
  */
+
+		/* expressionChain :=
+				expr |
+				expr SEMICOLON exprChain
+		*/
+
+		ExposableParseTreeNode ExpressionChain()		
+		{
+			ExposableParseTreeNode left = Expression();
+			if (left == null)
+				return null;	// Whoops!  If it doesn't start with an expression, it's not a chain
+			Token next = Scanner.Next();
+			if (next.Type != TokenType.TokenSemicolon)
+			{
+				Scanner.Pushback(next);
+				return left;		// Just a single expression
+			}
+			// Looks like a chain
+			ExposableParseTreeNode right = ExpressionChain();
+			if (right == null)
+				throw new ExpectedTokenParseException(LocationFromToken(next), "expression following ';'", Scanner.LatestToken);
+			return new ExpressionChainPTN(LocationFromToken(next), left, right);
+		}
+
+
 		/*
 		 	expr := 
 			literal |
@@ -89,7 +132,7 @@ namespace FlexWiki
 					ParseTreeNode chain = ReferenceChain();
 					if (chain == null)
 						return null;
-					return new DereferencePTN(answer, chain);
+					return new DereferencePTN(LocationFromToken(next), answer, chain);
 				}
 			}
 			answer = ReferenceChain();
@@ -130,7 +173,7 @@ namespace FlexWiki
 				return null;
 			}
 
-			return new DereferencePTN(reference, rightSide);
+			return new DereferencePTN(LocationFromToken(t), reference, rightSide);
 		}
 
 
@@ -156,11 +199,11 @@ namespace FlexWiki
 			{
 				args = Args();
 				if (args == null)
-					throw new UnexpectedTokenParseException(Scanner.LatestToken);
+					throw new UnexpectedTokenParseException(LocationFromToken(Scanner.LatestToken), Scanner.LatestToken);
 				paren = Scanner.Next();
 				if (paren.Type != TokenType.TokenRightParen)
 				{
-					throw new ExpectedTokenParseException("right parenthesis", paren);
+					throw new ExpectedTokenParseException(LocationFromToken(paren), "right parenthesis", paren);
 				}
 			}
 			else
@@ -170,7 +213,7 @@ namespace FlexWiki
 
 			// Check to see if we have block argument(s)
 			BlockArgumentsPTN blockArgs = BlockArguments();
-			return new MethodReferencePTN(t.Value, args, blockArgs);
+			return new MethodReferencePTN(LocationFromToken(t), t.Value, args, blockArgs);
 		}
 
 		/*
@@ -186,7 +229,7 @@ namespace FlexWiki
 
 			// OK, we know we have at least the opening 
 			QualifiedBlockArgumentsPTN qualifiedBlockArguments = QualifiedBlockArguments();
-			return new BlockArgumentsPTN(first, qualifiedBlockArguments);
+			return new BlockArgumentsPTN(first.Location, first, qualifiedBlockArguments);
 		}
 
 
@@ -213,11 +256,11 @@ namespace FlexWiki
 				// OK, we've got an identifier -- there better be a block
 				BlockPTN block = BlockLiteral();
 				if (block == null)
-					throw new ExpectedTokenParseException("block {}", Scanner.LatestToken);
+					throw new ExpectedTokenParseException(LocationFromToken(next), "block {}", Scanner.LatestToken);
 
 				if (answer == null)
-					answer = new QualifiedBlockArgumentsPTN();
-				answer.AddQualifiedBlock(new QualifiedBlockPTN(next.Value, block));
+					answer = new QualifiedBlockArgumentsPTN(LocationFromToken(next));
+				answer.AddQualifiedBlock(new QualifiedBlockPTN(LocationFromToken(next), next.Value, block));
 			}
 			return answer;
 		}
@@ -247,7 +290,7 @@ namespace FlexWiki
 					return answer;
 				}
 
-				ParseTreeNode arg = Expression();
+				ParseTreeNode arg = ExpressionChain();
 				if (arg == null)
 				{
 					Expected(ex);
@@ -263,7 +306,7 @@ namespace FlexWiki
 					return answer;
 				}
 				if (next.Type != TokenType.TokenComma)
-					throw new ExpectedTokenParseException("comma ','", next);
+					throw new ExpectedTokenParseException(LocationFromToken(next), "right parenthesis ')' or comma ','", next);
 			}
 		}
 
@@ -278,9 +321,9 @@ namespace FlexWiki
 		{
 			Token next = Scanner.Next();
 			if (next.Type == TokenType.TokenString)
-				return new StringPTN(next.Value);
+				return new StringPTN(LocationFromToken(next), next.Value);
 			else if (next.Type == TokenType.TokenInteger)
-				return new IntegerPTN(next.Value);
+				return new IntegerPTN(LocationFromToken(next), next.Value);
 			Scanner.Pushback(next);
 			ExposableParseTreeNode array = ArrayLiteral();
 			if (array != null)
@@ -302,7 +345,7 @@ namespace FlexWiki
 			}
 
 			string ex = "expression or right bracket";
-			ArrayPTN answer = new ArrayPTN();
+			ArrayPTN answer = new ArrayPTN(LocationFromToken(next));
 			while (true)
 			{
 				next = Scanner.Next();
@@ -312,7 +355,7 @@ namespace FlexWiki
 				}
 				Scanner.Pushback(next);
 
-				ParseTreeNode arg = Expression();
+				ParseTreeNode arg = ExpressionChain();
 				if (arg == null)
 				{
 					Expected(ex);
@@ -325,7 +368,7 @@ namespace FlexWiki
 				if (next.Type == TokenType.TokenRightBracket)
 					return answer;
 				if (next.Type != TokenType.TokenComma)
-					throw new ExpectedTokenParseException("comma ','", next);
+					throw new ExpectedTokenParseException(LocationFromToken(next), "right bracket ']' or comma ','", next);
 			}
 		}
 
@@ -341,7 +384,7 @@ namespace FlexWiki
 			}
 
 			string ex = "expression, block parameters or right brace";
-			BlockPTN answer = new BlockPTN();
+			BlockPTN answer = new BlockPTN(LocationFromToken(next));
 
 			next = Scanner.Next();
 			if (next.Type == TokenType.TokenRightBrace)
@@ -353,7 +396,7 @@ namespace FlexWiki
 			BlockParametersPTN parms = BlockParameters();
 			answer.Parameters = parms;
 
-			ExposableParseTreeNode arg = Expression();
+			ExposableParseTreeNode arg = ExpressionChain();
 			if (arg == null)
 			{
 				Expected(ex);
@@ -365,20 +408,24 @@ namespace FlexWiki
 			next = Scanner.Next();
 			if (next.Type == TokenType.TokenRightBrace)
 				return answer;
-			throw new ExpectedTokenParseException("right brace '}'", next);
+			throw new ExpectedTokenParseException(LocationFromToken(next), "right brace '}'", next);
 		}
 
 		BlockParametersPTN BlockParameters()
 		{
 			Token identifier = null;
 			Token type ;
-			BlockParametersPTN answer = new BlockParametersPTN();
+			BlockParametersPTN answer = null;
 
 			while (true)
 			{
 				Token next;
 
 				next = Scanner.Next();
+
+				if (answer == null)
+					answer = new BlockParametersPTN(LocationFromToken(next));
+
 				if (next.Type != TokenType.TokenIdentifier)
 				{
 					if (answer.Parameters.Count == 0)
@@ -387,7 +434,7 @@ namespace FlexWiki
 						return null; // not block parms
 					}
 					else
-						throw new ExpectedTokenParseException("type or parameter name", next); // if we've lready got one, we're committed
+						throw new ExpectedTokenParseException(LocationFromToken(next), "type or parameter name", next); // if we've lready got one, we're committed
 				}
 				type = next;
 				next = Scanner.Next();
@@ -395,7 +442,7 @@ namespace FlexWiki
 				if (next.Type == TokenType.TokenBar ||  next.Type == TokenType.TokenComma)
 				{
 					// oops, it's the case where they omit the type, the token we thought was the type must be the identifier
-					answer.AddParameter(new BlockParameterPTN(null, type.Value));
+					answer.AddParameter(new BlockParameterPTN(LocationFromToken(next), null, type.Value));
 					if (next.Type == TokenType.TokenBar)
 						return answer;
 					continue;
@@ -409,12 +456,12 @@ namespace FlexWiki
 						return null; // not block parms
 					}
 					else
-						throw new ExpectedTokenParseException("parameter name", next);
+						throw new ExpectedTokenParseException(LocationFromToken(next), "parameter name", next);
 				}
 
 				identifier = next;
 
-				answer.AddParameter(new BlockParameterPTN(type.Value, identifier.Value));
+				answer.AddParameter(new BlockParameterPTN(LocationFromToken(next), type.Value, identifier.Value));
 
 				// next should be either comma or bar
 
@@ -423,7 +470,7 @@ namespace FlexWiki
 					return answer;
 				
 				if (next.Type != TokenType.TokenComma)
-					throw new ExpectedTokenParseException("| or ,", next);
+					throw new ExpectedTokenParseException(LocationFromToken(next), "| or ,", next);
 			}
 		}
 

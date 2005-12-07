@@ -102,6 +102,7 @@ namespace FlexWiki.Formatting
 
 		abstract public void Begin();
 		abstract public void End();
+		abstract public void NonBreakingSpace();
 		abstract public void AddToFooter(string s);
 		abstract public void WriteErrorMessage(string title, string body);
 		abstract public void WriteOpenProperty(string name);
@@ -126,7 +127,7 @@ namespace FlexWiki.Formatting
 		abstract public void WriteCloseTable();
 		abstract public void WriteOpenTableRow();
 		abstract public void WriteCloseTableRow();
-		abstract public void WriteTableCell(string s,  bool isHighlighted, TableCellInfo.AlignOption alignment, int colSpan, int RowSpan, bool hasBorder, bool allowBreaks, int Width);
+		abstract public void WriteTableCell(string s,  bool isHighlighted, TableCellInfo.AlignOption alignment, int colSpan, int RowSpan, bool hasBorder, bool allowBreaks, int Width, string bgcolor);
 		abstract public OutputFormat Format { get; }
 		abstract public void WriteImage(string title, string URL, string linkToURL, string height, string width, string attributes);
 		abstract public void WriteLink(string URL, string tip, string content, string attributes);

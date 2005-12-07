@@ -19,11 +19,11 @@ namespace FlexWiki
 	/// </summary>
 	public class MemberInvocationException : ExecutionException
 	{
-		public MemberInvocationException() : base()
+		public MemberInvocationException(BELLocation loc) : base(loc)
 		{
 		}
 
-			public MemberInvocationException(string message) : base(message)
+			public MemberInvocationException(BELLocation loc, string message) : base(loc, message)
 		{
 		}
 	}

@@ -16,20 +16,38 @@ using System.Collections;
 namespace FlexWiki
 {
 	/// <summary>
-	/// Summary description for BlockPTN.
+	/// 
 	/// </summary>
-	public class BlockPTN : ExposableParseTreeNode
+	public class ExpressionChainPTN : ExposableParseTreeNode
 	{
-		public BlockPTN(BELLocation loc) : base(loc)
+		public ExpressionChainPTN(BELLocation loc, ExposableParseTreeNode left, ExposableParseTreeNode right)  : base(loc)
 		{
+			_Left = left;
+			_Right = right;
 		}
 
-		public ExposableParseTreeNode ParseTree;
-		public BlockParametersPTN Parameters; 
+		ExposableParseTreeNode _Left;
+		ExposableParseTreeNode _Right;
+
+		public ExposableParseTreeNode Left
+		{
+			get
+			{
+				return _Left;
+			}
+		}
+
+		public ExposableParseTreeNode Right
+		{
+			get
+			{
+				return _Right;
+			}
+		}
 
 		public override string ToString()
 		{
-			return "Block";
+			return "Expression Chain";
 		}
 
 		public override System.Collections.IEnumerable Children
@@ -37,30 +55,28 @@ namespace FlexWiki
 			get
 			{
 				ArrayList answer = new ArrayList();
-				if (Parameters != null)
-					answer.Add(Parameters);
-				if (ParseTree != null)
-					answer.Add(ParseTree);
+				answer.Add(Left);
+				answer.Add(Right);
 				return answer;
 			}
 		}
 
 		public override IBELObject Expose(ExecutionContext ctx)
 		{
-			ArrayList parameters = null;
-
-			if (Parameters != null)
-			{
-				parameters = new ArrayList();
-				foreach (BlockParameterPTN p in Parameters.Parameters)
-				{
-					parameters.Add(new BlockParameter(p.Type, p.Identifier));
-				}
-			}
 			try
 			{
-				ctx.PushLocation(ParseTree.Location);
-				return new Block(ParseTree, parameters, ctx.CurrentScope);
+				ctx.PushLocation(Left.Location);
+				Left.Expose(ctx);
+			}
+			finally
+			{
+				ctx.PopLocation();
+			}
+
+			try
+			{
+				ctx.PushLocation(Right.Location);
+				return Right.Expose(ctx);
 			}
 			finally
 			{
@@ -68,5 +84,6 @@ namespace FlexWiki
 			}
 
 		}
+
 	}
 }

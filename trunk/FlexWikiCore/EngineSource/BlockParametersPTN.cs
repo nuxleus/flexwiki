@@ -21,7 +21,7 @@ namespace FlexWiki
 	/// </summary>
 	public class BlockParametersPTN  : ParseTreeNode
 	{
-		public BlockParametersPTN() : base()
+		public BlockParametersPTN(BELLocation loc) : base(loc)
 		{
 		}
 

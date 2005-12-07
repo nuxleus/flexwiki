@@ -19,7 +19,7 @@ namespace FlexWiki
 	/// </summary>
 	public class ExpectedTokenParseException : ParseException
 	{
-		public ExpectedTokenParseException(string expected, Token token) : base("Expected " + expected + "; " + (token == null ? "expression ended prematurely" : "got " + token.ToString()))
+		public ExpectedTokenParseException(BELLocation loc, string expected, Token token) : base(loc, "Expected " + expected + "; " + (token == null ? "expression ended prematurely" : "got " + token.ToString()))
 		{
 		}
 

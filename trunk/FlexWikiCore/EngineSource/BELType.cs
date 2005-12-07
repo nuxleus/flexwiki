@@ -256,7 +256,7 @@ namespace FlexWiki
 					continue;
 				string visibleName = (vis.OverrideName == null) ? each.Name : vis.OverrideName;
 				if (answer.Contains(visibleName))
-					throw new ExecutionException("Overloading not allowed for ExposedMethod members (" + instanceCLRType.FullName + "." + each.Name + ")");
+					throw new ExecutionException(null, "Overloading not allowed for ExposedMethod members (" + instanceCLRType.FullName + "." + each.Name + ")");
 				BELMember member = new BELMember(visibleName, vis, mi);
 				answer[visibleName] = member;
 			}
@@ -286,7 +286,7 @@ namespace FlexWiki
 					continue;
 				string visibleName = (vis.OverrideName == null) ? each.Name : vis.OverrideName;
 				if (answer.Contains(visibleName))
-					throw new ExecutionException("Overloading not allowed for ExposedMethod members (" + CLRType.FullName + "." + each.Name + ")");
+					throw new ExecutionException(null, "Overloading not allowed for ExposedMethod members (" + CLRType.FullName + "." + each.Name + ")");
 				BELMember member = new BELMember(visibleName, vis, mi);
 				answer[visibleName] = member;
 			}

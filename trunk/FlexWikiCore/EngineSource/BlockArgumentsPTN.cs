@@ -18,9 +18,10 @@ namespace FlexWiki
 	/// <summary>
 	/// Summary description for BlockArgumentsPTN.
 	/// </summary>
-	public class BlockArgumentsPTN : ParseTreeNode
+	public class 
+		BlockArgumentsPTN : ParseTreeNode
 	{
-		public BlockArgumentsPTN(BlockPTN block, QualifiedBlockArgumentsPTN qualifiedBlocks) : base()
+		public BlockArgumentsPTN(BELLocation loc, BlockPTN block, QualifiedBlockArgumentsPTN qualifiedBlocks) : base(loc)
 		{
 			Block = block;
 			QualifiedBlocks = qualifiedBlocks;

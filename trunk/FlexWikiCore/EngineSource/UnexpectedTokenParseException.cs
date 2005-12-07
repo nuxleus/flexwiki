@@ -19,11 +19,11 @@ namespace FlexWiki
 	/// </summary>
 	public class UnexpectedTokenParseException : ParseException
 	{
-		public UnexpectedTokenParseException() : base()
+		public UnexpectedTokenParseException(BELLocation loc ) : base(loc)
 		{
 		}
 
-		public UnexpectedTokenParseException(Token token) : base("Unexpected token: " + token.ToString())
+		public UnexpectedTokenParseException(BELLocation loc, Token token) : base(loc, "Unexpected token: " + token.ToString())
 		{
 		}
 

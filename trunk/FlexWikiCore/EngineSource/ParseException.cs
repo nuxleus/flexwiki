@@ -19,17 +19,21 @@ namespace FlexWiki
 	/// </summary>
 	public class ParseException : System.ApplicationException
 	{
-		public ParseException() : base()
+		public ParseException(BELLocation loc) : base(loc.ToString())
 		{
+			Location = loc;
 		}
 
-		public ParseException(string message) : base(message)
+		public ParseException(BELLocation loc, string message) : base(loc.ToString() + " : " + message)
 		{
+			Location = loc;
 		}
 
-		public ParseException(string message, Token token) : base(message + (token == null ? "" : ": " + token.ToString()))
+		public ParseException(BELLocation loc, string message, Token token) : base(loc.ToString() + " : " + message + (token == null ? "" : ": " + token.ToString()))
 		{
+			Location = loc;
 		}
 
+		BELLocation Location;
 	}
 }

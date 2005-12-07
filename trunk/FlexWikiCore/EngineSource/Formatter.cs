@@ -1052,7 +1052,7 @@ namespace FlexWiki.Formatting
 								}
 								_Output.WriteOpenTableRow();
 							}
-							_Output.WriteTableCell(ProcessLineElements(cellContent), info.IsHighlighted, info.CellAlignment, info.ColSpan, info.RowSpan, ts.HasBorder, info.AllowBreaks, info.CellWidth);
+							_Output.WriteTableCell(ProcessLineElements(cellContent), info.IsHighlighted, info.CellAlignment, info.ColSpan, info.RowSpan, ts.HasBorder, info.AllowBreaks, info.CellWidth, info.BackgroundColor);
 							firstCell = false;
 						}
 						_Output.WriteCloseTableRow();
@@ -1245,7 +1245,7 @@ namespace FlexWiki.Formatting
 				// Turn any escape sequences into unescaped @@
 				expr = expr.Replace(escapedTwo,BehaviorDelimiter);
 				TopicContext tc = new TopicContext(TheFederation, ContentBase, new TopicInfo(TheFederation, CurrentTopic));
-				BehaviorInterpreter interpreter = new BehaviorInterpreter(expr, TheFederation, TheFederation.WikiTalkVersion, this);
+				BehaviorInterpreter interpreter = new BehaviorInterpreter(CurrentTopic == null ? "" : CurrentTopic.Fullname, expr, TheFederation, TheFederation.WikiTalkVersion, this);
 				string replacement = null;
 				if (!interpreter.Parse())
 				{	// parse failed

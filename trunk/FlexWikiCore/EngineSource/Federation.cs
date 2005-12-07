@@ -1018,7 +1018,7 @@ namespace FlexWiki
       // Yup, so evaluate it!
       string code = "federation.GetTopic(\"" + abs.Fullname + "\")." + borderPropertyName + "(federation.GetTopicInfo(\"" + relativeToTopic + "\"))";
 
-      BehaviorInterpreter interpreter = new BehaviorInterpreter(code, this, this.WikiTalkVersion, null);
+      BehaviorInterpreter interpreter = new BehaviorInterpreter(abs.Fullname + "#" + borderPropertyName, code, this, this.WikiTalkVersion, null);
       if (!interpreter.Parse())
       {
         throw new Exception("Border property expression failed to parse.");

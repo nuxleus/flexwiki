@@ -19,7 +19,7 @@ namespace FlexWiki
 	/// </summary>
 	public class BlockParameterPTN : ParseTreeNode
 	{
-		public BlockParameterPTN(string type, string identifier)
+		public BlockParameterPTN(BELLocation loc, string type, string identifier) : base(loc)
 	 {
 		 Type = type;
 		 Identifier = identifier;

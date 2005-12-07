@@ -34,6 +34,22 @@ namespace FlexWiki.BuildVerificationTests
     [Test] public void CreateNamespaceProviderLinkBug()
     {
       DocumentElement doc = TheBrowser.Navigate(TheLinkMaker.SiteURL() + "admin/EditProvider.aspx", true); 
+
+		// System.Diagnostics.Debugger.Break();
+		// Select the filesystem namespace provider
+		SelectElement sel = (SelectElement)doc.GetElementByID("TypeName");
+		int idx = 0;
+		foreach (OptionElement each in sel.Options)
+		{
+			if (each.Text.IndexOf(typeof(FileSystemNamespaceProvider).Name) != -1)
+			{
+				sel.SelectedIndex = idx;
+				break;
+			}
+			idx++;
+		}
+
+
       InputElement next = doc.GetElementByName("next1") as InputElement; 
       next.Form.Submit(); 
 

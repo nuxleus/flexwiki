@@ -85,6 +85,12 @@ namespace FlexWiki
 			return new FormEndPresentation();
 		}
 
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "present a non-breaking space")]
+		public static NonBreakingSpacePresentation NonBreakingSpace()
+		{
+			return new NonBreakingSpacePresentation();
+		}
+
 		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Present a submit button")]
 		public static FormSubmitButtonPresentation SubmitButton(ExecutionContext ctx, string fieldName, string label, [ExposedParameter(true)] string attributes)
 		{

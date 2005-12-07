@@ -281,6 +281,31 @@ namespace FlexWiki
 			}
 		}
 
+		ArrayList _LocationStack = new ArrayList();
+
+		public void PushLocation(BELLocation loc)
+		{
+			_LocationStack.Add(loc);
+		}
+
+		public void PopLocation()
+		{
+			if (_LocationStack.Count == 0)
+				throw new Exception("Location stack has underflowed.");
+			_LocationStack.RemoveAt(_LocationStack.Count - 1);
+		}
+
+		public BELLocation CurrentLocation
+		{
+			get
+			{
+				if (_LocationStack.Count == 0)
+					return null;
+				return (BELLocation)(_LocationStack[_LocationStack.Count - 1]);
+			}
+		}
+
+
 
 	}
 }

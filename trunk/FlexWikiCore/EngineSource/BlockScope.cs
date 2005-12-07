@@ -42,7 +42,7 @@ namespace FlexWiki
 			if (answer == null)
 				return null;		// not found
 			if (args != null && args.Count > 0)
-				throw new ExecutionException(symbol + " is a temporary variable, not a function; no arguments allowed");
+				throw new ExecutionException(ctx.CurrentLocation, symbol + " is a temporary variable, not a function; no arguments allowed");
 			return answer;
 		}
 

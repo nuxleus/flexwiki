@@ -127,7 +127,7 @@ namespace FlexWiki
 				IBELObject objValue = block.Value(ctx, parms);
 				BELBoolean test = objValue as BELBoolean;
 				if (test == null)
-					throw new ExecutionException("Select block must evaluate to a boolean.  Got " + BELType.BELTypeForType(objValue.GetType()).ExternalTypeName + " instead.");
+					throw new ExecutionException(ctx.CurrentLocation, "Select block must evaluate to a boolean.  Got " + BELType.BELTypeForType(objValue.GetType()).ExternalTypeName + " instead.");
 				if (test.Value)
 					answer.Add(each);
 			}
@@ -223,10 +223,10 @@ namespace FlexWiki
 			{
 				IComparable	xc = x as IComparable;
 				if (xc == null)
-					throw new ExecutionException("Can not compare objects of type " + BELType.ExternalTypeNameForType(x.GetType()));
+					throw new ExecutionException(null, "Can not compare objects of type " + BELType.ExternalTypeNameForType(x.GetType()));
 				IComparable	yc = y as IComparable;
 				if (yc == null)
-					throw new ExecutionException("Can not compare objects of type " + BELType.ExternalTypeNameForType(y.GetType()));
+					throw new ExecutionException(null, "Can not compare objects of type " + BELType.ExternalTypeNameForType(y.GetType()));
 
 				return xc.CompareTo(yc);
 			}
@@ -259,10 +259,10 @@ namespace FlexWiki
 
 				IComparable	xc = xKey as IComparable;
 				if (xc == null)
-					throw new ExecutionException("Can not compare objects of type " + BELType.ExternalTypeNameForType(xKey.GetType()));
+					throw new ExecutionException(null, "Can not compare objects of type " + BELType.ExternalTypeNameForType(xKey.GetType()));
 				IComparable	yc = yKey as IComparable;
 				if (yc == null)
-					throw new ExecutionException("Can not compare objects of type " + BELType.ExternalTypeNameForType(yKey.GetType()));
+					throw new ExecutionException(null, "Can not compare objects of type " + BELType.ExternalTypeNameForType(yKey.GetType()));
 
 				int a = xc.CompareTo(yc);
 				return a;

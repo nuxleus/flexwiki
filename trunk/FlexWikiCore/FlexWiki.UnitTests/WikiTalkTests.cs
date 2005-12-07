@@ -624,6 +624,48 @@ namespace FlexWiki.UnitTests
 		}
 		#endregion
 		#endregion
+
+		#region BELInteger comparison tests
+		[Test]
+		public void BELIntegerLessThanTest()
+		{
+			BELInteger left = new BELInteger(4);
+			Assert.IsTrue(left.LessThan(5));
+			Assert.IsFalse(left.LessThan(4));
+			Assert.IsFalse(left.LessThan(3));
+		}
+
+		[Test]
+		public void BELIntegerLessThanOrEqualToTest()
+		{
+			BELInteger left = new BELInteger(4);
+			Assert.IsTrue(left.LessThanOrEqualTo(5));
+			Assert.IsTrue(left.LessThanOrEqualTo(4));
+			Assert.IsFalse(left.LessThanOrEqualTo(3));
+		}
+
+		[Test]
+		public void BELIntegerGreaterThanTest()
+		{
+			BELInteger left = new BELInteger(4);
+			Assert.IsFalse(left.GreaterThan(5));
+			Assert.IsFalse(left.GreaterThan(4));
+			Assert.IsTrue(left.GreaterThan(3));
+		}
+
+		[Test]
+		public void BELIntegerGreaterThanOrEqualToTest()
+		{
+			BELInteger left = new BELInteger(4);
+			Assert.IsFalse(left.GreaterThanOrEqualTo(5));
+			Assert.IsTrue(left.GreaterThanOrEqualTo(4));
+			Assert.IsTrue(left.GreaterThanOrEqualTo(3));
+		}
+
+
+
+		#endregion
+
 		#region BELInteger static arithmetic tests
 		#region Add
 		[Test]

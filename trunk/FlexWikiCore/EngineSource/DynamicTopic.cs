@@ -77,16 +77,16 @@ namespace FlexWiki
 				return new BELString(val);
 			// It's a block, so fire up the interpreter
 			if (!val.EndsWith("}"))
-				throw new ExecutionException("Topic member " + name + " defined in " + Name.Fullname + " is not well-formed; missing closing '}' for code block.");
+				throw new ExecutionException(ctx.CurrentLocation, "Topic member " + name + " defined in " + Name.Fullname + " is not well-formed; missing closing '}' for code block.");
 			ContentBase cb = CurrentFederation.ContentBaseForTopic(Name);
 			TopicContext newContext = new TopicContext(ctx.CurrentFederation, cb, CurrentTopicInfo);
-			BehaviorInterpreter interpreter = new BehaviorInterpreter(val, CurrentFederation, CurrentFederation.WikiTalkVersion, ctx.Presenter);
+			BehaviorInterpreter interpreter = new BehaviorInterpreter(Name.Fullname + "#" + name, val, CurrentFederation, CurrentFederation.WikiTalkVersion, ctx.Presenter);
 			if (!interpreter.Parse())
-				throw new ExecutionException("Parsing error evaluating topic member " + name + " defined in " + Name.Fullname + ": " + interpreter.ErrorString);
+				throw new ExecutionException(ctx.CurrentLocation, "Syntax error in " + interpreter.ErrorString);
 			
 			IBELObject b1 = interpreter.EvaluateToObject(newContext, ctx.ExternalWikiMap);
 			if (b1 == null)
-				throw new ExecutionException("Error while evaluating topic member " + name + " defined in " + Name.Fullname + ": " + interpreter.ErrorString);
+				throw new ExecutionException(ctx.CurrentLocation, "Execution error in " + interpreter.ErrorString);
 			Block block = (Block)b1;
 			ArrayList evaluatedArgs = new ArrayList();
 			foreach (object each in arguments)

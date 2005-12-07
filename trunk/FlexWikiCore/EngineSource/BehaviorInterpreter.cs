@@ -99,9 +99,12 @@ namespace FlexWiki.Formatting
 			}
 		}
 
-		public BehaviorInterpreter(string input, Federation aFed, int wikiTalkVersion, IWikiToPresentation presenter)
+		string _ContextString;
+
+		public BehaviorInterpreter(string contextString, string input, Federation aFed, int wikiTalkVersion, IWikiToPresentation presenter)
 		{
 			_TheFederation = aFed;
+			_ContextString = contextString == null ? "(unknown location)" : contextString;
 			WikiTalkVersion = wikiTalkVersion;
 			Presenter = presenter;
 
@@ -131,7 +134,7 @@ namespace FlexWiki.Formatting
 		public bool Parse()
 		{
 			ParseTree = null;
-			BehaviorParser parser = new BehaviorParser();
+			BehaviorParser parser = new BehaviorParser(_ContextString);
 			string error = null;
 			try
 			{
@@ -198,9 +201,26 @@ namespace FlexWiki.Formatting
 
 				ctx.Presenter = Presenter;
 
-				TopicInfo topic = topicContext.CurrentTopic;
+				TopicInfo topic = topicContext != null ? topicContext.CurrentTopic : null;
 				if (topic != null && topic.Fullname != null)
 				{
+					// Locate any topics via the NamespaceWith property to see if there's anybody else we should import (for all topics in the namespace)
+					ArrayList nswith = topicContext.CurrentFederation.GetTopicInfo(ctx, topicContext.CurrentTopic.ContentBase.DefinitionTopicName.Fullname).GetListProperty("NamespaceWith");
+					if (nswith != null)
+					{
+						nswith.Reverse();
+						foreach (string top in nswith)
+						{
+							AbsoluteTopicName abs = topic.ContentBase.UnambiguousTopicNameFor(new RelativeTopicName(top));
+							if (abs == null)
+							{
+								throw new Exception("No such topic: " + top + " (as specifed in NamespaceWith: property for " + topicContext.CurrentTopic.ContentBase.DefinitionTopicName.Fullname + ")");
+							}
+							theScope = new TopicScope(theScope, new DynamicTopic(topic.Federation, abs));
+							ctx.AddCacheRule(new TopicsCacheRule(topic.Federation, abs));
+						}
+					}
+					
 					// Locate any topics via the with property to see if there's anybody else we should import
 					ArrayList with = topicContext.CurrentTopic.GetListProperty("With");
 					if (with != null)
@@ -211,9 +231,10 @@ namespace FlexWiki.Formatting
 							AbsoluteTopicName abs = topic.ContentBase.UnambiguousTopicNameFor(new RelativeTopicName(top));
 							if (abs == null)
 							{
-								throw new Exception("No such topic: " + top + " (as specifed in with: property for topic)");
+								throw new Exception("No such topic: " + top + " (as specifed in With: property for " + topicContext.CurrentTopic + ")");
 							}
 							theScope = new TopicScope(theScope, new DynamicTopic(topic.Federation, abs));
+							ctx.AddCacheRule(new TopicsCacheRule(topic.Federation, abs));
 						}
 					}
 					// add the topic to the current scope (this guy goes at the front of the queue!)
@@ -232,7 +253,7 @@ namespace FlexWiki.Formatting
 			catch (Exception e)
 			{
 				_CacheRules = ctx.CacheRules;
-				ErrorString = "Error evaluating expression: " + e.Message;
+				ErrorString = e.Message;
 				State = InterpreterState.EvaluationFailure;
 				return  null;
 			}

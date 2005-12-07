@@ -213,7 +213,7 @@ namespace FlexWiki
 		{
 			BELString other = obj as BELString;
 			if (other == null)
-				throw new ExecutionException("Can't compare String to object of type " + BELType.ExternalTypeNameForType(obj.GetType()));
+				throw new ExecutionException(null, "Can't compare String to object of type " + BELType.ExternalTypeNameForType(obj.GetType()));
 			return Value.CompareTo(other.Value);
 		}
 

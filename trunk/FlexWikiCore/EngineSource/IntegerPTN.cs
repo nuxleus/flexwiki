@@ -19,7 +19,7 @@ namespace FlexWiki
 	/// </summary>
 	public class IntegerPTN : ExposableParseTreeNode
 	{
-		public IntegerPTN(string val)
+		public IntegerPTN(BELLocation loc, string val) : base(loc)
 		{
 			_Value = val;
 		}
@@ -39,7 +39,15 @@ namespace FlexWiki
 
 		public override IBELObject Expose(ExecutionContext ctx)
 		{
-			return new BELInteger(AsInteger);
+			try
+			{
+				ctx.PushLocation(Location);
+				return new BELInteger(AsInteger);
+			}
+			finally
+			{
+				ctx.PopLocation();
+			}
 		}
 
 

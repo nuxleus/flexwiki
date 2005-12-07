@@ -42,7 +42,20 @@ namespace FlexWiki.BuildVerificationTests
 				TypedElement.selectedIndex = index;
 		}
 
-		public IList Options
+		public int SelectedIndex
+		{
+			get
+			{
+				return TypedElement.selectedIndex;
+				}
+			set
+			{
+				TypedElement.selectedIndex = value;
+			}
+		}
+
+
+			public IList Options
 		{
 			get
 			{

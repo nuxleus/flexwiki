@@ -55,7 +55,7 @@ namespace FlexWiki.UnitTests
 
 		[Test] public void ScanTest()
 		{
-			Scanner scanner = new Scanner(@"|_ident{}abc_def(),abc123[]""he\""llo""100-100#");
+			Scanner scanner = new Scanner(@"|_ident{}abc_def(),abc123[]""he\""llo""100-100#;");
 			Assert.AreEqual(TokenType.TokenBar, scanner.Next().Type);
 			Assert.AreEqual(TokenType.TokenIdentifier, scanner.Next().Type);
 			Assert.AreEqual(TokenType.TokenLeftBrace, scanner.Next().Type);
@@ -75,7 +75,70 @@ namespace FlexWiki.UnitTests
 			Assert.AreEqual(TokenType.TokenInteger, scanner.Next().Type);
 			Assert.AreEqual("-100", scanner.LatestToken.Value);
 			Assert.AreEqual(TokenType.TokenOther, scanner.Next().Type);
+			Assert.AreEqual(TokenType.TokenSemicolon, scanner.Next().Type);
 		}
+
+		[Test] public void ScanLineAndColumnTest()
+		{
+			Scanner scanner = new Scanner(@"|
+_ident {   
+}abc_def()
+,
+""he\""llo""100
+-100#");
+
+			Token t;
+
+			t = scanner.Next();
+			Assert.AreEqual(1, t.Line);
+			Assert.AreEqual(1, t.Column);
+
+			t = scanner.Next();
+			Assert.AreEqual(2, t.Line);
+			Assert.AreEqual(1, t.Column);
+		
+			t = scanner.Next();
+			Assert.AreEqual(2, t.Line);
+			Assert.AreEqual(8, t.Column);
+
+			t = scanner.Next();
+			Assert.AreEqual(3, t.Line);
+			Assert.AreEqual(1, t.Column);
+
+			t = scanner.Next();
+			Assert.AreEqual(3, t.Line);
+			Assert.AreEqual(2, t.Column);
+
+			t = scanner.Next();
+			Assert.AreEqual(3, t.Line);
+			Assert.AreEqual(9, t.Column);
+
+			t = scanner.Next();
+			Assert.AreEqual(3, t.Line);
+			Assert.AreEqual(10, t.Column);
+
+			t = scanner.Next();
+			Assert.AreEqual(4, t.Line);
+			Assert.AreEqual(1, t.Column);
+
+			t = scanner.Next();
+			Assert.AreEqual(5, t.Line);
+			Assert.AreEqual(1, t.Column);
+
+			t = scanner.Next();
+			Assert.AreEqual(5, t.Line);
+			Assert.AreEqual(10, t.Column);
+
+			t = scanner.Next();
+			Assert.AreEqual(6, t.Line);
+			Assert.AreEqual(1, t.Column);
+		
+			t = scanner.Next();
+			Assert.AreEqual(6, t.Line);
+			Assert.AreEqual(5, t.Column);
+		}
+
+
 
 
 	}

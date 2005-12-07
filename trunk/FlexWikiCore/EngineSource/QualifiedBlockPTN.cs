@@ -20,7 +20,7 @@ namespace FlexWiki
 	/// </summary>
 	public class QualifiedBlockPTN  : ParseTreeNode
 	{
-		public QualifiedBlockPTN(string identifier, BlockPTN block)
+		public QualifiedBlockPTN(BELLocation loc, string identifier, BlockPTN block) : base(loc)
 		{
 			Identifier = identifier;
 			Block = block;

@@ -19,11 +19,11 @@ namespace FlexWiki
 	/// </summary>
 	public class ExecutionException : System.ApplicationException
 	{
-		public ExecutionException() : base()
+		public ExecutionException(BELLocation loc) : base(loc.ToString())
 		{
 		}
 
-		public ExecutionException(string message) : base(message)
+		public ExecutionException(BELLocation loc, string message) : base(loc.ToString() + " : " + message)
 		{
 		}
 	}

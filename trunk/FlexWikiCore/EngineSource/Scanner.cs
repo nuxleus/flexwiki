@@ -20,16 +20,19 @@ namespace FlexWiki
 	{
 		string _Input;
 		int _Pos;
+		int _Line;
+		int _Column;
+
 		public Scanner(string input)
 		{
 			_Input = input;
-			_Pos = 0;;
+			_Pos = 0;
+			_Line = 1;
+			_Column = 1;
 		}
 
 		ArrayList _Pushback = new ArrayList();
 			
-		Token _EndOfInput = new Token(TokenType.TokenEndOfInput);
-
 		public void Pushback(Token t)
 		{
 			_Pushback.Add(t);
@@ -43,6 +46,19 @@ namespace FlexWiki
 					return _Pos >= _Input.Length;
 				else
 					return ((Token)(_Pushback[_Pushback.Count - 1])).Type == TokenType.TokenEndOfInput;
+			}
+		}
+
+		void Track(char c)
+		{
+			if (c == '\n')
+			{
+				_Line++;
+				_Column = 1;
+			}
+			else
+			{
+				_Column++;
 			}
 		}
 
@@ -65,13 +81,14 @@ namespace FlexWiki
 			//LeftParen = '('
 			//RightParen = ')'
 			//Comma = ','
-			//identifir = 'A-Za-z_' '_A-Za-z0-9'*
+			//identifier = 'A-Za-z_' '_A-Za-z0-9'*
 			//LeftBracket = '['
 			//RightBracker = ']'
 			//StringLiteral = "........."
 			//Integer '-'? [0-9]+
 			//LeftBrace '{'
 			//RightBrace '}'
+			//Semicolon ';'
 
 			// NOT IMPLEMENTED YET (EVER?)
 			//Hash='#'
@@ -102,40 +119,51 @@ namespace FlexWiki
 
 			// Skip whitespace
 			while (_Pos < _Input.Length && Char.IsWhiteSpace(_Input[_Pos]))
+			{
+				Track(_Input[_Pos]);
 				_Pos++;
+			}
+
+			// Record where this token starts for position reporting
+			int lineStart = _Line;
+			int columnStart = _Column;
 
 			if (AtEnd)
-				return _EndOfInput;		// at the end
+				return new Token(TokenType.TokenEndOfInput, lineStart, columnStart);		// at the end
 
 			char c = _Input[_Pos++];
+			Track(c);
 			switch (c)
 			{
 				case '|':
-					return new Token(TokenType.TokenBar);
+					return new Token(TokenType.TokenBar, lineStart, columnStart);
+
+				case ';':
+					return new Token(TokenType.TokenSemicolon, lineStart, columnStart);
 
 				case '{':
-					return new Token(TokenType.TokenLeftBrace);
+					return new Token(TokenType.TokenLeftBrace, lineStart, columnStart);
 
 				case '}':
-					return new Token(TokenType.TokenRightBrace);
+					return new Token(TokenType.TokenRightBrace, lineStart, columnStart);
 				
 				case '(':
-					return new Token(TokenType.TokenLeftParen);
+					return new Token(TokenType.TokenLeftParen, lineStart, columnStart);
 
 				case '.':
-					return new Token(TokenType.TokenPeriod);
+					return new Token(TokenType.TokenPeriod, lineStart, columnStart);
 
 				case ')':
-					return new Token(TokenType.TokenRightParen);
+					return new Token(TokenType.TokenRightParen, lineStart, columnStart);
 
 				case '[':
-					return new Token(TokenType.TokenLeftBracket);
+					return new Token(TokenType.TokenLeftBracket, lineStart, columnStart);
 
 				case ']':
-					return new Token(TokenType.TokenRightBracket);
+					return new Token(TokenType.TokenRightBracket, lineStart, columnStart);
 
 				case ',':
-					return new Token(TokenType.TokenComma);
+					return new Token(TokenType.TokenComma, lineStart, columnStart);
 			}
 
 			// OK, maybe a number
@@ -156,10 +184,11 @@ namespace FlexWiki
 					}
 					s.Append(next);
 					_Pos++;
+					Track(next);
 				}
 				if (isInt)
 				{
-					return new Token(TokenType.TokenInteger, s.ToString());
+					return new Token(TokenType.TokenInteger, s.ToString(), lineStart, columnStart);
 				}
 				else
 				{
@@ -167,11 +196,11 @@ namespace FlexWiki
 					{
 						int integer = int.Parse(s.ToString());
 						//if ok, it should be an Integer
-						return new Token(TokenType.TokenInteger, s.ToString());
+						return new Token(TokenType.TokenInteger, s.ToString(), lineStart, columnStart);
 					}
 					catch 
 					{
-						return new Token(TokenType.TokenIdentifier, s.ToString());
+						return new Token(TokenType.TokenIdentifier, s.ToString(), lineStart, columnStart);
 					}
 				}
 			}
@@ -185,23 +214,27 @@ namespace FlexWiki
 					char next = _Input[_Pos];
 					if (next == '\\')
 					{
+						Track(next);
 						_Pos++;
 						if (_Pos < _Input.Length)
 						{
 							s.Append(_Input[_Pos]);
+							Track(_Input[_Pos]);
 							_Pos++;
 						}
 						continue;
 					}
 					if (next == '"')
 					{
+						Track(next);
 						_Pos++;
 						break;
 					}
 					s.Append(next);
+					Track(next);
 					_Pos++;
 				}
-				return new Token(TokenType.TokenString, s.ToString());
+				return new Token(TokenType.TokenString, s.ToString(), lineStart, columnStart);
 			}
 
 			// Identifier
@@ -215,12 +248,13 @@ namespace FlexWiki
 					if (!Char.IsLetterOrDigit(next) && next != '_')
 						break;
 					s.Append(next);
+					Track(next);
 					_Pos++;
 				}
-				return new Token(TokenType.TokenIdentifier, s.ToString());
+				return new Token(TokenType.TokenIdentifier, s.ToString(), lineStart, columnStart);
 			}
 
-			return new Token(TokenType.TokenOther);
+			return new Token(TokenType.TokenOther, lineStart, columnStart);
 		}			
 	}
 }

@@ -20,9 +20,12 @@ namespace FlexWiki
 	/// </summary>
 	public abstract class ParseTreeNode
 	{
-		public ParseTreeNode()
+		public ParseTreeNode(BELLocation loc)
 		{
+			Location = loc;
 		}
+
+		public BELLocation Location;
 
 		ArrayList EmptyCollection = new ArrayList();
 		public virtual IEnumerable Children

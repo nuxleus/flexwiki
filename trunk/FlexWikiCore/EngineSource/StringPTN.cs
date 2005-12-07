@@ -19,7 +19,7 @@ namespace FlexWiki
 	/// </summary>
 	public class StringPTN : ExposableParseTreeNode
 	{
-		public StringPTN(string val)
+		public StringPTN(BELLocation loc, string val) : base(loc)
 		{
 			_Value = val;
 		}
@@ -39,7 +39,16 @@ namespace FlexWiki
 
 		public override IBELObject Expose(ExecutionContext ctx)
 		{
-			return new BELString(Value);
+			try
+			{
+				ctx.PushLocation(Location);
+				return new BELString(Value);
+			}
+			finally
+			{
+				ctx.PopLocation();
+			}
+
 		}
 
 		public override string ToString()

@@ -34,7 +34,7 @@ namespace FlexWiki
 			if (needExecutionContext)
 				need--;
 			if (got > need && !(mi.ExposedMethod.AllowsVariableArguments))
-				throw new MemberInvocationException("Incorrect number of arguments (too many) for " + ExternalTypeName + "." + name + " (need " + need + ", got " + got + ")");
+				throw new MemberInvocationException(ctx.CurrentLocation, "Incorrect number of arguments (too many) for " + ExternalTypeName + "." + name + " (need " + need + ", got " + got + ")");
 
 			// Figure out what arguments we should be passing
 			ArrayList args = new ArrayList();
@@ -56,7 +56,7 @@ namespace FlexWiki
 				if (arguments != null && (each - offset) < arguments.Count)
 					arg = (ParseTreeNode)(arguments[each - offset]);
 				if (!BELMember.IsOptionalParameter(parms[each]) && arg == null)
-					throw new MemberInvocationException("Missing argument " + (each - offset) + " for " + ExternalTypeName + "." + name);
+					throw new MemberInvocationException(ctx.CurrentLocation, "Missing argument " + (each - offset) + " for " + ExternalTypeName + "." + name);
 				if (parameterPresentFlags != null)
 					parameterPresentFlags.Add(arg != null);
 				if (mi.ExposedMethod.IsCustomArgumentProcessor)
@@ -114,7 +114,7 @@ namespace FlexWiki
 						bad = true;
 				}
 				if (bad)
-					throw new MemberInvocationException("Argument " + each + " is not of the correct type (was " 
+					throw new MemberInvocationException(ctx.CurrentLocation, "Argument " + (each + 1) + " for " + ExternalTypeName + "." + name + " is not of the correct type (was " 
 						+ ExternalTypeNameForType(args[each].GetType()) + 
 						", but needed " + ExternalTypeNameForType(parms[each].ParameterType) + ")");
 			}
@@ -168,7 +168,7 @@ namespace FlexWiki
 			if (pi.ParameterType == typeof(bool))
 				return false;
 
-			throw new ExecutionException("Unsupported type (" + pi.ParameterType.FullName + ") for optional parameter " + pi.Name + " in method " + pi.Member.Name);
+			throw new ExecutionException(null, "Unsupported type (" + pi.ParameterType.FullName + ") for optional parameter " + pi.Name + " in method " + pi.Member.Name);
 		}
 		protected static IBELObject Wrap(object obj)
 		{
@@ -194,7 +194,7 @@ namespace FlexWiki
 				return new BELString(obj as string);
 			if (obj is ArrayList)
 				return new BELArray(obj as ArrayList);
-			throw new ExecutionException("Object of type " + obj.GetType().FullName + " can not be converted to a BEL object");
+			throw new ExecutionException(null, "Object of type " + obj.GetType().FullName + " can not be converted to a BEL object");
 		}
 		public static object ConvertFromBELObjectIfNeeded(IBELObject obj)
 		{

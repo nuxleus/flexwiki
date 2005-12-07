@@ -316,6 +316,12 @@ Write(@"
 			}
 		}
 
+		public override void NonBreakingSpace()
+		{
+			Write("&nbsp;");
+		}
+
+
 		public override void WriteErrorMessage(string title, string body)
 		{
 			Write("<span class=\"ErrorMessage\">");
@@ -332,7 +338,7 @@ Write(@"
 		}
 
 
-		override public void WriteTableCell(string s,  bool isHighlighted, TableCellInfo.AlignOption alignment, int colSpan, int rowSpan, bool hasBorder, bool allowBreaks, int width)
+		override public void WriteTableCell(string s,  bool isHighlighted, TableCellInfo.AlignOption alignment, int colSpan, int rowSpan, bool hasBorder, bool allowBreaks, int width, string bgColor)
 		{
 			Write("<td  ");
 			if (isHighlighted)
@@ -349,6 +355,9 @@ Write(@"
 				else
 					Write("class=\"TableCellNoBorder\"");
 			}
+
+			if (bgColor != null)
+				Write(" style=\" background: " + Formatter.EscapeHTML(bgColor) + "\" ");
 
 			if (!allowBreaks)
 				Write(" nowrap ");

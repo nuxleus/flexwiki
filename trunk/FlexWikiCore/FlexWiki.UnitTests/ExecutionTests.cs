@@ -29,9 +29,11 @@ namespace FlexWiki.UnitTests
 			return Run(input, 1);
 		}
 
+		const string ContextString = "Unit Tests";
+
 		string Run(string input, int wikiTalkVersion)
 		{
-			BehaviorParser parser = new BehaviorParser();
+			BehaviorParser parser = new BehaviorParser(ContextString);
 			ExposableParseTreeNode obj = parser.Parse(input);
 			Assert.IsNotNull(obj);
 			ExecutionContext ctx = new ExecutionContext();
@@ -134,6 +136,13 @@ namespace FlexWiki.UnitTests
 		{
 			Assert.AreEqual("P(5)", Run(@"""hello"".Reverse.Length"));
 		}
+
+
+		[Test] public void TestExpressionChain()
+		{
+			Assert.AreEqual("P(5)", Run(@"100; 200; ""hello"".Reverse.Length"));
+		}
+
 
 		[Test] public void TestArgs()
 		{
@@ -409,8 +418,8 @@ with(""short"")
 		{
 			IBELObject p = new Dummy();
 			ExecutionContext ctx = new ExecutionContext();
-			StringPTN s1 = new StringPTN(@"string1");
-			StringPTN s2 = new StringPTN(@"string2");
+			StringPTN s1 = new StringPTN(new BELLocation(ContextString, 1, 1), @"string1");
+			StringPTN s2 = new StringPTN(new BELLocation(ContextString, 1, 1), @"string2");
 			ArrayList args = new ArrayList();
 			args.Add(s1);
 			args.Add(s2);
@@ -423,10 +432,10 @@ with(""short"")
 		{
 			IBELObject p = new Dummy();
 			ExecutionContext ctx = new ExecutionContext();
-			StringPTN s1 = new StringPTN(@"string1");
-			StringPTN s2 = new StringPTN(@"string2");
+			StringPTN s1 = new StringPTN(new BELLocation(ContextString, 1, 1), @"string1");
+			StringPTN s2 = new StringPTN(new BELLocation(ContextString, 1, 1), @"string2");
 			ArrayList args = new ArrayList();
-			args.Add(new IntegerPTN("1"));
+			args.Add(new IntegerPTN(new BELLocation(ContextString, 1, 1), "1"));
 			args.Add(s1);
 			args.Add(s2);
 			IBELObject v = p.ValueOf("ExtractExtraArg", args, ctx);

@@ -35,8 +35,6 @@ namespace FlexWiki.BeL.Debugger
 		private System.Windows.Forms.ListBox listBoxTokens;
 		private System.Windows.Forms.Button button3;
 		private System.Windows.Forms.ToolTip toolTip1;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.ListBox listBoxCache;
@@ -60,6 +58,7 @@ namespace FlexWiki.BeL.Debugger
 		private System.Windows.Forms.Splitter splitter2;
 		private System.Windows.Forms.TabControl tabControl1;
 		private System.Windows.Forms.TabPage tabPage1;
+		private System.Windows.Forms.Label parseErrorLabel;
 		private System.ComponentModel.IContainer components;
 
 		public Form1()
@@ -104,8 +103,6 @@ namespace FlexWiki.BeL.Debugger
 			this.listBoxTokens = new System.Windows.Forms.ListBox();
 			this.button3 = new System.Windows.Forms.Button();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-			this.label1 = new System.Windows.Forms.Label();
-			this.label2 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
 			this.listBoxCache = new System.Windows.Forms.ListBox();
@@ -129,6 +126,7 @@ namespace FlexWiki.BeL.Debugger
 			this.mainMenu1 = new System.Windows.Forms.MainMenu();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
+			this.parseErrorLabel = new System.Windows.Forms.Label();
 			this.tabControl.SuspendLayout();
 			this.tabParser.SuspendLayout();
 			this.panel5.SuspendLayout();
@@ -150,7 +148,7 @@ namespace FlexWiki.BeL.Debugger
 			this.textBoxInput.Name = "textBoxInput";
 			this.textBoxInput.Size = new System.Drawing.Size(760, 68);
 			this.textBoxInput.TabIndex = 0;
-			this.textBoxInput.Text = "textBox1";
+			this.textBoxInput.Text = "";
 			this.toolTip1.SetToolTip(this.textBoxInput, "Enter behavior expression");
 			this.textBoxInput.TextChanged += new System.EventHandler(this.textBoxInput_TextChanged);
 			// 
@@ -163,6 +161,7 @@ namespace FlexWiki.BeL.Debugger
 			this.treeViewParseTree.SelectedImageIndex = -1;
 			this.treeViewParseTree.Size = new System.Drawing.Size(448, 176);
 			this.treeViewParseTree.TabIndex = 1;
+			this.treeViewParseTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeViewParseTree_AfterSelect);
 			// 
 			// textBoxLog
 			// 
@@ -176,41 +175,21 @@ namespace FlexWiki.BeL.Debugger
 			// listBoxTokens
 			// 
 			this.listBoxTokens.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.listBoxTokens.Location = new System.Drawing.Point(0, 23);
+			this.listBoxTokens.Location = new System.Drawing.Point(0, 0);
 			this.listBoxTokens.Name = "listBoxTokens";
-			this.listBoxTokens.Size = new System.Drawing.Size(312, 147);
+			this.listBoxTokens.Size = new System.Drawing.Size(312, 173);
 			this.listBoxTokens.TabIndex = 3;
 			this.listBoxTokens.SelectedIndexChanged += new System.EventHandler(this.listBoxTokens_SelectedIndexChanged);
 			// 
 			// button3
 			// 
-			this.button3.Location = new System.Drawing.Point(104, 6);
+			this.button3.Location = new System.Drawing.Point(680, 8);
 			this.button3.Name = "button3";
 			this.button3.Size = new System.Drawing.Size(72, 20);
 			this.button3.TabIndex = 2;
 			this.button3.Text = "Run";
 			this.toolTip1.SetToolTip(this.button3, "parse and evaluate the expression");
 			this.button3.Click += new System.EventHandler(this.button3_Click);
-			// 
-			// label1
-			// 
-			this.label1.Dock = System.Windows.Forms.DockStyle.Top;
-			this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.label1.Location = new System.Drawing.Point(0, 0);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(312, 23);
-			this.label1.TabIndex = 5;
-			this.label1.Text = "Lexical Analysis";
-			// 
-			// label2
-			// 
-			this.label2.Dock = System.Windows.Forms.DockStyle.Top;
-			this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.label2.Location = new System.Drawing.Point(0, 0);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(448, 23);
-			this.label2.TabIndex = 5;
-			this.label2.Text = "Parse Tree";
 			// 
 			// label3
 			// 
@@ -288,6 +267,7 @@ namespace FlexWiki.BeL.Debugger
 			// 
 			// panel6
 			// 
+			this.panel6.Controls.Add(this.parseErrorLabel);
 			this.panel6.Controls.Add(this.button3);
 			this.panel6.Controls.Add(this.textBoxInput);
 			this.panel6.Controls.Add(this.label5);
@@ -321,7 +301,6 @@ namespace FlexWiki.BeL.Debugger
 			// panel2
 			// 
 			this.panel2.Controls.Add(this.listBoxTokens);
-			this.panel2.Controls.Add(this.label1);
 			this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.panel2.Location = new System.Drawing.Point(0, 0);
 			this.panel2.Name = "panel2";
@@ -330,7 +309,6 @@ namespace FlexWiki.BeL.Debugger
 			// 
 			// panel3
 			// 
-			this.panel3.Controls.Add(this.label2);
 			this.panel3.Controls.Add(this.treeViewParseTree);
 			this.panel3.Dock = System.Windows.Forms.DockStyle.Right;
 			this.panel3.Location = new System.Drawing.Point(312, 0);
@@ -376,7 +354,7 @@ namespace FlexWiki.BeL.Debugger
 			this.textBoxFederationPath.Name = "textBoxFederationPath";
 			this.textBoxFederationPath.Size = new System.Drawing.Size(360, 20);
 			this.textBoxFederationPath.TabIndex = 6;
-			this.textBoxFederationPath.Text = "C:\\Safe\\Keep\\Dev\\Flex\\FlexWiki.Web\\WikiBases\\NamespaceMap.xml";
+			this.textBoxFederationPath.Text = "D:\\Safe\\keep\\Dev\\FlexWikiCore\\FlexWiki.Web\\WikiBases\\NamespaceMap.xml";
 			this.textBoxFederationPath.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
 			// 
 			// label6
@@ -419,6 +397,14 @@ namespace FlexWiki.BeL.Debugger
 			this.tabPage1.Size = new System.Drawing.Size(768, 302);
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "WikiTalk";
+			// 
+			// parseErrorLabel
+			// 
+			this.parseErrorLabel.ForeColor = System.Drawing.Color.Red;
+			this.parseErrorLabel.Location = new System.Drawing.Point(120, 2);
+			this.parseErrorLabel.Name = "parseErrorLabel";
+			this.parseErrorLabel.Size = new System.Drawing.Size(544, 23);
+			this.parseErrorLabel.TabIndex = 6;
 			// 
 			// Form1
 			// 
@@ -478,7 +464,7 @@ namespace FlexWiki.BeL.Debugger
 
 		void LexAndParse()
 		{
-			BehaviorInterpreter interpreter = new BehaviorInterpreter(textBoxInput.Text, CurrentTopicContext.CurrentFederation, 1, this);
+			BehaviorInterpreter interpreter = new BehaviorInterpreter("Input Form", textBoxInput.Text, CurrentTopicContext != null ? CurrentFederation : null, 1, this);
 			Lex();	
 			Parse(interpreter);
 		}
@@ -486,6 +472,7 @@ namespace FlexWiki.BeL.Debugger
 		ParseTreeNode Parse(BehaviorInterpreter interpreter)
 		{
 			textBoxLog.Text = "";
+			parseErrorLabel.Text = "";
 			ParseTreeNode result = null;
 			if (interpreter.Parse())
 				result = interpreter.ParseTree;
@@ -493,6 +480,7 @@ namespace FlexWiki.BeL.Debugger
 			if (result == null)
 			{
 				textBoxLog.Text = interpreter.ErrorString;
+				parseErrorLabel.Text = interpreter.ErrorString;
 			}
 			else
 			{
@@ -556,6 +544,8 @@ namespace FlexWiki.BeL.Debugger
 				if (_CurrentTopicContext != null)
 					return _CurrentTopicContext;
 				AbsoluteTopicName tn = new AbsoluteTopicName(comboBoxTopic.Text);
+				if (comboBoxTopic.Text.Length == 0)
+					return null;
 				_CurrentTopicContext = new TopicContext(CurrentFederation, CurrentFederation.ContentBaseForTopic(tn), new TopicInfo(CurrentFederation, tn));
 				return _CurrentTopicContext;
 			}
@@ -564,7 +554,7 @@ namespace FlexWiki.BeL.Debugger
 		private void button3_Click(object sender, System.EventArgs e)
 		{
 			Federation fed = new Federation(textBoxFederationPath.Text, OutputFormat.Testing, null);
-			BehaviorInterpreter interpreter = new BehaviorInterpreter(textBoxInput.Text, CurrentTopicContext.CurrentFederation, 1, this);
+			BehaviorInterpreter interpreter = new BehaviorInterpreter("Input Form", textBoxInput.Text, CurrentFederation, 1, this);
 					
 			ClearCacheView();
 
@@ -645,6 +635,11 @@ namespace FlexWiki.BeL.Debugger
 		}
 
 		private void tabControl1_SelectedIndexChanged(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void treeViewParseTree_AfterSelect(object sender, System.Windows.Forms.TreeViewEventArgs e)
 		{
 		
 		}

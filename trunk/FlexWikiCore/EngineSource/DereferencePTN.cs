@@ -23,8 +23,9 @@ namespace FlexWiki
 		ExposableParseTreeNode Left;
 		ParseTreeNode Right;
 
-		public DereferencePTN(ExposableParseTreeNode left, ParseTreeNode right)
+		public DereferencePTN(BELLocation loc, ExposableParseTreeNode left, ParseTreeNode right) : base(loc)
 		{
+			Location = loc;
 			Left = left;
 			Right = right;
 		}
@@ -48,13 +49,32 @@ namespace FlexWiki
 		
 		public override IBELObject Expose(ExecutionContext ctx)
 		{
-			// The object on the left is evaluated relative to the global context and temps
-			IBELObject leftObject = Left.Expose(ctx);
-			// The object on the right is either a MethodReferencePTN or another DereferencePTN
-			if (Right is MethodReferencePTN)
-				return ((MethodReferencePTN)Right).EvaluateWithReceiver(ctx, leftObject);
-			else if (Right is DereferencePTN)
-				return ((DereferencePTN)Right).EvaluateWithReceiver(ctx, leftObject);
+			IBELObject leftObject;
+			try
+			{
+				ctx.PushLocation(Left.Location);
+				// The object on the left is evaluated relative to the global context and temps
+				leftObject = Left.Expose(ctx);
+			}
+			finally
+			{
+				ctx.PopLocation();
+			}
+
+			try
+			{
+				ctx.PushLocation(Right.Location);
+				// The object on the right is either a MethodReferencePTN or another DereferencePTN
+				if (Right is MethodReferencePTN)
+					return ((MethodReferencePTN)Right).EvaluateWithReceiver(ctx, leftObject);
+				else if (Right is DereferencePTN)
+					return ((DereferencePTN)Right).EvaluateWithReceiver(ctx, leftObject);
+			}
+			finally
+			{
+				ctx.PopLocation();
+			}
+
 			throw new Exception("Corrupt parse tree -- DereferencePTN with right side that's neither a MethodReferencePTN nor a DereferencePTN");
 		}
 

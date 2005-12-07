@@ -112,6 +112,69 @@ lenSpanning=@@topics.TopicWithBehaviorProperties.FaceSpanningLines(""parsing is 
 		#endregion
 
 
+		#region TableFormatting rules tests
+
+		[Test] public void TableFormattingRulesTest1()
+		{
+			TableCellInfo info = new TableCellInfo();
+			info.Parse("!+");
+			Assert.IsTrue(info.IsHighlighted);
+			Assert.IsFalse(info.AllowBreaks);
+			Assert.AreEqual(info.CellAlignment, TableCellInfo.AlignOption.None);
+			Assert.AreEqual(info.CellWidth, TableCellInfo.UnspecifiedWidth);
+			Assert.AreEqual(info.ColSpan, 1);
+			Assert.AreEqual(info.RowSpan, 1);
+			Assert.AreEqual(info.BackgroundColor, null);
+		}
+
+		[Test] public void TableFormattingRulesCellWidthTest()
+		{
+			TableCellInfo info = new TableCellInfo();
+			info.Parse("W10");
+			Assert.AreEqual(info.CellWidth, 10);
+		}
+
+		[Test] public void TableFormattingRulesColor()
+		{
+			TableCellInfo info = new TableCellInfo();
+			info.Parse("!*red*+");
+			Assert.IsTrue(info.IsHighlighted);
+			Assert.AreEqual(info.BackgroundColor, "red");
+			Assert.IsFalse(info.AllowBreaks);
+		}
+
+		[Test] public void TableFormattingRulesSpanTest()
+		{
+			TableCellInfo info = new TableCellInfo();
+			info.Parse("C10R3");
+			Assert.AreEqual(info.ColSpan, 10);
+			Assert.AreEqual(info.RowSpan, 3);
+		}
+
+
+		[Test] public void TableFormattingRulesTestLeftCell()
+		{
+			TableCellInfo info = new TableCellInfo();
+			info.Parse("[");
+			Assert.AreEqual(info.CellAlignment, TableCellInfo.AlignOption.Left);
+		}
+
+		[Test] public void TableFormattingRulesTestRightCell()
+		{
+			TableCellInfo info = new TableCellInfo();
+			info.Parse("]");
+			Assert.AreEqual(info.CellAlignment, TableCellInfo.AlignOption.Right);
+		}
+
+		[Test] public void TableFormattingRulesTestLeftCenter()
+		{
+			TableCellInfo info = new TableCellInfo();
+			info.Parse("^");
+			Assert.AreEqual(info.CellAlignment, TableCellInfo.AlignOption.Center);
+		}
+
+		#endregion
+
 
 		#region WikiPageProperty Tests
 		[Test] public void SinglineLinePropertyTest()
@@ -1814,7 +1877,7 @@ Normal again
 		{
 			FormatTest(
 				@"@@Presentations.ComboSelectField(""selectTest"", [""one"", ""two"", ""three""], null, [1, 2])@@",
-				@"<p><span class=""ErrorMessage""><span class=""ErrorMessageBody"">Error evaluating expression: The values array does not contain the same number of items as the options array
+				@"<p><span class=""ErrorMessage""><span class=""ErrorMessageBody"">The values array does not contain the same number of items as the options array
 Parameter name: values</span></span></p>
 ");
 		}
@@ -1949,7 +2012,7 @@ Parameter name: values</span></span></p>
 		{
 			FormatTest(
 				@"@@Presentations.ListSelectField(""selectTest"", 2, true, [""one"", ""two"", ""three""], null, [1, 2])@@",
-				@"<p><span class=""ErrorMessage""><span class=""ErrorMessageBody"">Error evaluating expression: The values array does not contain the same number of items as the options array
+				@"<p><span class=""ErrorMessage""><span class=""ErrorMessageBody"">The values array does not contain the same number of items as the options array
 Parameter name: values</span></span></p>
 ");
 		}

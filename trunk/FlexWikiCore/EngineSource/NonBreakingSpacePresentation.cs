@@ -11,27 +11,25 @@
 #endregion
 
 using System;
+using FlexWiki.Formatting;
 
 namespace FlexWiki
 {
 	/// <summary>
-	/// Summary description for ExposableParseTreeNode.
+	/// 
 	/// </summary>
-	public abstract class ExposableParseTreeNode : ParseTreeNode
+	/// 
+	[ExposedClass("NonBreakingSpacePresentation", "Presents a non-breakign space")]
+	public class NonBreakingSpacePresentation : FlexWiki.PresentationPrimitive
 	{
-		public ExposableParseTreeNode(BELLocation loc) : base(loc)
+		public NonBreakingSpacePresentation()
 		{
 		}
 
-		/// <summary>
-		/// Expose the reciever.  If it's something like a literal, we'll 
-		/// just end up answering a BELObject for it.  If it's a property or 
-		/// function reference, we'll use the given 
-		/// context to look it up.
-		/// </summary>
-		/// <param name="ctx"></param>
-		/// <returns></returns>
-		public abstract IBELObject Expose(ExecutionContext ctx);
+		public override void OutputTo(WikiOutput output)
+		{
+			output.NonBreakingSpace();
+		}
 
 	}
 }

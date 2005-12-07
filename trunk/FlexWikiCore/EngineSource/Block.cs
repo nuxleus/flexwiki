@@ -104,7 +104,7 @@ namespace FlexWiki
 					IBELObject arg = (IBELObject)(convertedArgs[i]); 
 					Type parmType = ((BELType)(neededTypes[i])).CLRType;
 					if (!parmType.IsAssignableFrom(arg.GetType()))
-						throw new MemberInvocationException("Block parameter " + bp.Identifier + " is not of the correct type (was " 
+						throw new MemberInvocationException(ctx.CurrentLocation, "Block parameter " + bp.Identifier + " is not of the correct type (was " 
 							+ ExternalTypeNameForType(arg.GetType()) + 
 							", but needed " + ExternalTypeNameForType(parmType) + ")");
 				}
@@ -145,7 +145,7 @@ namespace FlexWiki
 				IBELObject objValue = Value(ctx);
 				BELBoolean test = objValue as BELBoolean;
 				if (test == null)
-					throw new ExecutionException("WhileTrue/WhileFalse block must evaluate to a boolean.  Got " + BELType.BELTypeForType(objValue.GetType()).ExternalTypeName + " instead.");
+					throw new ExecutionException(ctx.CurrentLocation, "WhileTrue/WhileFalse block must evaluate to a boolean.  Got " + BELType.BELTypeForType(objValue.GetType()).ExternalTypeName + " instead.");
 				if (test.Value == halt)
 					break;
 			}

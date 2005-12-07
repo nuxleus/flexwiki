@@ -42,16 +42,16 @@ namespace FlexWiki
 			}
 		}
 
-		public static NoSuchMemberException ForMember(string member)
+		public static NoSuchMemberException ForMember(BELLocation loc, string member)
 		{
-			NoSuchMemberException answer = new NoSuchMemberException("No such property or function: " + member);
+			NoSuchMemberException answer = new NoSuchMemberException(loc.ToString() + " : " + "No such property or function: " + member);
 			answer.Member = member;
 			return answer;
 		}
 
-		public static NoSuchMemberException ForMemberAndType(string member, string typeName)
+		public static NoSuchMemberException ForMemberAndType(BELLocation loc, string member, string typeName)
 		{
-			NoSuchMemberException answer = new NoSuchMemberException("No such property or function: " + typeName + "." + member);
+			NoSuchMemberException answer = new NoSuchMemberException(loc.ToString() + " : " + "No such property or function: " + typeName + "." + member);
 			answer.Member = member;
 			return answer;
 		}

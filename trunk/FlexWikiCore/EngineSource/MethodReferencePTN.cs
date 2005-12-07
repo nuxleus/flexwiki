@@ -21,7 +21,7 @@ namespace FlexWiki
 	/// </summary>
 	public class MethodReferencePTN : ExposableParseTreeNode
 	{
-		public MethodReferencePTN(string methodName, ArrayList args, BlockArgumentsPTN blockargs)
+		public MethodReferencePTN(BELLocation loc, string methodName, ArrayList args, BlockArgumentsPTN blockargs) : base(loc)
 		{
 			_MethodName = methodName;
 			_Args = args;
@@ -97,18 +97,28 @@ namespace FlexWiki
 				args.Add(x);
 			IBELObject answer = receiver.ValueOf(FullMethodName, args, ctx);
 			if (answer == null)
-				throw NoSuchMemberException.ForMemberAndType(FullMethodName, BELType.ExternalTypeNameForType(receiver.GetType()));
+				throw NoSuchMemberException.ForMemberAndType(Location, FullMethodName, BELType.ExternalTypeNameForType(receiver.GetType()));
 			return answer;
 		}
 
 		public override IBELObject Expose(ExecutionContext ctx)
 		{
+			IBELObject answer = null;
 			ArrayList args = new ArrayList();
 			foreach (object x in AllArgs)
 				args.Add(x);
-			IBELObject answer = ctx.FindAndInvoke(FullMethodName, args);
-			if (answer == null)
-				throw NoSuchMemberException.ForMember(FullMethodName);
+			try
+			{
+				ctx.PushLocation(Location);
+				answer = ctx.FindAndInvoke(FullMethodName, args);
+				if (answer == null)
+					throw NoSuchMemberException.ForMember(Location, FullMethodName);
+			}
+			finally
+			{
+				ctx.PopLocation();
+			}
+
 			return answer;
 		}
 

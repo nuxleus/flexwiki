@@ -41,6 +41,7 @@ namespace FlexWiki.Formatting
 		public bool AllowBreaks = true;
 		public int CellWidth = UnspecifiedWidth;
 		public int TableWidth = UnspecifiedWidth;
+		public string BackgroundColor = null;
 
 		static public int UnspecifiedWidth = -1;
 
@@ -149,12 +150,26 @@ namespace FlexWiki.Formatting
 						p--;
 						continue;
 
+					case '*':
+						if (p + 1 >= format.Length)
+							return "Missing color for background color option '<>' in table format";
+						p++;
+						BackgroundColor = "";
+						while (p < format.Length && format[p] != '*')
+							BackgroundColor += format[p++];
+						if (BackgroundColor == "")
+							return "Missing color for background color option '**' in table format";
+						continue;
+
+
 					default:
 						return "Unknown table formatting option: " + ch;
 				}
 			}
 			return null;
 		}
+
 		
 	}
+
 }

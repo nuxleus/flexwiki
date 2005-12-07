@@ -115,6 +115,30 @@ namespace FlexWiki
 				Int32.Parse(secondValue.ToString(), CultureInfo.CurrentCulture);
 		}
 
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer true or false depending on whether this number is less than or equal to the supplied integer")]
+		public bool LessThanOrEqualTo(int otherValue)
+		{
+			return Value <= otherValue;
+		}
+
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer true or false depending on whether this number is less than the supplied integer")]
+		public bool LessThan(int otherValue)
+		{
+			return Value < otherValue;
+		}
+
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer true or false depending on whether this number is greater than or equal to the supplied integer")]
+		public bool GreaterThanOrEqualTo(int otherValue)
+		{
+			return Value >= otherValue;
+		}
+
+		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer true or false depending on whether this number is greater than the supplied integer")]
+		public bool GreaterThan(int otherValue)
+		{
+			return Value > otherValue;
+		}
+
 		#region IWikiSequenceProducer Members
 
 		public override IOutputSequence ToOutputSequence()
@@ -131,7 +155,7 @@ namespace FlexWiki
 		{
 			BELInteger other = obj as BELInteger;
 			if (other == null)
-				throw new ExecutionException("Can't compare Integer to object of type " + BELType.ExternalTypeNameForType(obj.GetType()));
+				throw new ExecutionException(null, "Can't compare Integer to object of type " + BELType.ExternalTypeNameForType(obj.GetType()));
 			return Value.CompareTo(other.Value);
 		}
 

@@ -164,6 +164,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "BELLocation.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "BELMember.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -350,6 +355,11 @@
                 />
                 <File
                     RelPath = "ExposedParameter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ExpressionChainPTN.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -620,6 +630,11 @@
                 />
                 <File
                     RelPath = "NamespaceScope.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "NonBreakingSpacePresentation.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
