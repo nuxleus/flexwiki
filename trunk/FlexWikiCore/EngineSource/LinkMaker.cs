@@ -27,36 +27,15 @@ namespace FlexWiki
 	public class LinkMaker : BELObject
 	{
 		private string	_SiteURL;
-		bool _MakeAbsoluteURLs = false;
 
 		public LinkMaker(string siteURL)
 		{
 			_SiteURL = siteURL;
-			string mau = ConfigurationSettings.AppSettings["MakeAbsoluteURLs"];
-			if (mau != null && mau.Equals("true"))
-				_MakeAbsoluteURLs = true;
-		}
-
-		bool MakeAbsoluteURLs
-		{
-			get
-			{
-				return _MakeAbsoluteURLs;
-			}
 		}
 
 		public string SiteURL()
 		{
-			if (MakeAbsoluteURLs)
-			{
-				HttpRequest r = 	System.Web.HttpContext.Current.Request;
-				string answer = new UriBuilder(r.Url.Scheme, r.Url.Host, r.Url.Port, _SiteURL).ToString();
-				return answer;
-			}
-			else
-			{
-				return _SiteURL;
-			}
+			return _SiteURL;
 		}
 
 		public LinkMaker Clone()
