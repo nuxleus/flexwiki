@@ -1,0 +1,56 @@
+<project name="cvsbuild" default="cvsbuild">
+
+  <!-- If a file called personal.properties exists, read it in and use
+       the properties defined there to override this build file's
+       settings -->
+  <available property="personalprops.available"
+	     resource="${nant.project.basedir}/../personal.properties"
+	     type="File" />
+
+  <include buildfile="${nant.project.basedir}/../personal.properties" 
+	   if="${personalprops.available}" />
+
+  <!-- The CVS connection string to use to connect to the repository
+       for diff and release tasks. Generally, you'll want to set this
+       in your personal.properties file. Defaults to anonymous access,
+       which allows you to get files (for diff), but not to check them
+       in. --> 
+  <ifnot propertyexists="cvs.root">
+    <property name="cvs.root" value=":pserver:anonymous@cvs.sourceforge.net:/cvsroot/flexwiki" />
+  </ifnot>
+
+  <!-- The name of the CVS module where this code is stored. Defaults
+       to "FlexWikiCore" -->
+  <ifnot propertyexists="cvs.module">
+    <property name="cvs.module" value="FlexWikiCore" />
+  </ifnot>
+
+  <!-- Change this property to use a directory other than the default
+       for checking out the sources into. -->
+  <ifnot propertyexists="cvsbuilddir"> 
+    <property name="cvsbuilddir"  value="..\cvsbld" /> 
+  </ifnot>
+
+    <!-- The freshbuild target gets a clean copy of the source from
+       SourceForge, and builds it. -->
+  <target name="cvsbuild">
+
+    <!-- Nuke anything that was in the directory and recreate
+	 it so we're working from a fresh copy of source --> 
+    <delete dir="${cvsbuilddir}" failonerror="false" />
+    <mkdir dir="${cvsbuilddir}" />
+
+    <!-- Grab the source from CVS --> 
+    <exec program="cvs.exe" workingdir="${cvsbuilddir}">
+      <arg value="-d" />
+      <arg value="${cvs.root}" />
+      <arg value="co" />
+      <arg value="-R" />
+      <arg value="${cvs.module}" />
+    </exec>
+
+    <!-- Run the build script that we just got from CVS -->
+    <nant buildfile="${cvsbuilddir}/${cvs.module}/${cvs.module}.build"
+	  target="dist" />
+  </target>
+</project>
