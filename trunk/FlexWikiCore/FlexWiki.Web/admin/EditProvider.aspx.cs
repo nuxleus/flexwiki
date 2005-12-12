@@ -14,6 +14,7 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Data;
+using System.Configuration;
 using System.Drawing;
 using System.Web;
 using System.Web.Mail;
@@ -246,8 +247,17 @@ namespace FlexWiki.Web.Admin
 		void NotifyOwnerOfCreation(string ownerMailingAddress, IList namespaces)
 		{
 			MailMessage msg = new MailMessage();
-			string adminMail = SendRequestsTo;
+			string adminMail = (string)(ConfigurationSettings.AppSettings["SendNamespaceCreationMailFrom"]);
+			if (adminMail == null || adminMail == "")
+			{
+				Response.Write(@"<p>FlexWiki is not configured to automatically send mail notifying the contact of the namespace creation.");
+				return;
+			}
 			msg.To = ownerMailingAddress;
+
+			string cc = (string)(ConfigurationSettings.AppSettings["SendNamespaceCreationMailToCC"]);
+			if (cc != null && cc != "")
+				msg.Cc = cc;
 			msg.BodyFormat = MailFormat.Html;
 			msg.From = adminMail;
 			msg.Subject = "FlexWiki creation request completed";
@@ -358,7 +368,14 @@ namespace FlexWiki.Web.Admin
 			UIResponse.WritePara(@"To add a new provider, you must first identify the type of provider you want.  Once you have selected a valid one, you may be prompted for additional information, depending on the type of the provider.");
 
 			UIResponse.WriteStartFields();
+			// Pick the right default
+			string defaultProvider;
+			if (TypeNameParm != null && TypeNameParm != "")
+				defaultProvider = TypeNameParm;
+			else
+				defaultProvider = (string)(ConfigurationSettings.AppSettings["DefaultNamespaceProviderForNamespaceCreation"]);
 
+			string def = null;
 			// Get the list of types in the loaded assemblies that implement INamespaceProvider
 			HTMLWriter.ChoiceSet choices = new HTMLWriter.ChoiceSet();
 			foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
@@ -373,8 +390,11 @@ namespace FlexWiki.Web.Admin
 							{
 								INamespaceProvider worker = (INamespaceProvider)(Activator.CreateInstance(each));
 								string displayString = each.FullName + " (" + worker.Description + ")";
+								string val = assembly.GetName() + "#" + each.FullName;
+								if (each.FullName == defaultProvider)
+									def = val;
 
-								choices.Add(displayString, assembly.GetName() + "#" + each.FullName);
+								choices.Add(displayString, val);
 								break;
 							}
 						}
@@ -382,7 +402,9 @@ namespace FlexWiki.Web.Admin
 				}
 			}
 
-			UIResponse.WriteCombobox(ParmNameTypeName, "Type", "The type of provider to to use", choices, TypeNameParm);
+
+
+			UIResponse.WriteCombobox(ParmNameTypeName, "Type", "The type of provider to to use", choices, def);
 
 			// If there were any proposed values for the parms provided in the query string, pass them along
 			foreach (string pName in Request.QueryString)
