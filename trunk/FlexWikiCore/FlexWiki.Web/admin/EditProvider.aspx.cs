@@ -260,11 +260,13 @@ namespace FlexWiki.Web.Admin
 				msg.Cc = cc;
 			msg.BodyFormat = MailFormat.Html;
 			msg.From = adminMail;
-			msg.Subject = "FlexWiki creation request completed";
+			msg.Subject = "Wiki namespace creation request completed";
 			string body = @"<p>Your request has been completed.</p>";
 			foreach (string ns in namespaces)
 			{
 				string url = TheLinkMaker.LinkToTopic(TheFederation.ContentBaseForNamespace(ns).HomePageTopicName);
+				Uri u = System.Web.HttpContext.Current.Request.Url;
+				url = new UriBuilder(u.Scheme, u.Host, u.Port, url).ToString();
 				body += @"<p>The namespace " + ns + " has been created.  You can visit the home page at <a href='" + url + "'>" + HTMLWriter.Escape(url) + "</a>.</p>";
 			}
 			msg.Body = body;
