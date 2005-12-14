@@ -180,8 +180,7 @@ namespace FlexWiki.Web.Admin
 							UIResponse.WriteStartUnorderedList();
 							foreach (string ns in namespaces)
 							{
-								string url = TheLinkMaker.LinkToTopic(TheFederation.ContentBaseForNamespace(ns).HomePageTopicName);
-								UIResponse.WriteListItem("<a href='" + url + "'>" + HTMLWriter.Escape(ns) + "</a>");
+								UIResponse.WriteListItem(HTMLWriter.Escape(ns));
 							}
 							UIResponse.WriteEndUnorderedList();
 						}
@@ -269,6 +268,16 @@ namespace FlexWiki.Web.Admin
 				url = new UriBuilder(u.Scheme, u.Host, u.Port, url).ToString();
 				body += @"<p>The namespace " + ns + " has been created.  You can visit the home page at <a href='" + url + "'>" + HTMLWriter.Escape(url) + "</a>.</p>";
 			}
+			bool signed = false; 
+			try
+			{
+				signed = bool.Parse(System.Configuration.ConfigurationSettings.AppSettings["SignNamespaceCreationMail"]); 
+			}
+			catch
+			{
+			}
+			if (signed)
+				body += @"<p>--- " + HTMLWriter.Escape(VisitorIdentityString) + "</p>";
 			msg.Body = body;
 			string fail = SendMail(msg);
 			if (fail == null)
