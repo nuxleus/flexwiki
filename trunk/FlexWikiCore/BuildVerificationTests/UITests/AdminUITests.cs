@@ -31,7 +31,7 @@ namespace FlexWiki.BuildVerificationTests
     {
     }
 
-    [Test] public void CreateNamespaceProviderLinkBug()
+    [Test] public void CreateNamespaceProvider()
     {
       DocumentElement doc = TheBrowser.Navigate(TheLinkMaker.SiteURL() + "admin/EditProvider.aspx", true); 
 
@@ -67,9 +67,7 @@ namespace FlexWiki.BuildVerificationTests
       doc.WaitForNavigationComplete(); 
 
       string contents = doc.Body.InnerHTML; 
-      Uri correctUri = new Uri(TheLinkMaker.LinkToTopic(new AbsoluteTopicName("HomePage", "NewNamespace"))); 
-      string correctLink = correctUri.PathAndQuery; 
-      Assert.IsTrue(contents.IndexOf(correctLink) != -1, "Checking that correct link was emitted."); 
+      Assert.IsTrue(contents.IndexOf("The provider has been created") != -1, "Checking that namespace was created."); 
     }
   }
 }

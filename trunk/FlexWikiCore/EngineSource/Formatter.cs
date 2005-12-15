@@ -342,61 +342,76 @@ namespace FlexWiki.Formatting
 		}
 		#endregion
 
-		/// <summary>
-		/// string pattern for what comes before a wiki name
-		/// </summary>
-		public static string beforeWikiName = "(?<before>^|\\||\\*|'|\\s|\\(|\\{|\\!)";
-		/// <summary>
-		/// string pattern for what comes after a wiki name
-		/// </summary>
-		public static string afterWikiName = "(?<after>'|\\||\\s|@|$|\\.|,|:|'|;|\\}|\\?|_|\\)|\\!)";
-		/// <summary>
-		/// string pattern for the optional anchor after a wiki name.
-		/// </summary>
-		public static string wikiNameAnchor = @"(?:\#)?(?<anchor>([\w\d]+))?";
 
-		/// <summary>
-		/// Unicode compatible regex fragments.
-		/// 
-		/// Lu: Letter Uppercase
-		/// Ll: Letter Lowercase
-		/// Lt: Letter Title
-		/// Lo: Letter Other
-		/// Nd: Number decimal
-		/// Pc: Punctation connector
-		/// </summary>
+		#region Regular Expressions
+
+		#region Unicode compatible regex fragments.
+		// Lu: Letter Uppercase
+		// Ll: Letter Lowercase
+		// Lt: Letter Title
+		// Lo: Letter Other
+		// Nd: Number decimal
+		// Pc: Punctation connector
 		public static string AZ = "[\\p{Lu}]"; // A-Z
 		public static string az09 = "[\\p{Ll}\\p{Lt}\\p{Lo}\\p{Nd}]"; // a-z0-9
 		public static string Az09 = "[\\p{Lu}\\p{Ll}\\p{Lt}\\p{Lo}\\p{Nd}]"; // A-Za-z0-9
+		#endregion
 
-
-		/// <summary>
-		/// string pattern for legal namespace names
-		/// </summary>
+		#region WikiName regexs
+		// A wiki name is a topic name, possibly with a namespace
+		// string patterns for:
+		//		* what comes before a wiki name
+		//		* what comes after a wiki name
+		//		* the optional anchor after a wiki name
+		//		* legal namespace names
+		// etc...
+		public static string beforeWikiName = "(?<before>^|\\||\\*|'|\\s|\\(|\\{|\\!)";
+		public static string afterWikiName = "(?<after>'|\\||\\s|@|$|\\.|,|:|'|;|\\}|\\?|_|\\)|\\!)";
+		public static string wikiNameAnchor = @"(?:\#)?(?<anchor>([\w\d]+))?";
 		private static string namespaceName = AZ + "[\\w]+";
-
 		private static string startsWithMulticaps = "(" + AZ + "{2,}" + az09 + "+" + Az09 + "*)";
 		private static string startsWithOneCap = "(" + AZ + az09 + "+" + Az09 + "*" + AZ + "+" + Az09 + "*)";
 		private static string unbracketedWikiName = "(?:_?" + startsWithMulticaps + "|" + startsWithOneCap + ")";
-
 		private static string bracketedWikiName = "\\[(?:[\\w ]+)\\]"; // \w is a word character (A-z0-9_)
 		private static string unqualifiedWikiName = "(?:" + "(?:" + unbracketedWikiName + ")|(?:" + bracketedWikiName + ")" + ")";
 		private static string qualifiedWikiName = "(?:" + namespaceName + "\\.)*"  + unqualifiedWikiName;
 		private static string forcedLocalWikiName = "\\."  + unqualifiedWikiName;
 		public static string wikiName = "(?:" + "(?:" + qualifiedWikiName + ")|(?:" + unqualifiedWikiName + ")|(?:" + forcedLocalWikiName + ")" + ")";
-		private static string relabelPrefix = "(\"(?<relabel>[^\"]+)\"\\:)";
-		
-		// A wiki name is a topic name, possibly with a namespace
+
 		public static string extractWikiNamesString = beforeWikiName + "(?<topic>" + wikiName + ")"  + afterWikiName;
 		public static Regex extractWikiNames = new Regex(extractWikiNamesString) ;
+		#endregion
 
+		#region WikiLink regexs
 		// A wiki link is a wiki name, possible prefixed by a relabel
+		private static string relabelPrefix = "(\"(?<relabel>[^\"]+)\"\\:)";
 		private static string beforeOrRelabel = "(" + relabelPrefix + "|" + beforeWikiName + ")";
 		public static string extractWikiLinksString = beforeOrRelabel + "(?<topic>" + wikiName + ")"  + wikiNameAnchor + afterWikiName;
 		public static Regex extractWikiLinks = new Regex(extractWikiLinksString) ;
+		#endregion
 
+		#region eMail Address Regexs
 		private static string emailAddressString = @"([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)";
 		private static Regex emailAddress = new Regex(emailAddressString);
+		#endregion
+
+		#region URL Regexs
+		static string urlPattern = @"((https?|ftp|gopher|telnet|file|notes|ms-help):((//)|(\\\\))+[\w\d:#@%/;$()~_?\+-=\\\.&]*)";
+		static string urlPatternInBrackets = @"((https?|ftp|gopher|telnet|file|notes|ms-help):((//)|(\\\\))+[\w\d:#@%/;$() ~_?\+-=\\\.& ]*)";
+		static string mailAndNewsPattern = @"(?<ignore>(^|\s|\W)[\W*])?(?<uri>((mailto|news){1}:[^(//\s,)][\w\d:#@%/;$()~_?\+-=\\\.&]+))";
+
+		private static string bracketedUrlPattern = "\\[(?:"+ urlPatternInBrackets + ")\\]";
+		private static string bracketedmailAndNewsPattern = "\\[(?:"+ mailAndNewsPattern + ")\\]";
+		private static string unqualifiedUrlPattern = "(?:" + "(?:" + bracketedUrlPattern + ")|(?:" + urlPattern + ")" + ")|(?:" + mailAndNewsPattern + ")|(?:" + bracketedmailAndNewsPattern + ")";
+		
+		private static string mustHaverelabelPrefix = "(\"(?<relabel>[^\"]+)\"\\:)";
+		private static string urlbeforeOrRelabel = "(" + mustHaverelabelPrefix + "|(" + mustHaverelabelPrefix + "|" + beforeWikiName + "))";
+		public static string extractUrlLinksString = mustHaverelabelPrefix + "(?<uri>" + unqualifiedUrlPattern + ")" + wikiNameAnchor + afterWikiName;
+		public static Regex extractUrlLinks = new Regex(extractUrlLinksString) ;
+		#endregion
+		
+
+		#endregion
 
 		#region Output
 		/// <summary>
@@ -862,7 +877,6 @@ namespace FlexWiki.Formatting
 					currentMultilinePropertyIsHidden = leader == ":";
 
 					// Write out the anchor field.
-					_Output.WriteOpenAnchor(name);
 					if (!currentMultilinePropertyIsHidden)	// Don't bother showing out hidden page properties
 					{
 						val = val.Trim();
@@ -874,6 +888,7 @@ namespace FlexWiki.Formatting
 						val = ProcessLineElements(val);
 
 						_Output.WriteOpenProperty(name);
+						_Output.WriteOpenAnchor(name);
 						if (ContentBase.IsBehaviorPropertyDelimiter(delim))
 							_Output.Write(delim);
 						_Output.Write(val);
@@ -895,9 +910,9 @@ namespace FlexWiki.Formatting
 							}
 							// Make sure we close off things like tables before we close the property.
 							Ensure(typeof(NeutralState));
+							_Output.WriteCloseAnchor();
 							_Output.WriteCloseProperty();
 						}
-						_Output.WriteCloseAnchor();
 						inMultilineProperty = false;
 						currentMultilinePropertyIsHidden = false;
 						continue;
@@ -1094,7 +1109,6 @@ namespace FlexWiki.Formatting
 								bool isLeader = leader == ":";
 
 								// Write out an anchor tag.
-								_Output.WriteOpenAnchor(name);
 								if (!isLeader)	// Don't bother showing out hidden page properties
 								{
 									// Do the normal processing
@@ -1104,10 +1118,11 @@ namespace FlexWiki.Formatting
 									val = ProcessLineElements(val);
 
 									_Output.WriteOpenProperty(name);
+									_Output.WriteOpenAnchor(name);
 									_Output.Write(val);
+									_Output.WriteCloseAnchor();
 									_Output.WriteCloseProperty();
 								}
-								_Output.WriteCloseAnchor();
 							}
 							else
 							{
@@ -1655,19 +1670,6 @@ namespace FlexWiki.Formatting
 			return str;	//	+	debugString;
 		}
 		#endregion
-
-		static string urlPattern = @"((https?|ftp|gopher|telnet|file|notes|ms-help):((//)|(\\\\))+[\w\d:#@%/;$()~_?\+-=\\\.&]*)";
-		static string urlPatternInBrackets = @"((https?|ftp|gopher|telnet|file|notes|ms-help):((//)|(\\\\))+[\w\d:#@%/;$() ~_?\+-=\\\.& ]*)";
-		static string mailAndNewsPattern = @"(?<ignore>(^|\s|\W)[\W*])?(?<uri>((mailto|news){1}:[^(//\s,)][\w\d:#@%/;$()~_?\+-=\\\.&]+))";
-
-		private static string bracketedUrlPattern = "\\[(?:"+ urlPatternInBrackets + ")\\]";
-		private static string bracketedmailAndNewsPattern = "\\[(?:"+ mailAndNewsPattern + ")\\]";
-		private static string unqualifiedUrlPattern = "(?:" + "(?:" + bracketedUrlPattern + ")|(?:" + urlPattern + ")" + ")|(?:" + mailAndNewsPattern + ")|(?:" + bracketedmailAndNewsPattern + ")";
-		
-		private static string mustHaverelabelPrefix = "(\"(?<relabel>[^\"]+)\"\\:)";
-		private static string urlbeforeOrRelabel = "(" + mustHaverelabelPrefix + "|(" + mustHaverelabelPrefix + "|" + beforeWikiName + "))";
-		public static string extractUrlLinksString = mustHaverelabelPrefix + "(?<uri>" + unqualifiedUrlPattern + ")" + wikiNameAnchor + afterWikiName;
-		public static Regex extractUrlLinks = new Regex(extractUrlLinksString) ;
 
 
 		#region LinkHyperLinks

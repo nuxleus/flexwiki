@@ -181,9 +181,9 @@ lenSpanning=@@topics.TopicWithBehaviorProperties.FaceSpanningLines(""parsing is 
 		{
 			FormatTest(
 				@"Singleline: single line property",
-				@"<a name=""Singleline"" class=""Anchor""><fieldset  class=""Property"" style=""width: auto""><legend class=""PropertyName"">Singleline</legend><span class=""PropertyValue"">single line property</span>
+				@"<fieldset  class=""Property"" style=""width: auto""><legend class=""PropertyName"">Singleline</legend><span class=""PropertyValue""><a name=""Singleline"" class=""Anchor"">single line property</a></span>
 </fieldset>
-</a>
+
 ");
 		}
 
@@ -191,9 +191,9 @@ lenSpanning=@@topics.TopicWithBehaviorProperties.FaceSpanningLines(""parsing is 
 		{
 			FormatTest(
 				@"Singleline: '''bold''' ''italics'' -deleted-",
-				@"<a name=""Singleline"" class=""Anchor""><fieldset  class=""Property"" style=""width: auto""><legend class=""PropertyName"">Singleline</legend><span class=""PropertyValue""><strong>bold</strong> <em>italics</em> <del>deleted</del></span>
+				@"<fieldset  class=""Property"" style=""width: auto""><legend class=""PropertyName"">Singleline</legend><span class=""PropertyValue""><a name=""Singleline"" class=""Anchor""><strong>bold</strong> <em>italics</em> <del>deleted</del></a></span>
 </fieldset>
-</a>
+
 ");
 		}
 
@@ -204,11 +204,11 @@ lenSpanning=@@topics.TopicWithBehaviorProperties.FaceSpanningLines(""parsing is 
 first line
 second line
 ]",
-				@"<a name=""Multiline"" class=""Anchor""><fieldset  class=""Property"" style=""width: auto""><legend class=""PropertyName"">Multiline</legend><span class=""PropertyValue""><p>first line</p>
+				@"<fieldset  class=""Property"" style=""width: auto""><legend class=""PropertyName"">Multiline</legend><span class=""PropertyValue""><a name=""Multiline"" class=""Anchor""><p>first line</p>
 <p>second line</p>
-</span>
+</a></span>
 </fieldset>
-</a>");
+");
 		}
 
 		[Test] public void FormattedMultilinePropertyTest()
@@ -218,12 +218,12 @@ second line
 !Heading1
 '''bold''' ''italics'' -deleted-
 ]",
-				@"<a name=""Multiline"" class=""Anchor""><fieldset  class=""Property"" style=""width: auto""><legend class=""PropertyName"">Multiline</legend><span class=""PropertyValue""><h1>Heading1</h1>
+				@"<fieldset  class=""Property"" style=""width: auto""><legend class=""PropertyName"">Multiline</legend><span class=""PropertyValue""><a name=""Multiline"" class=""Anchor""><h1>Heading1</h1>
 
 <p><strong>bold</strong> <em>italics</em> <del>deleted</del></p>
-</span>
+</a></span>
 </fieldset>
-</a>");
+");
 		}
 		#endregion
 
