@@ -361,7 +361,7 @@ namespace FlexWiki.Formatting
 		// A wiki name is a topic name, possibly with a namespace
 		// string patterns for:
 		//		* what comes before a wiki name
-		//		* what comes after a wiki name
+		//		* what comes after a wiki name    
 		//		* the optional anchor after a wiki name
 		//		* legal namespace names
 		// etc...
@@ -370,7 +370,7 @@ namespace FlexWiki.Formatting
 		public static string wikiNameAnchor = @"(?:\#)?(?<anchor>([\w\d]+))?";
 		private static string namespaceName = AZ + "[\\w]+";
 		private static string startsWithMulticaps = "(" + AZ + "{2,}" + az09 + "+" + Az09 + "*)";
-		private static string startsWithOneCap = "(" + AZ + az09 + "+" + Az09 + "*" + AZ + "+" + Az09 + "*)";
+		private static string startsWithOneCap = "(" + AZ + az09 + "+" + Az09 + "*)";
 		private static string unbracketedWikiName = "(?:_?" + startsWithMulticaps + "|" + startsWithOneCap + ")";
 		private static string bracketedWikiName = "\\[(?:[\\w ]+)\\]"; // \w is a word character (A-z0-9_)
 		private static string unqualifiedWikiName = "(?:" + "(?:" + unbracketedWikiName + ")|(?:" + bracketedWikiName + ")" + ")";
@@ -883,11 +883,12 @@ namespace FlexWiki.Formatting
 
 						// Do the normal processing
 						name = StripHTMLSpecialCharacters(name);
-						name = ProcessLineElements(name);
+						string linkedName = LinkWikiNames(name);
+
 						val = StripHTMLSpecialCharacters(val);
 						val = ProcessLineElements(val);
 
-						_Output.WriteOpenProperty(name);
+						_Output.WriteOpenProperty(linkedName);
 						_Output.WriteOpenAnchor(name);
 						if (ContentBase.IsBehaviorPropertyDelimiter(delim))
 							_Output.Write(delim);
@@ -1112,12 +1113,13 @@ namespace FlexWiki.Formatting
 								if (!isLeader)	// Don't bother showing out hidden page properties
 								{
 									// Do the normal processing
-									name = ProcessLineElements(name);
+
+									string linkedName = LinkWikiNames(name);
 
 									val = val.Trim();
 									val = ProcessLineElements(val);
 
-									_Output.WriteOpenProperty(name);
+									_Output.WriteOpenProperty(linkedName);
 									_Output.WriteOpenAnchor(name);
 									_Output.Write(val);
 									_Output.WriteCloseAnchor();
@@ -1949,6 +1951,26 @@ namespace FlexWiki.Formatting
 		}
 		#endregion
 
+		/// <summary>
+		/// One-word names are treated specially: if they don't exist, no "create" link is generated.  This function figures out if the topic name 
+		/// in question is such a one word link.  Note that this code will reject as a one-word-link a reference surrounded with square brackets because 
+		/// those indicate that the user said make it a link no matter what.
+		/// </summary>
+		/// <param name="name"></param>
+		/// <returns></returns>
+
+		bool IsUnbracketedOneWordName(string name)
+		{
+			if (name.Length < 2)
+				return false;
+			if (!Char.IsUpper(name[0]))
+				return false;
+			for (int i = 1; i < name.Length; i++)
+				if (Char.IsUpper(name[i]))
+					return false;
+			return true;
+		}
+
 		#region LinkWikiNames
 		private string LinkWikiNames (string input)
 		{
@@ -1994,9 +2016,14 @@ namespace FlexWiki.Formatting
 
 					if (absoluteNames.Count == 0)
 					{
-						// It doesn't exist, so give the option to create it
-						AbsoluteTopicName abs = relName.AsAbsoluteTopicName(ContentBase.Namespace);
-						str = ReplaceMatch(answer, str, m, before + "<a title=\"Click here to create this topic\" class=\"create\" href=\"" + LinkMaker().LinkToEditTopic(abs) + "\">" + displayname + "</a>" + after);
+						if (!IsUnbracketedOneWordName(each))
+						{
+							// It doesn't exist, so give the option to create it
+							AbsoluteTopicName abs = relName.AsAbsoluteTopicName(ContentBase.Namespace);
+							str = ReplaceMatch(answer, str, m, before + "<a title=\"Click here to create this topic\" class=\"create\" href=\"" + LinkMaker().LinkToEditTopic(abs) + "\">" + displayname + "</a>" + after);
+						}
+						else
+							str = ReplaceMatch(answer, str, m, m.Value);
 					}
 					else
 					{
