@@ -1,0 +1,14 @@
+bin
+dist
+reports
+tools
+diff
+personal.properties
+FlexWikiCore.suo
+cvsbld
+FlexWikiCore.vskdb
+FlexWikiCore.vsksln
+CacheRuleChanges.zip
+FlexWikiCore.zip
+install
+sqlstore
