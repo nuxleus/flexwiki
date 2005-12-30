@@ -114,7 +114,7 @@ namespace FlexWiki.Web
     /// <returns>A string representing the root URL for the application.</returns>
     protected string FullRootUrl(HttpRequest req)
     {
-      UriBuilder builder = new UriBuilder(req.Url.Scheme, req.Url.Authority, req.Url.Port, 
+      UriBuilder builder = new UriBuilder(req.Url.Scheme, req.Url.Host, req.Url.Port, 
         req.ApplicationPath); 
       string path = builder.ToString(); 
       if (path.EndsWith("/"))
