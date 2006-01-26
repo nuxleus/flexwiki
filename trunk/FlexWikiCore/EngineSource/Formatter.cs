@@ -1685,6 +1685,8 @@ namespace FlexWiki.Formatting
 			// image links
 			str = Regex.Replace (str, @"([^""']|^)http(://\S*(?i:\.jpg|\.gif|\.png|\.jpeg))",
 				"$1<img src=\"HTTPIMAGESOURCE:$2\"/>") ;
+			str = Regex.Replace (str, @"([^""']|^)https(://\S*(?i:\.jpg|\.gif|\.png|\.jpeg))",
+				"$1<img src=\"HTTPSIMAGESOURCE:$2\"/>") ;
 			str = Regex.Replace (str, @"([^""'])file(://\S*(?i:\.jpg|\.gif|\.png|\.jpeg|\.doc|\.xls|\.ppt|\.txt))",
 				"$1<img src=\"FILEIMAGESOURCE:$2\"/>") ;
 
@@ -1915,6 +1917,7 @@ namespace FlexWiki.Formatting
 			// finalise image links
 			string str = input;
 			str = Regex.Replace (str, "HTTPIMAGESOURCE::(//\\S*)", "http:$1") ;
+			str = Regex.Replace (str, "HTTPSIMAGESOURCE::(//\\S*)", "https:$1") ;
 			str = Regex.Replace (str, "FILEIMAGESOURCE::(//\\S*)", "file:$1") ;
 			return str;
 		}

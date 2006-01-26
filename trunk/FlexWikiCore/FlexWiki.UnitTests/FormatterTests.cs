@@ -707,10 +707,10 @@ blah blah EndOfLineShouldLink",
 				@"A ""NewTest"":[test test] new topic",
 				@"href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("test test")) + @""">NewTest</a> new topic");
 
-//			FormatTest(
-//				@"""Spacelink"":http://localhost/space in link/test.htm",
-//				@"<p><a class=""externalLink"" href=""http://localhost/space%20in%20link/test.htm"">Spacelink</a></p>
-//");
+			//			FormatTest(
+			//				@"""Spacelink"":http://localhost/space in link/test.htm",
+			//				@"<p><a class=""externalLink"" href=""http://localhost/space%20in%20link/test.htm"">Spacelink</a></p>
+			//");
 
 			FormatTest(
 				@"""Correct link"":[http://localhost/link to a page/test.htm]",
@@ -1185,6 +1185,48 @@ And the text in the parens and brackets should be code formatted:
 				@"http://www.microsoft.com/billgates/images/sofa-billjpeg",
 				@"<a class=""externalLink"" href");
 		}
+
+		[Test] public void HttpsImageLink()
+		{
+			FormatTest(
+				@"https://www.microsoft.com/billgates/images/sofa-bill.jpg",
+				@"<p><img src=""https://www.microsoft.com/billgates/images/sofa-bill.jpg""/></p>
+");
+			FormatTest(
+				@"https://www.microsoft.com/billgates/images/sofa-bill.JPG",
+				@"<p><img src=""https://www.microsoft.com/billgates/images/sofa-bill.JPG""/></p>
+");
+			FormatTest(
+				@"https://www.microsoft.com/billgates/images/sofa-bill.png",
+				@"<p><img src=""https://www.microsoft.com/billgates/images/sofa-bill.png""/></p>
+");
+			FormatTest(
+				@"https://www.microsoft.com/billgates/images/sofa-bill.PNG",
+				@"<p><img src=""https://www.microsoft.com/billgates/images/sofa-bill.PNG""/></p>
+");
+			FormatTest(
+				@"https://www.microsoft.com/billgates/images/sofa-bill.gif",
+				@"<p><img src=""https://www.microsoft.com/billgates/images/sofa-bill.gif""/></p>
+");
+			FormatTest(
+				@"https://www.microsoft.com/billgates/images/SOFA-BILL.GIF",
+				@"<p><img src=""https://www.microsoft.com/billgates/images/SOFA-BILL.GIF""/></p>
+");
+			FormatTest(
+				@"https://www.microsoft.com/billgates/images/sofa-bill.jpeg",
+				@"<p><img src=""https://www.microsoft.com/billgates/images/sofa-bill.jpeg""/></p>
+");
+			FormatTest(
+				@"https://www.microsoft.com/billgates/images/SOFA-BILL.JPEG",
+				@"<p><img src=""https://www.microsoft.com/billgates/images/SOFA-BILL.JPEG""/></p>
+");
+			// Make sure we really need the period before the trigger extensions...
+			// Look for a hyperlink, not an <img>
+			FormatTestContains(
+				@"https://www.microsoft.com/billgates/images/sofa-billjpeg",
+				@"<a class=""externalLink"" href");
+		}
+
 		#endregion
 
 		#region FileLinks
