@@ -1,0 +1,726 @@
+MIME-Version: 1.0
+Content-Location: file:///C:/EA821E05/FxCop1.312Readme.htm
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/html; charset="us-ascii"
+
+<html xmlns:o=3D"urn:schemas-microsoft-com:office:office"
+xmlns:w=3D"urn:schemas-microsoft-com:office:word"
+xmlns=3D"http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
+<meta name=3DProgId content=3DWord.Document>
+<meta name=3DGenerator content=3D"Microsoft Word 11">
+<meta name=3DOriginator content=3D"Microsoft Word 11">
+<link rel=3DFile-List href=3D"FxCop1.312Readme_files/filelist.xml">
+<title>FxCop 1.312 Release Notes</title>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>Jeffrey van Gogh</o:Author>
+  <o:LastAuthor>Jeffrey van Gogh</o:LastAuthor>
+  <o:Revision>1</o:Revision>
+  <o:TotalTime>1</o:TotalTime>
+  <o:Created>2004-10-28T17:26:00Z</o:Created>
+  <o:LastSaved>2004-10-28T17:27:00Z</o:LastSaved>
+  <o:Pages>1</o:Pages>
+  <o:Words>718</o:Words>
+  <o:Characters>4097</o:Characters>
+  <o:Company>Microsoft Corporation</o:Company>
+  <o:Lines>34</o:Lines>
+  <o:Paragraphs>9</o:Paragraphs>
+  <o:CharactersWithSpaces>4806</o:CharactersWithSpaces>
+  <o:Version>11.5606</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:SpellingState>Clean</w:SpellingState>
+  <w:GrammarState>Clean</w:GrammarState>
+  <w:PunctuationKerning/>
+  <w:ValidateAgainstSchemas/>
+  <w:SaveIfXMLInvalid>false</w:SaveIfXMLInvalid>
+  <w:IgnoreMixedContent>false</w:IgnoreMixedContent>
+  <w:AlwaysShowPlaceholderText>false</w:AlwaysShowPlaceholderText>
+  <w:Compatibility>
+   <w:BreakWrappedTables/>
+   <w:SnapToGridInCell/>
+   <w:WrapTextWithPunct/>
+   <w:UseAsianBreakRules/>
+   <w:DontGrowAutofit/>
+  </w:Compatibility>
+  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
+ </w:WordDocument>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:LatentStyles DefLockedState=3D"false" LatentStyleCount=3D"156">
+ </w:LatentStyles>
+</xml><![endif]-->
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:Verdana;
+	panose-1:2 11 6 4 3 5 4 4 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:swiss;
+	mso-font-pitch:variable;
+	mso-font-signature:536871559 0 0 0 415 0;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+span.SpellE
+	{mso-style-name:"";
+	mso-spl-e:yes;}
+span.GramE
+	{mso-style-name:"";
+	mso-gram-e:yes;}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+ /* List Definitions */
+ @list l0
+	{mso-list-id:442117994;
+	mso-list-template-ids:1699273716;}
+@list l0:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l0:level2
+	{mso-level-number-format:bullet;
+	mso-level-text:o;
+	mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	mso-ansi-font-size:10.0pt;
+	font-family:"Courier New";
+	mso-bidi-font-family:"Times New Roman";}
+@list l1
+	{mso-list-id:877938020;
+	mso-list-template-ids:406211478;}
+@list l1:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l2
+	{mso-list-id:1373195023;
+	mso-list-template-ids:-1958708930;}
+@list l2:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l3
+	{mso-list-id:1503199725;
+	mso-list-template-ids:192048582;}
+@list l3:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+ol
+	{margin-bottom:0in;}
+ul
+	{margin-bottom:0in;}
+-->
+</style>
+<!--[if gte mso 10]>
+<style>
+ /* Style Definitions */
+ table.MsoNormalTable
+	{mso-style-name:"Table Normal";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	mso-style-noshow:yes;
+	mso-style-parent:"";
+	mso-padding-alt:0in 5.4pt 0in 5.4pt;
+	mso-para-margin:0in;
+	mso-para-margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-ansi-language:#0400;
+	mso-fareast-language:#0400;
+	mso-bidi-language:#0400;}
+</style>
+<![endif]-->
+</head>
+
+<body lang=3DEN-US style=3D'tab-interval:.5in'>
+
+<div class=3DSection1>
+
+<p class=3DMsoNormal style=3D'margin-bottom:3.0pt'><b><span style=3D'font-s=
+ize:18.0pt;
+font-family:Arial'>FxCop 1.312 &#8211; Release Notes</span></b><o:p></o:p><=
+/p>
+
+<p class=3DMsoNormal style=3D'margin-bottom:3.0pt'>&nbsp;<o:p></o:p></p>
+
+<p class=3DMsoNormal style=3D'margin-bottom:3.0pt'><a name=3D"Whats_New_In_=
+V130"></a><b><span
+style=3D'font-size:14.0pt;font-family:Arial'>What&#8217;s New in Version <s=
+pan
+class=3DGramE>1.312</span></span></b><o:p></o:p></p>
+
+<p class=3DMsoNormal><span style=3D'font-size:10.0pt;font-family:Verdana'>&=
+nbsp;</span><o:p></o:p></p>
+
+<p class=3DMsoNormal><b><span style=3D'font-size:10.0pt;font-family:Arial'>=
+Major
+features of this release:</span></b><o:p></o:p></p>
+
+<p class=3DMsoNormal><span style=3D'font-size:10.0pt;font-family:Arial'>&nb=
+sp;</span><o:p></o:p></p>
+
+<ul style=3D'margin-top:0in' type=3Ddisc>
+ <li class=3DMsoNormal style=3D'mso-list:l1 level1 lfo1;tab-stops:list .5in=
+'><span
+     style=3D'font-size:10.0pt;font-family:Arial'>Simplification of report =
+xml.</span>
+     <o:p></o:p></li>
+ <li class=3DMsoNormal style=3D'mso-list:l1 level1 lfo1;tab-stops:list .5in=
+'><span
+     style=3D'font-size:10.0pt;font-family:Arial'>New Fix Categories: Each
+     message is marked to indicate if the suggested fix will constitute a
+     breaking change for previously shipped code.</span> <o:p></o:p></li>
+ <li class=3DMsoNormal style=3D'mso-list:l1 level1 lfo1;tab-stops:list .5in=
+'><span
+     style=3D'font-size:10.0pt;font-family:Arial'>User Interface Improvemen=
+ts:
+     windowing behavior has been made more consistent</span> <o:p></o:p></l=
+i>
+ <li class=3DMsoNormal style=3D'mso-list:l1 level1 lfo1;tab-stops:list .5in=
+'><span
+     style=3D'font-size:10.0pt;font-family:Arial'>Auto Update: Sign up to g=
+et
+     notified when a new version of FxCop is available.</span> <o:p></o:p><=
+/li>
+</ul>
+
+<p class=3DMsoNormal style=3D'text-indent:.5in'>&nbsp;<o:p></o:p></p>
+
+<p class=3DMsoNormal><b><span style=3D'font-size:10.0pt;font-family:Arial'>=
+New
+Rules:</span></b><o:p></o:p></p>
+
+<ul style=3D'margin-top:0in' type=3Ddisc>
+ <li class=3DMsoNormal style=3D'mso-list:l0 level1 lfo2;tab-stops:list .5in=
+'><span
+     style=3D'font-size:10.0pt;font-family:Arial'>Design</span> <o:p></o:p>=
+</li>
+ <ul style=3D'margin-top:0in' type=3Dcircle>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Avoid excessive paramete=
+rs on
+      generic types</span> <o:p></o:p></li>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Collections should
+      &nbsp;implement generic interface</span> <o:p></o:p></li>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Do not declare static me=
+mbers
+      on generic types</span> <o:p></o:p></li>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Do not expose generic li=
+sts</span>
+      <o:p></o:p></li>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Do not nest generic type=
+s in
+      member signatures</span> <o:p></o:p></li>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      class=3DSpellE><span style=3D'font-size:10.0pt;font-family:Arial'>Enu=
+ms</span></span><span
+      style=3D'font-size:10.0pt;font-family:Arial'> should have zero value<=
+/span>
+      <o:p></o:p></li>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Generic methods should p=
+rovide
+      type parameter</span> <o:p></o:p></li>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Members should not expose
+      certain concrete types</span> <o:p></o:p></li>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Types should not extend
+      certain base types</span> <o:p></o:p></li>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Use generic event handler
+      instances</span> <o:p></o:p></li>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Use generics where appro=
+priate</span>
+      <o:p></o:p></li>
+ </ul>
+ <li class=3DMsoNormal style=3D'mso-list:l0 level1 lfo2;tab-stops:list .5in=
+'><span
+     style=3D'font-size:10.0pt;font-family:Arial'>Interoperability</span> <=
+o:p></o:p></li>
+ <ul style=3D'margin-top:0in' type=3Dcircle>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Avoid overloads in <span
+      class=3DSpellE>ComVisible</span> Interfaces</span> <o:p></o:p></li>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Call <span class=3DSpell=
+E>GetLastError</span>
+      immediately after <span class=3DSpellE>PInvoke</span></span> <o:p></o=
+:p></li>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Com visible base types s=
+hould
+      be <span class=3DSpellE>ComVisible</span></span> <o:p></o:p></li>
+ </ul>
+ <li class=3DMsoNormal style=3D'mso-list:l0 level1 lfo2;tab-stops:list .5in=
+'><span
+     style=3D'font-size:10.0pt;font-family:Arial'>Mobility</span> <o:p></o:=
+p></li>
+ <ul style=3D'margin-top:0in' type=3Dcircle>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Do not use idle process
+      priority</span> <o:p></o:p></li>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Do not use times that pr=
+event
+      power state changes</span> <o:p></o:p></li>
+ </ul>
+ <li class=3DMsoNormal style=3D'mso-list:l0 level1 lfo2;tab-stops:list .5in=
+'><span
+     style=3D'font-size:10.0pt;font-family:Arial'>Naming</span> <o:p></o:p>=
+</li>
+ <ul style=3D'margin-top:0in' type=3Dcircle>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Compound words should be=
+ cased
+      correctly</span> <o:p></o:p></li>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Do not name <span
+      class=3DSpellE>enum</span> values &#8216;Reserved&#8217;</span> <o:p>=
+</o:p></li>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Resource string compound=
+ words
+      should be cased correctly</span> <o:p></o:p></li>
+ </ul>
+ <li class=3DMsoNormal style=3D'mso-list:l0 level1 lfo2;tab-stops:list .5in=
+'><span
+     style=3D'font-size:10.0pt;font-family:Arial'>Performance</span> <o:p><=
+/o:p></li>
+ <ul style=3D'margin-top:0in' type=3Dcircle>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Avoid calls that box val=
+ue
+      types</span> <o:p></o:p></li>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Avoid costly calls where
+      possible</span> <o:p></o:p></li>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Avoid unnecessary string
+      creation</span> <o:p></o:p></li>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Avoid unused parameters<=
+/span>
+      <o:p></o:p></li>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Do not cast unnecessaril=
+y</span>
+      <o:p></o:p></li>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Do not ignore method res=
+ults</span>
+      <o:p></o:p></li>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Do not initialize unnece=
+ssarily</span>
+      <o:p></o:p></li>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Remove unused locals</sp=
+an> <o:p></o:p></li>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Use literals where appro=
+priate</span>
+      <o:p></o:p></li>
+ </ul>
+ <li class=3DMsoNormal style=3D'mso-list:l0 level1 lfo2;tab-stops:list .5in=
+'><span
+     style=3D'font-size:10.0pt;font-family:Arial'>Portability</span> <o:p><=
+/o:p></li>
+ <ul style=3D'margin-top:0in' type=3Dcircle>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Avoid testing for floati=
+ng
+      point equality</span> <o:p></o:p></li>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      class=3DSpellE><span style=3D'font-size:10.0pt;font-family:Arial'>PIn=
+voke</span></span><span
+      style=3D'font-size:10.0pt;font-family:Arial'> declarations should be
+      portable</span> <o:p></o:p></li>
+ </ul>
+ <li class=3DMsoNormal style=3D'mso-list:l0 level1 lfo2;tab-stops:list .5in=
+'><span
+     style=3D'font-size:10.0pt;font-family:Arial'>Security</span> <o:p></o:=
+p></li>
+ <ul style=3D'margin-top:0in' type=3Dcircle>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Catch non-<span class=3D=
+SpellE>CLSCompliant</span>
+      exceptions in general handlers</span> <o:p></o:p></li>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Review <span class=3DSpe=
+llE>sql</span>
+      queries for security vulnerabilities</span> <o:p></o:p></li>
+ </ul>
+ <li class=3DMsoNormal style=3D'mso-list:l0 level1 lfo2;tab-stops:list .5in=
+'><span
+     style=3D'font-size:10.0pt;font-family:Arial'>Usage</span> <o:p></o:p><=
+/li>
+ <ul style=3D'margin-top:0in' type=3Dcircle>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Call base class methods =
+on <span
+      class=3DSpellE>ISerializable</span> types</span> <o:p></o:p></li>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Do not dispose objects
+      multiple times</span> <o:p></o:p></li>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Do not raise reserved
+      exception types</span> <o:p></o:p></li>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Implement <span class=3D=
+SpellE>ISerializable</span>
+      correctly</span> <o:p></o:p></li>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Implement serialization
+      methods correctly</span> <o:p></o:p></li>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Literals should be <span
+      class=3DSpellE>spellect</span> correctly</span> <o:p></o:p></li>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Mark all non-<span
+      class=3DSpellE>serializable</span> fields</span> <o:p></o:p></li>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Provide <span class=3DSp=
+ellE>deserialization</span>
+      methods for optional fields</span> <o:p></o:p></li>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      class=3DSpellE><span style=3D'font-size:10.0pt;font-family:Arial'>Ret=
+hrow</span></span><span
+      style=3D'font-size:10.0pt;font-family:Arial'> to preserve stack detai=
+ls</span>
+      <o:p></o:p></li>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Review Boolean assignment
+      evaluations</span> <o:p></o:p></li>
+  <li class=3DMsoNormal style=3D'mso-list:l0 level2 lfo2;tab-stops:list 1.0=
+in'><span
+      style=3D'font-size:10.0pt;font-family:Arial'>Use managed equivalents =
+of
+      win32 <span class=3DSpellE>api</span></span> <o:p></o:p></li>
+ </ul>
+</ul>
+
+<p class=3DMsoNormal style=3D'margin-left:.75in'><span style=3D'font-size:1=
+0.0pt;
+font-family:Arial'>&nbsp;</span><o:p></o:p></p>
+
+<p class=3DMsoNormal><span style=3D'font-size:11.0pt;font-family:Verdana'>M=
+igrating
+Custom Rules</span><o:p></o:p></p>
+
+<p class=3DMsoNormal><span style=3D'font-size:10.0pt;font-family:Verdana'>&=
+nbsp;</span><o:p></o:p></p>
+
+<p class=3DMsoNormal><span style=3D'font-size:9.0pt;font-family:Verdana'>Th=
+ere have
+been some changes that affect custom rules development for FxCop.</span><o:=
+p></o:p></p>
+
+<p class=3DMsoNormal><span style=3D'font-size:9.0pt;font-family:Verdana'>&n=
+bsp;</span><o:p></o:p></p>
+
+<form>
+
+<ul style=3D'margin-top:0in' type=3Ddisc>
+ <li class=3DMsoNormal style=3D'margin-top:.55pt;margin-bottom:.55pt;line-h=
+eight:
+     16.8pt;mso-list:l3 level1 lfo3;tab-stops:list .5in;background:white'><=
+span
+     style=3D'font-size:10.0pt;font-family:Arial'>The number of overloads to
+     Check has been reduced.</span> <o:p></o:p></li>
+</ul>
+
+<p class=3DMsoNormal style=3D'margin-top:0in;margin-right:0in;margin-bottom=
+:.55pt;
+margin-left:.75in;line-height:16.8pt;background:white'><span style=3D'font-=
+size:
+10.0pt;font-family:Arial'>If you previously used the overload <span
+class=3DGramE>Check(</span><span class=3DSpellE>AssemblyNode</span>) replac=
+e this
+with Check(Module) (you can check if the Module is an assembly by checking =
+if <span
+class=3DSpellE>NodeType</span> =3D=3D <span class=3DSpellE>NodeType.Assembl=
+y</span>).
+All the different member Check overloads have been unified to <span
+class=3DGramE>Check(</span>Member) (here goes the same, you can check for
+specific member types by checking <span class=3DSpellE>NodeType</span>). </=
+span><o:p></o:p></p>
+
+<p class=3DMsoNormal style=3D'margin-top:0in;margin-right:0in;margin-bottom=
+:.55pt;
+margin-left:.55in;text-indent:-.25in;line-height:16.8pt;background:white'><=
+span
+style=3D'font-size:10.0pt;font-family:Symbol'>&middot;</span><span
+style=3D'font-size:7.0pt'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+class=3DSpellE><span style=3D'font-size:10.0pt;font-family:Arial'>Protectio=
+nLevels</span></span><span
+style=3D'font-size:10.0pt;font-family:Arial'> are gone.</span><o:p></o:p></=
+p>
+
+<p class=3DMsoNormal style=3D'margin-top:0in;margin-right:0in;margin-bottom=
+:.55pt;
+margin-left:.75in;line-height:16.8pt;background:white'><span style=3D'font-=
+size:
+10.0pt;font-family:Arial'>There is now a <span class=3DSpellE>TargetVisibil=
+ity</span>
+property which can be set to <span class=3DSpellE>ExternallyVisible</span>,=
+ <span
+class=3DSpellE>NotExternallyVisible</span> or <span class=3DSpellE>TargetVi=
+sibilities.All</span>
+if one of the first two is <span class=3DGramE>specified,</span> you can ma=
+ke
+this <span class=3DSpellE>overridable</span> in the project by <span
+class=3DSpellE>or'ing</span> the value with <span class=3DSpellE>TargetVisi=
+bilities.Overridable</span>
+</span><o:p></o:p></p>
+
+<p class=3DMsoNormal style=3D'margin-top:0in;margin-right:0in;margin-bottom=
+:.55pt;
+margin-left:.55in;text-indent:-.25in;line-height:16.8pt;background:white'><=
+span
+style=3D'font-size:10.0pt;font-family:Symbol'>&middot;</span><span
+style=3D'font-size:7.0pt'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span=
+><span
+style=3D'font-size:10.0pt;font-family:Arial'>Addition of Resolution objects=
+ </span><o:p></o:p></p>
+
+<p class=3DMsoNormal style=3D'margin-top:0in;margin-right:0in;margin-bottom=
+:.55pt;
+margin-left:.75in;line-height:16.8pt;background:white'><span style=3D'font-=
+size:
+10.0pt;font-family:Arial'>The Resolution object provides a container for de=
+fect
+resolution rather than having the too-flexible weakly-typed Problem constru=
+ctor
+which previously accepted 'object'. </span><o:p></o:p></p>
+
+<p class=3DMsoNormal style=3D'margin-top:0in;margin-right:0in;margin-bottom=
+:.55pt;
+margin-left:.55in;text-indent:-.25in;line-height:16.8pt;background:white'><=
+span
+style=3D'font-size:10.0pt;font-family:Symbol'>&middot;</span><span
+style=3D'font-size:7.0pt'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+style=3D'font-size:10.0pt;font-family:Arial'>Rules return a <span class=3DS=
+pellE>ProblemCollection</span>
+instead of a <span class=3DGramE>Problem[</span>].</span><o:p></o:p></p>
+
+<p class=3DMsoNormal style=3D'margin-top:0in;margin-right:0in;margin-bottom=
+:.55pt;
+margin-left:.75in;line-height:16.8pt;background:white'><span style=3D'font-=
+size:
+10.0pt;font-family:Arial'>&nbsp;<span class=3DSpellE>ProblemCollection</spa=
+n>
+object is automatically cleared by the engine before the rule is called aga=
+in. </span><o:p></o:p></p>
+
+<ul style=3D'margin-top:0in' type=3Ddisc>
+ <li class=3DMsoNormal style=3D'mso-list:l2 level1 lfo4;tab-stops:list .5in=
+'><span
+     style=3D'font-size:10.0pt;font-family:Arial'>Helper base classes to cr=
+eate
+     XML-based rules have changed.</span> <o:p></o:p></li>
+</ul>
+
+<p class=3DMsoNormal style=3D'margin-left:.25in'><span style=3D'font-size:1=
+0.0pt;
+font-family:Arial'>&nbsp;</span><o:p></o:p></p>
+
+<p class=3DMsoNormal style=3D'margin-left:1.0in'><span style=3D'font-size:1=
+0.0pt;
+font-family:Arial'>1) <span class=3DSpellE>GroupOwner</span> and <span
+class=3DSpellE>DevOwner</span> nodes have been collapsed into a single node=
+ named
+&#8216;Owner&#8217;</span><o:p></o:p></p>
+
+<p class=3DMsoNormal style=3D'margin-left:1.0in'><span style=3D'font-size:1=
+0.0pt;
+font-family:Arial'>&nbsp;</span><o:p></o:p></p>
+
+<p class=3DMsoNormal style=3D'margin-left:1.0in'><span style=3D'font-size:1=
+0.0pt;
+font-family:Arial'>2) The Message node has been renamed to <span class=3DSp=
+ellE>MessageLevel</span></span><o:p></o:p></p>
+
+<p class=3DMsoNormal style=3D'margin-left:1.0in'><span style=3D'font-size:1=
+0.0pt;
+font-family:Arial'>&nbsp;</span><o:p></o:p></p>
+
+<p class=3DMsoNormal style=3D'margin-left:1.0in'><span style=3D'font-size:1=
+0.0pt;
+font-family:Arial'>3) The <span class=3DSpellE>LongDescription</span> node =
+has
+been removed. You should take any content in your <span class=3DSpellE>Long=
+Decription</span>
+node and append it to your Description node</span><o:p></o:p></p>
+
+<p class=3DMsoNormal style=3D'margin-left:1.0in'><span style=3D'font-size:1=
+0.0pt;
+font-family:Arial'>&nbsp;</span><o:p></o:p></p>
+
+<p class=3DMsoNormal style=3D'margin-left:1.0in'><span style=3D'font-size:1=
+0.0pt;
+font-family:Arial'>4) You should add a <span class=3DSpellE>FixCategories</=
+span>
+node to your XML which describes whether it is a breaking change to resolve=
+ an
+occurrence of a rule violation value. Use Breaking or <span class=3DSpellE>=
+NonBreaking</span>
+as the inner text value of the node, e.g.:</span><o:p></o:p></p>
+
+<p class=3DMsoNormal style=3D'margin-left:1.0in'><span style=3D'font-size:1=
+0.0pt;
+font-family:Arial'>&nbsp;</span><o:p></o:p></p>
+
+<p class=3DMsoNormal style=3D'margin-left:1.0in'><span style=3D'font-size:1=
+0.0pt;
+font-family:Arial'>&nbsp;&nbsp;&nbsp; &lt;<span class=3DSpellE>FixCategorie=
+s</span>&gt;<span
+class=3DSpellE>NonBreaking</span>&lt;/<span class=3DSpellE>FixCategories</s=
+pan>&gt;</span><o:p></o:p></p>
+
+<p class=3DMsoNormal style=3D'margin-left:1.0in'><span style=3D'font-size:1=
+0.0pt;
+font-family:Arial'>&nbsp;</span><o:p></o:p></p>
+
+<p class=3DMsoNormal style=3D'margin-left:1.0in'><span style=3D'font-size:1=
+0.0pt;
+font-family:Arial'>5) The Rule node has an expanded set of attributes which,
+taken together, constitute a unique id for your rule. You must add a
+&#8216;Category&#8217; and &#8216;<span class=3DSpellE>CheckId</span>&#8217;
+attribute to the node. The values for these are somewhat open-ended. For Fx=
+Cop,
+we use a category that reflects the rule assembly purpose, such as security.
+For the <span class=3DSpellE>CheckId</span>, we use a unique identifier whi=
+ch
+will be used in the VS FxCop documentation to serve as a tool-returned error
+code. All these values are used in a new feature whereby users can suppress=
+ an
+FxCop message by adding a custom attribute to target source code. Here&#821=
+7;s
+an example of a current Rule node:</span><o:p></o:p></p>
+
+<p class=3DMsoNormal style=3D'margin-left:1.0in'><span style=3D'font-size:1=
+0.0pt;
+font-family:Arial'>&nbsp;</span><o:p></o:p></p>
+
+<p class=3DMsoNormal style=3D'margin-left:.75in'><span style=3D'font-size:1=
+0.0pt;
+font-family:Arial'>&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;
+&lt;Rule </span><o:p></o:p></p>
+
+<p class=3DMsoNormal style=3D'margin-left:1.75in;text-indent:.25in'><span
+class=3DSpellE><span style=3D'font-size:10.0pt;font-family:Arial'>TypeName<=
+/span></span><span
+style=3D'font-size:10.0pt;font-family:Arial'>=3D&quot;<span class=3DSpellE>=
+PInvokeEntryPointsShouldExist</span>&quot;</span><o:p></o:p></p>
+
+<p class=3DMsoNormal style=3D'margin-left:1.5in;text-indent:.5in'><span
+style=3D'font-size:10.0pt;font-family:Arial'>Category=3D&quot;<span class=
+=3DSpellE>Microsoft.Interoperability</span>&quot;
+</span><o:p></o:p></p>
+
+<p class=3DMsoNormal style=3D'margin-left:1.5in;text-indent:.5in'><span
+class=3DSpellE><span style=3D'font-size:10.0pt;font-family:Arial'>CheckId</=
+span></span><span
+style=3D'font-size:10.0pt;font-family:Arial'>=3D&quot;CA1400&quot;&gt;</spa=
+n><o:p></o:p></p>
+
+<p class=3DMsoNormal style=3D'margin-left:.75in'>&nbsp;<o:p></o:p></p>
+
+<p class=3DMsoNormal><span style=3D'font-size:10.0pt;font-family:Arial'>&nb=
+sp;</span><o:p></o:p></p>
+
+</form>
+
+<p class=3DMsoNormal><o:p>&nbsp;</o:p></p>
+
+</div>
+
+</body>
+
+</html>
