@@ -51,6 +51,3 @@ exec sp_dboption N'${database}', N'auto create statistics', N'true'
 GO
 exec sp_dboption N'${database}', N'auto update statistics', N'true'
 GO
-if( ( (@@microsoftversion / power(2, 24) = 8) and (@@microsoftversion & 0xffff >= 724) ) or ( (@@microsoftversion / power(2, 24) = 7) and (@@microsoftversion & 0xffff >= 1082) ) )
-exec sp_dboption N'${database}', N'db chaining', N'false'
-GO
