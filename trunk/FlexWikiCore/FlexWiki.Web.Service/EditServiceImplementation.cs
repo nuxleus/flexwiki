@@ -34,12 +34,12 @@ namespace FlexWiki.Web.Services
 	[WebService(Namespace="http://www.flexwiki.com/webservices/")]
 	public class EditServiceImplementation : System.Web.Services.WebService
 	{
-    private LinkMaker _linkMaker;
+		private LinkMaker _linkMaker;
 
-    public EditServiceImplementation()
-    {
-      EstablishFederation();
-    }
+		public EditServiceImplementation()
+		{
+			EstablishFederation();
+		}
 
     
 		protected Federation TheFederation
@@ -63,7 +63,7 @@ namespace FlexWiki.Web.Services
 		}
 
 		
-    /// <summary>
+		/// <summary>
 		/// CanEdit checks to see if the user is Authenticated using supplied credentials in the Web Service proxy.
 		/// </summary>
 		/// <returns>An attribution in the form of domain\username or null if the user isn't authenticated.</returns>
@@ -86,44 +86,44 @@ namespace FlexWiki.Web.Services
 
 			foreach (ContentBase cb in TheFederation.ContentBases)
 			{
-        WireTypes.ContentBase wireFormat = new WireTypes.ContentBase(cb); 
+				WireTypes.ContentBase wireFormat = new WireTypes.ContentBase(cb); 
 				contentBases.Add(wireFormat);
 			}
 
 			return contentBases;
 		}
 
-    /// <summary>
-    /// Returns the AbsoluteTopicNames for a given Namespace.
-    /// </summary>
-    /// <param name="cb">The ContentBase.</param>
-    /// <returns>A AbsoluteTopicNameCollection of the AbsoluteTopicNames for the ContentBase</returns>
-    [WebMethod]
-    public WireTypes.AbsoluteTopicNameCollection GetAllTopics(WireTypes.ContentBase cb)
-    {
-      WireTypes.AbsoluteTopicNameCollection topicNames = new WireTypes.AbsoluteTopicNameCollection();
+		/// <summary>
+		/// Returns the AbsoluteTopicNames for a given Namespace.
+		/// </summary>
+		/// <param name="cb">The ContentBase.</param>
+		/// <returns>A AbsoluteTopicNameCollection of the AbsoluteTopicNames for the ContentBase</returns>
+		[WebMethod]
+		public WireTypes.AbsoluteTopicNameCollection GetAllTopics(WireTypes.ContentBase cb)
+		{
+			WireTypes.AbsoluteTopicNameCollection topicNames = new WireTypes.AbsoluteTopicNameCollection();
 			 
-      foreach (AbsoluteTopicName ab in TheFederation.ContentBaseForNamespace(cb.Namespace).AllTopics(false))
-      {
-        // We need to also return the current version
-        ContentBase cb2 = TheFederation.ContentBaseForTopic(ab); 
-        WireTypes.AbsoluteTopicName atn = new WireTypes.AbsoluteTopicName();
-        atn.Name = ab.Name;
-        atn.Namespace = ab.Namespace; 
-        string version = cb2.LatestVersionForTopic(ab.LocalName);
-        if (version == null)
-        {
-          // There's only one version, so just use the empty string
-          version = ""; 
-        }
-        atn.Version = version; 
-        topicNames.Add(atn);
-      }
+			foreach (AbsoluteTopicName ab in TheFederation.ContentBaseForNamespace(cb.Namespace).AllTopics(false))
+			{
+				// We need to also return the current version
+				ContentBase cb2 = TheFederation.ContentBaseForTopic(ab); 
+				WireTypes.AbsoluteTopicName atn = new WireTypes.AbsoluteTopicName();
+				atn.Name = ab.Name;
+				atn.Namespace = ab.Namespace; 
+				string version = cb2.LatestVersionForTopic(ab.LocalName);
+				if (version == null)
+				{
+					// There's only one version, so just use the empty string
+					version = ""; 
+				}
+				atn.Version = version; 
+				topicNames.Add(atn);
+			}
 
-      return topicNames;
-    }
+			return topicNames;
+		}
 
-    /// <summary>
+		/// <summary>
 		/// Returns the default namespace in the Federation. 
 		/// </summary>
 		/// <returns>A ContentBase of the default namespace.</returns>
@@ -143,11 +143,11 @@ namespace FlexWiki.Web.Services
 		[WebMethod]
 		public string GetHtmlForTopic(WireTypes.AbsoluteTopicName topicName)
 		{
-      AbsoluteTopicName atn = new AbsoluteTopicName(topicName.Name, topicName.Namespace); 
+			AbsoluteTopicName atn = new AbsoluteTopicName(topicName.Name, topicName.Namespace); 
 			return InternalGetHtmlForTopic(atn, null);
 		}
 
-    /// <summary>
+		/// <summary>
 		/// Returns the formatted HTML for a previous version of a given Topic. 
 		/// </summary>
 		/// <param name="topicName">An AbsoluteTopicName.</param>
@@ -156,28 +156,28 @@ namespace FlexWiki.Web.Services
 		[WebMethod]
 		public string GetHtmlForTopicVersion(WireTypes.AbsoluteTopicName topicName, string version)
 		{
-      AbsoluteTopicName atn = new AbsoluteTopicName(topicName.Name, topicName.Namespace); 
+			AbsoluteTopicName atn = new AbsoluteTopicName(topicName.Name, topicName.Namespace); 
 			return InternalGetHtmlForTopic(atn, version);
 		}
 
-    /// <summary>
-    /// Returns the formatted HTML version of the given text for a Topic.
-    /// </summary>
-    /// <param name="topicName">An AbsoluteTopicName.</param>
-    /// <param name="textToFormat">The text to format.</param>
-    /// <returns>Formatted HTML string.</returns>
-    [WebMethod]
-    public string GetPreviewForTopic(WireTypes.AbsoluteTopicName topicName, string textToFormat)
-    {
-      _linkMaker = new LinkMaker(RootUrl(Context.Request));
+		/// <summary>
+		/// Returns the formatted HTML version of the given text for a Topic.
+		/// </summary>
+		/// <param name="topicName">An AbsoluteTopicName.</param>
+		/// <param name="textToFormat">The text to format.</param>
+		/// <returns>Formatted HTML string.</returns>
+		[WebMethod]
+		public string GetPreviewForTopic(WireTypes.AbsoluteTopicName topicName, string textToFormat)
+		{
+			_linkMaker = new LinkMaker(RootUrl(Context.Request));
 
-      // OmarS: why do I have to do this?
-      ContentBase relativeToBase = TheFederation.ContentBaseForNamespace(topicName.Namespace);
+			// OmarS: why do I have to do this?
+			ContentBase relativeToBase = TheFederation.ContentBaseForNamespace(topicName.Namespace);
 			
-      return FlexWiki.Formatting.Formatter.FormattedString(null, textToFormat, Formatting.OutputFormat.HTML,  relativeToBase, _linkMaker, null);
-    }
+			return FlexWiki.Formatting.Formatter.FormattedString(null, textToFormat, Formatting.OutputFormat.HTML,  relativeToBase, _linkMaker, null);
+		}
 
-    /// <summary>
+		/// <summary>
 		/// Returns the raw Text for a version of a given Topic. 
 		/// </summary>
 		/// <param name="topicName">An AbsoluteTopicName.</param>
@@ -187,55 +187,56 @@ namespace FlexWiki.Web.Services
 		{
 			string content = null;
 			// OmarS: Do I need to check for Topic existence?
-      AbsoluteTopicName atn = new AbsoluteTopicName(topicName.Name, topicName.Namespace); 
+			AbsoluteTopicName atn = new AbsoluteTopicName(topicName.Name, topicName.Namespace); 
+			atn.Version = topicName.Version; 
      
-      if (TheFederation.ContentBaseForTopic(atn).TopicExists(atn))
-      {
-        content = TheFederation.ContentBaseForTopic(atn).Read(atn.LocalName);
-      }
-      if (content == null)
-      {
-        content = "[enter your text here]";
-      }
+			if (TheFederation.ContentBaseForTopic(atn).TopicExists(atn))
+			{
+				content = TheFederation.ContentBaseForTopic(atn).Read(atn.LocalName);
+			}
+			if (content == null)
+			{
+				content = "[enter your text here]";
+			}
 
 			return content;
 		}
 
-    /// <summary>
-    /// Returns a collection of versions for a given Topic.
-    /// </summary>
-    /// <param name="topicName">An AbsoluteTopicName.</param>
-    /// <returns>StringCollection of version strings.</returns>
-    [WebMethod]
-    public StringCollection GetVersionsForTopic(WireTypes.AbsoluteTopicName topicName)
-    {
-      StringCollection topicVersions = new StringCollection();
+		/// <summary>
+		/// Returns a collection of versions for a given Topic.
+		/// </summary>
+		/// <param name="topicName">An AbsoluteTopicName.</param>
+		/// <returns>StringCollection of version strings.</returns>
+		[WebMethod]
+		public StringCollection GetVersionsForTopic(WireTypes.AbsoluteTopicName topicName)
+		{
+			StringCollection topicVersions = new StringCollection();
 			
-      AbsoluteTopicName atn = new AbsoluteTopicName(topicName.Name, topicName.Namespace); 
-      IEnumerable changeList = TheFederation.ContentBaseForTopic(atn).AllChangesForTopic(atn.LocalName);
+			AbsoluteTopicName atn = new AbsoluteTopicName(topicName.Name, topicName.Namespace); 
+			IEnumerable changeList = TheFederation.ContentBaseForTopic(atn).AllChangesForTopic(atn.LocalName);
 
-      foreach (TopicChange change in changeList)
-      {
-        topicVersions.Add(change.Version);
-      }
+			foreach (TopicChange change in changeList)
+			{
+				topicVersions.Add(change.Version);
+			}
 
-      return topicVersions;
-    }
+			return topicVersions;
+		}
 
-    [WebMethod]
-    public WireTypes.WikiVersion GetWikiVersion()
-    {
-      WireTypes.WikiVersion wikiVersion = new WireTypes.WikiVersion();
-      Version assemblyVersion = typeof(Federation).Assembly.GetName().Version; 
+		[WebMethod]
+		public WireTypes.WikiVersion GetWikiVersion()
+		{
+			WireTypes.WikiVersion wikiVersion = new WireTypes.WikiVersion();
+			Version assemblyVersion = typeof(Federation).Assembly.GetName().Version; 
 
-      wikiVersion.Major = assemblyVersion.Major; 
-      wikiVersion.Minor = assemblyVersion.Minor; 
-      wikiVersion.Build = assemblyVersion.Build; 
-      wikiVersion.Revision = assemblyVersion.Revision;
+			wikiVersion.Major = assemblyVersion.Major; 
+			wikiVersion.Minor = assemblyVersion.Minor; 
+			wikiVersion.Build = assemblyVersion.Build; 
+			wikiVersion.Revision = assemblyVersion.Revision;
 
-      return wikiVersion; 
-    }
-    /// <summary>
+			return wikiVersion; 
+		}
+		/// <summary>
 		/// Restores a given Topic to a previous version.
 		/// </summary>
 		/// <param name="topicName">An AbsoluteTopicName.</param>
@@ -250,7 +251,7 @@ namespace FlexWiki.Web.Services
 			}
 			else
 			{
-        AbsoluteTopicName atn = new AbsoluteTopicName(topicName.Name, topicName.Namespace); 
+				AbsoluteTopicName atn = new AbsoluteTopicName(topicName.Name, topicName.Namespace); 
 				IEnumerable changeList = TheFederation.ContentBaseForTopic(atn).AllChangesForTopic(atn.LocalName);
 
 				foreach (TopicChange change in changeList)
@@ -264,120 +265,120 @@ namespace FlexWiki.Web.Services
 			}
 		}
 
-    /// <summary>
-    /// Sets the text for a given Topic.
-    /// </summary>
-    /// <param name="topicName">An AbsoluteTopicName.</param>
-    /// <param name="postedTopicText">The new unformatted text.</param>
-    /// <param name="visitorIdentityString">The visitor identity string.</param>
-    [WebMethod]
-    public void SetTextForTopic(WireTypes.AbsoluteTopicName topicName, string postedTopicText, string visitorIdentityString)
-    {
-      AbsoluteTopicName atn = new AbsoluteTopicName(topicName.Name, topicName.Namespace); 
-      WriteNewTopic(atn, postedTopicText, GetVisitorIdentity(visitorIdentityString), null);
-    }
+		/// <summary>
+		/// Sets the text for a given Topic.
+		/// </summary>
+		/// <param name="topicName">An AbsoluteTopicName.</param>
+		/// <param name="postedTopicText">The new unformatted text.</param>
+		/// <param name="visitorIdentityString">The visitor identity string.</param>
+		[WebMethod]
+		public void SetTextForTopic(WireTypes.AbsoluteTopicName topicName, string postedTopicText, string visitorIdentityString)
+		{
+			AbsoluteTopicName atn = new AbsoluteTopicName(topicName.Name, topicName.Namespace); 
+			WriteNewTopic(atn, postedTopicText, GetVisitorIdentity(visitorIdentityString), null);
+		}
 
 		
-    private void EstablishFederation()
-    {
-      if (TheFederation != null)
-      {
-        // If we have one, just make sure it's valid
-        TheFederation.Validate();
-        return;
-      }
+		private void EstablishFederation()
+		{
+			if (TheFederation != null)
+			{
+				// If we have one, just make sure it's valid
+				TheFederation.Validate();
+				return;
+			}
 
-      // nope - need a new one
-      string federationNamespaceMap = ConfigurationSettings.AppSettings["FederationNamespaceMapFile"];
-      if (federationNamespaceMap == null)
-      {
-        throw new Exception("No namespace map file defined.  Please set the FederationNamespaceMapFile key in <appSettings> in web.config to point to a namespace map file.");
-      }
-      string fsPath = Context.Request.MapPath(federationNamespaceMap);
-      TheFederation = new Federation(fsPath, FlexWiki.Formatting.OutputFormat.HTML, new LinkMaker(RootUrl(Context.Request)));
-    }
+			// nope - need a new one
+			string federationNamespaceMap = ConfigurationSettings.AppSettings["FederationNamespaceMapFile"];
+			if (federationNamespaceMap == null)
+			{
+				throw new Exception("No namespace map file defined.  Please set the FederationNamespaceMapFile key in <appSettings> in web.config to point to a namespace map file.");
+			}
+			string fsPath = Context.Request.MapPath(federationNamespaceMap);
+			TheFederation = new Federation(fsPath, FlexWiki.Formatting.OutputFormat.HTML, new LinkMaker(RootUrl(Context.Request)));
+		}
 
-    private XmlElement GetWsdl()
-    {
-      ServiceDescriptionReflector reflector = new ServiceDescriptionReflector();
-      reflector.Reflect(typeof(EditServiceImplementation), HttpContext.Current.Request.RawUrl);
+		private XmlElement GetWsdl()
+		{
+			ServiceDescriptionReflector reflector = new ServiceDescriptionReflector();
+			reflector.Reflect(typeof(EditServiceImplementation), HttpContext.Current.Request.RawUrl);
 
-      if (reflector.ServiceDescriptions.Count > 1)
-      {
-        throw new Exception("I'll deal with multiple service descriptions later");
-      }
+			if (reflector.ServiceDescriptions.Count > 1)
+			{
+				throw new Exception("I'll deal with multiple service descriptions later");
+			}
       
-      MemoryStream ms = new MemoryStream(); 
-      XmlTextWriter wtr = new XmlTextWriter(ms, System.Text.Encoding.UTF8);
-      wtr.Formatting = System.Xml.Formatting.Indented;
-      reflector.ServiceDescriptions[0].Write(wtr);
-      wtr.Close(); 
-      ms.Position = 0; 
+			MemoryStream ms = new MemoryStream(); 
+			XmlTextWriter wtr = new XmlTextWriter(ms, System.Text.Encoding.UTF8);
+			wtr.Formatting = System.Xml.Formatting.Indented;
+			reflector.ServiceDescriptions[0].Write(wtr);
+			wtr.Close(); 
+			ms.Position = 0; 
 
-      XmlDocument doc = new XmlDocument(); 
-      doc.Load(ms); 
+			XmlDocument doc = new XmlDocument(); 
+			doc.Load(ms); 
 
-      return doc.DocumentElement; 
-    }
-    private string GetVisitorIdentity(string visitorIdentityString)
-    {
-      // if we are using Windows Authenticaiton, override the attribution with the Windows domain/username
-      if (User.Identity.IsAuthenticated)
-      {
-        return User.Identity.Name;
-      }
-      else if (visitorIdentityString == null || visitorIdentityString.Length == 0)
-      {
-        return Context.Request.UserHostAddress;
-      }
-      else
-      {
-        return visitorIdentityString;
-      }
-    }
-    private string InternalGetHtmlForTopic(AbsoluteTopicName topicName, string version)
-    {
-      _linkMaker = new LinkMaker(RootUrl(Context.Request));
+			return doc.DocumentElement; 
+		}
+		private string GetVisitorIdentity(string visitorIdentityString)
+		{
+			// if we are using Windows Authenticaiton, override the attribution with the Windows domain/username
+			if (User.Identity.IsAuthenticated)
+			{
+				return User.Identity.Name;
+			}
+			else if (visitorIdentityString == null || visitorIdentityString.Length == 0)
+			{
+				return Context.Request.UserHostAddress;
+			}
+			else
+			{
+				return visitorIdentityString;
+			}
+		}
+		private string InternalGetHtmlForTopic(AbsoluteTopicName topicName, string version)
+		{
+			_linkMaker = new LinkMaker(RootUrl(Context.Request));
 
-      if (version != null && version == topicName.Version)
-      {
-        return FlexWiki.Formatting.Formatter.FormattedTopic(topicName, Formatting.OutputFormat.HTML, null,  TheFederation, _linkMaker, null);
-      }
-      else
-      {
-        IEnumerable changeList;
-        changeList = TheFederation.ContentBaseForTopic(topicName).AllChangesForTopic(topicName.LocalName);
+			if (version != null && version == topicName.Version)
+			{
+				return FlexWiki.Formatting.Formatter.FormattedTopic(topicName, Formatting.OutputFormat.HTML, null,  TheFederation, _linkMaker, null);
+			}
+			else
+			{
+				IEnumerable changeList;
+				changeList = TheFederation.ContentBaseForTopic(topicName).AllChangesForTopic(topicName.LocalName);
 
-        foreach (TopicChange change in changeList)
-        {
-          if (change.Version == version)
-          {
-            return FlexWiki.Formatting.Formatter.FormattedTopic(change.Topic, Formatting.OutputFormat.HTML, null,  TheFederation, _linkMaker, null);
-          }
-        }
+				foreach (TopicChange change in changeList)
+				{
+					if (change.Version == version)
+					{
+						return FlexWiki.Formatting.Formatter.FormattedTopic(change.Topic, Formatting.OutputFormat.HTML, null,  TheFederation, _linkMaker, null);
+					}
+				}
 
-        return FlexWiki.Formatting.Formatter.FormattedTopic(topicName, Formatting.OutputFormat.HTML, null,  TheFederation, _linkMaker, null);
-      }
-    }
+				return FlexWiki.Formatting.Formatter.FormattedTopic(topicName, Formatting.OutputFormat.HTML, null,  TheFederation, _linkMaker, null);
+			}
+		}
 
-    private string RootUrl(HttpRequest req)
-    {
-      string full = req.Url.ToString();
-      if (req.Url.Query != null && req.Url.Query.Length > 0)
-      {
-        full = full.Substring(0, full.Length - req.Url.Query.Length);
-      }
-      if (req.PathInfo != null && req.PathInfo.Length > 0)
-      {
-        full = full.Substring(0, full.Length - (req.PathInfo.Length + 1));
-      }
-      full = full.Substring(0, full.LastIndexOf('/') + 1);
-      Uri fullUri = new Uri(full); 
-      full = fullUri.AbsolutePath.ToString(); 
-      return full;
-    }
+		private string RootUrl(HttpRequest req)
+		{
+			string full = req.Url.ToString();
+			if (req.Url.Query != null && req.Url.Query.Length > 0)
+			{
+				full = full.Substring(0, full.Length - req.Url.Query.Length);
+			}
+			if (req.PathInfo != null && req.PathInfo.Length > 0)
+			{
+				full = full.Substring(0, full.Length - (req.PathInfo.Length + 1));
+			}
+			full = full.Substring(0, full.LastIndexOf('/') + 1);
+			Uri fullUri = new Uri(full); 
+			full = fullUri.AbsolutePath.ToString(); 
+			return full;
+		}
 
-    private void WriteNewTopic(AbsoluteTopicName theTopic, string postedTopicText, string visitorIdentityString, string version)
+		private void WriteNewTopic(AbsoluteTopicName theTopic, string postedTopicText, string visitorIdentityString, string version)
 		{
 			_linkMaker = new LinkMaker(RootUrl(Context.Request));
 
@@ -387,5 +388,5 @@ namespace FlexWiki.Web.Services
 		}
     
     
-  }
+	}
 }

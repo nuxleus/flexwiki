@@ -180,6 +180,23 @@ namespace FlexWiki.BuildVerificationTests
       Assert.AreEqual(testTopic.LatestContent, text, "Checking that correct text was returned"); 
     }
 
+	[Test]
+	public void GetTextForTopicVersion()
+	{
+		TestNamespace testNamespace = testContent.Namespaces[1]; 
+		TestTopic testTopic = testNamespace.Topics[2];
+		string oldVersion = GetVersions(testNamespace.Name, testTopic.Name)[0]; 
+
+		EditService.AbsoluteTopicName topicName = new EditService.AbsoluteTopicName(); 
+		topicName.Namespace = testNamespace.Name; 
+		topicName.Name = testTopic.Name; 
+		topicName.Version = oldVersion;
+		string raw = proxy.GetTextForTopic(topicName); 
+
+		Assert.IsFalse(raw.IndexOf("This is some old test content") == -1, 
+			"Checking that old content was returned"); 
+	}
+
     [Test]
     public void GetVersionsForTopic()
     {
