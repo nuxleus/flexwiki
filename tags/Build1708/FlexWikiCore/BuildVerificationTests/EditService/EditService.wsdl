@@ -1,0 +1,450 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://www.flexwiki.com/webservices/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" targetNamespace="http://www.flexwiki.com/webservices/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://www.flexwiki.com/webservices/">
+      <s:element name="CanEdit">
+        <s:complexType />
+      </s:element>
+      <s:element name="CanEditResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CanEditResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetAllNamespaces">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetAllNamespacesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetAllNamespacesResult" type="tns:ArrayOfContentBase" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfContentBase">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="ContentBase" nillable="true" type="tns:ContentBase" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ContentBase">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:BELObject">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="Created" type="s:dateTime" />
+              <s:element minOccurs="1" maxOccurs="1" name="LastRead" type="s:dateTime" />
+              <s:element minOccurs="1" maxOccurs="1" name="Secure" type="s:boolean" />
+              <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="Contact" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="ImageURL" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="HomePage" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="DisplaySpacesInWikiLinks" type="s:boolean" />
+              <s:element minOccurs="0" maxOccurs="1" name="Namespace" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="Title" type="s:string" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="BELObject" abstract="true">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:ReflectedValueSource" />
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="ReflectedValueSource" abstract="true" />
+      <s:element name="GetAllTopics">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="cb" type="tns:ContentBase" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetAllTopicsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetAllTopicsResult" type="tns:ArrayOfAbsoluteTopicName" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfAbsoluteTopicName">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="AbsoluteTopicName" nillable="true" type="tns:AbsoluteTopicName" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="AbsoluteTopicName">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:TopicName" />
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="TopicName" abstract="true">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="FullnameWithVersion" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Version" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Fullname" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Namespace" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetDefaultNamespace">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetDefaultNamespaceResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetDefaultNamespaceResult" type="tns:ContentBase" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetHtmlForTopic">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="topicName" type="tns:AbsoluteTopicName" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetHtmlForTopicResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetHtmlForTopicResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetHtmlForTopicVersion">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="topicName" type="tns:AbsoluteTopicName" />
+            <s:element minOccurs="0" maxOccurs="1" name="version" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetHtmlForTopicVersionResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetHtmlForTopicVersionResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetPreviewForTopic">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="topicName" type="tns:AbsoluteTopicName" />
+            <s:element minOccurs="0" maxOccurs="1" name="textToFormat" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetPreviewForTopicResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetPreviewForTopicResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetTextForTopic">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="topicName" type="tns:AbsoluteTopicName" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetTextForTopicResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetTextForTopicResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetVersionsForTopic">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="topicName" type="tns:AbsoluteTopicName" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetVersionsForTopicResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetVersionsForTopicResult" type="tns:ArrayOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfString">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetWikiVersion">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetWikiVersionResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetWikiVersionResult" type="tns:Version" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="Version" />
+      <s:element name="RestoreTopic">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="topicName" type="tns:AbsoluteTopicName" />
+            <s:element minOccurs="0" maxOccurs="1" name="visitorIdentityString" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="version" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RestoreTopicResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="SetTextForTopic">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="topicName" type="tns:AbsoluteTopicName" />
+            <s:element minOccurs="0" maxOccurs="1" name="postedTopicText" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="visitorIdentityString" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetTextForTopicResponse">
+        <s:complexType />
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="CanEditSoapIn">
+    <wsdl:part name="parameters" element="tns:CanEdit" />
+  </wsdl:message>
+  <wsdl:message name="CanEditSoapOut">
+    <wsdl:part name="parameters" element="tns:CanEditResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetAllNamespacesSoapIn">
+    <wsdl:part name="parameters" element="tns:GetAllNamespaces" />
+  </wsdl:message>
+  <wsdl:message name="GetAllNamespacesSoapOut">
+    <wsdl:part name="parameters" element="tns:GetAllNamespacesResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetAllTopicsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetAllTopics" />
+  </wsdl:message>
+  <wsdl:message name="GetAllTopicsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetAllTopicsResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetDefaultNamespaceSoapIn">
+    <wsdl:part name="parameters" element="tns:GetDefaultNamespace" />
+  </wsdl:message>
+  <wsdl:message name="GetDefaultNamespaceSoapOut">
+    <wsdl:part name="parameters" element="tns:GetDefaultNamespaceResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetHtmlForTopicSoapIn">
+    <wsdl:part name="parameters" element="tns:GetHtmlForTopic" />
+  </wsdl:message>
+  <wsdl:message name="GetHtmlForTopicSoapOut">
+    <wsdl:part name="parameters" element="tns:GetHtmlForTopicResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetHtmlForTopicVersionSoapIn">
+    <wsdl:part name="parameters" element="tns:GetHtmlForTopicVersion" />
+  </wsdl:message>
+  <wsdl:message name="GetHtmlForTopicVersionSoapOut">
+    <wsdl:part name="parameters" element="tns:GetHtmlForTopicVersionResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetPreviewForTopicSoapIn">
+    <wsdl:part name="parameters" element="tns:GetPreviewForTopic" />
+  </wsdl:message>
+  <wsdl:message name="GetPreviewForTopicSoapOut">
+    <wsdl:part name="parameters" element="tns:GetPreviewForTopicResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetTextForTopicSoapIn">
+    <wsdl:part name="parameters" element="tns:GetTextForTopic" />
+  </wsdl:message>
+  <wsdl:message name="GetTextForTopicSoapOut">
+    <wsdl:part name="parameters" element="tns:GetTextForTopicResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetVersionsForTopicSoapIn">
+    <wsdl:part name="parameters" element="tns:GetVersionsForTopic" />
+  </wsdl:message>
+  <wsdl:message name="GetVersionsForTopicSoapOut">
+    <wsdl:part name="parameters" element="tns:GetVersionsForTopicResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetWikiVersionSoapIn">
+    <wsdl:part name="parameters" element="tns:GetWikiVersion" />
+  </wsdl:message>
+  <wsdl:message name="GetWikiVersionSoapOut">
+    <wsdl:part name="parameters" element="tns:GetWikiVersionResponse" />
+  </wsdl:message>
+  <wsdl:message name="RestoreTopicSoapIn">
+    <wsdl:part name="parameters" element="tns:RestoreTopic" />
+  </wsdl:message>
+  <wsdl:message name="RestoreTopicSoapOut">
+    <wsdl:part name="parameters" element="tns:RestoreTopicResponse" />
+  </wsdl:message>
+  <wsdl:message name="SetTextForTopicSoapIn">
+    <wsdl:part name="parameters" element="tns:SetTextForTopic" />
+  </wsdl:message>
+  <wsdl:message name="SetTextForTopicSoapOut">
+    <wsdl:part name="parameters" element="tns:SetTextForTopicResponse" />
+  </wsdl:message>
+  <wsdl:portType name="EditServiceSoap">
+    <wsdl:operation name="CanEdit">
+      <wsdl:input message="tns:CanEditSoapIn" />
+      <wsdl:output message="tns:CanEditSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAllNamespaces">
+      <wsdl:input message="tns:GetAllNamespacesSoapIn" />
+      <wsdl:output message="tns:GetAllNamespacesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAllTopics">
+      <wsdl:input message="tns:GetAllTopicsSoapIn" />
+      <wsdl:output message="tns:GetAllTopicsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDefaultNamespace">
+      <wsdl:input message="tns:GetDefaultNamespaceSoapIn" />
+      <wsdl:output message="tns:GetDefaultNamespaceSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetHtmlForTopic">
+      <wsdl:input message="tns:GetHtmlForTopicSoapIn" />
+      <wsdl:output message="tns:GetHtmlForTopicSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetHtmlForTopicVersion">
+      <wsdl:input message="tns:GetHtmlForTopicVersionSoapIn" />
+      <wsdl:output message="tns:GetHtmlForTopicVersionSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPreviewForTopic">
+      <wsdl:input message="tns:GetPreviewForTopicSoapIn" />
+      <wsdl:output message="tns:GetPreviewForTopicSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTextForTopic">
+      <wsdl:input message="tns:GetTextForTopicSoapIn" />
+      <wsdl:output message="tns:GetTextForTopicSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetVersionsForTopic">
+      <wsdl:input message="tns:GetVersionsForTopicSoapIn" />
+      <wsdl:output message="tns:GetVersionsForTopicSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetWikiVersion">
+      <wsdl:input message="tns:GetWikiVersionSoapIn" />
+      <wsdl:output message="tns:GetWikiVersionSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RestoreTopic">
+      <wsdl:input message="tns:RestoreTopicSoapIn" />
+      <wsdl:output message="tns:RestoreTopicSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SetTextForTopic">
+      <wsdl:input message="tns:SetTextForTopicSoapIn" />
+      <wsdl:output message="tns:SetTextForTopicSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="EditServiceSoap" type="tns:EditServiceSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" />
+    <wsdl:operation name="CanEdit">
+      <soap:operation soapAction="http://www.flexwiki.com/webservices/CanEdit" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllNamespaces">
+      <soap:operation soapAction="http://www.flexwiki.com/webservices/GetAllNamespaces" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllTopics">
+      <soap:operation soapAction="http://www.flexwiki.com/webservices/GetAllTopics" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDefaultNamespace">
+      <soap:operation soapAction="http://www.flexwiki.com/webservices/GetDefaultNamespace" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetHtmlForTopic">
+      <soap:operation soapAction="http://www.flexwiki.com/webservices/GetHtmlForTopic" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetHtmlForTopicVersion">
+      <soap:operation soapAction="http://www.flexwiki.com/webservices/GetHtmlForTopicVersion" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPreviewForTopic">
+      <soap:operation soapAction="http://www.flexwiki.com/webservices/GetPreviewForTopic" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTextForTopic">
+      <soap:operation soapAction="http://www.flexwiki.com/webservices/GetTextForTopic" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetVersionsForTopic">
+      <soap:operation soapAction="http://www.flexwiki.com/webservices/GetVersionsForTopic" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetWikiVersion">
+      <soap:operation soapAction="http://www.flexwiki.com/webservices/GetWikiVersion" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RestoreTopic">
+      <soap:operation soapAction="http://www.flexwiki.com/webservices/RestoreTopic" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetTextForTopic">
+      <soap:operation soapAction="http://www.flexwiki.com/webservices/SetTextForTopic" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="EditService">
+    <documentation xmlns="http://schemas.xmlsoap.org/wsdl/" />
+    <wsdl:port name="EditServiceSoap" binding="tns:EditServiceSoap">
+      <soap:address location="http://localhost/FlexWikiCore/EditService.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
