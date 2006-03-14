@@ -1022,6 +1022,21 @@ file://servername/umuff&#126;/folder%20name/file.txt",
 		}
 		#endregion
 
+		#region ExtendedPreFormatting
+		[Test]
+		public void ExtendedPreFormatting()
+		{
+			FormatTest(
+				@"{+
+%blue%public void%% '''Foo'''(%blue%string%% bar);
+}+",
+				@"<pre>
+<span style=""color:blue"">public void</span> <strong>Foo</strong>(<span style=""color:blue"">string</span> bar);
+</pre>
+");
+		}
+		#endregion
+
 		#region TableTests
 		[Test] public void TableTests()
 		{

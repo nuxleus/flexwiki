@@ -822,6 +822,7 @@ namespace FlexWiki.Formatting
 			bool currentMultilinePropertyIsHidden = false;
 			string multiLinePropertyDelim = null;
 			bool inPreBlock=false;
+			bool inExtendedPreBlock = false;
 			string preBlockKey=null;
 
 			_Output.Begin();
@@ -836,7 +837,7 @@ namespace FlexWiki.Formatting
 
 				if ( inPreBlock )
 				{
-					if ( each.StartsWith("}@") && each.Substring(2).Trim() == preBlockKey )
+					if ((each.StartsWith("}+") || each.StartsWith("}@")) && each.Substring(2).Trim() == preBlockKey )
 					{
 						Ensure(typeof(NeutralState));
 						inPreBlock = false;
@@ -846,17 +847,23 @@ namespace FlexWiki.Formatting
 					{
 						if (false == currentMultilinePropertyIsHidden)
 						{
-							_Output.Write(Regex.Replace(each, "\t", "        "));
+							each = each.Replace("\t", "		");
+							if (inExtendedPreBlock)
+							{
+								each = ProcessLineElements(each);
+							}
+							_Output.Write(each);
 							_Output.WriteEndLine();
 						}
 						_CurrentLineIndex++;
 					}
 					continue;
 				}
-				else if ( !inMultilineProperty && each.StartsWith("{@") )
+				else if ( !inMultilineProperty && (each.StartsWith("{+") || each.StartsWith("{@")) )
 				{
 					Ensure(typeof(PreState));
 					inPreBlock = true;
+					inExtendedPreBlock = each.StartsWith("{+");
 					preBlockKey = each.Substring(2).Trim();
 					continue;
 				}
