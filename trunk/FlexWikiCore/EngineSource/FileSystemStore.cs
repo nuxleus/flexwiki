@@ -67,10 +67,10 @@ namespace FlexWiki
 			Namespace = ns;
 
 			// Calculate the root -- taking into account the relative location of the directory if needed
-			if (root.StartsWith(".\\"))
+			if (root.StartsWith("." + Path.DirectorySeparatorChar))
 			{
 				FileInfo fi = new FileInfo(aFed.FederationNamespaceMapFilename);
-				root = fi.DirectoryName + "\\" + root.Substring(2);
+				root = Path.Combine(fi.DirectoryName, root.Substring(2));
 			}
 			_Root = root;
 			_State = State.New;
@@ -100,7 +100,7 @@ namespace FlexWiki
 		{
 			get
 			{
-				return Root + "\\" + DefinitionTopicFilename;
+				return Path.Combine(Root,DefinitionTopicFilename);
 			}
 		}
 
@@ -239,9 +239,9 @@ namespace FlexWiki
 		static string MakePath(string root, LocalTopicName name)
 		{
 			if (name.Version == null || name.Version.Length == 0)
-				return root + "\\" + name.Name + ".wiki";
+				return Path.Combine(root,name.Name + ".wiki");
 			else
-				return root + "\\" + name.Name + "(" + name.Version + ").awiki";
+				return Path.Combine(root, name.Name + "(" + name.Version + ").awiki");
 		}
  
 		/// <summary>
@@ -717,10 +717,10 @@ namespace FlexWiki
 			// TRIGGER
 			ArrayList answer = new ArrayList();
 			string root = Root;
-			string pathToTopicFile =  root + "\\" + oldName.Name + ".wiki";
-			string pathToArchiveFolder = root + "\\archive\\" + oldName.Name;
-			string newNameForTopicFile = root + "\\" + newName + ".wiki";
-			string newNameForArchiveFolder = root + "\\archive\\" + newName;
+			string pathToTopicFile =  Path.Combine(root, oldName.Name + ".wiki");
+			string pathToArchiveFolder = root + Path.DirectorySeparatorChar + "archive" + Path.DirectorySeparatorChar + oldName.Name;
+			string newNameForTopicFile = Path.Combine(root , newName + ".wiki");
+			string newNameForArchiveFolder = root + Path.DirectorySeparatorChar + "archive" +Path.DirectorySeparatorChar + newName;
 			AbsoluteTopicName newFullName = new AbsoluteTopicName(newName, Namespace);
 
 			// Make sure it's not goign to overwrite an existing topic

@@ -987,11 +987,11 @@ namespace FlexWiki
     /// <returns></returns>
     private static string AbsoluteRoot(string possiblyRelativeRoot, string rootBase)
     {
-      if (!possiblyRelativeRoot.StartsWith(".\\"))
+      if (!possiblyRelativeRoot.StartsWith("." + Path.DirectorySeparatorChar))
       {
         return possiblyRelativeRoot;
       }
-      return rootBase + "\\" + possiblyRelativeRoot.Substring(2);			
+      return Path.Combine(rootBase,possiblyRelativeRoot.Substring(2));			
     }
 
     private IBELObject BorderPropertyFromTopic(AbsoluteTopicName relativeToTopic, AbsoluteTopicName abs, Border border, CompositeCacheRule rule)

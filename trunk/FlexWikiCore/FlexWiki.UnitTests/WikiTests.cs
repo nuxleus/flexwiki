@@ -107,7 +107,7 @@ namespace FlexWiki.UnitTests
 		private ReadWriteStore CreateFileSystemStore(string ns)
 		{
 			string currentDir = System.IO.Directory.GetCurrentDirectory();
-			string path = currentDir + "\\" + ns;
+			string path = Path.Combine(currentDir, ns);
 			FileSystemStore store = new FileSystemStore(TheFederation, ns, path);
 			TheFederation.RegisterNamespace(store);
 			return store;
