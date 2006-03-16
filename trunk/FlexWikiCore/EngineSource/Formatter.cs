@@ -882,10 +882,15 @@ namespace FlexWiki.Formatting
 					string delim = m.Groups["delim"].Value;
 					multiLinePropertyDelim = ContentBase.ClosingDelimiterForOpeningMultilinePropertyDelimiter(delim);
 					currentMultilinePropertyIsHidden = leader == ":";
-
-					// Write out the anchor field.
-					if (!currentMultilinePropertyIsHidden)	// Don't bother showing out hidden page properties
+					if (currentMultilinePropertyIsHidden) // just write the anchor for hidden page properties
 					{
+						_Output.WriteOpenAnchor(name);
+						_Output.WriteCloseAnchor();
+						_Output.WriteLine("");
+					}
+					else
+					{
+						// Don't bother showing out hidden page properties
 						val = val.Trim();
 
 						// Do the normal processing
@@ -1117,7 +1122,12 @@ namespace FlexWiki.Formatting
 								bool isLeader = leader == ":";
 
 								// Write out an anchor tag.
-								if (!isLeader)	// Don't bother showing out hidden page properties
+								if (isLeader)	// Only bother writing anchor and name for hidden page properties
+								{
+									_Output.WriteOpenAnchor(name);
+									_Output.WriteCloseAnchor();
+								}
+								else
 								{
 									// Do the normal processing
 

@@ -2096,7 +2096,33 @@ Parameter name: values</span></span></p>
 		}
 		#endregion
 		#endregion
-	
+
+		#region PropertyAnchors
+		[Test]
+		public void PropertyAnchors()
+		{
+			FormatTest("Foo:Bar", 
+			@"<fieldset  class=""Property"" style=""width: auto""><legend class=""PropertyName"">Foo</legend><span class=""PropertyValue""><a name=""Foo"" class=""Anchor"">Bar</a></span>
+</fieldset>
+
+");
+			FormatTest(":Foo:Bar", @"<a name=""Foo"" class=""Anchor""></a>
+");
+			FormatTest(@"Foo:[ Bar
+Baz
+]",
+			@"<fieldset  class=""Property"" style=""width: auto""><legend class=""PropertyName"">Foo</legend><span class=""PropertyValue""><a name=""Foo"" class=""Anchor"">Bar<p>Baz</p>
+</a></span>
+</fieldset>
+");
+			FormatTest(@":Foo:[ Bar
+Baz
+]",
+			@"<a name=""Foo"" class=""Anchor""></a>
+");
+
+		}
+		#endregion
 
 
 		#region Private Methodes
