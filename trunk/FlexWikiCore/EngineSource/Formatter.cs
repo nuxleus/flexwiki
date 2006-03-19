@@ -365,8 +365,8 @@ namespace FlexWiki.Formatting
 		//		* the optional anchor after a wiki name
 		//		* legal namespace names
 		// etc...
-		public static string beforeWikiName = "(?<before>^|\\||\\*|'|\\s|\\(|\\{|\\!)";
-		public static string afterWikiName = "(?<after>'|\\||\\s|@|$|\\.|,|:|'|;|\\}|\\?|_|\\)|\\!)";
+		public static string beforeWikiName = "(?<before>^|\\||\\*|'|\\s|\\(|\\{|\\!|\\>)";
+		public static string afterWikiName = "(?<after>'|\\||\\s|@|$|\\.|,|:|'|;|\\}|\\?|_|\\)|\\!|\\<)";
 		public static string wikiNameAnchor = @"(?:\#)?(?<anchor>([\w\d]+))?";
 		private static string namespaceName = AZ + "[\\w]+";
 		private static string startsWithMulticaps = "(" + AZ + "{2,}" + az09 + "+" + Az09 + "*)";
@@ -1168,15 +1168,40 @@ namespace FlexWiki.Formatting
 		#endregion
 
 		private static string doubleQuote = "\"\"";
+		private static string BehaviorDelimiter = "@@";
+		
+		#region IsInsideBehavior
+		private static bool IsInsideBehavior(int dq, IList behaviors)
+							
+		{
+			foreach (IList each in behaviors)
+					
+			{
+				int start = (int)each[0];
+				int end = (int)each[1];
+				if (start < dq && dq < end)
+					return true;
+				if (dq < start)
+					return false;	// can't be any of the following ones					
+			}
+			return false;
+		}
+		#endregion 
+
 
 		#region ProcessLineElements
 		private string ProcessLineElements(string line)
 		{
 			// Break the line into parts, recognizing escape quotes ("")
 			StringBuilder builder = new StringBuilder();
-		
-			// Build an array of indicies of all the behaviors so we can ignore escapes (double quotes)
+			// Convert foo@bar external ref syntax to standardized InterWiki behavior
+			// This must happen here because the actual interpretation of these is as a behavior
+			line = externalWikiRef.Replace(line, new MatchEvaluator(externalWikiRefMatch));
+			
+			// Build an array of indices of all the behaviors so we can ignore escapes (double quotes)
+			#region GatherBehaviors
 			ArrayList behaviors = new ArrayList();
+			ArrayList parameters = new ArrayList();
 			int off = 0;
 			int start, end;
 			while (off < line.Length)
@@ -1193,9 +1218,36 @@ namespace FlexWiki.Formatting
 				behaviors.Add(pair);
 				off = end + BehaviorDelimiter.Length;
 			}
+			#endregion
 
-			// OK, now look for paired escape delimiters
+			#region ProtectParameterTokens
 			int index = 0;
+			MatchCollection matches;
+			// remove any tokens that would be confused as parameters
+			matches = ParametersRegex.Matches(line);
+			if (matches.Count > 0)
+							
+			{
+				builder.Length=0;
+				index = 0;
+				foreach (Match m in matches)
+														   				
+				{
+					if (IsInsideBehavior(m.Index,behaviors)) continue;
+					builder.Append(line.Substring(index,(m.Index-index)));
+					Parameterize(builder,parameters,line.Substring(m.Index,m.Length));
+					index = m.Index+m.Length;
+				}
+				builder.Append(line.Substring(index));
+				line = builder.ToString();
+			}
+				
+			#endregion
+			#region GatherEscapedTokens
+			string escapedTwo = "\\@\\@";
+			// OK, now look for paired escape delimiters
+			index = 0;
+			builder.Length = 0;
 			while (index < line.Length)
 			{
 				// find the first open double that's not inside a behavior
@@ -1205,7 +1257,7 @@ namespace FlexWiki.Formatting
 				if (dq == -1)
 				{
 					// none left; process the rest normally
-					builder.Append(TranslateBehaviorsAndEverythingElse(line.Substring(index)));
+					builder.Append(line.Substring(index));
 					break;
 				}
 				
@@ -1214,68 +1266,31 @@ namespace FlexWiki.Formatting
 				if (close == -1)
 				{
 					// We have an unbalanced double, just send the rest along as a literal
-					builder.Append(TranslateBehaviorsAndEverythingElse(line.Substring(index)));
+					builder.Append(line.Substring(index));
 					break;
 				}
 
 				// Here with an escaped component 
-				// First, send along everything up to the component; then send the component untranslated; then continue
 				string pre = line.Substring(index, dq - index);
-				builder.Append(TranslateBehaviorsAndEverythingElse(pre)); // translated
-				builder.Append(line.Substring(dq + doubleQuote.Length, close - dq - doubleQuote.Length));	// untranslated
+				builder.Append(pre);
+				Parameterize(builder,parameters,line.Substring(dq + doubleQuote.Length, close - dq - doubleQuote.Length));
 				index = close + doubleQuote.Length;		
 			}
-			return builder.ToString();
-		}
-		#endregion
+			line = builder.ToString();
+			#endregion
 
-		#region IsInsideBehavior
-		private static bool IsInsideBehavior(int dq, IList behaviors)
-		{
-			foreach (IList each in behaviors)
-			{
-				int start = (int)each[0];
-				int end = (int)each[1];
-				if (start < dq && dq < end)
-					return true;
-				if (dq < start)
-					return false;	// can't be any of the following ones					
-			}
-			return false;
-		}
-		#endregion 
-
-		private static string BehaviorDelimiter = "@@";
-
-		#region TranslateBehaviorsAndEverythingElse
-		/// <summary>
-		/// Break the supplied line into BeL sequences and non-BeL sequences.  Run the BeL interpreter to process
-		/// the BeL sequences and do regular wiki processing on the non-BeL sequences
-		/// </summary>
-		/// <param name="line"></param>
-		/// <returns></returns>
-		private string TranslateBehaviorsAndEverythingElse(string input)
-		{
-			// Convert foo@bar external ref syntax to standardized InterWiki behavior
-			// This must happen here because the actual interpretation of these is as a behavior
-			string str = externalWikiRef.Replace(input, new MatchEvaluator(externalWikiRefMatch));		
-			
-			string escapedTwo = "\\@\\@";
-			// If no behaviors, just process normally and return
-			if (str.IndexOf(BehaviorDelimiter) == -1)
-				return TranslateLineElements(input);
-			while (true)
+			#region TranslateBehaviors
+			builder.Length = 0; // reset
+			index = 0;
+			for (int i=0;i<behaviors.Count;i++)
 			{
 				// Find the next BehaviorDelimiter marker
-				int start = str.IndexOf(BehaviorDelimiter);
-				if (start == -1)
-					break;
+				start = (int)((ArrayList)behaviors[i])[0];				
 				// Find the end
-				int end = str.IndexOf(BehaviorDelimiter, start + 2);
-				if (end == -1)
-					break;
+				end = (int)((ArrayList)behaviors[i])[1];
+
 				// OK, we have one
-				string expr = str.Substring(start + 2, end - start - 2);
+				string expr = line.Substring(start + 2, end - start - 2);
 				// Turn any escape sequences into unescaped @@
 				expr = expr.Replace(escapedTwo,BehaviorDelimiter);
 				TopicContext tc = new TopicContext(TheFederation, ContentBase, new TopicInfo(TheFederation, CurrentTopic));
@@ -1300,34 +1315,84 @@ namespace FlexWiki.Formatting
 					foreach (CacheRule r in interpreter.CacheRules)
 						AddCacheRule(r);
 				}
-				str = TranslateLineElements(str.Substring(0, start)) + replacement + TranslateLineElements(str.Substring(end + 2));
+				builder.Append(line.Substring(index, start-index));
+				Parameterize(builder,parameters,replacement);
+				index = end + doubleQuote.Length;
 			}
-			return str;
-		}
-		#endregion 
+			builder.Append(line.Substring(index));
+			#endregion
+					
+			line = builder.ToString();
+			line = LinkHyperLinks(line);
+			matches = Regex.Matches(line,urlPattern);
+			// hyperlinks are exempt from any emoticons or textile or anything else.
+			if (matches.Count > 0)
+								
+			{
+				builder.Length = 0;
+				index = 0;
+				foreach (Match m in matches)
+															   				
+				{
+					builder.Append(line.Substring(index,(m.Index-index)));
+					Parameterize(builder,parameters,line.Substring(m.Index,m.Length));
+					index = m.Index+m.Length;
+				}
+				builder.Append(line.Substring(index));
+				line = builder.ToString();
+			}
+			line = ConvertEmoticons(line);	// needs to come before textile because of precedence in overlappign formatting rules
+			line = SentencePairedDelimiters(line);
+			line = TextileFormat(line,parameters);
+			line = ColorsEtcFormat(line);
+			matches = Regex.Matches(line,@"(?:\<nowiki\>)(\<a.*?\<\/a\>)");
+			if (matches.Count > 0)
+								
+			{
+				builder.Length = 0;
+				index = 0;
+				foreach (Match m in matches)
+															   				
+				{
+					Group g = m.Groups[1];
+					builder.Append(line.Substring(index,(m.Index-index)));
+					Parameterize(builder, parameters, line.Substring(g.Index, g.Length));
+					index = m.Index+m.Length;
+				}
+				builder.Append(line.Substring(index));
+				line = builder.ToString();
+			}
+			line = LinkWikiNames(line);
+			line = ProcessWikiLinks(line);
+			return ReplaceParameters(line, parameters);
 
-		#region TranslateLineElements
-		private string TranslateLineElements(string line)
-		{
-			string answer = line;
-			answer = ConvertEmoticons(answer);	// needs to come before textile because of precedence in overlappign formatting rules
-			answer = SentencePairedDelimiters(answer);
-			answer = TextileFormat(answer);
-			answer = LinkHyperLinks(answer);
-			answer = ColorsEtcFormat(answer);
-			if (answer.IndexOf("<nowiki>") < 0)
-			{
-				answer = LinkWikiNames(answer);
-				answer = ProcessWikiLinks(answer);
-			}
-			else
-			{
-				answer = answer.Replace("<nowiki>", "");
-			}
-			return answer;
 		}
 		#endregion
 
+		#region LineProcessingParameters
+		private const string PreParam = "${";
+		private const string PostParam = "}";
+		private static readonly Regex ParametersRegex = new Regex(@"\"+PreParam+@"\d+"+PostParam,RegexOptions.Compiled);
+
+		private void Parameterize(StringBuilder sb, ArrayList parameters, string parameter)
+		{
+			sb.Append(PreParam + parameters.Count + PostParam);
+			parameters.Add(parameter);
+		}
+
+		private string ReplaceParameters(string str, ArrayList parameters)
+		{
+			for (int i = parameters.Count-1; i >= 0; i--)
+			{
+				string tok = PreParam + i + PostParam;
+				int pos = str.IndexOf(tok);
+				if (pos == -1) continue;
+				str = str.Substring(0, pos) + parameters[i] + str.Substring(pos + tok.Length);
+				parameters.RemoveAt(i);
+			}
+			return str;
+		}
+		#endregion
 
 		private static Regex externalWikiRef = new Regex(@"(\s)*(?<param>[\w\d\.]+)@(?<behavior>[\w\d]+([\w\d]{1,})+)([\w\d\.])*(\s)*");
 
@@ -1434,83 +1499,92 @@ namespace FlexWiki.Formatting
 		#region ConvertEmoticons
 		private string ConvertEmoticons(string input)
 		{
+			// organized so that we can shortcut misses as much as possible
 			string str = input;
-			str = Emote(str, "(Y)", "emoticons/thumbs_up.gif");
-			str = Emote(str, "(y)", "emoticons/thumbs_up.gif");
-			str = Emote(str, "(N)", "emoticons/thumbs_down.gif");
-			str = Emote(str, "(n)", "emoticons/thumbs_down.gif");
-			str = Emote(str, "(B)", "emoticons/beer_yum.gif");
-			str = Emote(str, "(b)", "emoticons/beer_yum.gif");
-			str = Emote(str, "(D)", "emoticons/martini_shaken.gif");
-			str = Emote(str, "(d)", "emoticons/martini_shaken.gif");
-			str = Emote(str, "(X)", "emoticons/girl_handsacrossamerica.gif");
-			str = Emote(str, "(x)", "emoticons/girl_handsacrossamerica.gif");
-			str = Emote(str, "(Z)", "emoticons/guy_handsacrossamerica.gif");
-			str = Emote(str, "(z)", "emoticons/guy_handsacrossamerica.gif");
-			str = Emote(str, "(6)", "emoticons/devil_smile.gif");
-			str = Emote(str, ":-[", "emoticons/bat.gif");
-			// str = Emote(str, ":[", "emoticons/bat.gif");  // not supported because it conflicts with the topic property syntax
-			str = Emote(str, "(})", "emoticons/girl_hug.gif");
-			str = Emote(str, "({)", "emoticons/dude_hug.gif");
-			str = Emote(str, ":-)", "emoticons/regular_smile.gif");
-			str = Emote(str, ":)", "emoticons/regular_smile.gif");
-			str = Emote(str, ":-D", "emoticons/teeth_smile.gif");
-			// str = Emote(str, ":d", "emoticons/teeth_smile.gif"); // conflicts with urls (e.g., mailto:)
-			str = Emote(str, ":-O", "emoticons/omg_smile.gif");
-			// str = Emote(str, ":o", "emoticons/omg_smile.gif");  // conflicts with urls (e.g., mailto:)
-			str = Emote(str, ":-P", "emoticons/tounge_smile.gif");
-			// str = Emote(str, ":p", "emoticons/tounge_smile.gif");  // conflicts with urls (e.g., mailto:)
-			str = Emote(str, ";-)", "emoticons/wink_smile.gif");
-			str = Emote(str, ";)", "emoticons/wink_smile.gif");
-			str = Emote(str, ":-(", "emoticons/sad_smile.gif");
-			str = Emote(str, ":(", "emoticons/sad_smile.gif");
-			str = Emote(str, ":-S", "emoticons/confused_smile.gif");
-			// str = Emote(str, ":s", "emoticons/confused_smile.gif");  // conflicts with urls (e.g., mailto:)
-			str = Emote(str, ":-|", "emoticons/whatchutalkingabout_smile.gif");
-			str = Emote(str, ":|", "emoticons/whatchutalkingabout_smile.gif");
-			str = Emote(str, ":'(", "emoticons/cry_smile.gif");
-			str = Emote(str, ":$", "emoticons/embaressed_smile.gif");
-			str = Emote(str, ":-$", "emoticons/embaressed_smile.gif");
-			str = Emote(str, "(H)", "emoticons/shades_smile.gif");
-			str = Emote(str, "(h)", "emoticons/shades_smile.gif");
-			str = Emote(str, ":-@", "emoticons/angry_smile.gif");
-			str = Emote(str, ":@", "emoticons/angry_smile.gif");
-			str = Emote(str, "(A)", "emoticons/angel_smile.gif");
-			str = Emote(str, "(a)", "emoticons/angel_smile.gif");
-			str = Emote(str, "(L)", "emoticons/heart.gif");
-			str = Emote(str, "(l)", "emoticons/heart.gif");
-			str = Emote(str, "(U)", "emoticons/broken_heart.gif");
-			str = Emote(str, "(u)", "emoticons/broken_heart.gif");
-			str = Emote(str, "(K)", "emoticons/kiss.gif");
-			str = Emote(str, "(k)", "emoticons/kiss.gif");
-			str = Emote(str, "(G)", "emoticons/present.gif");
-			str = Emote(str, "(g)", "emoticons/present.gif");
-			str = Emote(str, "(F)", "emoticons/rose.gif");
-			str = Emote(str, "(f)", "emoticons/rose.gif");
-			str = Emote(str, "(W)", "emoticons/wilted_rose.gif");
-			str = Emote(str, "(w)", "emoticons/wilted_rose.gif");
-			str = Emote(str, "(P)", "emoticons/camera.gif");
-			str = Emote(str, "(p)", "emoticons/camera.gif");
-
-			str = Emote(str, "(~)", "emoticons/film.gif");
-			str = Emote(str, "(T)", "emoticons/phone.gif");
-			str = Emote(str, "(t)", "emoticons/phone.gif");
-			str = Emote(str, "(@)", "emoticons/kittykay.gif");
-			//			str = Emote(str, "(&)", "emoticons/bowwow.gif");	// disabled because it conflicts with lots of formatting rules
-			str = Emote(str, "(C)", "emoticons/coffee.gif");
-			str = Emote(str, "(c)", "emoticons/coffee.gif");
-			str = Emote(str, "(I)", "emoticons/lightbulb.gif");
-			str = Emote(str, "(i)", "emoticons/lightbulb.gif");
-			str = Emote(str, "(S)", "emoticons/moon.gif");
-			str = Emote(str, "(*)", "emoticons/star.gif");
-			str = Emote(str, "(8)", "emoticons/musical_note.gif");
-			str = Emote(str, "(E)", "emoticons/envelope.gif");
-			str = Emote(str, "(e)", "emoticons/envelope.gif");
-			str = Emote(str, "(^)", "emoticons/cake.gif");
-			str = Emote(str, "(O)", "emoticons/clock.gif");
-			str = Emote(str, "(o)", "emoticons/clock.gif");
-			str = Emote(str, "(M)", "emoticons/messenger.gif");
-			str = Emote(str, "(m)", "emoticons/messenger.gif");
+			if (str.IndexOf("(") > -1)
+			{
+				str = Emote(str, "(Y)", "emoticons/thumbs_up.gif");
+				str = Emote(str, "(y)", "emoticons/thumbs_up.gif");
+				str = Emote(str, "(N)", "emoticons/thumbs_down.gif");
+				str = Emote(str, "(n)", "emoticons/thumbs_down.gif");
+				str = Emote(str, "(B)", "emoticons/beer_yum.gif");
+				str = Emote(str, "(b)", "emoticons/beer_yum.gif");
+				str = Emote(str, "(D)", "emoticons/martini_shaken.gif");
+				str = Emote(str, "(d)", "emoticons/martini_shaken.gif");
+				str = Emote(str, "(X)", "emoticons/girl_handsacrossamerica.gif");
+				str = Emote(str, "(x)", "emoticons/girl_handsacrossamerica.gif");
+				str = Emote(str, "(Z)", "emoticons/guy_handsacrossamerica.gif");
+				str = Emote(str, "(z)", "emoticons/guy_handsacrossamerica.gif");
+				str = Emote(str, "(6)", "emoticons/devil_smile.gif");
+				str = Emote(str, "(})", "emoticons/girl_hug.gif");
+				str = Emote(str, "({)", "emoticons/dude_hug.gif");
+				str = Emote(str, "(H)", "emoticons/shades_smile.gif");
+				str = Emote(str, "(h)", "emoticons/shades_smile.gif");
+				str = Emote(str, "(A)", "emoticons/angel_smile.gif");
+				str = Emote(str, "(a)", "emoticons/angel_smile.gif");
+				str = Emote(str, "(L)", "emoticons/heart.gif");
+				str = Emote(str, "(l)", "emoticons/heart.gif");
+				str = Emote(str, "(U)", "emoticons/broken_heart.gif");
+				str = Emote(str, "(u)", "emoticons/broken_heart.gif");
+				str = Emote(str, "(K)", "emoticons/kiss.gif");
+				str = Emote(str, "(k)", "emoticons/kiss.gif");
+				str = Emote(str, "(G)", "emoticons/present.gif");
+				str = Emote(str, "(g)", "emoticons/present.gif");
+				str = Emote(str, "(F)", "emoticons/rose.gif");
+				str = Emote(str, "(f)", "emoticons/rose.gif");
+				str = Emote(str, "(W)", "emoticons/wilted_rose.gif");
+				str = Emote(str, "(w)", "emoticons/wilted_rose.gif");
+				str = Emote(str, "(P)", "emoticons/camera.gif");
+				str = Emote(str, "(p)", "emoticons/camera.gif");
+				str = Emote(str, "(~)", "emoticons/film.gif");
+				str = Emote(str, "(T)", "emoticons/phone.gif");
+				str = Emote(str, "(t)", "emoticons/phone.gif");
+				str = Emote(str, "(@)", "emoticons/kittykay.gif");
+				//			str = Emote(str, "(&)", "emoticons/bowwow.gif");	// disabled because it conflicts with lots of formatting rules
+				str = Emote(str, "(C)", "emoticons/coffee.gif");
+				str = Emote(str, "(c)", "emoticons/coffee.gif");
+				str = Emote(str, "(I)", "emoticons/lightbulb.gif");
+				str = Emote(str, "(i)", "emoticons/lightbulb.gif");
+				str = Emote(str, "(S)", "emoticons/moon.gif");
+				str = Emote(str, "(*)", "emoticons/star.gif");
+				str = Emote(str, "(8)", "emoticons/musical_note.gif");
+				str = Emote(str, "(E)", "emoticons/envelope.gif");
+				str = Emote(str, "(e)", "emoticons/envelope.gif");
+				str = Emote(str, "(^)", "emoticons/cake.gif");
+				str = Emote(str, "(O)", "emoticons/clock.gif");
+				str = Emote(str, "(o)", "emoticons/clock.gif");
+				str = Emote(str, "(M)", "emoticons/messenger.gif");
+				str = Emote(str, "(m)", "emoticons/messenger.gif");
+			}
+			if (str.IndexOf(":") > -1)
+			{
+				str = Emote(str, ":-[", "emoticons/bat.gif");
+				// str = Emote(str, ":[", "emoticons/bat.gif");  // not supported because it conflicts with the topic property syntax
+				str = Emote(str, ":-)", "emoticons/regular_smile.gif");
+				str = Emote(str, ":)", "emoticons/regular_smile.gif");
+				str = Emote(str, ":-D", "emoticons/teeth_smile.gif");
+				// str = Emote(str, ":d", "emoticons/teeth_smile.gif"); // conflicts with urls (e.g., mailto:)
+				str = Emote(str, ":-O", "emoticons/omg_smile.gif");
+				// str = Emote(str, ":o", "emoticons/omg_smile.gif");  // conflicts with urls (e.g., mailto:)
+				str = Emote(str, ":-P", "emoticons/tounge_smile.gif");
+				// str = Emote(str, ":p", "emoticons/tounge_smile.gif");  // conflicts with urls (e.g., mailto:)
+				str = Emote(str, ":-(", "emoticons/sad_smile.gif");
+				str = Emote(str, ":(", "emoticons/sad_smile.gif");
+				str = Emote(str, ":-S", "emoticons/confused_smile.gif");
+				// str = Emote(str, ":s", "emoticons/confused_smile.gif");  // conflicts with urls (e.g., mailto:)
+				str = Emote(str, ":-|", "emoticons/whatchutalkingabout_smile.gif");
+				str = Emote(str, ":|", "emoticons/whatchutalkingabout_smile.gif");
+				str = Emote(str, ":'(", "emoticons/cry_smile.gif");
+				str = Emote(str, ":$", "emoticons/embaressed_smile.gif");
+				str = Emote(str, ":-$", "emoticons/embaressed_smile.gif");
+				str = Emote(str, ":-@", "emoticons/angry_smile.gif");
+				str = Emote(str, ":@", "emoticons/angry_smile.gif");
+			}
+			if (str.IndexOf(";") > -1)
+			{
+				str = Emote(str, ";-)", "emoticons/wink_smile.gif");
+				str = Emote(str, ";)", "emoticons/wink_smile.gif");
+			}
 			return str;
 		}
 		#endregion
@@ -1518,8 +1592,13 @@ namespace FlexWiki.Formatting
 		#region Emote
 		private string Emote(string input, string text, string image)
 		{
-      string img = string.Format("<img src=\"{0}\"/>", LinkMaker().LinkToImage(image)); 
-			return input.Replace (text, img) ;			
+			// there's a fair bit of processing to skip if we can
+			if (input.IndexOf(text) > -1)
+			{
+				string img = string.Format("<img src=\"{0}\"/>", LinkMaker().LinkToImage(image));
+				return input.Replace(text, img);
+			}
+			return input;
 		}
 		#endregion
 
@@ -1553,8 +1632,14 @@ namespace FlexWiki.Formatting
 		#endregion
     
 		#region TextileFormat
-		private string TextileFormat(string input)
+		private static Regex codeRegexEsc = new Regex(@"(^|\s|\(|\[)@(\"+PreParam+"[^@]+"+PostParam+")@", RegexOptions.Compiled);
+		private static Regex codeRegexLink = new Regex(@"(^|\s|\(|\[)@\[([^@]+)\]@", RegexOptions.Compiled);
+		private static Regex codeRegexWikiLink = new Regex(@"(^|\s|\(|\[)@("+wikiName+")@", RegexOptions.Compiled);
+		private static Regex codeRegex = new Regex(@"(^|\s|\(|\[)@([^@]+)@", RegexOptions.Compiled);
+		private string TextileFormat(string input, ArrayList parameters)
 		{
+			// NOTE: This code now expects for the input string to not contain any URLs. These should have
+			// been Parameterize()d before this stage.
 			string str = input;
 			// _emphasis_
 			str = Regex.Replace (str, "(^|\\W)_([^ ].*?)_", "$1<em>$2</em>") ;
@@ -1565,7 +1650,7 @@ namespace FlexWiki.Formatting
 			// -deleted text- 
 			// Special care needs to be taken with this expression so that the - in URLs and images does not get replaced
 			// and that Wiki Signatures with trailing dates contianing hypens are ignored.
-			str = Regex.Replace (str, "(^|\\s+)-([^ <a ]|[^ <img ]|[^ -].*)-", "$1<del>$2</del>");
+			str = Regex.Replace (str, "(^|\\s+)-([^ -].*?)-", "$1<del>$2</del>");
 			// +inserted text+ 
 			str = Regex.Replace (str, "(^|\\W)\\+(.*?)\\+", "$1<ins>$2</ins>") ;
 			// ^superscript^ 
@@ -1576,7 +1661,33 @@ namespace FlexWiki.Formatting
 			// @code@ 
 			// The regex is a bit special because it needs to start with a zero-width negative lookbehind assertion (because we 
 			// need to be sure we don't consume WikiBehaviors @@Whatever@@
-			str = Regex.Replace (str, "(^|\\s|\\(|\\[)@([^@]+)@", "$1<code>$2</code>") ;
+			// Code is divided into three regexes. We are treating @ @ different than the rest of the textiles in that
+			// @ @ is also to mean to escape the text inside.
+			// This first one is for cases where we are saying "Link this!"
+			if (codeRegexLink.Match(str).Success) str = codeRegexLink.Replace(str,"$1<code>[$2]</code>");
+			// This is one that matches a potential WikiTopic
+			MatchCollection matches = codeRegexWikiLink.Matches(str);
+			if (matches.Count > 0)
+			{
+				// We want to consume all the matches and treat them as escaped parameters
+				StringBuilder sb = new StringBuilder();
+				int index = 0;
+				for (int i = 0; i < matches.Count; i++)
+				{
+					Match m = matches[i];
+					Group g = m.Groups[2];
+					sb.Append(str.Substring(index,(m.Index-index)));
+					sb.Append(m.Groups[1].Value);
+					sb.Append("<code>");
+					Parameterize(sb,parameters,str.Substring(g.Index,g.Length));
+					sb.Append("</code>");
+					index = m.Index+m.Length;
+				}
+				sb.Append(str.Substring(index));
+				str = sb.ToString();
+			}
+			// finally, this one automatically applies to everything else
+			str = codeRegex.Replace(str,"$1<code>$2</code>");
 //			// "link text":url 
 //			str = Regex.Replace (str, "\"([^\"(]+)( \\(([^\\)]+)\\))?\":" + urlPattern, ObfuscatableLinkReplacementPattern("$1", "$4"));
 //			// "link text":url for mail and news
@@ -1704,7 +1815,10 @@ namespace FlexWiki.Formatting
 				"$1<img src=\"HTTPIMAGESOURCE:$2\"/>") ;
 			str = Regex.Replace (str, @"([^""']|^)https(://\S*(?i:\.jpg|\.gif|\.png|\.jpeg))",
 				"$1<img src=\"HTTPSIMAGESOURCE:$2\"/>") ;
-			str = Regex.Replace (str, @"([^""'])file(://\S*(?i:\.jpg|\.gif|\.png|\.jpeg|\.doc|\.xls|\.ppt|\.txt))",
+			// nbjones - removed \.doc|\.xls|\.ppt|\.txt from the regex (added in version 1.16) 
+			// because it was causing bug 1309039.
+			// the removal does not cause any unit tests to break and I can't see why it was here.
+			str = Regex.Replace (str, @"([^""'])file(://\S*(?i:\.jpg|\.gif|\.png|\.jpeg))",
 				"$1<img src=\"FILEIMAGESOURCE:$2\"/>") ;
 
 			// web links (including those surrounded by parens, brackets and curlies)
@@ -1767,10 +1881,10 @@ namespace FlexWiki.Formatting
 			while (str.Length > 0)
 			{
 				Match m = extractUrlLinks.Match(str);
-        if (!m.Success)
-        {
-          break;
-        }
+				if (!m.Success)
+				{
+					break;
+				}
 
 				string uri = m.Groups["uri"].ToString();
 				string before = m.Groups["before"].ToString();
@@ -1778,36 +1892,37 @@ namespace FlexWiki.Formatting
 				string relabel = m.Groups["relabel"].ToString();
 				string anchor = m.Groups["anchor"].ToString();
 
-        if (relabel != string.Empty)
-        {
-          uri = uri.Replace("[", "");
-          uri = uri.Replace("]", "");
-          uri = uri.Replace(" ", "%20");
-          if (anchor != string.Empty)
-          {
-            uri += "#" + anchor;
-          }
+				if (relabel != string.Empty)
+				{
+					uri = uri.Replace("[", "");
+					uri = uri.Replace("]", "");
+					uri = uri.Replace(" ", "%20");
+					if (anchor != string.Empty)
+					{
+						uri += "#" + anchor;
+					}
 
-          string noFollow = " ";
-          if (TheFederation.NoFollowExternalHyperlinks)
-          {
-            noFollow = " rel=\"nofollow\" ";
-          }
-					
-          str = ReplaceMatch(answer, str, m, before + "<nowiki><a class=\"externalLink\"" + noFollow + "href=\"" + uri + "\">" + relabel + "</a>" + after);
-        }
-        else
-        {
-          break;
-        }
-				
+					string noFollow = " ";
+					if (TheFederation.NoFollowExternalHyperlinks)
+					{
+						noFollow = " rel=\"nofollow\" ";
+					}
+
+					str = ReplaceMatch(answer, str, m, before + "<nowiki><a class=\"externalLink\"" + noFollow + "href=\"" + uri + "\">" + relabel + "</a>" + after);
+					//str = ReplaceMatch(answer, str, m, before + "<a class=\"externalLink\"" + noFollow + "href=\"" + uri + "\">" + relabel + "</a>" + after);
+				}
+				else
+				{
+					break;
+				}
+
 			}
 			answer.Append(str);
-			return answer.ToString();
+			return answer.ToString();        
 		}
 		#endregion
 	
-
+	
 		#region ObfuscatableLinkReplacementPattern
 		private string ObfuscatableLinkReplacementPattern(string replacementText, string replacementURL)
 		{

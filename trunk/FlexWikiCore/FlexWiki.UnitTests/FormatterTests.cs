@@ -82,6 +82,7 @@ namespace FlexWiki.UnitTests
 			WriteTestTopicAndNewVersion(_cb, "InlineTestTopic", @"aaa @@""foo""@@ zzz", user);
 			WriteTestTopicAndNewVersion(_cb, "OneMinuteWiki", "one ", user);
 			WriteTestTopicAndNewVersion(_cb, "TestIncludesBehaviors", "@@ProductName@@ somthing @@Now@@ then @@Now@@", user);
+			WriteTestTopicAndNewVersion(_cb, "_Underscore", "Underscore", user);
 			WriteTestTopicAndNewVersion(_cb, "TopicWithBehaviorProperties", @"
 Face: {""hello"".Length}
 one 
@@ -581,6 +582,18 @@ second line
 		}
 		#endregion
 
+		#region ComplexLinkTests
+		[Test] public void ComplexLinkTests()
+		{
+			FormatTestContains(
+				@"[_Underscore] +and+ *@@[""after""]@@*",
+				_lm.LinkToTopic(_cb.TopicNameFor("_Underscore")));
+			FormatTestContains(
+				@"[_Underscore] +and+ after@Google",
+				_lm.LinkToTopic(_cb.TopicNameFor("_Underscore")));
+		}
+		#endregion
+
 		#region SimpleLinkTests
 		[Test] public void SimpleLinkTests()
 		{
@@ -598,6 +611,11 @@ blah blah EndOfLineShouldLink",
 		#region SimpleEscapeTest
 		[Test] public void SimpleEscapeTest()
 		{
+			FormatTest(@"-deleted """"HelloWorld"""" text-",
+				@"<p><del>deleted HelloWorld text</del></p>
+");
+			FormatTest(@"'''Hello """"MrWorld"""" World'''", @"<p><strong>Hello MrWorld World</strong></p>
+");
 			FormatTest(@"Hello """" World", @"<p>Hello """" World</p>
 ");
 			FormatTest(@"Hello """"World""""", @"<p>Hello World</p>
@@ -889,6 +907,16 @@ Test for case-insensitivity, such as CAPS@BAF, or some such nonsense.",
 		}
 		#endregion
 
+		#region TextileLinkTest
+		[Test] public void TextileLinkTest()
+		{
+			FormatTest(@"RowDataGateway http://www.google.com", @"<p><a title=""Click here to create this topic"" class=""create"" href=""/formattingtestswiki/wikiedit.aspx?topic=FlexWiki.RowDataGateway"">RowDataGateway</a> <a class=""externalLink"" href=""http://www.google.com"">http://www.google.com</a></p>
+");
+			FormatTest(@"RowDataGateway ""Google"":http://www.google.com", @"<p><a title=""Click here to create this topic"" class=""create"" href=""/formattingtestswiki/wikiedit.aspx?topic=FlexWiki.RowDataGateway"">RowDataGateway</a> <a class=""externalLink"" href=""http://www.google.com"">Google</a></p>
+");
+		}
+		#endregion
+
 		#region TextileHyphensInLinkTest
 		[Test] public void TextileHyphensInLinkTest()
 		{
@@ -941,13 +969,17 @@ file://servername/umuff~/folder%20name/file.txt",
 		}
 		#endregion
 
-		#region EmphaisInLinkTest
-		[Ignore("This test shows an bug in link. Should be fixed in next patch. --ChristianMetz")]
-		[Test] public void EmphaisInLinkTest()
+		#region EmphasisInLinkTest
+		//[Ignore("This test shows an bug in link. Should be fixed in next patch. --ChristianMetz")]
+		[Test] public void EmphasisInLinkTest()
 		{
 			FormatTest(
+				@"""_Main directory_"":[file://servername/_default/orange_futurism/file.txt]",
+				@"<p><a class=""externalLink"" href=""file://servername/_default/orange_futurism/file.txt""><em>Main directory</em></a></p>
+");
+			FormatTest(
 				@"http://localhost/_default/orange_futurism/portal.jpg",
-				@"<p><img src=""http://localhost/_default/orange_futurism/portal.jpg"" /></p>
+				@"<p><img src=""http://localhost/_default/orange_futurism/portal.jpg""/></p>
 ");
 
 			FormatTest(
@@ -960,7 +992,7 @@ file://servername/umuff~/folder%20name/file.txt",
 ");
 			FormatTest(
 				@"file://servername/_default/orange_futurism/file.txt",
-				@"<p><a class=""externalLink"" href=""file://servername/_default/orange_futurism/file.txt"">file://servername/umuff~/folder%20name/file.txt</a></p>
+				@"<p><a class=""externalLink"" href=""file://servername/_default/orange_futurism/file.txt"">file://servername/_default/orange_futurism/file.txt</a></p>
 ");
 		}
 		
@@ -1005,7 +1037,17 @@ file://servername/umuff&#126;/folder%20name/file.txt",
 		{
 			FormatTest(
 				@"LinkThis, AndLinkThis, dontLinkThis, (LinkThis), _LinkAndEmphasisThis_ *LinkAndBold* (LinkThisOneToo)",
-				@"<p><a title=""Click here to create this topic"" class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("LinkThis")) + @""">LinkThis</a>, <a title=""Click here to create this topic"" class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("AndLinkThis")) + @""">AndLinkThis</a>, dontLinkThis, (<a title=""Click here to create this topic"" class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("LinkThis")) + @""">LinkThis</a>), <em>LinkAndEmphasisThis</em> <strong>LinkAndBold</strong> (<a title=""Click here to create this topic"" class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("LinkThisOneToo")) + @""">LinkThisOneToo</a>)</p>
+				@"<p><a title=""Click here to create this topic"" class=""create"" href=""" 
+					+ _lm.LinkToEditTopic(_cb.TopicNameFor("LinkThis")) 
+					+ @""">LinkThis</a>, <a title=""Click here to create this topic"" class=""create"" href=""" 
+					+ _lm.LinkToEditTopic(_cb.TopicNameFor("AndLinkThis")) 
+					+ @""">AndLinkThis</a>, dontLinkThis, (<a title=""Click here to create this topic"" class=""create"" href=""" 
+					+ _lm.LinkToEditTopic(_cb.TopicNameFor("LinkThis")) 
+					+ @""">LinkThis</a>), <em><a title=""Click here to create this topic"" class=""create"" href="""
+					+ _lm.LinkToEditTopic(_cb.TopicNameFor("LinkAndEmphasisThis")) 
+					+ @""">LinkAndEmphasisThis</a></em> <strong><a title=""Click here to create this topic"" class=""create"" href="""
+					+ _lm.LinkToEditTopic(_cb.TopicNameFor("LinkAndBold"))
+					+ @""">LinkAndBold</a></strong> (<a title=""Click here to create this topic"" class=""create"" href=""" + _lm.LinkToEditTopic(_cb.TopicNameFor("LinkThisOneToo")) + @""">LinkThisOneToo</a>)</p>
 ");
 		}
 		#endregion
@@ -1142,6 +1184,18 @@ file://servername/umuff&#126;/folder%20name/file.txt",
 		#region CodeFormatting
 		[Test] public void CodeFormatting()
 		{
+			FormatTest("@Namespace.Class@", @"<p><code>Namespace.Class</code></p>
+");
+			FormatTest("@Name.Space.Class@", @"<p><code>Name.Space.Class</code></p>
+");
+			FormatTest(
+				@"These values should be code formatted, not external Wiki references @""""IObjectWithSite""""@ and @""""IViewObject""""@. This should also be (@code formatted@) inside of the parens, and @""""PropertyManager.RegisterProperty""""@ should work...",
+				@"<p>These values should be code formatted, not external Wiki references <code>IObjectWithSite</code> and <code>IViewObject</code>. This should also be (<code>code formatted</code>) inside of the parens, and <code>PropertyManager.RegisterProperty</code> should work...</p>
+");
+			FormatTest(
+				@"These values should be Wiki references and code formatted, @[IObjectWithSite]@ and @[IViewObject]@. This should also be (@code formatted@) inside of the parens, and @PropertyManager.RegisterProperty@ should work...",
+				@"<p>These values should be Wiki references and code formatted, <code><a title=""Click here to create this topic"" class=""create"" href=""/formattingtestswiki/wikiedit.aspx?topic=FlexWiki.IObjectWithSite"">IObjectWithSite</a></code> and <code><a title=""Click here to create this topic"" class=""create"" href=""/formattingtestswiki/wikiedit.aspx?topic=FlexWiki.IViewObject"">IViewObject</a></code>. This should also be (<code>code formatted</code>) inside of the parens, and <code>PropertyManager.RegisterProperty</code> should work...</p>
+");
 			FormatTest(
 				@"These values should be code formatted, not external Wiki references @IObjectWithSite@ and @IViewObject@. This should also be (@code formatted@) inside of the parens, and @PropertyManager.RegisterProperty@ should work...",
 				@"<p>These values should be code formatted, not external Wiki references <code>IObjectWithSite</code> and <code>IViewObject</code>. This should also be (<code>code formatted</code>) inside of the parens, and <code>PropertyManager.RegisterProperty</code> should work...</p>
@@ -1270,6 +1324,11 @@ And the text in the parens and brackets should be code formatted:
 			FormatTest(
 				@"file://server\share\directory\mydoc1.jpg",
 				@"<p><a class=""externalLink"" href=""file://server\share\directory\mydoc1.jpg"">file://server\share\directory\mydoc1.jpg</a></p>
+");
+
+ 			FormatTest(
+				@"test file:\\server\share\directory\mydoc.doc",
+				@"<p>test <a class=""externalLink"" href=""file:\\server\share\directory\mydoc.doc"">file:\\server\share\directory\mydoc.doc</a></p>
 ");
 
 			FormatTest(
@@ -1726,6 +1785,14 @@ And the text in the parens and brackets should be code formatted:
 ");
 			// -deleted text- 
 			FormatTest(
+				@"AB -CD- -EF- GH -IJ-",
+				@"<p>AB <del>CD</del> <del>EF</del> GH <del>IJ</del></p>
+");
+			FormatTest(
+				@"-deleted text- undeleted text -more deleted text-",
+				@"<p><del>deleted text</del> undeleted text <del>more deleted text</del></p>
+");
+			FormatTest(
 				@"-deleted text-",
 				@"<p><del>deleted text</del></p>
 ");
@@ -2123,6 +2190,21 @@ Baz
 
 		}
 		#endregion
+
+		#region ProcessLineElementRefactor
+		[Test] public void ProcessLineElementRefactor()
+		{
+			// make sure that input string that contain the parameter tokens are properly escaped
+			FormatTest(@"${USER}=${1} """"# comment"""" is """"here""""",
+				@"<p>${USER}=${1} # comment is here</p>
+");
+			// original impl expected < 10 escaped parameters
+			FormatTest(@"""""One"""" """"two"""" """"three"""" """"four"""" """"five"""" """"six"""" """"seven"""" """"eight"""" """"nine"""" """"ten"""" """"eleven"""" """"twelve"""" "
+				,@"<p>One two three four five six seven eight nine ten eleven twelve </p>
+");
+		}
+		#endregion
+
 
 
 		#region Private Methodes
