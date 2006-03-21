@@ -77,57 +77,58 @@ namespace FlexWiki
 		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a link to the search page for the given namespace")]
 		public string LinkToSearchNamespace(string ns)
 		{
-			return SimpleLinkTo("search.aspx" + (ns != null ? "?namespace=" + ns : "") );
+			return SimpleLinkTo("Search.aspx" + (ns != null ? "?namespace=" + ns : "") );
 		}
 
 		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a link to search for the given string in the given namespace")]
 		public string LinkToSearchFor(string Namespace, string searchExpression)
 		{
-			return SimpleLinkTo("search.aspx" + (Namespace != null ? "?namespace=" + Namespace : "") + (searchExpression != null ? "?search=" + HttpUtility.UrlEncode(searchExpression) : "") );
+			return SimpleLinkTo("Search.aspx" + (Namespace != null ? "?namespace=" + Namespace : "") + (searchExpression != null ? "?search=" + HttpUtility.UrlEncode(searchExpression) : "") );
 		}
 
 		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a link to a list of all the versions for the given topic")]
 		public string LinkToVersions(string fullTopicName)
 		{
-			return SimpleLinkTo("versions.aspx" + (fullTopicName != null ? "?topic=" + HttpUtility.UrlEncode(fullTopicName) : "") );
+			return SimpleLinkTo("Versions.aspx" + (fullTopicName != null ? "?topic=" + HttpUtility.UrlEncode(fullTopicName) : "") );
 		}
 
 		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a link to compare two versions for the given topic")]
 		public string LinkToCompare(string fullTopicName, int diff, int oldid)
 		{
-			return SimpleLinkTo("compare.aspx" + (fullTopicName != null ? "?topic=" + HttpUtility.UrlEncode(fullTopicName) : "") + ((diff>=0)?"&diff=" + diff.ToString():string.Empty) + ((oldid>=0)?"&oldid=" + oldid.ToString():string.Empty));
+			return SimpleLinkTo("Compare.aspx" + (fullTopicName != null ? "?topic=" + HttpUtility.UrlEncode(fullTopicName) : "") + ((diff>=0)?"&diff=" + diff.ToString():string.Empty) + ((oldid>=0)?"&oldid=" + oldid.ToString():string.Empty));
 		}
 
 		public string LinkToQuicklink()
 		{
-			return SimpleLinkTo("quicklink.aspx");
+			return SimpleLinkTo("QuickLink.aspx");
 		}
 
 		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a link to the recent changes list for the given namespace")]
 		public string LinkToRecentChanges(string ns)
 		{
-			return SimpleLinkTo("lastmodified.aspx"+ (ns != null ? "?namespace=" + ns : "") );
+			return SimpleLinkTo("LastModified.aspx"+ (ns != null ? "?namespace=" + ns : "") );
 		}
 
 		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a link to the page that allows the given topic to be renamed")]
 		public string LinkToRename(string fullyQualifiedTopicName)
 		{
-			return SimpleLinkTo("rename.aspx"+ (fullyQualifiedTopicName != null ? "?topic=" + fullyQualifiedTopicName: "") );
+			return SimpleLinkTo("Rename.aspx"+ (fullyQualifiedTopicName != null ? "?topic=" + fullyQualifiedTopicName: "") );
 		}
 
 		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a link to the list of subscriptions for the given namespace (or null for all)")]
 		public string LinkToSubscriptions(string ns)
 		{
-			return SimpleLinkTo("rssface.aspx"+ (ns != null ? "?namespace=" + ns : "") );
+			return SimpleLinkTo("RssFace.aspx"+ (ns != null ? "?namespace=" + ns : "") );
 		}
 
 		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a link to the lost and found for the given namespace")]
 		public string LinkToLostAndFound(string ns)
 		{
-			return SimpleLinkTo("lostandfound.aspx"+ (ns != null ? "?namespace=" + ns : "") );
+			return SimpleLinkTo("LostAndFound.aspx"+ (ns != null ? "?namespace=" + ns : "") );
 		}
 
-		string SimpleLinkTo(string s)
+        [ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a link to the given page based in the FlexWiki Web Root")]
+		public string SimpleLinkTo(string s)
 		{
 			StringBuilder builder = new StringBuilder();
 			builder.Append(SiteURL());
@@ -197,7 +198,7 @@ namespace FlexWiki
 		{
 			StringBuilder builder = new StringBuilder();
 			builder.Append(SiteURL());
-			builder.Append("login.aspx?ReturnURL=" + HttpUtility.UrlEncode(TopicLink(topic, false, null)));
+			builder.Append("Login.aspx?ReturnURL=" + HttpUtility.UrlEncode(TopicLink(topic, false, null)));
 			return builder.ToString();
 		}
 
@@ -217,7 +218,7 @@ namespace FlexWiki
 		{
 			StringBuilder builder = new StringBuilder();
 			builder.Append(SiteURL());
-			builder.Append("logoff.aspx");
+			builder.Append("Logoff.aspx");
 			return builder.ToString();
 		}
 		
@@ -236,7 +237,7 @@ namespace FlexWiki
 		{
 			StringBuilder builder = new StringBuilder();
 			builder.Append(SiteURL());
-			builder.Append("print.aspx/");
+			builder.Append("Print.aspx/");
 			builder.Append(top);
 			return builder.ToString();
 		}
@@ -256,7 +257,7 @@ namespace FlexWiki
 		{
 			StringBuilder builder = new StringBuilder();
 			builder.Append(SiteURL());
-			builder.Append("wikiedit.aspx?topic=");
+			builder.Append("WikiEdit.aspx?topic=");
 			builder.Append(HttpUtility.UrlEncode(top));
 			if (ReturnToTopicForEditLinks != null)
 				builder.Append("&return=" + HttpUtility.UrlEncode(ReturnToTopicForEditLinks.Fullname));

@@ -109,7 +109,7 @@ function SaveAndReturn()
 
 function search()
 {
-	window.open('search.aspx');
+	window.open('Search.aspx');
 }
 
 

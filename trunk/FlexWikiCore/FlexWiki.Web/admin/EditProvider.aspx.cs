@@ -188,7 +188,7 @@ namespace FlexWiki.Web.Admin
 						{
 							UIResponse.WritePara("The provider has been updated.");
 						}
-						UIResponse.WritePara(UIResponse.Link("providers.aspx", "View provider list"));
+						UIResponse.WritePara(UIResponse.Link("Providers.aspx", "View provider list"));
 						return;
 					}
 				}

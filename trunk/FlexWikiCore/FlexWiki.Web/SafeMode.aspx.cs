@@ -334,8 +334,8 @@ function tbinput()
 			Response.Write("<td valign='top'>");
 
 			Command(lm, "Lost&nbsp;and&nbsp;Found", "Show unreferenced topics", lm.LinkToLostAndFound(topic.Namespace));
-			Command(lm, "Find&nbsp;References", "Find mentions of this topic in other topics", RootUrl(Request) + "search.aspx?search=" + topic.Name);
-			Command(lm, "Rename", "Rename this topic (use with care)", RootUrl(Request) + "rename.aspx?topic=" + topic.Fullname);
+			Command(lm, "Find&nbsp;References", "Find mentions of this topic in other topics", RootUrl(Request) + "Search.aspx?search=" + topic.Name);
+			Command(lm, "Rename", "Rename this topic (use with care)", RootUrl(Request) + "Rename.aspx?topic=" + topic.Fullname);
 			Response.Write("</td>");
 			Response.Write("</tr></table>");
 

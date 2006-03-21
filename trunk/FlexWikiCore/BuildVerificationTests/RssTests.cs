@@ -43,7 +43,7 @@ namespace FlexWiki.BuildVerificationTests
     {
       // Get the base URL from the config file and gen up the web service endpoint
       string baseUrl = TestUtilities.BaseUrl;
-      _rssUrl = baseUrl + "rss.aspx"; 
+      _rssUrl = baseUrl + "Rss.aspx"; 
 
       // Back up the wiki configuration
       _oldWikiState = TestUtilities.BackupWikiState(); 

@@ -17,7 +17,7 @@
 				<script runat="server">
 			void Search(object sender, EventArgs e)
 			{
-				Response.Redirect("search.aspx?search=" + searchString.Text);
+				Response.Redirect("Search.aspx?search=" + searchString.Text);
 			}
 				</script>
 		</form>

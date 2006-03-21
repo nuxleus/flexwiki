@@ -138,7 +138,7 @@ To subscribe the the RSS feed for the newsletter directly, use the listed link b
 					string desc = info.GetProperty("Description");
 					Response.Write(@"
 <tr>
-<td><a class=""standardsButton"" href='" + RootUrl(Request) + @"rss.aspx?newsletter=" + abs.ToString() + @"'>rss</a></td>
+<td><a class=""standardsButton"" href='" + RootUrl(Request) + @"Rss.aspx?newsletter=" + abs.ToString() + @"'>rss</a></td>
 <td><a href='" + TheLinkMaker.LinkToTopic(abs) + @"'>" + abs.Name + @"</a></td>
 </tr>
 <tr>
@@ -171,11 +171,11 @@ To subscribe the the RSS feed for the newsletter directly, use the listed link b
 					Response.Write(@"<tr><td colspan='2'><div class='SubscriptionNamespace'>" + EscapeHTML(cb.FriendlyTitle)  + "</div></td></tr>");
 				Response.Write(@"
 <tr>
-<td><a class=""standardsButton"" href='" + RootUrl(Request) + @"rss.aspx?namespace=" + cb.Namespace + @"'>rss</a></td>
+<td><a class=""standardsButton"" href='" + RootUrl(Request) + @"Rss.aspx?namespace=" + cb.Namespace + @"'>rss</a></td>
 <td>Only this namespace (<a href='" + TheLinkMaker.LinkToTopic(new AbsoluteTopicName(cb.Namespace + "." + cb.HomePage)) + @"'>" + cb.FriendlyTitle + @"</a>)</td>
 </tr>
 <tr>
-<td><a class=""standardsButton"" href='" + RootUrl(Request) + @"rss.aspx?namespace=" + cb.Namespace + @"&inherited=y'>rss</a></td>
+<td><a class=""standardsButton"" href='" + RootUrl(Request) + @"Rss.aspx?namespace=" + cb.Namespace + @"&inherited=y'>rss</a></td>
 <td>This namespace and related namespaces (<a href='" + TheLinkMaker.LinkToTopic(new AbsoluteTopicName(cb.Namespace + "." + cb.HomePage)) + @"'>" + cb.FriendlyTitle + @"</a>");
 				foreach (ContentBase import in cb.ImportedContentBases)
 					Response.Write(", <a href='" + TheLinkMaker.LinkToTopic(new AbsoluteTopicName(import.Namespace + "." + import.HomePage)) + @"'>" + import.FriendlyTitle + @"</a>");

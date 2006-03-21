@@ -236,7 +236,7 @@ namespace FlexWiki.Web
 
 			Response.Write(@"
 		<div style='display: none'>
-			<form id='Form2' method='post' target='previewWindow' ACTION='preview.aspx'>
+			<form id='Form2' method='post' target='previewWindow' ACTION='Preview.aspx'>
 				<textarea id='body' name='body'></textarea>
 				<input  type='text' id='Text1' name='defaultNamespace' value ='" + TheTopic.Namespace  + @"'>
 				<input  type='text' id='Text2' name='topic' value ='" + TheTopic.Name  + @"'>

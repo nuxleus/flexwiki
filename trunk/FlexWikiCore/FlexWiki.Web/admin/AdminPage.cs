@@ -41,7 +41,7 @@ namespace FlexWiki.Web.Admin
 			UIResponse.WriteMenuItem("default.aspx", "Home", "Go to the home page for FlexWiki administration");
 			UIResponse.WriteMenuItem("Providers.aspx", "Namespace providers", "View and edit namespace providers for this federation");
 			UIResponse.WriteMenuItem("EditLinksBlacklist.aspx", "External Links Blacklist", "Edit the list of blacklisted external links");
-			UIResponse.WriteMenuItem("config.aspx", "Validate Configuration", "Validate that your FlexWiki site is correctly configured");
+			UIResponse.WriteMenuItem("Config.aspx", "Validate Configuration", "Validate that your FlexWiki site is correctly configured");
 			UIResponse.WriteMenuItem("Newsletter.aspx", "Newsletter Daemon", "Show information about the newsletter delivery daemon status");
 			UIResponse.WriteMenuItem("ShowCache.aspx", "Show Cache", "Show a list of everything in the cache (and, optionally, clear the cache)");
 			UIResponse.WriteMenuItem("ShowUpdates.aspx", "Show Updates", "Show recent changes to the federation");

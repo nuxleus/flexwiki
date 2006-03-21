@@ -910,9 +910,9 @@ Test for case-insensitivity, such as CAPS@BAF, or some such nonsense.",
 		#region TextileLinkTest
 		[Test] public void TextileLinkTest()
 		{
-			FormatTest(@"RowDataGateway http://www.google.com", @"<p><a title=""Click here to create this topic"" class=""create"" href=""/formattingtestswiki/wikiedit.aspx?topic=FlexWiki.RowDataGateway"">RowDataGateway</a> <a class=""externalLink"" href=""http://www.google.com"">http://www.google.com</a></p>
+			FormatTest(@"RowDataGateway http://www.google.com", @"<p><a title=""Click here to create this topic"" class=""create"" href=""/formattingtestswiki/WikiEdit.aspx?topic=FlexWiki.RowDataGateway"">RowDataGateway</a> <a class=""externalLink"" href=""http://www.google.com"">http://www.google.com</a></p>
 ");
-			FormatTest(@"RowDataGateway ""Google"":http://www.google.com", @"<p><a title=""Click here to create this topic"" class=""create"" href=""/formattingtestswiki/wikiedit.aspx?topic=FlexWiki.RowDataGateway"">RowDataGateway</a> <a class=""externalLink"" href=""http://www.google.com"">Google</a></p>
+			FormatTest(@"RowDataGateway ""Google"":http://www.google.com", @"<p><a title=""Click here to create this topic"" class=""create"" href=""/formattingtestswiki/WikiEdit.aspx?topic=FlexWiki.RowDataGateway"">RowDataGateway</a> <a class=""externalLink"" href=""http://www.google.com"">Google</a></p>
 ");
 		}
 		#endregion
@@ -1194,7 +1194,7 @@ file://servername/umuff&#126;/folder%20name/file.txt",
 ");
 			FormatTest(
 				@"These values should be Wiki references and code formatted, @[IObjectWithSite]@ and @[IViewObject]@. This should also be (@code formatted@) inside of the parens, and @PropertyManager.RegisterProperty@ should work...",
-				@"<p>These values should be Wiki references and code formatted, <code><a title=""Click here to create this topic"" class=""create"" href=""/formattingtestswiki/wikiedit.aspx?topic=FlexWiki.IObjectWithSite"">IObjectWithSite</a></code> and <code><a title=""Click here to create this topic"" class=""create"" href=""/formattingtestswiki/wikiedit.aspx?topic=FlexWiki.IViewObject"">IViewObject</a></code>. This should also be (<code>code formatted</code>) inside of the parens, and <code>PropertyManager.RegisterProperty</code> should work...</p>
+				@"<p>These values should be Wiki references and code formatted, <code><a title=""Click here to create this topic"" class=""create"" href=""/formattingtestswiki/WikiEdit.aspx?topic=FlexWiki.IObjectWithSite"">IObjectWithSite</a></code> and <code><a title=""Click here to create this topic"" class=""create"" href=""/formattingtestswiki/WikiEdit.aspx?topic=FlexWiki.IViewObject"">IViewObject</a></code>. This should also be (<code>code formatted</code>) inside of the parens, and <code>PropertyManager.RegisterProperty</code> should work...</p>
 ");
 			FormatTest(
 				@"These values should be code formatted, not external Wiki references @IObjectWithSite@ and @IViewObject@. This should also be (@code formatted@) inside of the parens, and @PropertyManager.RegisterProperty@ should work...",
@@ -2205,6 +2205,14 @@ Baz
 		}
 		#endregion
 
+        #region SimpleLinkTo tests
+        [Test] public void SimpleLinkToTest()
+        {
+            FormatTest("@@federation.LinkMaker.SimpleLinkTo(\"Foo.aspx\")@@",
+                @"<p>" + _base + @"Foo.aspx</p>
+"); 
+        }
+        #endregion
 
 
 		#region Private Methodes

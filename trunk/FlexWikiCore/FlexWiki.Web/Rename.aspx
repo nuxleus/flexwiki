@@ -55,7 +55,7 @@
 						they still make sense.</li>
 				</ul>
 				<hr noshade size='1'>
-				<form id="RenameForm" method="post" ACTION="rename.aspx">
+				<form id="RenameForm" method="post" ACTION="Rename.aspx">
 					<input style='DISPLAY: none' type="text"  name="oldName" value ="<%= FlexWiki.Web.HTMLWriter.Escape(AbsTopicName.Name)  %>">
 					<b>&nbsp;Old</b> name:
 					<%= FlexWiki.Web.HTMLWriter.Escape(AbsTopicName.Name)  %>
