@@ -846,8 +846,47 @@ a.Anchor, a.Anchor:hover, a.Anchor:active
 {
 	font-size: .82em;
 	color: #cc6600;
+	line-height: 1.35em;
 	background-color: white;
 }
+
+.PropertyValue p
+{
+	font-size: 1em;
+	color: #cc6600;
+	line-height: 1.35em;
+	background-color: white;
+        margin-bottom: 0; 
+        margin-top: 0;
+}
+
+.Anchor
+{
+	color: #cc6600;
+	line-height: 1.35em;
+	background-color: white;
+}
+
+.Anchor:hover
+{
+	color: #cc6600;
+	line-height: 1.35em;
+	background-color: white;
+        text-decoration:none;
+}
+
+.Anchor a
+{
+	color: royalblue;
+	line-height: 1.35em;
+	background-color: white;
+}
+
+.Anchor a:hover {
+	color: royalblue;
+	text-decoration:underline;
+}
+
 
 .Deemphasis 
 {
