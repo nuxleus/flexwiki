@@ -1,0 +1,1 @@
+tools\nant\bin\nant -buildfile:tools\cvsbuild.build
