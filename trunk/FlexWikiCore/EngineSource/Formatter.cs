@@ -1167,29 +1167,11 @@ namespace FlexWiki.Formatting
 		}
 		#endregion
 
-		private static string doubleQuote = "\"\"";
 		private static string BehaviorDelimiter = "@@";
 		
-		#region IsInsideBehavior
-		private static bool IsInsideBehavior(int dq, IList behaviors)
-							
-		{
-			foreach (IList each in behaviors)
-					
-			{
-				int start = (int)each[0];
-				int end = (int)each[1];
-				if (start < dq && dq < end)
-					return true;
-				if (dq < start)
-					return false;	// can't be any of the following ones					
-			}
-			return false;
-		}
-		#endregion 
-
-
 		#region ProcessLineElements
+        private static readonly Regex EscapedTextRegex = new Regex(@"(@@.*?@@)|(\" + PreParam + @"\d+" + PostParam + @")|("""".*?"""")", RegexOptions.Compiled | RegexOptions.Singleline);
+        private static readonly Regex BehaviorRegex = new Regex(@"(@@.*?@@)", RegexOptions.Compiled | RegexOptions.Singleline);
 		private string ProcessLineElements(string line)
 		{
 			// Break the line into parts, recognizing escape quotes ("")
@@ -1198,131 +1180,90 @@ namespace FlexWiki.Formatting
 			// This must happen here because the actual interpretation of these is as a behavior
 			line = externalWikiRef.Replace(line, new MatchEvaluator(externalWikiRefMatch));
 			
-			// Build an array of indices of all the behaviors so we can ignore escapes (double quotes)
-			#region GatherBehaviors
-			ArrayList behaviors = new ArrayList();
 			ArrayList parameters = new ArrayList();
-			int off = 0;
-			int start, end;
-			while (off < line.Length)
-			{
-				start = line.IndexOf(BehaviorDelimiter, off);
-				if (start == -1)
-					break;
-				end = line.IndexOf(BehaviorDelimiter, start + BehaviorDelimiter.Length);
-				if (end == -1)
-					break;
-				ArrayList pair = new ArrayList();
-				pair.Add(start);
-				pair.Add(end);
-				behaviors.Add(pair);
-				off = end + BehaviorDelimiter.Length;
-			}
+            MatchCollection matches; // temp var used in several places in this method
+			int index = 0; // temp var used in several places in this method
+
+			#region GatherEscapedText
+            matches = EscapedTextRegex.Matches(line);
+            if (matches.Count > 0)
+            {
+                builder.Length = 0;
+                index = 0;
+                foreach (Match match in matches)
+                {
+                    builder.Append(line.Substring(index, (match.Index - index)));
+                    // skip behaviors for now. We match them so that the Regex engine does the work
+                    // of dealing with @@""@@ and ""@@"" type things. Behaviors handled in the next block
+                    if (match.Groups[1].Success)
+                    {
+                        builder.Append(match.Value);
+                        index = match.Index + match.Length;
+                        continue;
+                    }
+                    if (match.Value.StartsWith(PreParam))
+                        Parameterize(builder, parameters, match.Value);
+                    else 
+                        Parameterize(builder, parameters, match.Value.Substring(2, match.Length - 2 - 2));
+
+                    index = match.Index + match.Length;
+                }
+                builder.Append(line.Substring(index));
+                line = builder.ToString();
+            }
 			#endregion
 
-			#region ProtectParameterTokens
-			int index = 0;
-			MatchCollection matches;
-			// remove any tokens that would be confused as parameters
-			matches = ParametersRegex.Matches(line);
-			if (matches.Count > 0)
-							
-			{
-				builder.Length=0;
-				index = 0;
-				foreach (Match m in matches)
-														   				
-				{
-					if (IsInsideBehavior(m.Index,behaviors)) continue;
-					builder.Append(line.Substring(index,(m.Index-index)));
-					Parameterize(builder,parameters,line.Substring(m.Index,m.Length));
-					index = m.Index+m.Length;
-				}
-				builder.Append(line.Substring(index));
-				line = builder.ToString();
-			}
-				
-			#endregion
-			#region GatherEscapedTokens
-			string escapedTwo = "\\@\\@";
-			// OK, now look for paired escape delimiters
-			index = 0;
-			builder.Length = 0;
-			while (index < line.Length)
-			{
-				// find the first open double that's not inside a behavior
-				int dq = line.IndexOf(doubleQuote, index);
-				while (IsInsideBehavior(dq, behaviors))
-					dq = line.IndexOf(doubleQuote, dq + doubleQuote.Length);
-				if (dq == -1)
-				{
-					// none left; process the rest normally
-					builder.Append(line.Substring(index));
-					break;
-				}
-				
-				// Try to find the closing quote
-				int close = line.IndexOf(doubleQuote, dq + doubleQuote.Length);
-				if (close == -1)
-				{
-					// We have an unbalanced double, just send the rest along as a literal
-					builder.Append(line.Substring(index));
-					break;
-				}
-
-				// Here with an escaped component 
-				string pre = line.Substring(index, dq - index);
-				builder.Append(pre);
-				Parameterize(builder,parameters,line.Substring(dq + doubleQuote.Length, close - dq - doubleQuote.Length));
-				index = close + doubleQuote.Length;		
-			}
-			line = builder.ToString();
-			#endregion
-
-			#region TranslateBehaviors
-			builder.Length = 0; // reset
-			index = 0;
-			for (int i=0;i<behaviors.Count;i++)
-			{
-				// Find the next BehaviorDelimiter marker
-				start = (int)((ArrayList)behaviors[i])[0];				
-				// Find the end
-				end = (int)((ArrayList)behaviors[i])[1];
-
-				// OK, we have one
-				string expr = line.Substring(start + 2, end - start - 2);
-				// Turn any escape sequences into unescaped @@
-				expr = expr.Replace(escapedTwo,BehaviorDelimiter);
-				TopicContext tc = new TopicContext(TheFederation, ContentBase, new TopicInfo(TheFederation, CurrentTopic));
-				BehaviorInterpreter interpreter = new BehaviorInterpreter(CurrentTopic == null ? "" : CurrentTopic.Fullname, expr, TheFederation, TheFederation.WikiTalkVersion, this);
-				string replacement = null;
-				if (!interpreter.Parse())
-				{	// parse failed
-					replacement = ErrorMessage(null, interpreter.ErrorString);
-				}
-				else
-				{	// parse succeeded
-					if (!interpreter.EvaluateToPresentation(tc, _ExternalWikiMap))
-					{	// eval failed
-						replacement = ErrorMessage(null, interpreter.ErrorString);
-					}
-					else
-					{	// eval succeeded
-						WikiOutput nOut = WikiOutput.ForFormat(Output.Format, Output);
-						interpreter.Value.OutputTo(nOut);
-						replacement = nOut.ToString();
-					}
-					foreach (CacheRule r in interpreter.CacheRules)
-						AddCacheRule(r);
-				}
-				builder.Append(line.Substring(index, start-index));
-				Parameterize(builder,parameters,replacement);
-				index = end + doubleQuote.Length;
-			}
-			builder.Append(line.Substring(index));
-			#endregion
+            #region TranslateBehaviors
+            string escapedTwo = "\\@\\@";
+            matches = BehaviorRegex.Matches(line);
+            if (matches.Count > 0)
+            {
+                builder.Length = 0; // reset
+                index = 0;
+                foreach (Match match in matches)
+                {
+                    builder.Append(line.Substring(index, (match.Index - index)));
+                    if (!match.Groups[1].Success)
+                    {
+                        builder.Append(match.Value);
+                        index = match.Index + match.Length;
+                        continue;
+                    }
+                    // OK, we have one
+                    string expr = match.Value.Substring(2, match.Value.Length - (2 * 2));
+                    // Turn any escape sequences into unescaped @@
+                    expr = expr.Replace(escapedTwo, BehaviorDelimiter);
+                    TopicContext tc = new TopicContext(TheFederation, ContentBase, new TopicInfo(TheFederation, CurrentTopic));
+                    BehaviorInterpreter interpreter = new BehaviorInterpreter(CurrentTopic == null ? "" : CurrentTopic.Fullname, expr, TheFederation, TheFederation.WikiTalkVersion, this);
+                    string replacement = null;
+                    if (!interpreter.Parse())
+                    {	// parse failed
+                        replacement = ErrorMessage(null, interpreter.ErrorString);
+                    }
+                    else
+                    {	// parse succeeded
+                        if (!interpreter.EvaluateToPresentation(tc, _ExternalWikiMap))
+                        {	// eval failed
+                            replacement = ErrorMessage(null, interpreter.ErrorString);
+                        }
+                        else
+                        {	// eval succeeded
+                            WikiOutput nOut = WikiOutput.ForFormat(Output.Format, Output);
+                            interpreter.Value.OutputTo(nOut);
+                            replacement = nOut.ToString();
+                        }
+                        foreach (CacheRule r in interpreter.CacheRules)
+                            AddCacheRule(r);
+                    }
+                    Parameterize(builder,parameters,replacement);
+                    index = match.Index + match.Length;
+                }
+                if (index < line.Length)
+                    builder.Append(line.Substring(index));
 					
-			line = builder.ToString();
+                line = builder.ToString();
+            }
+            #endregion
 			line = LinkHyperLinks(line);
 			matches = Regex.Matches(line,urlPattern);
 			// hyperlinks are exempt from any emoticons or textile or anything else.
@@ -1347,7 +1288,6 @@ namespace FlexWiki.Formatting
 			line = ColorsEtcFormat(line);
 			matches = Regex.Matches(line,@"(?:\<nowiki\>)(\<a.*?\<\/a\>)");
 			if (matches.Count > 0)
-								
 			{
 				builder.Length = 0;
 				index = 0;
@@ -1364,7 +1304,8 @@ namespace FlexWiki.Formatting
 			}
 			line = LinkWikiNames(line);
 			line = ProcessWikiLinks(line);
-			return ReplaceParameters(line, parameters);
+            line = ReplaceParameters(line,parameters);
+			return line;
 
 		}
 		#endregion
@@ -1380,8 +1321,8 @@ namespace FlexWiki.Formatting
 			parameters.Add(parameter);
 		}
 
-		private string ReplaceParameters(string str, ArrayList parameters)
-		{
+        private string ReplaceParameters(string str, ArrayList parameters)
+        {
 			for (int i = parameters.Count-1; i >= 0; i--)
 			{
 				string tok = PreParam + i + PostParam;

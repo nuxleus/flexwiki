@@ -2199,8 +2199,20 @@ Baz
 				@"<p>${USER}=${1} # comment is here</p>
 ");
 			// original impl expected < 10 escaped parameters
-			FormatTest(@"""""One"""" """"two"""" """"three"""" """"four"""" """"five"""" """"six"""" """"seven"""" """"eight"""" """"nine"""" """"ten"""" """"eleven"""" """"twelve"""" "
-				,@"<p>One two three four five six seven eight nine ten eleven twelve </p>
+			FormatTest(@"""""One"""" """"two"""" """"three"""" """"four"""" """"five"""" """"six"""" """"seven"""" """"eight"""" """"nine"""" """"ten"""" """"eleven"""" """"twelve"""" ",
+				@"<p>One two three four five six seven eight nine ten eleven twelve </p>
+");
+            FormatTest(@"The ${0} is @@ProductVersion@@",
+                @"<p>The ${0} is " + new ClassicBehaviors().ProductVersion + @"</p>
+");
+            FormatTest(@"The """"ProductVersion"""" is @@ProductVersion@@",
+                @"<p>The ProductVersion is " + new ClassicBehaviors().ProductVersion + @"</p>
+");
+            FormatTest(@"The """"@@"""" is @@ProductVersion@@ and that is all there is to it",
+                @"<p>The @@ is " + new ClassicBehaviors().ProductVersion + @" and that is all there is to it</p>
+");
+            FormatTest(@"The """"ProductVersion"""" is @@ProductVersion@@ and that is all there is to it",
+                @"<p>The ProductVersion is " + new ClassicBehaviors().ProductVersion + @" and that is all there is to it</p>
 ");
 		}
 		#endregion
