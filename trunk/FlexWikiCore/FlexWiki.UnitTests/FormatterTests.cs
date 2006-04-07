@@ -654,6 +654,13 @@ blah blah EndOfLineShouldLink",
 		[Test] public void ExternalLinks()
 		{
 			FormatTest(
+				@"A ""xxxx FooBar 0x(ToolTipText)"":http://localhost link.",
+				@"<p>A <a class=""externalLink"" title=""ToolTipText"" href=""http://localhost"">xxxx FooBar 0x</a> link.</p>
+");
+			FormatTest(
+				@"A ""xxxx FooBar 0x(ToolTipText) "":http://localhost link.",
+				@"<p>A <a class=""externalLink"" href=""http://localhost"">xxxx FooBar 0x(ToolTipText)</a> link.</p>
+");			FormatTest(
 				@"A ""xxxx FooBar 0x"":http://localhost link.",
 				@"<p>A <a class=""externalLink"" href=""http://localhost"">xxxx FooBar 0x</a> link.</p>
 ");

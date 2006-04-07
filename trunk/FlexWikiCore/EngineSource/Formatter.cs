@@ -404,7 +404,7 @@ namespace FlexWiki.Formatting
 		private static string bracketedmailAndNewsPattern = "\\[(?:"+ mailAndNewsPattern + ")\\]";
 		private static string unqualifiedUrlPattern = "(?:" + "(?:" + bracketedUrlPattern + ")|(?:" + urlPattern + ")" + ")|(?:" + mailAndNewsPattern + ")|(?:" + bracketedmailAndNewsPattern + ")";
 		
-		private static string mustHaverelabelPrefix = "(\"(?<relabel>[^\"]+)\"\\:)";
+		private static string mustHaverelabelPrefix = "(\"(?<relabel>[^\"]+?)\\s*?(?:\\((?<tooltip>.*?)\\))?\"\\:)";
 		private static string urlbeforeOrRelabel = "(" + mustHaverelabelPrefix + "|(" + mustHaverelabelPrefix + "|" + beforeWikiName + "))";
 		public static string extractUrlLinksString = mustHaverelabelPrefix + "(?<uri>" + unqualifiedUrlPattern + ")" + wikiNameAnchor + afterWikiName;
 		public static Regex extractUrlLinks = new Regex(extractUrlLinksString) ;
@@ -1832,6 +1832,7 @@ namespace FlexWiki.Formatting
 				string after = m.Groups["after"].ToString();
 				string relabel = m.Groups["relabel"].ToString();
 				string anchor = m.Groups["anchor"].ToString();
+                string tooltip = m.Groups["tooltip"].ToString();
 
 				if (relabel != string.Empty)
 				{
@@ -1848,8 +1849,12 @@ namespace FlexWiki.Formatting
 					{
 						noFollow = " rel=\"nofollow\" ";
 					}
+                    if (tooltip != string.Empty)
+                    {
+                        tooltip = "title=\"" + tooltip + "\" ";
+                    }
 
-					str = ReplaceMatch(answer, str, m, before + "<nowiki><a class=\"externalLink\"" + noFollow + "href=\"" + uri + "\">" + relabel + "</a>" + after);
+					str = ReplaceMatch(answer, str, m, before + "<nowiki><a class=\"externalLink\"" + noFollow + tooltip + "href=\"" + uri + "\">" + relabel + "</a>" + after);
 					//str = ReplaceMatch(answer, str, m, before + "<a class=\"externalLink\"" + noFollow + "href=\"" + uri + "\">" + relabel + "</a>" + after);
 				}
 				else
