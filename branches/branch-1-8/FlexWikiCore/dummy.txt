@@ -17,3 +17,4 @@ Test change to check for problems.
 Derek changes to force build - committing new files doesn't seem to trigger a build
 
 Changes after branch to test that build picks up on changes in this branch only. 
+Change to check that updating and tagging is working correctly. 
