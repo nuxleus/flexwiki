@@ -1,0 +1,221 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+<HEAD>
+<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1252">
+<TITLE>Xcacls.exe</TITLE>
+
+<STYLE TYPE="text/css">
+body    { color: #000000;
+		background: #FFFFFF;  	
+		font-size: 70%;    		
+		font-family: Verdana, Arial, Sans Serif; }
+h1
+		{ font-size: 125%; 
+		margin-bottom:" .5em"; clear:both; }
+h2
+		{ font-size: 110%;  
+		margin-top: "1.5em";
+		margin-bottom:" .5em"; clear:both; }
+h3
+		{ font-size: 100%; 
+		margin-top: "1.2em";  
+		margin-bottom: ".5em"; clear:both; }
+h4
+		{ font-size: 100%; 
+		margin-top: "1.2em";  
+		margin-bottom: ".5em"; clear:both; }
+p
+		{ margin-top:" .6em"; 
+		margin-bottom: ".6em"; }
+ol
+		{ margin-top: ".5em"; 
+		margin-bottom: 0; 
+		margin-left: "2.1em"; 
+		padding-left: "0em";
+		margin-right:"2.1em" }
+ul
+		{ margin-top: ".6em"; 	
+		margin-bottom: 0;
+		list-style-type: disc;
+		margin-left: "1.5em";
+		padding-left: "0em";
+		margin-right: "1.5em"; }
+li
+		{ margin-bottom: ".7em"; clear:both; }
+p.browse
+		{text-align: right;
+		margin-top: -.5em;
+		margin-bottom: -.5em;}
+p.note, p.tip, p.important, p.caution, p.warning
+		{ font-weight:bold;
+		clear:both; margin-top: "1.2em";
+		margin-bottom: "-.4em"; }
+p.alert
+	{ margin-left: 1.5em; 
+	margin-top: -1.em; margin-bottom: -.3em; font-weight: bold } 
+
+p.indent	
+		{ margin-left: "1.3em"; }       	
+		
+p.topics	{font-weight: bold}
+p.info		{font-weight: bold}
+p.files		{font-weight: bold}
+p.syntax	{background: #dddddd;
+			margin-top: 1em; 
+			margin-bottom: 1em;}
+dl		{margin-top: -.5em;}
+dt.SyntaxTerm {font-weight: normal}
+a.poplink
+		{ color: "#000000";
+		cursor: "text";
+		text-decoration: "none"; }
+table
+		{ font-size: 100%;
+		margin-top: 1em; 
+		margin-bottom: 1em; 
+		cellpadding: 0.5em; }
+		
+th
+		{ text-align: left;
+		background: #dddddd;
+		vertical-align: bottom;
+		padding: .2em;
+		padding-left: .45em;
+		padding-right: .5em; }
+		
+tr
+		{ vertical-align: top; }
+
+td
+		{ background: #EEEEEE;
+		vertical-align: top;
+		padding: .2em;
+		padding-left: .45em;
+		padding-right: .5em; }
+</style>
+
+
+
+</HEAD>
+
+<BODY>
+
+
+<H1>Xcacls.exe</H1>
+
+
+<HR>
+
+<P>This command-line tool allows you to set all file system security options that are accessible in Windows Explorer. XcAcls does this by displaying and modifying the access control lists (ACLs) of files.</P>
+
+<P>XcAcls is especially useful in unattended installations of Microsoft Windows&nbsp;2000 Professional or Server. By using this tool, you can set the initial access rights for folders in which the operating system resides. When you distribute software to servers or workstations, XcAcls also offers one-step protection against deletion of directories or files by users.</P>
+
+<A NAME="xcacls_topics"></A>
+<P CLASS="topics"><b>XcAcls Topics</b></P>
+
+<UL>
+     <LI><a href="#xcacls_syntax">XcAcls Syntax</a></LI>
+     <LI><a href="#xcacls_examples">XcAcls Examples</a></LI>
+</UL>
+
+<P CLASS="files"><B>File Required</B></P>
+<UL>
+     <LI>Xcacls.exe</LI>
+</UL>
+
+
+<A NAME="xcacls_syntax"></A>
+<HR>
+<P class="browse"><A HREF="#top">top</A></P>
+<H2>Xcacls Syntax</H2>
+<HR>
+
+<P CLASS="syntax"><b>xcacls</b> <i>filename</i> [<b>/T</b>] [<b>/E</b>] [<b>/X</b>] [<b>/C</b>] [<b>/G</b> <i>user</i>:<i>perm</i>;<i>spec</i>] [<b>/R</b> <i>user</i>] [<b>/P</b> <i>user</i>:<i>perm</i>;<i>spec</i> [...]] [<b>/D</b> <i>user</i> [...]] [<b>/Y</b>]</P>
+
+<P>Where:</p>
+
+<DL>
+
+<DT CLASS="SyntaxTerm"><i>filename</i></DT>
+<DD>Indicates the name of the file or directory to which the access control list (ACL) or access control entry (ACE) is typically applied. All standard wildcard characters can be used.</DD>
+
+<DT CLASS="SyntaxTerm"><b>/T</b></DT>
+<DD>Recursively walk through the current directory and all its subdirectories, applying the chosen access rights to the matching files or directories.</DD>
+
+<DT CLASS="SyntaxTerm"><b>/E</b></DT>
+<DD>Edit the ACL instead of replacing it. </DD>
+
+<DT CLASS="SyntaxTerm"><b>/X</b></DT>
+<DD>Same as /E except it only affects the ACEs the specified user already owns.</DD><br><br>
+
+<DT CLASS="SyntaxTerm"><b>/C</b></DT>
+<DD>Causes XcAcls to continue if an &quot;access denied&quot; error occurs. If <B>/C</B> is not specified, XcAcls stops on this error.</DD>
+
+<DT CLASS="SyntaxTerm"><b>/G</b> <i>user</i>:<i>perm</i>;<i>spec</i></DT>
+<DD>Grant access to user to the matching file or directory.  
+<P>The <i>perm</i> variable applies the specified access right to files and represents the special file-access-right mask for directories. The <i>perm</i> variable accepts the following values: </P>
+	<dl>
+	<dt CLASS="SyntaxTerm">R</dt>
+	<dd>Read</dd>
+	<dt CLASS="SyntaxTerm">C</dt>
+	<dd>Change (write)</dd>
+	<dt CLASS="SyntaxTerm">F</dt>
+	<dd>Full Control</dd>
+	<dt CLASS="SyntaxTerm">P</dt>
+	<dd>Change Permissions (special access)</dd>
+	<dt CLASS="SyntaxTerm">O</dt>
+	<dd>Take Ownership (special access)</dd>
+	<dt CLASS="SyntaxTerm">X</dt>
+	<dd>EXecute (special access)</dd>
+	<dt CLASS="SyntaxTerm">E</dt>
+	<dd>REad (Special access)</dd>
+	<dt CLASS="SyntaxTerm">W</dt>
+	<dd>Write (Special access)</dd>
+	<dt CLASS="SyntaxTerm">D</dt>
+	<dd>Delete (Special access)</dd>
+	</DL>	
+	<P>The <i>spec</i> variable applies only to directories and accepts the same values as <i>perm</i>, with the addition of the following special value:</P>
+	<DL>
+	<dt CLASS="SyntaxTerm">T</dt>
+	<dd>Not Specified. Sets an ACE for the directory itself without specifying an ACE that is applied to new files created in that directory. At least one access right has to follow. Entries between a semicolon (<B>;</B>) and <B>T</B> are ignored.</dd>
+	</dl>
+	<P><B> Notes</b></P>
+<UL><LI>The access options for files (for directories, special file and directory access) are identical. For detailed explanations of these options, see the Windows&nbsp;2000 operating system documentation.</LI>
+	<LI>All other options, which can also be set in Windows Explorer, are subsets of all possible combinations of the basic access rights. Therefore, there are no special options for directory access rights, such as LIST or READ.</LI>
+</UL>
+</DD>
+
+<DT CLASS="SyntaxTerm"><b>/R</b> <i>user</i></DT>
+<DD>Revoke all access rights for the specified user.</DD>
+
+<DT CLASS="SyntaxTerm"><b>/P</b> <i>user</i>:<i>perm</i>;<i>spec</i></DT>
+<DD>Replace access rights for the specified user. The rules for specifying perm and spec are the same as for the <B>/G</B> option. See XcAcls Examples.</DD>
+
+<DT CLASS="SyntaxTerm"><b>/D</b> <i>user</i></DT>
+<DD>Denies user access to the file or directory.</DD>
+	
+<DT CLASS="SyntaxTerm"><b>/Y</b></DT>
+<DD>Disables confirmation when replacing user access rights. Using this option, XcAcls can be used in batch scripts unlike CACLS.</DD>
+</DL>
+
+<A NAME="xcacls_examples"></A>
+<HR>
+<P class="browse"><A HREF="#top">top</A></P>
+<H2>Xcacls Examples</H2>
+<HR>
+
+<H3>Example 1</H3>
+<P>The following command replaces the ACL of all files and directories in the current directory without scanning subdirectories and without confirmation.</P>
+<P><CODE><b>XCACLS *.* /G administrator:RW /Y</b></CODE></P>
+
+<H3>Example 2</H3>
+<P>The following command edits the ACL of a file or a directory, but its effect on a directory is different. The ACE added to the directory is also an inherit ACE for new files created in this directory.</P>
+<p>In this example, the command gives TestUser read, write, run, and delete rights on all new files created in this directory, but only read and write permissions on the directory itself.</p>
+<P><CODE><b>XCACLS *.* /G TestUser:RWED;RW /E</b></CODE></P>
+
+<H3>Example 3</H3>
+<P>The following command grants read and write permissions on a directory without creating an inherit entry for new files. Therefore, in this example, new files created in this directory get no ACE for TestUser. For existing files, an ACE with read permissions is created.</P>
+<P><CODE><b>XCACLS *.* /G TestUser:R;TRW /E</b></CODE></P>
+
+</BODY>
+</HTML>
