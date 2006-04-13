@@ -22,7 +22,6 @@
       <arg value="-F" />             <!-- Move tag if it already exists -->
       <arg value="-R" />             <!-- Tag recursively -->
       <arg value="${cvs.tag}" />     <!-- Tag name -->
-      <arg value="${module.name}" /> <!-- Module name -->
     </exec>
 
     <!-- Override the version numbers when building from CCNet -->
