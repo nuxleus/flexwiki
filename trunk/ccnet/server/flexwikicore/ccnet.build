@@ -5,17 +5,7 @@
 
     <property name="cvs.tag" value="Build${label-to-apply}" />
 
-    <!-- Tag the tree with the build label -->
-    <exec program="cvs.exe"
-	  workingdir="build">
-      <arg value="rtag" />
-      <arg value="-F" />             <!-- Move tag if it already exists -->
-      <arg value="-R" />             <!-- Tag recursively -->
-      <arg value="${cvs.tag}" />     <!-- Tag name -->
-      <arg value="${module.name}" /> <!-- Module name -->
-    </exec>
-    
-    <!-- Update the build directory with the sources we just tagged -->
+    <!-- Update the build directory -->
     <exec program="cvs.exe"
 	      workingdir="build">
       <arg value="update" />     <!-- Command -->
@@ -23,8 +13,16 @@
       <arg value="-R" />         <!-- Recursive -->
       <arg value="-C" />         <!-- Overwrite modified files -->
       <arg value="-d" />         <!-- Create new repository directories -->
-      <arg value="-r" />         <!-- Update by tag -->
-      <arg value="${cvs.tag}" /> <!-- Argument to -r -->
+    </exec>
+
+    <!-- Tag the tree with the build label -->
+    <exec program="cvs.exe"
+	  workingdir="build">
+      <arg value="tag" />
+      <arg value="-F" />             <!-- Move tag if it already exists -->
+      <arg value="-R" />             <!-- Tag recursively -->
+      <arg value="${cvs.tag}" />     <!-- Tag name -->
+      <arg value="${module.name}" /> <!-- Module name -->
     </exec>
 
     <!-- Override the version numbers when building from CCNet -->
