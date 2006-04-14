@@ -22,8 +22,11 @@ namespace FlexWiki
 	/// </summary>
 	public class NamespaceProviderDefinition
 	{
-
-		/// <summary>
+    private string _AssemblyName;
+    private string _Id;
+    private string _Type;
+    
+    /// <summary>
 		/// Answer a definition object for the given namespace
 		/// </summary>
 		/// <param name="type">Type (class name)</param>
@@ -48,9 +51,8 @@ namespace FlexWiki
 				_Id = value;
 			}
 		}
-		string _Id;
 		
-		ArrayList _Parameters = new ArrayList();
+		private ArrayList _Parameters = new ArrayList();
 		[XmlArray(ElementName = "Parameters"), 
 		XmlArrayItem(ElementName= "Parameter", 
 			Type = typeof(NamespaceProviderParameter))
@@ -122,7 +124,6 @@ namespace FlexWiki
 				_Type = value;
 			}
 		}
-		string _Type;
 
 		[XmlAttribute]
 		public string AssemblyName
@@ -136,7 +137,6 @@ namespace FlexWiki
 				_AssemblyName = value;
 			}
 		}
-		string _AssemblyName;
 
 		public Type ProviderType
 		{

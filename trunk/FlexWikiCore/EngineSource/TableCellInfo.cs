@@ -24,13 +24,6 @@ namespace FlexWiki.Formatting
 		{
 		}
 
-		public enum AlignOption
-		{
-			None,
-			Left,
-			Center,
-			Right
-		};
 
 		public AlignOption TableAlignment = AlignOption.None;
 		public AlignOption CellAlignment = AlignOption.None;

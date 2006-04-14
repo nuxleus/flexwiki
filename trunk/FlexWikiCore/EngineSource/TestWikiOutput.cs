@@ -25,7 +25,7 @@ namespace FlexWiki.Formatting
 		{
 		}
 
-		override public OutputFormat Format 
+		public override OutputFormat Format 
 		{ 
 			get 
 			{
@@ -33,7 +33,7 @@ namespace FlexWiki.Formatting
 			}
 		}
 
-		override public void Begin()
+		public override void Begin()
 		{
 		}
 	}

@@ -18,7 +18,7 @@ namespace FlexWiki
 	/// <summary>
 	/// 
 	/// </summary>
-	[ExposedClass("FormHiddenFieldPresentation", "Presents a hidden form field")]
+	[ExposedClass("FormHiddenFieldPresentation", "Presents a hidden form property")]
 	public class FormHiddenFieldPresentation : FlexWiki.PresentationPrimitive
 	{
 		public FormHiddenFieldPresentation(string fieldName, string fieldValue)

@@ -83,7 +83,7 @@ namespace FlexWiki.Web.Services.WireTypes
 		/// <summary>
 		/// Adds an instance of type TopicName to the end of this TopicNameCollection.
 		/// </summary>
-		/// <param name="value">
+		/// <param name="rawValue">
 		/// The TopicName to be added to the end of this TopicNameCollection.
 		/// </param>
 		public virtual void Add(TopicName value)
@@ -92,13 +92,13 @@ namespace FlexWiki.Web.Services.WireTypes
 		}
 
 		/// <summary>
-		/// Determines whether a specfic TopicName value is in this TopicNameCollection.
+		/// Determines whether a specfic TopicName rawValue is in this TopicNameCollection.
 		/// </summary>
-		/// <param name="value">
-		/// The TopicName value to locate in this TopicNameCollection.
+		/// <param name="rawValue">
+		/// The TopicName rawValue to locate in this TopicNameCollection.
 		/// </param>
 		/// <returns>
-		/// true if value is found in this TopicNameCollection;
+		/// true if rawValue is found in this TopicNameCollection;
 		/// false otherwise.
 		/// </returns>
 		public virtual bool Contains(TopicName value)
@@ -107,14 +107,14 @@ namespace FlexWiki.Web.Services.WireTypes
 		}
 
 		/// <summary>
-		/// Return the zero-based index of the first occurrence of a specific value
+		/// Return the zero-based index of the first occurrence of a specific rawValue
 		/// in this TopicNameCollection
 		/// </summary>
-		/// <param name="value">
-		/// The TopicName value to locate in the TopicNameCollection.
+		/// <param name="rawValue">
+		/// The TopicName rawValue to locate in the TopicNameCollection.
 		/// </param>
 		/// <returns>
-		/// The zero-based index of the first occurrence of the _ELEMENT value if found;
+		/// The zero-based index of the first occurrence of the _ELEMENT rawValue if found;
 		/// -1 otherwise.
 		/// </returns>
 		public virtual int IndexOf(TopicName value)
@@ -128,7 +128,7 @@ namespace FlexWiki.Web.Services.WireTypes
 		/// <param name="index">
 		/// The index at which the TopicName is to be inserted.
 		/// </param>
-		/// <param name="value">
+		/// <param name="rawValue">
 		/// The TopicName to insert.
 		/// </param>
 		public virtual void Insert(int index, TopicName value)
@@ -154,8 +154,8 @@ namespace FlexWiki.Web.Services.WireTypes
 		/// <summary>
 		/// Removes the first occurrence of a specific TopicName from this TopicNameCollection.
 		/// </summary>
-		/// <param name="value">
-		/// The TopicName value to remove from this TopicNameCollection.
+		/// <param name="rawValue">
+		/// The TopicName rawValue to remove from this TopicNameCollection.
 		/// </param>
 		public virtual void Remove(TopicName value)
 		{

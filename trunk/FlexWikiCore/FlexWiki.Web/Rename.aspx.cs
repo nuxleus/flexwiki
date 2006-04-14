@@ -23,170 +23,182 @@ using System.Web.UI.HtmlControls;
 
 namespace FlexWiki.Web
 {
-	/// <summary>
-	/// Summary description for Rename.
-	/// </summary>
-	public class Rename : BasePage
-	{
-		private void Page_Load(object sender, System.EventArgs e)
-		{
-			// Put user code to initialize the page here
-		}
+    /// <summary>
+    /// Summary description for Rename.
+    /// </summary>
+    public class Rename : BasePage
+    {
+        private void Page_Load(object sender, System.EventArgs e)
+        {
+            // Put user code to initialize the page here
+        }
 
-		#region Web Form Designer generated code
-		override protected void OnInit(EventArgs e)
-		{
-			//
-			// CODEGEN: This call is required by the ASP.NET Web Form Designer.
-			//
-			InitializeComponent();
-			base.OnInit(e);
-		}
-		
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{    
-			this.Load += new System.EventHandler(this.Page_Load);
-		}
-		#endregion
+        #region Web Form Designer generated code
+        override protected void OnInit(EventArgs e)
+        {
+            //
+            // CODEGEN: This call is required by the ASP.NET Web Form Designer.
+            //
+            InitializeComponent();
+            base.OnInit(e);
+        }
 
-		protected AbsoluteTopicName AbsTopicName
-		{
-			get
-			{
-				return new AbsoluteTopicName(Request.QueryString["topic"]);
-			}
-		}
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.Load += new System.EventHandler(this.Page_Load);
+        }
+        #endregion
 
-		protected bool IsTopicReadOnly
-		{
-			get
-			{
-				ContentBase cb = TheFederation.ContentBaseForTopic(AbsTopicName);
-				if (cb == null)
-					return true;
-				return !cb.IsExistingTopicWritable(AbsTopicName.LocalName);
+        protected NamespaceQualifiedTopicVersionKey AbsTopicName
+        {
+            get
+            {
+                return new NamespaceQualifiedTopicVersionKey(Request.QueryString["topic"]);
+            }
+        }
 
-			}
+        protected bool IsTopicReadOnly
+        {
+            get
+            {
+                NamespaceManager storeManager = Federation.NamespaceManagerForTopic(AbsTopicName);
+                if (storeManager == null)
+                    return true;
+                return !storeManager.IsExistingTopicWritable(AbsTopicName.LocalName);
 
-		}
-		
-		protected string Fixup
-		{
-			get
-			{
-				return Request.Form["Fixup"];
-			}
-		}
+            }
 
-		protected string LeaveRedirect
-		{
-			get
-			{
-				return Request.Form["LeaveRedirect"];
-			}
-		}
+        }
 
-		protected string NewName
-		{
-			get
-			{
-				return Request.Form["NewName"];
-			}
-		}
-        
-		protected string OldName
-		{
-			get
-			{
-				return Request.Form["OldName"];
-			}
-		}
+        protected string Fixup
+        {
+            get
+            {
+                return Request.Form["Fixup"];
+            }
+        }
 
-		protected string Namespace
-		{
-			get
-			{
-				return Request.Form["Namespace"];
-			}
-		}
+        protected string LeaveRedirect
+        {
+            get
+            {
+                return Request.Form["LeaveRedirect"];
+            }
+        }
 
-		protected void PerformRename()
-		{
-			AbsoluteTopicName oldName = new AbsoluteTopicName(OldName, Namespace);
-			ContentBase cb = TheFederation.ContentBaseForNamespace(Namespace);
+        protected string NewName
+        {
+            get
+            {
+                return Request.Form["NewName"];
+            }
+        }
 
-			string defaultNamespace = DefaultNamespace;
-			string oldAppearsAs = (oldName.Namespace == defaultNamespace) ? oldName.Name : oldName.Fullname;
-			string newName = NewName;
-			string newAppearsAs = (oldName.Namespace == defaultNamespace) ? newName : Namespace + "." + newName;
+        protected string OldName
+        {
+            get
+            {
+                return Request.Form["OldName"];
+            }
+        }
 
-      if (cb == null)
-      {
-        Response.Write("<b>No namespace was specified. Please try again.</b>"); 
-        return; 
-      }
+        protected string Namespace
+        {
+            get
+            {
+                return Request.Form["Namespace"];
+            }
+        }
 
-      if (newName == null || newName.Length == 0)
-      {
-        Response.Write("<b>No name was specified. Please try again.</b>"); 
-        return; 
-      }
+        protected void PerformRename()
+        {
+            NamespaceQualifiedTopicVersionKey oldName = new NamespaceQualifiedTopicVersionKey(OldName, Namespace);
+            NamespaceManager storeManager = Federation.NamespaceManagerForNamespace(Namespace);
 
-			// See if the new name already exists
-			if (cb.TopicExistsLocally(newName))
-			{
-				Response.Write("<b>Topic (" + newName + ") already exists.  Choose another name...</b>");
-				return;
-			}
+            string defaultNamespace = DefaultNamespace;
+            string oldAppearsAs = (oldName.Namespace == defaultNamespace) ? oldName.LocalName : oldName.QualifiedName;
+            string newName = NewName;
+            string newAppearsAs = (oldName.Namespace == defaultNamespace) ? newName : Namespace + "." + newName;
 
-			bool fixup = Fixup == "on";
-			bool fixupDisabled = false; 
+            if (storeManager == null)
+            {
+                Response.Write("<b>No namespace was specified. Please try again.</b>");
+                return;
+            }
 
-			try
-			{
-				fixupDisabled = bool.Parse(System.Configuration.ConfigurationSettings.AppSettings["DisableRenameFixup"]); 
-			}
-			catch
-			{
-			}
+            if (newName == null || newName.Length == 0)
+            {
+                Response.Write("<b>No name was specified. Please try again.</b>");
+                return;
+            }
 
-			if (fixupDisabled)
-				fixup = false;
+            // See if the new name already exists
+            if (storeManager.TopicExists(newName, ImportPolicy.DoNotIncludeImports))
+            {
+                Response.Write("<b>Topic (" + newName + ") already exists.  Choose another name...</b>");
+                return;
+            }
 
-			ArrayList log = cb.RenameTopic(oldName.LocalName, newName, fixup);
-			Response.Write("Renamed <i>" + oldAppearsAs + "</i> to <i>" + newName + "</i><br/>");
-			Response.Write("<br/>");
-			foreach (string each in log)
-			{
-				Response.Write(each + "<br>");
-			}
-			bool redir = LeaveRedirect == "on";
-			if (redir)
-			{
-				DateTime ts = DateTime.Now.ToLocalTime();
-				cb.WriteTopic(oldName.LocalName, 
-					"Redirect: " + newName + @"
+            bool fixup = Fixup == "on";
+            bool fixupDisabled = false;
 
-This page was automatically generated when this topic (" + oldName.Name + ") was renamed to " + newName + " on " +
-					ts.ToShortDateString() + " at " + ts.ToShortTimeString() + " by " + VisitorIdentityString + "." +
-					"\nPlease update references to point to the new topic.");
-			}
+            try
+            {
+                fixupDisabled = bool.Parse(System.Configuration.ConfigurationManager.AppSettings["DisableRenameFixup"]);
+            }
+            catch
+            {
+            }
 
-		}
+            if (fixupDisabled)
+            {
+                fixup = false;
+            }
 
-		protected void DoLeftBorder()
-		{
-			Response.Write("<td width='140' valign='top' class='BorderLeft'></td>");
-		}
-		protected void DoRightBorder()
-		{
-			string rightBorder = TheFederation.GetTopicFormattedBorder(GetTopicName(), Border.Right); // topic, Border.Right);
-			rightBorder = "<td width='140' valign='top' class='BorderRight'>" + rightBorder + "</td>";
-			Response.Write(rightBorder);
-		}
-	}
+            ReferenceFixupPolicy fixupPolicy = ReferenceFixupPolicy.DoNotFixReferences;
+
+            if (fixup)
+            {
+                fixupPolicy = ReferenceFixupPolicy.FixReferences; 
+            }
+
+            RenameTopicDetails results = storeManager.RenameTopic(oldName.LocalName, newName, fixupPolicy, 
+                VisitorIdentityString);
+
+            Response.Write("Renamed <i>" + oldAppearsAs + "</i> to <i>" + newName + "</i><br/>");
+            Response.Write("<br/>");
+            foreach (TopicName topic in results.UpdatedReferenceTopics)
+            {
+                Response.Write(String.Format("Topic {0} had its references updated. <br>", topic.QualifiedName));
+            }
+            bool redir = LeaveRedirect == "on";
+            if (redir)
+            {
+                DateTime ts = DateTime.Now.ToLocalTime();
+                storeManager.WriteTopicAndNewVersion(oldName.LocalName,
+                    "Redirect: " + newName + @"
+
+This page was automatically generated when this topic (" + oldName.LocalName + ") was renamed to " + newName + " on " +
+                    ts.ToShortDateString() + " at " + ts.ToShortTimeString() + " by " + VisitorIdentityString + "." +
+                    "\nPlease update references to point to the new topic.", 
+                    VisitorIdentityString);
+            }
+
+        }
+
+        protected void DoLeftBorder()
+        {
+            Response.Write("<td width='140' valign='top' class='BorderLeft'></td>");
+        }
+        protected void DoRightBorder()
+        {
+            string rightBorder = Federation.GetTopicFormattedBorder(GetTopicVersionKey(), Border.Right); // topic, Border.Right);
+            rightBorder = "<td width='140' valign='top' class='BorderRight'>" + rightBorder + "</td>";
+            Response.Write(rightBorder);
+        }
+    }
 }

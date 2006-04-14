@@ -20,7 +20,7 @@ using System.Web.SessionState;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
-using FlexWiki.Newsletters;
+using FlexWiki.Web.Newsletters;
 
 namespace FlexWiki.Web
 {
@@ -54,21 +54,21 @@ namespace FlexWiki.Web
 		}
 		#endregion
 
-		protected AbsoluteTopicName Newsletter
+		protected NamespaceQualifiedTopicVersionKey Newsletter
 		{
 			get
 			{
 				string nl = Request.QueryString["newsletter"];
 				if (nl == null)
 					return null;
-				return new AbsoluteTopicName(nl);
+				return new NamespaceQualifiedTopicVersionKey(nl);
 			}
 		}
 
 		protected void DoPage()
 		{
-			NewsletterManager manager = new NewsletterManager(TheFederation, TheLinkMaker, null, null, null);
-			AbsoluteTopicName newsletter = Newsletter;
+			NewsletterManager manager = new NewsletterManager(Federation, TheLinkMaker, null, null, null);
+			NamespaceQualifiedTopicVersionKey newsletter = Newsletter;
 			
 			DateTime since;
 			string headInsert = null;
@@ -83,7 +83,7 @@ namespace FlexWiki.Web
 			{
 				description = manager.GetDescriptionForNewsletter(newsletter);
 				since = manager.GetLastUpdateForNewsletter(newsletter);
-				newsletterName = newsletter.Name;
+				newsletterName = newsletter.LocalName;
 				newsletterLink = TheLinkMaker.LinkToTopic(newsletter);
 				topics = manager.AllTopicsForNewsletter(newsletter);
 				homeNamespace = newsletter.Namespace;
@@ -94,10 +94,10 @@ namespace FlexWiki.Web
 				since = since.Subtract(new TimeSpan(24, 0, 0));
 				// Arbitrary newsletter
 				ArrayList al = new ArrayList();
-				al.Add(new AbsoluteTopicName("Microsoft.Projects.Wiki.HomePage"));
-				al.Add(new AbsoluteTopicName("Microsoft.Projects.Wiki.SecondPage"));
+				al.Add(new NamespaceQualifiedTopicVersionKey("Microsoft.Projects.Wiki.HomePage"));
+				al.Add(new NamespaceQualifiedTopicVersionKey("Microsoft.Projects.Wiki.SecondPage"));
 				topics = al;
-				homeNamespace = TheFederation.DefaultNamespace;
+				homeNamespace = Federation.DefaultNamespace;
 			}
 
 			since = since.Subtract(new TimeSpan(24, 0, 0));

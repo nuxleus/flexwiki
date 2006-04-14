@@ -21,6 +21,10 @@ namespace FlexWiki
 	/// </summary>
 	public class MethodReferencePTN : ExposableParseTreeNode
 	{
+        private string _MethodName;
+        private ArrayList _Args;
+        private BlockArgumentsPTN _BlockArguments; 
+
 		public MethodReferencePTN(BELLocation loc, string methodName, ArrayList args, BlockArgumentsPTN blockargs) : base(loc)
 		{
 			_MethodName = methodName;
@@ -28,11 +32,8 @@ namespace FlexWiki
 			_BlockArguments = blockargs;
 		}
 
-		BlockArgumentsPTN _BlockArguments;
-		ArrayList _Args = null;
 
-		string _MethodName;
-		string MethodName
+		private string MethodName
 		{
 			get
 			{
@@ -44,7 +45,7 @@ namespace FlexWiki
 			}
 		}
 
-		string FullMethodName
+		private string FullMethodName
 		{
 			get
 			{
@@ -59,7 +60,7 @@ namespace FlexWiki
 			}
 		}
 
-		IList AllArgs
+		private IList AllArgs
 		{
 			get
 			{

@@ -29,7 +29,7 @@ namespace FlexWiki
 			return new WikiSequence(ToString());
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer true if this object is null; else false")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer true if this object is null; else false")]
 		public virtual bool IsNull
 		{
 			get
@@ -38,20 +38,20 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone | ExposedMethodFlags.NeedContext, "If this object is null, answer the result of evaluating the block; else answer null")]
+		[ExposedMethod(ExposedMethodFlags.NeedContext, "If this object is null, answer the result of evaluating the block; else answer null")]
 		public virtual IBELObject IfNull(ExecutionContext ctx, Block block)
 		{
 			return UndefinedObject.Instance;
 		}
 
 		
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone | ExposedMethodFlags.NeedContext, "If this object is not null, answer the result of evaluating the block; else answer null" )]
+		[ExposedMethod(ExposedMethodFlags.NeedContext, "If this object is not null, answer the result of evaluating the block; else answer null" )]
 		public virtual IBELObject IfNotNull(ExecutionContext ctx, Block block)
 		{
 			return block.Value(ctx);
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Determine whether this object is equal to another object")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Determine whether this object is equal to another object")]
 		public override bool Equals(object obj)
 		{
 			return base.Equals(obj);
@@ -63,19 +63,19 @@ namespace FlexWiki
 		}
 
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone | ExposedMethodFlags.NeedContext, "If this object is null, answer the result of evaluating the first block; else answer the result of evaluating the second block" )]
+		[ExposedMethod(ExposedMethodFlags.NeedContext, "If this object is null, answer the result of evaluating the first block; else answer the result of evaluating the second block" )]
 		public virtual IBELObject IfNullElse(ExecutionContext ctx, Block nullBlock, Block notNullBlock)
 		{
 			return notNullBlock.Value(ctx);
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone | ExposedMethodFlags.NeedContext, "If this object is not null, answer the result of evaluating the first block; else answer the result of evaluating the second block" )]
+		[ExposedMethod(ExposedMethodFlags.NeedContext, "If this object is not null, answer the result of evaluating the first block; else answer the result of evaluating the second block" )]
 		public virtual IBELObject IfNotNullElse(ExecutionContext ctx, Block notNullBlock, Block nullBlock)
 		{
 			return notNullBlock.Value(ctx);
 		}
 
-		[ExposedMethod("ToString", ExposedMethodFlags.CachePolicyNone, "Answer this object converted to a string")]
+		[ExposedMethod("ToString", ExposedMethodFlags.Default, "Answer this object converted to a string")]
 		public string AsString
 		{
 			get
@@ -84,7 +84,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the Type of this object")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the Type of this object")]
 		public override BELType Type
 		{
 			get

@@ -20,14 +20,17 @@ namespace FlexWiki
 	/// </summary>
 	public class TopicScope : IScope
 	{
-		public TopicScope(IScope ContainingScope, DynamicTopic topic)
+    private IScope _ContainingScope;
+    private DynamicTopic _Topic;
+
+    public TopicScope(IScope ContainingScope, DynamicTopic topic)
 		{
 			_ContainingScope = ContainingScope;
 			_Topic = topic;
 		}
 
-		IScope _ContainingScope;
-		public IScope ContainingScope
+		
+    public IScope ContainingScope
 		{
 			get
 			{
@@ -35,7 +38,6 @@ namespace FlexWiki
 			}
 		}
 
-		DynamicTopic _Topic;
 		public DynamicTopic Topic
 		{
 			get

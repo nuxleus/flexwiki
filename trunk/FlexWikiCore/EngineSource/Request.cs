@@ -27,7 +27,7 @@ namespace FlexWiki
 		{
 		}
 
-		HttpRequest HTTPRequest
+		private HttpRequest HTTPRequest
 		{
 			get
 			{
@@ -39,7 +39,7 @@ namespace FlexWiki
 
 
 
-		IPrincipal User
+		private IPrincipal User
 		{
 			get
 			{
@@ -49,7 +49,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the named parameter from the query string of the request; null if absent")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the named parameter from the query string of the request; null if absent")]
 		public string GetParameterNamed(string parm)
 		{
 			if (HTTPRequest == null)
@@ -57,7 +57,7 @@ namespace FlexWiki
 			return HTTPRequest.QueryString[parm];
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer an Array the names of all of the parameters in the query string")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer an Array the names of all of the parameters in the query string")]
 		public ArrayList ParameterNames
 		{
 			get
@@ -71,7 +71,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNever, "Answer an Array of VisitorEvents describing the current user's visits during the session")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer an Array of VisitorEvents describing the current user's visits during the session")]
 		public ArrayList VisitorEvents   
 		{
 			get
@@ -84,7 +84,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNever, "Answer an Array of Unique VisitorEvents describing the current user's visits during the session")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer an Array of Unique VisitorEvents describing the current user's visits during the session")]
 		public ArrayList UniqueVisitorEvents
 		{
 			get
@@ -106,7 +106,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a string identifying the visitor (not authenticated)")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer a string identifying the visitor (not authenticated)")]
 		public string VisitorIdentityString
 		{
 			get
@@ -117,7 +117,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a string identifying the authenticated identity of the user (or null if none)")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer a string identifying the authenticated identity of the user (or null if none)")]
 		public string AuthenticatedUserName
 		{
 			get
@@ -130,7 +130,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer true if the current user is authenticated")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer true if the current user is authenticated")]
 		public bool IsAuthenticated
 		{
 			get
@@ -142,7 +142,7 @@ namespace FlexWiki
 		}
 
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer true if the user can log in and out; else false")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer true if the user can log in and out; else false")]
 		public bool CanLogInAndOut
 		{
 			get
@@ -154,7 +154,7 @@ namespace FlexWiki
 		}
 
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer true if differences are being shown; else false")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer true if differences are being shown; else false")]
 		public bool AreDifferencesShown
 		{
 			get

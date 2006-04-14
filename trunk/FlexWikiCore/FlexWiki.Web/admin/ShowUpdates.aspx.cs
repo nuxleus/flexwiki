@@ -40,12 +40,12 @@ namespace FlexWiki.Web.Admin
 			UIResponse.ShowPage("Federation Update History", new UIResponse.MenuWriter(ShowAdminMenu), new UIResponse.BodyWriter(ShowMain));
 		}
    
-		void ShowMain()
+		private void ShowMain()
 		{
 			UIResponse.Write("<table cellpadding='2' cellspacing='0' border='0'>");
 			for (int index = this.UpdateMonitor.Updates.Count - 1; index >= 0; index--)
 			{
-				UpdateMonitor.UpdateInfo update = (UpdateMonitor.UpdateInfo)(this.UpdateMonitor.Updates[index]);
+				UpdateInfo update = (UpdateInfo)(this.UpdateMonitor.Updates[index]);
 				UIResponse.Write("<tr><td class='UpdateDivider' colspan='2' valign='top'>" + update.Timestamp.ToString() + "</td></tr>");
 
 				if (update.Update.FederationPropertiesChanged)
@@ -57,9 +57,9 @@ namespace FlexWiki.Web.Admin
 				if (update.Update.CreatedTopics.Count > 0)
 				{
 					UIResponse.Write("<tr><td  class='UpdateKey' valign='top'>Topics Created</td><td  class='UpdateValue' valign='top'>");
-					foreach (AbsoluteTopicName t in update.Update.CreatedTopics)
+					foreach (NamespaceQualifiedTopicVersionKey t in update.Update.CreatedTopics)
 					{
-						UIResponse.Write(EscapeHTML(t.FullnameWithVersion));
+						UIResponse.Write(EscapeHTML(t.QualifiedNameWithVersion));
 						UIResponse.Write("<br />");
 					}
 					UIResponse.Write("</td></tr>");
@@ -68,9 +68,9 @@ namespace FlexWiki.Web.Admin
 				if (update.Update.UpdatedTopics.Count > 0)
 				{
 					UIResponse.Write("<tr><td  class='UpdateKey' valign='top'>Topics Updated</td><td  class='UpdateValue' valign='top'>");
-					foreach (AbsoluteTopicName t in update.Update.UpdatedTopics)
+					foreach (NamespaceQualifiedTopicVersionKey t in update.Update.UpdatedTopics)
 					{
-						UIResponse.Write(EscapeHTML(t.FullnameWithVersion));
+						UIResponse.Write(EscapeHTML(t.QualifiedNameWithVersion));
 						UIResponse.Write("<br />");
 					}
 					UIResponse.Write("</td></tr>");
@@ -80,23 +80,23 @@ namespace FlexWiki.Web.Admin
 				if (update.Update.DeletedTopics.Count > 0)
 				{
 					UIResponse.Write("<tr><td  class='UpdateKey' valign='top'>Topics Deleted</td><td  class='UpdateValue' valign='top'>");
-					foreach (AbsoluteTopicName t in update.Update.DeletedTopics)
+					foreach (NamespaceQualifiedTopicVersionKey t in update.Update.DeletedTopics)
 					{
-						UIResponse.Write(EscapeHTML(t.FullnameWithVersion));
+						UIResponse.Write(EscapeHTML(t.QualifiedNameWithVersion));
 						UIResponse.Write("<br />");
 					}
 					UIResponse.Write("</td></tr>");
 				}
 
-				// Now properties
+				// Now imports
 
 				if (update.Update.AllTopicsWithChangedProperties.Count > 0)
 				{
 					UIResponse.Write("<tr><td  class='UpdateKey' valign='top'>Topics with Property Updates</td><td  class='UpdateValue' valign='top'>");
 					UIResponse.Write("<table cellpadding='2' cellspacing='0' border='0'>");
-					foreach (AbsoluteTopicName t in update.Update.AllTopicsWithChangedProperties)
+					foreach (NamespaceQualifiedTopicVersionKey t in update.Update.AllTopicsWithChangedProperties)
 					{
-						UIResponse.Write("<tr><td class='UpdateDivider' colspan=2 valign='top'>" + t.FullnameWithVersion + "</td></tr>");
+						UIResponse.Write("<tr><td class='UpdateDivider' colspan=2 valign='top'>" + t.QualifiedNameWithVersion + "</td></tr>");
 						
 						IList props;
 

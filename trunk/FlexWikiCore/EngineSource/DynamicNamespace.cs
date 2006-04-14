@@ -12,6 +12,8 @@
 
 using System;
 using System.Collections;
+
+using FlexWiki.Collections; 
 using FlexWiki.Formatting;
 
 namespace FlexWiki
@@ -21,64 +23,61 @@ namespace FlexWiki
 	/// </summary>
 	public class DynamicNamespace : DynamicObject
 	{
-		public DynamicNamespace(Federation aFed, string ns)
+        private Federation _currentFederation;
+        private string _namespace;
+        private Hashtable _topics;
+        
+        public DynamicNamespace(Federation aFed, string ns)
 		{
-			_CurrentFederation = aFed;
-			_Name = ns;
+			_currentFederation = aFed;
+			_namespace = ns;
 		}
 
-		public string Name
+		public string Namespace
 		{
 			get
 			{
-				return _Name;
+				return _namespace;
 			}
 		}
 
-		string _Name;
-
-		Federation _CurrentFederation;
 		public Federation CurrentFederation
 		{
 			get
 			{
-				return _CurrentFederation;
+				return _currentFederation;
 			}
 		}
 
 		public override IOutputSequence ToOutputSequence()
 		{
-			return new WikiSequence("(namespace \"\'" + Name + "\"\")");
+			return new WikiSequence("(namespace \"\'" + Namespace + "\"\")");
 		}
 
-		Hashtable _Topics;
 		public DynamicTopic DynamicTopicFor(string topic)
 		{
-			if (_Topics == null)
-				_Topics = new Hashtable();
-			DynamicTopic answer = (DynamicTopic)(_Topics[topic]);
-			if (answer != null)
-				return answer;
+            if (_topics == null)
+            {
+                _topics = new Hashtable();
+            }
+			DynamicTopic answer = (DynamicTopic)(_topics[topic]);
+            if (answer != null)
+            {
+                return answer;
+            }
 
-			RelativeTopicName rel = new RelativeTopicName(topic);
-			ArrayList alternatives = new ArrayList();
-			if (rel.Namespace != null)	// if they left the namespace unspec'd
-			{			
-				alternatives.Add(new AbsoluteTopicName(topic));	
-			}
-			else
-			{
-				alternatives.Add(new AbsoluteTopicName(topic, Name));	// always try this one first
-				alternatives.AddRange(rel.AllAbsoluteTopicNamesFor(CurrentFederation.ContentBaseForNamespace(Name)));
-			}
+            TopicName topicName = new TopicName(topic); 
 
-			foreach (AbsoluteTopicName tn in alternatives)
+            NamespaceManager manager = CurrentFederation.NamespaceManagerForNamespace(Namespace);
+            NamespaceQualifiedTopicNameCollection alternatives = manager.AllPossibleNamespaceQualifiedTopicNames(topicName); 
+
+			foreach (NamespaceQualifiedTopicName tn in alternatives)
 			{
-				ContentBase cb = CurrentFederation.ContentBaseForTopic(tn);
-				if (!cb.TopicExists(tn))
+				NamespaceManager namespaceManager = CurrentFederation.NamespaceManagerForTopic(tn);
+				if (!namespaceManager.TopicExists(tn.LocalName, ImportPolicy.DoNotIncludeImports))
 					continue;
-				answer = new DynamicTopic(CurrentFederation, tn);
-				_Topics[topic] = answer;
+				answer = new DynamicTopic(CurrentFederation, new NamespaceQualifiedTopicVersionKey(tn));
+				_topics[topic] = answer;
 				return answer;
 			}
 			return null;

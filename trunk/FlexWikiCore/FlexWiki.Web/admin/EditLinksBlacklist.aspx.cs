@@ -63,7 +63,7 @@ namespace FlexWiki.Web.Admin
 			UIResponse.ShowPage("External Links Blacklist", new UIResponse.MenuWriter(ShowAdminMenu), new UIResponse.BodyWriter(ShowList));
 		}
 
-		void ShowList()
+		private void ShowList()
 		{
 			if (IsPost)
 				ProcessPost();
@@ -78,13 +78,13 @@ namespace FlexWiki.Web.Admin
 			UIResponse.WriteEndForm();
 
 			UIResponse.WriteHeading("Current Blacklist",2);
-			foreach (string each in TheFederation.BlacklistedExternalLinkPrefixes)
+			foreach (string each in Federation.BlacklistedExternalLinkPrefixes)
 			{
 				UIResponse.WriteLine(UIResponse.Escape(each));
 			}
 		}
 
-		void ProcessPost()
+		private void ProcessPost()
 		{
 			string [] adds = ((string)(Request.Form["Additions"])).Split (new char[] {'\n'});
 			string [] removals = ((string)(Request.Form["Removals"])).Split (new char[] {'\n'});
@@ -96,13 +96,13 @@ namespace FlexWiki.Web.Admin
 				if (each == "")
 					continue;
 				count++;
-				if (TheFederation.BlacklistedExternalLinkPrefixes.Contains(each))
+				if (Federation.BlacklistedExternalLinkPrefixes.Contains(each))
 				{
 					UIResponse.WriteLine("Ignored (already listed) " + UIResponse.Escape(each));
 				}
 				else
 				{
-					TheFederation.AddBlacklistedExternalLinkPrefix(each);
+					Federation.AddBlacklistedExternalLinkPrefix(each);
 					UIResponse.WriteLine("Added " + UIResponse.Escape(each));
 				}
 			}
@@ -112,13 +112,13 @@ namespace FlexWiki.Web.Admin
 				if (each == "")
 					continue;
 				count++;
-				if (!TheFederation.BlacklistedExternalLinkPrefixes.Contains(each))
+				if (!Federation.BlacklistedExternalLinkPrefixes.Contains(each))
 				{
 					UIResponse.WriteLine("Ignored (not listed) " + UIResponse.Escape(each));
 				}
 				else
 				{
-					TheFederation.RemoveBlacklistedExternalLinkPrefix(each);
+					Federation.RemoveBlacklistedExternalLinkPrefix(each);
 					UIResponse.WriteLine("Removed " + UIResponse.Escape(each));
 				}
 			}
@@ -126,11 +126,12 @@ namespace FlexWiki.Web.Admin
 			if (count > 0)
 			{
 				UIResponse.WriteDivider();
-				ArrayList newList = new ArrayList();
-				foreach (string s in TheFederation.BlacklistedExternalLinkPrefixes)
-					newList.Add(s);
-				TheFederation.CurrentConfiguration.BlacklistedExternalLinks = newList;
-				TheFederation.CurrentConfiguration.WriteToFile(TheFederation.CurrentConfiguration.FederationNamespaceMapFilename);
+                Federation.CurrentConfiguration.BlacklistedExternalLinks.Clear(); 
+                foreach (string s in Federation.BlacklistedExternalLinkPrefixes)
+                {
+                    Federation.CurrentConfiguration.BlacklistedExternalLinks.Add(s);    
+                }
+				Federation.Application.WriteFederationConfiguration();
 			}			
 		}
 

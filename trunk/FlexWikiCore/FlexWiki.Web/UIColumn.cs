@@ -19,21 +19,23 @@ namespace FlexWiki.Web
 	/// </summary>
 	public class UIColumn
 	{
-		public UIColumn(string name)
+    public UIColumn()
+    {
+    }
+    
+    public UIColumn(string name)
 		{
-			_Name = name;
+			_name = name;
 		}
 
-		public UIColumn()
-		{
-		}
 
-		string _Name;
+	  private string _name;
+
 		public string Name
 		{
 			get
 			{
-				return _Name;
+				return _name;
 			}
 		}
 

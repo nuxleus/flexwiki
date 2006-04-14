@@ -23,16 +23,22 @@ namespace FlexWiki
     private readonly StringCollection _editors        = new StringCollection(); 
     private readonly StringCollection _readers        = new StringCollection(); 
 
+    [XmlArray("administrators")]
+    [XmlArrayItem("allow")]
     public StringCollection Administrators
     {
       get { return _administrators; }
     }
 
+    [XmlArray("editors")]
+    [XmlArrayItem("allow")]
     public StringCollection Editors
     {
       get { return _editors; }
     }
 
+    [XmlArray("readers")]
+    [XmlArrayItem("allow")]
     public StringCollection Readers
     {
       get { return _readers; }

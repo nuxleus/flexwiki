@@ -12,8 +12,8 @@ You must not remove this notice, or any other, from this software.
 
 use ${database}
 GO
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[FK_Topic_Namespace]') and OBJECTPROPERTY(id, N'IsForeignKey') = 1)
-ALTER TABLE [dbo].[Topic] DROP CONSTRAINT FK_Topic_Namespace
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[FK_Topic_namespace]') and OBJECTPROPERTY(id, N'IsForeignKey') = 1)
+ALTER TABLE [dbo].[Topic] DROP CONSTRAINT FK_Topic_namespace
 GO
 
 /****** Object:  Stored Procedure dbo.CheckNamespaceExists    Script Date: 1/30/2005 11:35:25 AM ******/
@@ -131,7 +131,7 @@ CREATE TABLE [dbo].[Topic] (
 GO
 
 ALTER TABLE [dbo].[Namespace] WITH NOCHECK ADD 
-	CONSTRAINT [PK_Namespace] PRIMARY KEY  CLUSTERED 
+	CONSTRAINT [PK_namespace] PRIMARY KEY  CLUSTERED 
 	(
 		[NamespaceId]
 	)  ON [PRIMARY] 
@@ -145,7 +145,7 @@ ALTER TABLE [dbo].[Topic] WITH NOCHECK ADD
 GO
 
 ALTER TABLE [dbo].[Namespace] ADD 
-	CONSTRAINT [DF_Namespace_Name] DEFAULT ('') FOR [Name]
+	CONSTRAINT [DF_namespace_name] DEFAULT ('') FOR [Name]
 GO
 
 ALTER TABLE [dbo].[Topic] ADD 
@@ -156,14 +156,14 @@ ALTER TABLE [dbo].[Topic] ADD
 	CONSTRAINT [DF_Topic_Hidden] DEFAULT (0) FOR [Hidden]
 GO
 
- CREATE  INDEX [IX_Topic_NamespaceId] ON [dbo].[Topic]([TopicId]) ON [PRIMARY]
+ CREATE  INDEX [IX_Topic_namespaceId] ON [dbo].[Topic]([TopicId]) ON [PRIMARY]
 GO
 
- CREATE  INDEX [IX_Topic_NamespaceId_LastWriteTime] ON [dbo].[Topic]([NamespaceId], [LastWriteTime] DESC ) ON [PRIMARY]
+ CREATE  INDEX [IX_Topic_namespaceId_LastWriteTime] ON [dbo].[Topic]([NamespaceId], [LastWriteTime] DESC ) ON [PRIMARY]
 GO
 
 ALTER TABLE [dbo].[Topic] ADD 
-	CONSTRAINT [FK_Topic_Namespace] FOREIGN KEY 
+	CONSTRAINT [FK_Topic_namespace] FOREIGN KEY 
 	(
 		[NamespaceId]
 	) REFERENCES [dbo].[Namespace] (

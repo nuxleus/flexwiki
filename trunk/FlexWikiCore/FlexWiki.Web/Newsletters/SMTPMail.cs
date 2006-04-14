@@ -15,32 +15,19 @@ using System.Text;
 using System.IO;
 using System.Net.Sockets;
 using System.Net;
-using System.Web.Mail;
+using System.Net.Mail;
 using System.Collections;
 
-namespace FlexWiki.Newsletters
+namespace FlexWiki.Web.Newsletters
 {
 	/// <summary>
 	/// provides methods to send email via smtp direct to mail server
 	/// </summary>
   public class SmtpMail
   {
-    /// <summary>
-    /// Get / Set the name of the SMTP mail server
-    /// </summary>
-    private enum SMTPResponse: int
-    {
-      CONNECT_SUCCESS = 220,
-      GENERIC_SUCCESS = 250,
-      DATA_SUCCESS	= 354,
-      AUTH_PROMPT = 334,
-      AUTH_SUCCESS = 235,
-      QUIT_SUCCESS	= 221
-    }
-
     public StringWriter sw;
 
-    string LogExit(string s)
+    private string LogExit(string s)
     {
       if (sw != null)
         sw.WriteLine(s);
@@ -61,19 +48,19 @@ namespace FlexWiki.Newsletters
     {
       if (sw != null)
         sw.WriteLine("Starting to send mail via {0}", SmtpServer);
-      IPHostEntry IPhst = Dns.Resolve(SmtpServer);
+      IPHostEntry IPhst = Dns.GetHostEntry(SmtpServer);
       IPEndPoint endPt = new IPEndPoint(IPhst.AddressList[0], 25);
       Socket s= new Socket(endPt.AddressFamily, SocketType.Stream,ProtocolType.Tcp);
       s.Connect(endPt);
     		
-      if(!Check_Response(s, SMTPResponse.CONNECT_SUCCESS))
+      if(!Check_Response(s, SmtpResponse.CONNECT_SUCCESS))
       {				
         s.Close();
         return LogExit("Unable to connect to server");
       }
     			
       Senddata(s, string.Format("EHLO {0}\r\n", Dns.GetHostName() ));
-      if(!Check_Response(s, SMTPResponse.GENERIC_SUCCESS))
+      if(!Check_Response(s, SmtpResponse.GENERIC_SUCCESS))
       {
         s.Close();
         return  LogExit("HELO command failed");
@@ -82,7 +69,7 @@ namespace FlexWiki.Newsletters
       if (SMTPPassword != null)
       {
         Senddata(s, string.Format("AUTH LOGIN\r\n"));
-        if(!Check_Response(s, SMTPResponse.AUTH_PROMPT))
+        if(!Check_Response(s, SmtpResponse.AUTH_PROMPT))
         {
           s.Close();
           return  LogExit("AUTH LOGIN command failed");
@@ -90,7 +77,7 @@ namespace FlexWiki.Newsletters
 
         string user64 = System.Convert.ToBase64String(Encoding.ASCII.GetBytes(SMTPUser));
         Senddata(s, string.Format(user64 + "\r\n"));
-        if(!Check_Response(s, SMTPResponse.AUTH_PROMPT))
+        if(!Check_Response(s, SmtpResponse.AUTH_PROMPT))
         {
           s.Close();
           return  LogExit("AUTH username failed");
@@ -98,7 +85,7 @@ namespace FlexWiki.Newsletters
 				
         string pw64 = System.Convert.ToBase64String(Encoding.ASCII.GetBytes(SMTPPassword));
         Senddata(s, string.Format(pw64 + "\r\n"), "[password  hidden]\n");
-        if(!Check_Response(s, SMTPResponse.AUTH_SUCCESS))
+        if(!Check_Response(s, SmtpResponse.AUTH_SUCCESS))
         {
           s.Close();
           return  LogExit("AUTH password failed");
@@ -106,57 +93,52 @@ namespace FlexWiki.Newsletters
       }
 
       Senddata(s, string.Format("MAIL From: {0}\r\n", message.From ));
-      if(!Check_Response(s, SMTPResponse.GENERIC_SUCCESS))
+      if(!Check_Response(s, SmtpResponse.GENERIC_SUCCESS))
       {
 				
         s.Close();
         return  LogExit("MAIL command failed");
       }
     			
-      string _To = message.To;
-      string[] Tos= _To.Split(new char[] {';'});
-      foreach (string To in Tos)
+      foreach (MailAddress To in message.To)
       {
-        Senddata(s, string.Format("RCPT TO: {0}\r\n", To));
-        if(!Check_Response(s, SMTPResponse.GENERIC_SUCCESS))
+        Senddata(s, string.Format("RCPT TO: {0}\r\n", To.Address));
+        if(!Check_Response(s, SmtpResponse.GENERIC_SUCCESS))
         {
           s.Close();
-          return  LogExit("RCPT TO (" + To + ") failed");
+          return  LogExit("RCPT TO (" + To.Address + ") failed");
         }
       }
     			
-      if(message.Cc!=null)
+      if(message.CC.Count != 0)
       {
-        Tos= message.Cc.Split(new char[] {';'});
-        foreach (string To in Tos)
+        foreach (MailAddress To in message.CC)
         {
-          Senddata(s, string.Format("RCPT TO: {0}\r\n", To));
-          if(!Check_Response(s, SMTPResponse.GENERIC_SUCCESS))
+          Senddata(s, string.Format("RCPT TO: {0}\r\n", To.Address));
+          if(!Check_Response(s, SmtpResponse.GENERIC_SUCCESS))
           {					
             s.Close();
-            return  LogExit("RCPT TO (" + To + ") failed");
+            return  LogExit("RCPT TO (" + To.Address + ") failed");
           }
         }
       }
     			
       StringBuilder Header=new StringBuilder();
       Header.Append("From: " + message.From + "\r\n");
-      Tos= message.To.Split(new char[] {';'});
       Header.Append("To: ");
-      for( int i=0; i< Tos.Length; i++)
+      for( int i=0; i< message.To.Count; i++)
       {
         Header.Append( i > 0 ? "," : "" );
-        Header.Append(Tos[i]);
+        Header.Append(message.To[i].Address);
       }
       Header.Append("\r\n");
-      if(message.Cc!=null)
+      if(message.CC.Count != 0)
       {
-        Tos= message.Cc.Split(new char[] {';'});
         Header.Append("Cc: ");
-        for( int i=0; i< Tos.Length; i++)
+        for( int i=0; i< message.CC.Count; i++)
         {
           Header.Append( i > 0 ? "," : "" );
-          Header.Append(Tos[i]);
+          Header.Append(message.CC[i].Address);
         }
         Header.Append("\r\n");
       }
@@ -214,13 +196,12 @@ namespace FlexWiki.Newsletters
       if (hasMessageAttachments)
       {
     				
-        foreach(object o in message.Attachments)
+        foreach(Attachment a in message.Attachments)
         {
-          MailAttachment a = o as MailAttachment;
           byte[] binaryData;
           if(a!=null)
           {
-            FileInfo f = new FileInfo(a.Filename);
+            FileInfo f = new FileInfo(a.Name);
             FileStream fs = f.OpenRead();
             binaryData = new Byte[fs.Length];
             long bytesRead = fs.Read(binaryData, 0, (int)fs.Length);
@@ -254,7 +235,7 @@ namespace FlexWiki.Newsletters
       MsgBody=sb.ToString();
     			
       Senddata(s, ("DATA\r\n"));
-      if(!Check_Response(s, SMTPResponse.DATA_SUCCESS))
+      if(!Check_Response(s, SmtpResponse.DATA_SUCCESS))
       {				
         s.Close();
         return  LogExit("DATA command failed");
@@ -266,7 +247,7 @@ namespace FlexWiki.Newsletters
 //      Header.Append( "\r\n" );
 
       Senddata(s, Header.ToString());
-      if(!Check_Response(s, SMTPResponse.GENERIC_SUCCESS ))
+      if(!Check_Response(s, SmtpResponse.GENERIC_SUCCESS ))
       {
 				
         s.Close();
@@ -276,7 +257,7 @@ namespace FlexWiki.Newsletters
       Senddata(s, "QUIT\r\n");
       // I was seeing my SMTP server hang waiting for a response to the QUIT, so I added
       // this one-minute timeout.
-      Check_Response(s, SMTPResponse.QUIT_SUCCESS, 60000);
+      Check_Response(s, SmtpResponse.QUIT_SUCCESS, 60000);
       s.Close();    			
       return null;
     }
@@ -316,14 +297,14 @@ namespace FlexWiki.Newsletters
       s.Send(_msg , 0, _msg .Length, SocketFlags.None);
     }
 
-    private bool Check_Response(Socket s, SMTPResponse response_expected)
+    private bool Check_Response(Socket s, SmtpResponse response_expected)
     {
       return Check_Response(s, response_expected, -1);
     }
    
     // I was seeing my SMTP server hang waiting for a response to the QUIT, so I added
     // this timeout. Pass -1 to wait forever. Timeout is in milliseconds. 
-    private bool Check_Response(Socket s, SMTPResponse response_expected, int timeout)
+    private bool Check_Response(Socket s, SmtpResponse response_expected, int timeout)
     {
       string sResponse;
       int response;

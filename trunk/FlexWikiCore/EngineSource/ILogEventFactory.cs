@@ -19,7 +19,7 @@ namespace FlexWiki
 	/// </summary>
 	public interface ILogEventFactory
 	{
-		LogEvent CreateAndStartEvent(string ipAddress, string user, string topic, LogEvent.LogEventType type);
-		LogEvent CreateEvent(string ipAddress, string user, string topic, LogEvent.LogEventType type);
+		LogEvent CreateAndStartEvent(string ipAddress, string user, string topic, LogEventType type);
+		LogEvent CreateEvent(string ipAddress, string user, string topic, LogEventType type);
 	}
 }

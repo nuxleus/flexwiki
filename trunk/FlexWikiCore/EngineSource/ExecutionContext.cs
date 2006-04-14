@@ -11,301 +11,279 @@
 #endregion
 
 using System;
-using System.Reflection;
 using System.Collections;
+using System.Reflection;
 using System.Web.Caching;
+
+using FlexWiki.Collections; 
 
 namespace FlexWiki
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	public class ExecutionContext
-	{
+    /// <summary>
+    /// 
+    /// </summary>
+    public class ExecutionContext
+    {
+        // Fields
 
-		public ExecutionContext(TopicContext ctx)
-		{
-			_CurrentTopicContext = ctx;
-			Initialize();
-		}
+        private ArrayList _cacheRules = new ArrayList();
+        private TopicContext _currentTopicContext;
+        private ExternalReferencesMap _externalWikiMap;
+        private ArrayList _frameStack = new ArrayList();
+        private IScope _globalScope;
+        private Home _home;
+        private ArrayList _locationStack = new ArrayList();
+        private IWikiToPresentation _presenter;
+        private TypeRegistry _typeRegistry = new TypeRegistry();
+        private int _wikiTalkVersion = 1;
 
-		void Initialize()
-		{
-			_Home = new Home();
-			PushFrame(new InvocationFrame());	// lay down a base frame (so we push scopes even before a member invocation)						
-		}
-		
-		public ExecutionContext()
-		{
-			Initialize();
-		}
+        // Constructors
 
-		TopicContext _CurrentTopicContext;
-		public TopicContext CurrentTopicContext
-		{
-			get
-			{
-				return _CurrentTopicContext;
-			}
-		}
+        public ExecutionContext()
+        {
+            Initialize();
+        }
+        public ExecutionContext(TopicContext ctx)
+        {
+            _currentTopicContext = ctx;
+            Initialize();
+        }
 
-		ArrayList	_CacheRules = new ArrayList();
+        // Properties
 
-		public ICollection CacheRules
-		{
-			get
-			{
-				return _CacheRules;
-			}
-		}
+        public ICollection CacheRules
+        {
+            get
+            {
+                return _cacheRules;
+            }
+        }
+        public Federation CurrentFederation
+        {
+            get
+            {
+                if (CurrentTopicContext == null)
+                    return null;
+                return CurrentTopicContext.CurrentFederation;
+            }
+        }
+        public BELLocation CurrentLocation
+        {
+            get
+            {
+                if (_locationStack.Count == 0)
+                    return null;
+                return (BELLocation)(_locationStack[_locationStack.Count - 1]);
+            }
+        }
+        public NamespaceManager CurrentNamespaceManager
+        {
+            get
+            {
+                if (CurrentTopicContext == null)
+                    return null;
+                return CurrentTopicContext.CurrentNamespaceManager;
+            }
+        }
+        public IScope CurrentScope
+        {
+            get
+            {
+                InvocationFrame frame = TopFrame;
+                if (frame == null)
+                    return null;
+                return frame.CurrentScope;
+            }
+        }
+        public DynamicTopic CurrentTopic
+        {
+            get
+            {
+                if (CurrentTopicName == null)
+                    return null;
+                return new DynamicTopic(CurrentFederation, CurrentTopicName);
+            }
+        }
+        public TopicContext CurrentTopicContext
+        {
+            get
+            {
+                return _currentTopicContext;
+            }
+        }
+        public NamespaceQualifiedTopicVersionKey CurrentTopicName
+        {
+            get
+            {
+                if (CurrentTopicContext == null)
+                    return null;
+                return CurrentTopicContext.CurrentTopic.TopicVersionKey;
+            }
+        }
+        public ExternalReferencesMap ExternalWikiMap
+        {
+            get
+            {
+                return _externalWikiMap;
+            }
+            set
+            {
+                _externalWikiMap = value;
+            }
+        }
+        public Home Home
+        {
+            get
+            {
+                return _home;
+            }
+        }
+        public IWikiToPresentation Presenter
+        {
+            get
+            {
+                return _presenter;
+            }
+            set
+            {
+                _presenter = value;
+            }
+        }
+        public int StackDepth
+        {
+            get
+            {
+                return _frameStack.Count;
+            }
+        }
+        public InvocationFrame TopFrame
+        {
+            get
+            {
+                if (_frameStack.Count == 0)
+                    return null;
+                return (InvocationFrame)(_frameStack[_frameStack.Count - 1]);
+            }
+        }
+        public TypeRegistry TypeRegistry
+        {
+            get
+            {
+                return _typeRegistry;
+            }
+        }
+        public int WikiTalkVersion
+        {
+            get
+            {
+                return _wikiTalkVersion;
+            }
+            set
+            {
+                _wikiTalkVersion = value;
+            }
+        }
 
-		public void AddCacheRule(CacheRule rule)
-		{
-			_CacheRules.Add(rule);
-		}
+        private IScope GlobalScope
+        {
+            get
+            {
+                if (_globalScope != null)
+                {
+                    return _globalScope;
+                }
+                WithScope with = new WithScope(null);
+                with.AddObject(TypeRegistry);
+                with.AddObject(new Utility());
+                with.AddObject(new ClassicBehaviors());
+                _globalScope = with;
+                return _globalScope;
+            }
+        }
 
-		ArrayList _FrameStack = new ArrayList();
-		public InvocationFrame TopFrame
-		{
-			get
-			{
-				if (_FrameStack.Count == 0)
-					return null;
-				return (InvocationFrame)(_FrameStack[_FrameStack.Count - 1]);
-			}
-		}
+        // Methods
 
-		public void PushFrame(InvocationFrame f)
-		{
-			_FrameStack.Add(f);
-		}
+        /// <summary>
+        /// Answer the rawValue of the given propertyName or function.  
+        /// Consider temporary variables followed by globals.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="args"></param>
+        /// <param name="ctx"></param>
+        /// <returns></returns>
+        public IBELObject FindAndInvoke(string name, ArrayList args)
+        {
+            IBELObject answer = null;
 
-		public int StackDepth
-		{
-			get
-			{
-				return _FrameStack.Count;
-			}
-		}
+            if (name == Home.ExternalTypeName)
+            {
+                return Home;
+            }
+            // Before we check anything else, we check the language builtin
+            answer = Home.ValueOf(name, args, this);
+            if (answer != null)
+            {
+                return answer;
+            }
 
-		public void PopFrame()
-		{
-			if (_FrameStack.Count == 0)
-				throw new Exception("Invocation frame stack has underflowed.");
-			_FrameStack.RemoveAt(_FrameStack.Count - 1);
-		}		
-		
-		
-		public Federation CurrentFederation
-		{
-			get
-			{
-				if (CurrentTopicContext == null)
-					return null;
-				return CurrentTopicContext.CurrentFederation;
-			}
-		}
+            // OK, not a builtin -- look into the current scope (and the containing scopes)
+            if (TopFrame != null)
+            {
+                IScope scope = TopFrame.CurrentScope;
+                while (scope != null)
+                {
+                    answer = scope.ValueOf(name, args, this);
+                    if (answer != null)
+                    {
+                        return answer;
+                    }
+                    scope = scope.ContainingScope;
+                }
+            }
 
-		public AbsoluteTopicName CurrentTopicName
-		{
-			get
-			{
-				if (CurrentTopicContext == null)
-					return null;
-				return CurrentTopicContext.CurrentTopic.Fullname;
-			}
-		}
+            // OK, didn't find it there -- let's try the global scope
+            return GlobalScope.ValueOf(name, args, this);
+        }
+        public void PopFrame()
+        {
+            if (_frameStack.Count == 0)
+                throw new Exception("Invocation frame stack has underflowed.");
+            _frameStack.RemoveAt(_frameStack.Count - 1);
+        }
+        public void PopLocation()
+        {
+            if (_locationStack.Count == 0)
+                throw new Exception("Location stack has underflowed.");
+            _locationStack.RemoveAt(_locationStack.Count - 1);
+        }
+        public void PopScope()
+        {
+            InvocationFrame frame = TopFrame;
+            if (frame == null)
+                throw new Exception("Can't pop scope; no top frame.");
+            frame.PopScope();
+        }
+        public void PushFrame(InvocationFrame f)
+        {
+            _frameStack.Add(f);
+        }
+        public void PushLocation(BELLocation loc)
+        {
+            _locationStack.Add(loc);
+        }
+        public void PushScope(IScope src)
+        {
+            InvocationFrame frame = TopFrame;
+            if (frame == null)
+                throw new Exception("Can't push scope; no top frame.");
+            frame.PushScope(src);
+        }
 
-		public DynamicTopic CurrentTopic
-		{
-			get
-			{
-				if (CurrentTopicName == null)
-					return null;
-				return new DynamicTopic(CurrentFederation, CurrentTopicName);
-			}
-		}
+        private void Initialize()
+        {
+            _home = new Home();
+            PushFrame(new InvocationFrame());	// lay down a base frame (so we push scopes even before a member invocation)						
+        }
 
-		public ContentBase CurrentContentBase
-		{
-			get
-			{
-				if (CurrentTopicContext == null)
-					return null;
-				return CurrentTopicContext.CurrentContentBase;
-			}
-		}
-
-		Hashtable _ExternalWikiMap;
-		public Hashtable ExternalWikiMap
-		{
-			get
-			{
-				return _ExternalWikiMap;
-			}
-			set
-			{
-				_ExternalWikiMap = value;
-			}
-		}
-
-
-
-		private Home _Home;
-		public Home Home
-		{
-			get
-			{
-				return _Home;
-			}
-		}
-
-		/// <summary>
-		/// Answer the value of the given property or function.  
-		/// Consider temporary variables followed by globals.
-		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="args"></param>
-		/// <param name="ctx"></param>
-		/// <returns></returns>
-		public IBELObject FindAndInvoke(string name, ArrayList args)
-		{
-			IBELObject answer = null;
-
-      if (name == Home.ExternalTypeName)
-      {
-        return Home;
-      }
-			// Before we check anything else, we check the language builtin
-			answer = Home.ValueOf(name, args, this);
-      if (answer != null)
-      {
-        return answer;
-      }
-
-			// OK, not a builtin -- look into the current scope (and the containing scopes)
-			if (TopFrame != null)
-			{
-				IScope scope = TopFrame.CurrentScope;
-				while (scope != null)
-				{
-					answer = scope.ValueOf(name, args, this);
-          if (answer != null)
-          {
-            return answer;
-          }
-					scope = scope.ContainingScope;
-				}
-			}
-
-			// OK, didn't find it there -- let's try the global scope
-			return GlobalScope.ValueOf(name, args, this);
-		}
-
-
-		int _WikiTalkVersion = 1;	
-		public int WikiTalkVersion
-		{
-			get
-			{
-				return _WikiTalkVersion;
-			}
-			set
-			{
-				_WikiTalkVersion = value;
-			}
-		}
-
-		IWikiToPresentation _Presenter;
-		public IWikiToPresentation Presenter
-		{
-			get
-			{
-				return _Presenter;
-			}
-			set
-			{
-				_Presenter = value;
-			}
-		}
-
-		IScope _GlobalScope;
-		IScope GlobalScope
-		{
-			get
-			{
-				if (_GlobalScope != null)
-					return _GlobalScope;
-				WithScope with = new WithScope(null);
-				with.AddObject(TypeRegistry);
-				with.AddObject(new Utility());
-				with.AddObject(new ClassicBehaviors());
-				_GlobalScope = with;
-				return _GlobalScope;
-			}
-		}
-
-		TypeRegistry _TypeRegistry = new TypeRegistry();
-		public TypeRegistry TypeRegistry
-		{
-			get
-			{
-				return _TypeRegistry;
-			}
-		}
-
-		public void PushScope(IScope src)
-		{
-			InvocationFrame frame = TopFrame;
-			if (frame == null)
-				throw new Exception("Can't push scope; no top frame.");
-			frame.PushScope(src);
-		}
-
-		public void PopScope()
-		{
-			InvocationFrame frame = TopFrame;
-			if (frame == null)
-				throw new Exception("Can't pop scope; no top frame.");
-			frame.PopScope();
-		}
-
-		public IScope CurrentScope
-		{
-			get
-			{
-				InvocationFrame frame = TopFrame;
-				if (frame == null)
-					return null;
-				return frame.CurrentScope;
-			}
-		}
-
-		ArrayList _LocationStack = new ArrayList();
-
-		public void PushLocation(BELLocation loc)
-		{
-			_LocationStack.Add(loc);
-		}
-
-		public void PopLocation()
-		{
-			if (_LocationStack.Count == 0)
-				throw new Exception("Location stack has underflowed.");
-			_LocationStack.RemoveAt(_LocationStack.Count - 1);
-		}
-
-		public BELLocation CurrentLocation
-		{
-			get
-			{
-				if (_LocationStack.Count == 0)
-					return null;
-				return (BELLocation)(_LocationStack[_LocationStack.Count - 1]);
-			}
-		}
-
-
-
-	}
+    }
 }

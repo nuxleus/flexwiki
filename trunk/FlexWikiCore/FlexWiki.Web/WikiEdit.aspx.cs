@@ -11,19 +11,20 @@
 #endregion
 
 using System;
-using System.Text;
 using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
+using System.Net.Mail;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.SessionState;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.Mail;
 using System.Web.UI.HtmlControls;
-using System.Text.RegularExpressions;
-using System.IO;
+
 using FlexWiki.Formatting;
 
 namespace FlexWiki.Web
@@ -58,7 +59,7 @@ namespace FlexWiki.Web
 		}
 		#endregion
 
-		string PostedTopicText
+		private string PostedTopicText
 		{
 			get
 			{
@@ -81,12 +82,12 @@ namespace FlexWiki.Web
 			}
 		}
 
-		void ProcessPost()
+		private void ProcessPost()
 		{
 			ProcessSave(true);
 		}
 
-		bool IsConflictingChange
+		private bool IsConflictingChange
 		{
 			get
 			{
@@ -97,45 +98,44 @@ namespace FlexWiki.Web
 					return false;	// it's probably new
 				DateTime currentStamp;
         
-				return TheFederation.TopicExists(TheTopic) && 
-					!(currentStamp = TheFederation.GetTopicModificationTime(TheTopic)).ToString("s").Equals(lastEdit);
+				return Federation.TopicExists(TheTopic) && 
+					!(currentStamp = Federation.GetTopicModificationTime(TheTopic)).ToString("s").Equals(lastEdit);
 			}
 		}
 
-		void LogBannedAttempt()
+		private void LogBannedAttempt()
 		{
-			string to = System.Configuration.ConfigurationSettings.AppSettings["SendBanNotificationsToMailAddress"];
+			string to = System.Configuration.ConfigurationManager.AppSettings["SendBanNotificationsToMailAddress"];
 			if (to == null || to == "")
 				return;
 
-			HTMLStringWriter w = new HTMLStringWriter();
+			HtmlStringWriter w = new HtmlStringWriter();
 			w.WritePara(String.Format("{0} attempted to post a change with banned content to the topic {1} on the FlexWiki site at {2}.", 
-				HTMLStringWriter.Escape(VisitorIdentityString), HTMLStringWriter.Escape(TheTopic.Fullname), HTMLStringWriter.Escape((Request.Url.Host))));
+				HtmlStringWriter.Escape(VisitorIdentityString), HtmlStringWriter.Escape(TheTopic.QualifiedName), HtmlStringWriter.Escape((Request.Url.Host))));
 			w.WritePara("Banned content includes:");
 			w.WriteStartUnorderedList();
 			string proposed = PostedTopicText;
-			foreach (string each in TheFederation.BlacklistedExternalLinkPrefixes)
+			foreach (string each in Federation.BlacklistedExternalLinkPrefixes)
 			{
 				if (proposed.ToUpper().IndexOf(each.ToUpper()) >= 0)
-					w.WriteListItem(HTMLStringWriter.Escape(each));
+					w.WriteListItem(HtmlStringWriter.Escape(each));
 			}
 			w.WriteEndUnorderedList();
 
-			MailMessage msg = new MailMessage();
-			msg.To = to;
-			msg.From = "noreply_spam_report@" + Request.Url.Host;
+      string from = "noreply_spam_report@" + Request.Url.Host;
+      MailMessage msg = new MailMessage(from, to);
 			msg.Subject = "Banned content post attempt from " + VisitorIdentityString;
-			msg.BodyFormat = MailFormat.Html;
+			msg.IsBodyHtml = true;
 			msg.Body = w.ToString();
 			SendMail(msg);
 		}
 
-		bool IsBanned
+		private bool IsBanned
 		{
 			get
 			{
 				string proposed = PostedTopicText;
-				foreach (string each in TheFederation.BlacklistedExternalLinkPrefixes)
+				foreach (string each in Federation.BlacklistedExternalLinkPrefixes)
 				{
 					if (proposed.ToUpper().IndexOf(each.ToUpper()) >= 0)
 						return true;
@@ -146,41 +146,41 @@ namespace FlexWiki.Web
 
 		protected void ProcessSave(bool back)
 		{
-			AbsoluteTopicName returnTo = null;
+			NamespaceQualifiedTopicVersionKey returnTo = null;
 
 			//Check Null edits
 			string oldContent = string.Empty;
-			if (TheFederation.TopicExists(TheTopic))
-				oldContent = TheFederation.Read(TheTopic);
+			if (Federation.TopicExists(TheTopic))
+				oldContent = Federation.Read(TheTopic);
 
 			if (string.Compare(oldContent, PostedTopicText)!=0)
 			{
 				bool isDelete = Regex.IsMatch(PostedTopicText, "^delete$", RegexOptions.IgnoreCase);
 				LogEvent ev;
-				LogEvent.LogEventType evType = isDelete ? LogEvent.LogEventType.DeleteTopic : LogEvent.LogEventType.WriteTopic;
-				ev = TheFederation.LogEventFactory.CreateAndStartEvent(Request.UserHostAddress, VisitorIdentityString, TheTopic.ToString(), evType);
+				LogEventType evType = isDelete ? LogEventType.DeleteTopic : LogEventType.WriteTopic;
+				ev = Federation.LogEventFactory.CreateAndStartEvent(Request.UserHostAddress, VisitorIdentityString, TheTopic.ToString(), evType);
 				
 				try
 				{
-					AbsoluteTopicName newVersionName = new AbsoluteTopicName(TheTopic.Name, TheTopic.Namespace);
-					newVersionName.Version = TopicName.NewVersionStringForUser(VisitorIdentityString);
-					ContentBase cb = TheFederation.ContentBaseForNamespace(TheTopic.Namespace);
-					cb.WriteTopicAndNewVersion(newVersionName.LocalName, PostedTopicText);		
+					NamespaceQualifiedTopicVersionKey newVersionName = new NamespaceQualifiedTopicVersionKey(TheTopic.LocalName, TheTopic.Namespace);
+					newVersionName.Version = TopicVersionKey.NewVersionStringForUser(VisitorIdentityString);
+					NamespaceManager storeManager = Federation.NamespaceManagerForNamespace(TheTopic.Namespace);
+					storeManager.WriteTopicAndNewVersion(newVersionName.LocalName, PostedTopicText, VisitorIdentityString);		
 					returnTo = TheTopic;
 
 					if (isDelete)
 					{
 						returnTo = null;	// we won't be able to go back here because we're deleting it!
-						TheFederation.DeleteTopic(TheTopic);
+						Federation.DeleteTopic(TheTopic);
 					}
 
 					if (back && ReturnTopic != null)
-						returnTo = new AbsoluteTopicName(ReturnTopic);
+						returnTo = new NamespaceQualifiedTopicVersionKey(ReturnTopic);
 				}
 				finally
 				{
-					if (Federation.GetPerformanceCounter(Federation.PerformanceCounterNames.TopicWrite) != null)
-						Federation.GetPerformanceCounter(Federation.PerformanceCounterNames.TopicWrite).Increment();
+					if (Federation.GetPerformanceCounter(PerformanceCounterNames.TopicWrite) != null)
+						Federation.GetPerformanceCounter(PerformanceCounterNames.TopicWrite).Increment();
 					ev.Record();
 				}
 			}
@@ -192,8 +192,8 @@ namespace FlexWiki.Web
 
 		}
 
-		AbsoluteTopicName _TheTopic;
-		protected AbsoluteTopicName TheTopic
+		private NamespaceQualifiedTopicVersionKey _TheTopic;
+		protected NamespaceQualifiedTopicVersionKey TheTopic
 		{
 			get
 			{
@@ -204,18 +204,18 @@ namespace FlexWiki.Web
 					topic = Request.Form["Topic"];
 				else
 					topic = Request.QueryString["topic"];
-				_TheTopic = new AbsoluteTopicName(topic);
+				_TheTopic = new NamespaceQualifiedTopicVersionKey(topic);
 				return _TheTopic;
 			}
 		}
 
-		bool IsWritable
+		private bool IsWritable
 		{
 			get
 			{
-				if (!TheFederation.TopicExists(TheTopic))
+				if (!Federation.TopicExists(TheTopic))
 					return true;	// assume we can create
-				return TheFederation.IsExistingTopicWritable(TheTopic);
+				return Federation.IsExistingTopicWritable(TheTopic);
 			}
 		}
 
@@ -227,7 +227,7 @@ namespace FlexWiki.Web
 				ShowEditPage();
 		}
 
-		void ShowEditPage()
+		private void ShowEditPage()
 		{
 			Response.Write("<body class='EditBody' width='100%' height='100%' scroll='no'>");
 
@@ -238,8 +238,8 @@ namespace FlexWiki.Web
 		<div style='display: none'>
 			<form id='Form2' method='post' target='previewWindow' ACTION='Preview.aspx'>
 				<textarea id='body' name='body'></textarea>
-				<input  type='text' id='Text1' name='defaultNamespace' value ='" + TheTopic.Namespace  + @"'>
-				<input  type='text' id='Text2' name='topic' value ='" + TheTopic.Name  + @"'>
+				<input  type='text' id='Text1' name='defaultNamespace' rawValue ='" + TheTopic.Namespace  + @"'>
+				<input  type='text' id='Text2' name='topic' rawValue ='" + TheTopic.LocalName  + @"'>
 
 			</form>
 		</div>
@@ -260,26 +260,26 @@ Add your wiki text here.
 
 ";
 			string content = null;
-			if (TheFederation.TopicExists(TheTopic))
-				content = TheFederation.Read(TheTopic);
+			if (Federation.TopicExists(TheTopic))
+				content = Federation.Read(TheTopic);
 			if (IsPost && IsBanned)
 				content = PostedTopicText;		// preserve what they asked for, even though we won't let them save
 
 			#region Build up the list of templates and set the content accordingly
 			string templateSelect = string.Empty;
-			ContentBase currentContentBase = TheFederation.ContentBaseForNamespace(TheTopic.Namespace);
+			NamespaceManager currentContentBase = Federation.NamespaceManagerForNamespace(TheTopic.Namespace);
 
 			// Process the topics looking for topics beginning with '_Template'.
 			ArrayList templates = new ArrayList();
-			foreach (AbsoluteTopicName topic in currentContentBase.AllTopics(false))
+			foreach (TopicName topic in currentContentBase.AllTopics(ImportPolicy.DoNotIncludeImports))
 			{
-				if (topic.Name.StartsWith("_Template"))
+				if (topic.LocalName.StartsWith("_Template"))
 				{
 					templates.Add(topic);
 
-					if ("_templatedefault" == topic.Name.ToLower())
+					if ("_templatedefault" == topic.LocalName.ToLower())
 					{
-						defaultContent = TheFederation.Read(topic);
+						defaultContent = Federation.Read(topic);
 					}
 				}
 			}
@@ -288,10 +288,10 @@ Add your wiki text here.
 			{
 				// Build up a combo box for selecting the template.
 				StringBuilder builder = new StringBuilder("<select name=\"templateSelect\" id=\"templateSelect\">\n");
-				foreach (AbsoluteTopicName topic in templates)
+				foreach (NamespaceQualifiedTopicVersionKey topic in templates)
 				{
-					builder.Append("\t<option value=\"");
-					builder.Append(Formatter.EscapeHTML(TheFederation.Read(topic)));
+					builder.Append("\t<optionrawValuee=\"");
+					builder.Append(Formatter.EscapeHTML(Federation.Read(topic)));
 					builder.Append("\">");
 					string topicStart = "_ Template";
 					string name = topic.FormattedName;
@@ -306,10 +306,11 @@ Add your wiki text here.
 				if (null != this.Request.QueryString["template"])
 				{
 					string templateName = this.Request["template"];
-					AbsoluteTopicName topicName = new AbsoluteTopicName(templateName, currentContentBase.Namespace);
-					if ((content == null) && (true == currentContentBase.TopicExists(topicName)))
+					NamespaceQualifiedTopicVersionKey topicVersionKey = new NamespaceQualifiedTopicVersionKey(templateName, currentContentBase.Namespace);
+					if ((content == null) && (true == currentContentBase.TopicExists(topicVersionKey.LocalName, 
+                        ImportPolicy.DoNotIncludeImports)))
 					{
-						content = TheFederation.Read(topicName);
+						content = Federation.Read(topicVersionKey);
 					}
 				}
 			}
@@ -324,13 +325,13 @@ Add your wiki text here.
 			Response.Write(@"</textarea>");
 			if (IsWritable)
 			{
-				Response.Write("<input type='text' style='display:none' name='UserSuppliedName' value ='" + Formatter.EscapeHTML(UserPrefix == null ? "" : UserPrefix) + "'>");
-				if (TheFederation.TopicExists(TheTopic))
-					Response.Write("<input type='text' style='display:none' name='TopicLastWrite' value ='" + Formatter.EscapeHTML(TheFederation.GetTopicModificationTime(TheTopic).ToString("s")) + "'>");
-				Response.Write("<input type='text' style='display:none' name='Topic' value ='" + Formatter.EscapeHTML(TheTopic.ToString()) + "'>");
+				Response.Write("<input type='text' style='display:none' name='UserSuppliedName' rawValue ='" + Formatter.EscapeHTML(UserPrefix == null ? "" : UserPrefix) + "'>");
+				if (Federation.TopicExists(TheTopic))
+					Response.Write("<input type='text' style='display:none' name='TopicLastWrite' rawValue ='" + Formatter.EscapeHTML(Federation.GetTopicModificationTime(TheTopic).ToString("s")) + "'>");
+				Response.Write("<input type='text' style='display:none' name='Topic' rawValue ='" + Formatter.EscapeHTML(TheTopic.ToString()) + "'>");
 				if (ReturnTopic != null)
 				{
-					Response.Write("<input type='text' style='display:none' name='ReturnTopic' value ='" + Formatter.EscapeHTML(ReturnTopic) + "'>");
+					Response.Write("<input type='text' style='display:none' name='ReturnTopic' rawValue ='" + Formatter.EscapeHTML(ReturnTopic) + "'>");
 				}
 			}
 
@@ -345,8 +346,8 @@ Add your wiki text here.
 			OpenPane(Response.Output, "Edit&nbsp;" + BELString.MaxLengthString2(Formatter.EscapeHTML(TheTopic.ToString()), 20, "..."));
 			if (IsWritable)
 			{
-				ContentBase cb = TheFederation.ContentBaseForTopic(TheTopic);
-				if (cb.TopicExists(TheTopic))
+				NamespaceManager storeManager = Federation.NamespaceManagerForTopic(TheTopic);
+				if (storeManager.TopicExists(TheTopic.LocalName, ImportPolicy.DoNotIncludeImports))
 				{
 					Response.Write("Make your changes to the text on the left and then select Save.");
 				}
@@ -354,8 +355,8 @@ Add your wiki text here.
 				{
 					Response.Write(@"
 			<div class='CreateTopicWarning'>
-				You are about to create a new topic called <b>" + TheTopic.Name + @"</b> in the <b>" +
-						cb.FriendlyTitle + @"</b> namespace.");
+				You are about to create a new topic called <b>" + TheTopic.LocalName + @"</b> in the <b>" +
+						storeManager.FriendlyTitle + @"</b> namespace.");
 					Response.Write("<P>Please be sure you are creating this topic in the desired namespace.</p>");
 					Response.Write(@"</div>");
 				}
@@ -386,7 +387,7 @@ Add your wiki text here.
 				LogBannedAttempt();
 			}
 
-			if (TheFederation.NoFollowExternalHyperlinks)
+			if (Federation.NoFollowExternalHyperlinks)
 			{
 				OpenPane(Response.Output, "External Hyperlinks");
 				Response.Write("<img src='" + TheLinkMaker.LinkToImage("images/NoFollowNoSpam.gif") + "' align='right'>External hyperlinks will not be indexed by search engines.");
@@ -412,7 +413,7 @@ Add your wiki text here.
 					Response.Write("<a onclick=\"javascript:Swap('ShowAttribution', 'HideAttribution')\">Hide this...</a><br>");
 
 					Response.Write("You can change part of this by entering your preferred user identity here (e.g., an email address):<br>");
-					Response.Write(@"<input style='font-size: x-small' type='text' id='UserNameEntryField' value ='" +
+					Response.Write(@"<input style='font-size: x-small' type='text' id='UserNameEntryField' rawValue ='" +
 						(UserPrefix == null ? "" : Formatter.EscapeHTML(UserPrefix)) + "'>");
 					Response.Write("</div>");
 
@@ -448,8 +449,8 @@ Add your wiki text here.
 		<div id='tip_proptip'>
 			<div class='tipBody'>
 				A line that starts with a wiki word and a colon identifies a property.
-				The value of the property is everything on the line after the colon.
-				Multiline properties use PropertyName:[ and then multiple lines and then ] on a
+				The rawValue of the property is everything on the line after the colon.
+				Multiline imports use PropertyName:[ and then multiple lines and then ] on a
 				blank line to mark the end.
 			</div>
 		</div>
@@ -566,7 +567,7 @@ Add your wiki text here.
 
 		}
 
-		void WriteTip(string id, string text)
+		private void WriteTip(string id, string text)
 		{
 			Response.Write(@"<span onclick='javascript:ShowTip(""" + id + @""")'><b>" + text + "</b></span> ");
 		}

@@ -41,14 +41,14 @@ namespace PrintTopic
 				topic = args[1];
 			LinkMaker lm = new LinkMaker("http://dummy");
 
-			Federation fed = new Federation(fsPath, OutputFormat.HTML, lm);
-			fed.EnableCaching();
+            PrintTopicApplication application = new PrintTopicApplication(fsPath, lm); 
+			Federation fed = new Federation(application);
 			if (topic != null)
-				Print(fed, new AbsoluteTopicName(topic));
+				Print(fed, new TopicName(topic));
 			else
 			{
 				int max = 10;
-				foreach (AbsoluteTopicName top in fed.DefaultContentBase.AllTopics(false))
+				foreach (TopicName top in fed.DefaultNamespaceManager.AllTopics(ImportPolicy.DoNotIncludeImports))
 				{
 					Print(fed, top);
 					if (max-- <= 0)
@@ -63,9 +63,9 @@ namespace PrintTopic
 			Console.Out.WriteLine("Usage: PrintTopic [path to federation config] {[abs topic name]}");
 		}
 
-		static void Print(Federation federation, AbsoluteTopicName topic)
+		static void Print(Federation federation, TopicName topic)
 		{
-			string formattedBody = federation.GetTopicFormattedContent(topic, null);
+			string formattedBody = federation.GetTopicFormattedContent(new NamespaceQualifiedTopicVersionKey(topic), null);
 
 			// Now calculate the borders
 			string leftBorder = federation.GetTopicFormattedBorder(topic, Border.Left);

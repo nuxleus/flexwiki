@@ -55,7 +55,7 @@ namespace FlexWiki.Web
 		}
 		#endregion
 
-		static string All = "[All]";
+		private static string All = "[All]";
 
 		protected void DoSearch()
 		{
@@ -64,11 +64,11 @@ namespace FlexWiki.Web
 <div id='TopicTip' class='TopicTip' ></div>
 <fieldset><legend class='DialogTitle'>Search</legend>
 <form id='SearchForm'>
-<p>Search:<br /><input type='text'  name='search' value='" + (search == null ? "[enter regular expression]" : FlexWiki.Web.HTMLWriter.Escape(search)) + @"'>
+<p>Search:<br /><input type='text'  name='search' rawValue='" + (search == null ? "[enter regular expression]" : FlexWiki.Web.HtmlWriter.Escape(search)) + @"'>
 <input type='submit' ID=Search Value='Go' />
 </p>");
 
-			ArrayList uniqueNamespaces = new ArrayList(TheFederation.Namespaces);
+			ArrayList uniqueNamespaces = new ArrayList(Federation.Namespaces);
 			uniqueNamespaces.Sort();
 
 			string preferredNamespace = Request.QueryString["namespace"];
@@ -76,11 +76,11 @@ namespace FlexWiki.Web
 				preferredNamespace  = DefaultNamespace;
 
 			Response.Write("<p>Namespace:<br /><select name='namespace' class='SearchColumnFilterBox' id='NamespaceFilter'>");
-			Response.Write("<option value='"+ All + "'>" + All + "</option>");
+			Response.Write("<option rawValue='"+ All + "'>" + All + "</option>");
 			foreach (string ns in uniqueNamespaces)
 			{
 				string sel = (ns == preferredNamespace) ? " selected " : "";
-				Response.Write("<option " + sel + " value='"+ ns + "'>" + ns + "</option>");
+				Response.Write("<option " + sel + " rawValue='"+ ns + "'>" + ns + "</option>");
 			}
 			Response.Write(@"</select></p></form>");		
 
@@ -96,25 +96,25 @@ namespace FlexWiki.Web
 				{
 					foreach (string ns in uniqueNamespaces)
 					{
-						ContentBase cb = TheFederation.ContentBaseForNamespace(ns);
-						if (cb == null)
+						NamespaceManager storeManager = Federation.NamespaceManagerForNamespace(ns);
+						if (storeManager == null)
 							continue;
-						searchTopics[cb] = cb.AllTopics(false);
+						searchTopics[storeManager] = storeManager.AllTopics(ImportPolicy.DoNotIncludeImports);
 					}
 				}
 				else
 				{
-					ContentBase cb = TheFederation.ContentBaseForNamespace(preferredNamespace);
-					searchTopics[cb] = cb.AllTopics(false);
+					NamespaceManager storeManager = Federation.NamespaceManagerForNamespace(preferredNamespace);
+					searchTopics[storeManager] = storeManager.AllTopics(ImportPolicy.DoNotIncludeImports);
 				}
 
-				foreach (ContentBase cb in searchTopics.Keys)
+				foreach (NamespaceManager storeManager in searchTopics.Keys)
 				{
-					string ns = cb.Namespace;
+					string ns = storeManager.Namespace;
 					bool header = false;
-					foreach (AbsoluteTopicName topic in (ArrayList)(searchTopics[cb]))
+					foreach (NamespaceQualifiedTopicVersionKey topic in (ArrayList)(searchTopics[storeManager]))
 					{
-						string s = TheFederation.Read(topic);
+						string s = Federation.Read(topic);
 						string bodyWithTitle = topic.ToString() + s;
 						
 						if (Regex.IsMatch(bodyWithTitle, search, RegexOptions.IgnoreCase))
@@ -124,8 +124,8 @@ namespace FlexWiki.Web
 							header = true;
 
 							Response.Write("<div class='searchHitHead'>");
-							Response.Write(@"<a title=""" + topic.Fullname + @"""  href=""" + lm.LinkToTopic(topic) + @""">");
-							Response.Write(topic.Name);
+							Response.Write(@"<a title=""" + topic.QualifiedName + @"""  href=""" + lm.LinkToTopic(topic) + @""">");
+							Response.Write(topic.LocalName);
 							Response.Write("</a>");
 							Response.Write("</div>");
 
@@ -135,7 +135,7 @@ namespace FlexWiki.Web
 							{
 								if (Regex.IsMatch(each, search, RegexOptions.IgnoreCase))
 								{
-									Response.Write(Formatter.FormattedString(topic, each, OutputFormat.HTML, cb, TheLinkMaker, null));
+									Response.Write(Formatter.FormattedString(topic, each, OutputFormat.HTML, storeManager, TheLinkMaker));
 								}
 							}
 							Response.Write("</div>");

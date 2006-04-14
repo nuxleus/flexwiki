@@ -8,7 +8,14 @@ namespace FlexWiki
 	/// </summary>
 	public class NamespaceProviderParameterDescriptor
 	{
-		public NamespaceProviderParameterDescriptor(string id, string title, string description, string defaultValue, bool isPersistent)
+    private IList _Choices;
+    private string _DefaultValue;
+    private string _Description;
+    private string _ID;
+    private bool _IsPersistent;
+    private string _Title;
+    
+    public NamespaceProviderParameterDescriptor(string id, string title, string description, string defaultValue, bool isPersistent)
 		{
 			_ID = id;
 			_Title = title;
@@ -17,7 +24,6 @@ namespace FlexWiki
 			_IsPersistent = isPersistent;
 		}
 
-		bool _IsPersistent;
 		public bool IsPersistent
 		{
 			get
@@ -27,7 +33,6 @@ namespace FlexWiki
 		}
 
 
-		string _ID;
 		public string ID
 		{
 			get
@@ -36,7 +41,6 @@ namespace FlexWiki
 			}
 		}
 
-		string _Title;
 		public string Title
 		{
 			get
@@ -45,7 +49,6 @@ namespace FlexWiki
 			}
 		}
 
-		string _Description;
 		public string Description
 		{
 			get
@@ -54,7 +57,6 @@ namespace FlexWiki
 			}
 		}
 
-		string _DefaultValue;
 		public string DefaultValue
 		{
 			get
@@ -63,7 +65,6 @@ namespace FlexWiki
 			}
 		}
 
-		IList _Choices;
 		public IList Choices
 		{
 			get

@@ -20,12 +20,14 @@ namespace FlexWiki
 	/// </summary>
 	public class WithScope : IScope
 	{
-		public WithScope(IScope ContainingScope)
+    private IScope _ContainingScope;
+    private ArrayList _With = new ArrayList();
+    
+    public WithScope(IScope ContainingScope)
 		{
 			_ContainingScope = ContainingScope;
 		}
 
-		IScope _ContainingScope;
 		public IScope ContainingScope
 		{
 			get
@@ -34,7 +36,6 @@ namespace FlexWiki
 			}
 		}
 
-		ArrayList _With = new ArrayList();
 
 		public IBELObject ValueOf(string symbol, ArrayList args, ExecutionContext ctx)
 		{

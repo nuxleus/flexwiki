@@ -82,7 +82,7 @@ namespace FlexWiki.Web.Admin
 			
 			foreach (StringBuilder b in TheNewsletterDaemon.Results)
 			{
-				Response.Write("<div style='margin: .25in; border 1px solid blue'>" + HTMLWriter.Escape(b.ToString(), true) + "</div>");
+				Response.Write("<div style='margin: .25in; border 1px solid blue'>" + HtmlWriter.Escape(b.ToString(), true) + "</div>");
 			}
 
 		}

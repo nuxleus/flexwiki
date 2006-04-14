@@ -40,7 +40,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Determine whether this object is equal to another object")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Determine whether this object is equal to another object")]
 		public override bool Equals(object obj)
 		{
 			if (!(obj is Type))
@@ -58,7 +58,7 @@ namespace FlexWiki
 
 		BELType _InstanceType;
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "For MetaTypes, answer the Type for instances")]		
+		[ExposedMethod(ExposedMethodFlags.Default, "For MetaTypes, answer the Type for instances")]		
 		public BELType InstanceType
 		{
 			get
@@ -71,7 +71,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer true if this is a MetaType")]		
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer true if this is a MetaType")]		
 		public bool IsMetaType
 		{
 			get
@@ -85,7 +85,7 @@ namespace FlexWiki
 			return new WikiSequence(Name);
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer how many super-types live above this type in the inheritance hierarchy")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer how many super-types live above this type in the inheritance hierarchy")]
 		public int InheritDepth
 		{
 			get
@@ -101,7 +101,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a description of this type")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer a description of this type")]
 		public string Description
 		{
 			get
@@ -111,7 +111,7 @@ namespace FlexWiki
 		}
 
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the base type that this type is 'based' on; null for none")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the base type that this type is 'based' on; null for none")]
 		public BELType BaseType
 		{
 			get
@@ -122,7 +122,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the name of this type")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the name of this type")]
 		public string Name
 		{
 			get
@@ -140,7 +140,7 @@ namespace FlexWiki
 		}
 
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer an Array of all of the Members of this type (including inherited ones)")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer an Array of all of the Members of this type (including inherited ones)")]
 		public ArrayList AllMembers
 		{
 			get
@@ -152,7 +152,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer an Array of all of the Members of this type (not including inherited ones)")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer an Array of all of the Members of this type (not including inherited ones)")]
 		public ArrayList Members
 		{
 			get
@@ -179,7 +179,7 @@ namespace FlexWiki
 		}
 
 		BELType _MetaType;
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the meta-Type of this Type")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the meta-Type of this Type")]
 		public override BELType Type
 		{
 			get
@@ -302,7 +302,7 @@ namespace FlexWiki
 			return null;
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the type given a name.")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the type given a name.")]
 		public BELType TypeForName(string typeName)
 		{
 			return (BELType)(new TypeRegistry().Registry[typeName]);

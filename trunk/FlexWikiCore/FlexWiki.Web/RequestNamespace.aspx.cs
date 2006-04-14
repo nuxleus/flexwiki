@@ -16,18 +16,19 @@ using System.ComponentModel;
 using System.Configuration;
 using System.Data;
 using System.Drawing;
+using System.IO;
+using System.Net.Mail;
 using System.Web;
 using System.Web.SessionState;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
+
 using FlexWiki;
-using System.IO;
 using FlexWiki.Web;
-using System.Web.Mail;
 
 
-namespace FlexWiki.Web.Admin
+namespace FlexWiki.Web
 {
 	/// <summary>
 	/// Summary description for Admin.
@@ -101,7 +102,7 @@ namespace FlexWiki.Web.Admin
 				return "Namespace must be specified";
 			if (values.Title == null || values.Title == "")
 				return "Title must be specified";
-			if (TheFederation.ContentBaseForNamespace(values.Namespace) != null)
+			if (Federation.NamespaceManagerForNamespace(values.Namespace) != null)
 				return "The namespace you selected already exists.  Please select another name.";
 			if (values.Description == null || values.Description == "")
 				return "Description must be specified";
@@ -117,7 +118,7 @@ namespace FlexWiki.Web.Admin
 
 		string AddressToSendMailFrom(string contact)
 		{
-			string pref = (string)(ConfigurationSettings.AppSettings["SendNamespaceRequestMailFrom"]);
+			string pref = (string)(ConfigurationManager.AppSettings["SendNamespaceRequestMailFrom"]);
 			if (pref == null || pref == "")
 			{
 				return contact;
@@ -130,9 +131,10 @@ namespace FlexWiki.Web.Admin
 
 		void DoCreate(FormValues values)
 		{
-			MailMessage msg = new MailMessage();
-			string adminMail = SendRequestsTo;
-			Uri uri = Request.Url;
+      string adminMail = SendRequestsTo;
+      MailMessage msg = new MailMessage(AddressToSendMailFrom(values.Contact), adminMail);
+      msg.IsBodyHtml = true;
+      Uri uri = Request.Url;
 			UriBuilder b = new UriBuilder(uri.Scheme, uri.Host, uri.Port, "/admin/EditProvider.aspx", 
 				"?Contact=" +  HttpUtility.UrlEncode(values.Contact) + 
 				"&Namespace=" +  HttpUtility.UrlEncode(values.Namespace) + 
@@ -140,9 +142,6 @@ namespace FlexWiki.Web.Admin
 				"&Description=" +  HttpUtility.UrlEncode(values.Description));
 			string link = b.ToString();
 
-			msg.To = adminMail;
-			msg.BodyFormat = MailFormat.Html;
-			msg.From = AddressToSendMailFrom(values.Contact);
 			msg.Subject = "FlexWiki namespace request - " + values.Namespace;
 			msg.Body = @"<p>You have received a request to create a FlexWiki namespace.
 
@@ -164,12 +163,9 @@ namespace FlexWiki.Web.Admin
 			}
 
 			// Also send confirmation mail
-			MailMessage msg2 = new MailMessage();
-
-			msg2.To = values.Contact;
-			msg2.From = AddressToSendMailFrom(values.Contact);
+			MailMessage msg2 = new MailMessage(AddressToSendMailFrom(values.Contact), values.Contact);
 			msg2.Subject = "FlexWiki namespace request - " + values.Namespace;
-			msg2.BodyFormat = MailFormat.Html;
+			msg2.IsBodyHtml = true;
 			msg2.Body = @"<p>This message is confirmation of your request to create a FlexWiki namespace.  
 
 <p><b>Contact:</b> " + values.Contact + @"<br />
@@ -213,13 +209,6 @@ namespace FlexWiki.Web.Admin
 			return answer;
 		}
 		
-		class FormValues
-		{
-			public string Namespace;
-			public string Contact;
-			public string Title;
-			public string Description;
-		}
 
 		void WriteForm(FormValues values)
 		{
@@ -231,14 +220,14 @@ namespace FlexWiki.Web.Admin
 			WriteTextAreaField("description", "Description", "A description for the namespace (can use Wiki formatting)", values.Description);
 			WriteInputField("contact", "Contact", "Specify a contact for this namespace (a valid email address)", values.Contact);
 			EndFields();
-			Response.Write("<input  type='submit'  name='OK' value ='Submit Request'>");
+			Response.Write("<input  type='submit'  name='OK' rawValue ='Submit Request'>");
 			Response.Write("</form>");
 		}
 
 		void WriteInputField(string fieldName, string fieldLabel, string help, string value)
 		{	
 			WriteFieldHTML(fieldLabel, help, 
-				"<input type='text' size='50' value='" + EscapeHTML(value) + "' name='" + fieldName + "'>");
+				"<input type='text' size='50' rawValue='" + EscapeHTML(value) + "' name='" + fieldName + "'>");
 		}
 
 		void WriteTextAreaField(string fieldName, string fieldLabel, string help, string value)

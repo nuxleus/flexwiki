@@ -1,4 +1,4 @@
-<%@ Page language="c#" Codebehind="RequestNamespace.aspx.cs" AutoEventWireup="false" Inherits="FlexWiki.Web.Admin.RequestNamespace" %>
+<%@ Page language="c#" Codebehind="RequestNamespace.aspx.cs" AutoEventWireup="false" Inherits="FlexWiki.Web.RequestNamespace" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HTML>
 	<HEAD>

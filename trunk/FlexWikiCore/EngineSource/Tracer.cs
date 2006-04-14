@@ -22,19 +22,19 @@ namespace FlexWiki
 	/// </summary>
 	public class Tracer 
 	{
-		static StringBuilder _History;
+		private static StringBuilder _History;
 
 		public Tracer()
 		{
 			Clear();
 		}
 
-		static public void Clear()
+		public static void Clear()
 		{
 			_History = new StringBuilder();
 		}
 
-		static public StringBuilder AppendFormat(
+		public static StringBuilder AppendFormat(
 			string format,
 			object arg0
 			)
@@ -42,7 +42,7 @@ namespace FlexWiki
 			return _History.AppendFormat(format, arg0);
 		}
 
-		static public StringBuilder AppendFormat(
+		public static StringBuilder AppendFormat(
 			string format,
 			params object[] args
 			)
@@ -50,7 +50,7 @@ namespace FlexWiki
 			return _History.AppendFormat(format, args);
 		}
 
-		static public StringBuilder AppendFormat(
+		public static StringBuilder AppendFormat(
 			string format,
 			object arg0,
 			object arg1
@@ -59,7 +59,7 @@ namespace FlexWiki
 			return _History.AppendFormat(format, arg0, arg1);
 		}
 
-		static public StringBuilder AppendFormat(
+		public static StringBuilder AppendFormat(
 			string format,
 			object arg0,
 			object arg1,
@@ -69,7 +69,7 @@ namespace FlexWiki
 			return _History.AppendFormat(format, arg0, arg1, arg2);
 		}
 
-		static public StringBuilder Append(
+		public static StringBuilder Append(
 			string value
 			)
 		{

@@ -14,22 +14,6 @@ using System;
 
 namespace FlexWiki
 {
-	[Flags]
-	public enum ExposedMethodFlags
-	{
-		CachePolicyNever = 0,
-		CachePolicyNone = 1,
-		CachePolicyForever = 2,
-		CachePolicyComplex = 3,
-		/// <summary>
-		/// true if the object is willing to be fully responsible for evaluating all arguments directly as ParseTreeNodes
-		/// </summary>
-		IsCustomArgumentProcessor = 4,
-		AllowsVariableArguments = 8,
-		NeedContext = 16,
-
-		Default = 0
-	}
 
 	/// <summary>
 	/// 

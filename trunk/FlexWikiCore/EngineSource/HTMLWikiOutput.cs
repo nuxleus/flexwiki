@@ -232,33 +232,37 @@ Write(@"
 			Write("<div " + css() + ">" + Formatter.EscapeHTML(each)  + "</div>");
 		}
 
-		override public void WriteOpenTable(TableCellInfo.AlignOption alignment, bool hasBorder, int width)
+		override public void WriteOpenTable(AlignOption alignment, bool hasBorder, int width)
 		{
 			string styles = "";
 			Write("<table ");
 			switch (alignment)
 			{
-				case TableCellInfo.AlignOption.None:
+				case AlignOption.None:
 					break;
 
-				case TableCellInfo.AlignOption.Left:
+				case AlignOption.Left:
 					styles += ";margin-left: 0; float: left ";
 					Write(" align=\"left\" ");
 					break;
 
-				case TableCellInfo.AlignOption.Right:
+				case AlignOption.Right:
 					styles += ";margin-left: 0; float: right";
 					break;
 
-				case TableCellInfo.AlignOption.Center:
+				case AlignOption.Center:
 					Write(" align=\"center\" ");
 					break;
 			}
-			if (width > 0)
-				Write(" width=\"" + width + "%\" ");
+      if (width > 0)
+      {
+        Write(" width=\"" + width + "%\" ");
+      }
 			string cls = "TableClass";
-			if (!hasBorder)
-				cls = "TableWithoutBorderClass";
+      if (!hasBorder)
+      {
+        cls = "TableWithoutBorderClass";
+      }
 			WriteLine("cellpadding=\"2\" cellspacing=\"1\" class=\"" + cls + "\"" + css(styles) + ">");
 		}
 
@@ -338,7 +342,7 @@ Write(@"
 		}
 
 
-		override public void WriteTableCell(string s,  bool isHighlighted, TableCellInfo.AlignOption alignment, int colSpan, int rowSpan, bool hasBorder, bool allowBreaks, int width, string bgColor)
+		override public void WriteTableCell(string s,  bool isHighlighted, AlignOption alignment, int colSpan, int rowSpan, bool hasBorder, bool allowBreaks, int width, string bgColor)
 		{
 			Write("<td  ");
 			if (isHighlighted)
@@ -359,33 +363,41 @@ Write(@"
 			if (bgColor != null)
 				Write(" style=\" background: " + Formatter.EscapeHTML(bgColor) + "\" ");
 
-			if (!allowBreaks)
-				Write(" nowrap ");
-			if (width > 0)
-				Write(" width=\"" + width + "%\" ");
+      if (!allowBreaks)
+      {
+        Write(" nowrap ");
+      }
+      if (width > 0)
+      {
+        Write(" width=\"" + width + "%\" ");
+      }
 
 			switch (alignment)
 			{
-				case TableCellInfo.AlignOption.None:
+				case AlignOption.None:
 					break;
 
-				case TableCellInfo.AlignOption.Left:
+				case AlignOption.Left:
 					Write(" align=\"left\" ");
 					break;
 
-				case TableCellInfo.AlignOption.Right:
+				case AlignOption.Right:
 					Write(" align=\"right\" ");
 					break;
 
-				case TableCellInfo.AlignOption.Center:
+				case AlignOption.Center:
 					Write(" align=\"center\" ");
 					break;
 			}
 
-			if (colSpan != 1)
-				Write(" colspan=\"" + colSpan + "\" ");
-			if (rowSpan != 1)
-				Write(" rowspan=\"" + rowSpan + "\" ");
+      if (colSpan != 1)
+      {
+        Write(" colspan=\"" + colSpan + "\" ");
+      }
+      if (rowSpan != 1)
+      {
+        Write(" rowspan=\"" + rowSpan + "\" ");
+      }
 				
 			WriteLine(css() + ">" + s + "</td>");
 		}
@@ -497,12 +509,12 @@ Write(@"
 
 		override public void FormSubmitButton(string FieldName, string label, string attributes)
 		{
-			Write("<input type=\"submit\" name=\"" + FieldName + "\"" + GetAttributeString(attributes) + " value=\"" + Formatter.EscapeHTML(label) + "\" />");
+			Write("<input type=\"submit\" name=\"" + FieldName + "\"" + GetAttributeString(attributes) + " rawValue=\"" + Formatter.EscapeHTML(label) + "\" />");
 		}
 
 		override public void FormResetButton(string FieldName, string label, string attributes)
 		{
-			Write("<input type=\"reset\" name=\"" + FieldName + "\"" + GetAttributeString(attributes) + " value=\"" + Formatter.EscapeHTML(label) + "\" />");
+			Write("<input type=\"reset\" name=\"" + FieldName + "\"" + GetAttributeString(attributes) + " rawValue=\"" + Formatter.EscapeHTML(label) + "\" />");
 		}
 
 		override public void FormInputBox(string FieldName, string fieldValue, int fieldLength, string attributes)
@@ -510,7 +522,7 @@ Write(@"
 			Write("<input type=\"text\" name=\"" + FieldName + "\" id=\"" + FieldName + "\"");
 			Write((fieldLength>0)?" size=\"" + fieldLength.ToString() + "\"":string.Empty);
 			Write(GetAttributeString(attributes));
-			Write(" value=\"" + Formatter.EscapeHTML(fieldValue) + "\" />");
+			Write(" rawValue=\"" + Formatter.EscapeHTML(fieldValue) + "\" />");
 		}
 
 		override public void FormTextarea(string FieldName, string fieldValue, int rows, int cols, string attributes)
@@ -527,22 +539,22 @@ Write(@"
 
 		override public void FormCheckbox(string fieldName, string fieldValue, bool isChecked, string attributes)
 		{
-			Write("<input type=\"checkbox\" name=\"" + fieldName + "\" value=\"" + Formatter.EscapeHTML(fieldValue) + "\"" + GetAttributeString(attributes) + ((isChecked)?" checked=\"true\"" : string.Empty) + "/>");
+			Write("<input type=\"checkbox\" name=\"" + fieldName + "\"rawValuee=\"" + Formatter.EscapeHTML(fieldValue) + "\"" + GetAttributeString(attributes) + ((isChecked)?" checked=\"true\"" : string.Empty) + "/>");
 		}
 		override public void FormRadio(string fieldName, string fieldValue, bool isChecked, string attributes)
 		{
-			Write("<input type=\"radio\" name=\"" + fieldName + "\" value=\"" + Formatter.EscapeHTML(fieldValue) + "\"" + GetAttributeString(attributes) + ((isChecked)?" checked=\"true\" " : string.Empty) + "/>");
+			Write("<input type=\"radio\" name=\"" + fieldName + "\"rawValuee=\"" + Formatter.EscapeHTML(fieldValue) + "\"" + GetAttributeString(attributes) + ((isChecked)?" checked=\"true\" " : string.Empty) + "/>");
 		}
 		
 		override public void FormHiddenField(string FieldName, string fieldValue, string attributes)
 		{
-			Write("<input style=\"display: none\" type=\"text\" name=\"" + FieldName + "\" value=\"" + Formatter.EscapeHTML(fieldValue) + "\"" + GetAttributeString(attributes) + " />");
+			Write("<input style=\"display: none\" type=\"text\" name=\"" + FieldName + "\"rawValuee=\"" + Formatter.EscapeHTML(fieldValue) + "\"" + GetAttributeString(attributes) + " />");
 		}
 
 		public override void FormSelectField(string fieldName, int size, bool multiple, ArrayList options, string selectedOption, ArrayList values, object selectedValue, string attributes)
 		{
 			StringBuilder stringBuilder = new StringBuilder();
-			// Start the select field.
+			// Start the select propertyName.
 			stringBuilder.Append(string.Format("<select name=\"{0}\" id=\"{0}\" size=\"{1}\"", fieldName, size));
 			// Add the multiple attribute if required.
 			if (true == multiple)
@@ -556,7 +568,7 @@ Write(@"
 			{
 				for (int i = 0; i < options.Count; i++)
 				{
-					stringBuilder.Append(string.Format("<option value=\"{0}\"",
+					stringBuilder.Append(string.Format("<option rawValue=\"{0}\"",
 						values[i].ToString()));
 					if ((null != selectedValue) && (selectedValue.ToString().Length > 0) && (selectedValue.ToString() == values[i].ToString()))
 					{

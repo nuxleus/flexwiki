@@ -17,13 +17,13 @@ using System.Text;
 namespace FlexWiki.Web
 {
 	/// <summary>
-	/// Summary description for HTMLStringWriter.
+	/// Summary description for HtmlStringWriter.
 	/// </summary>
-	public class HTMLStringWriter : HTMLWriter
+	public class HtmlStringWriter : HtmlWriter
 	{
 		StringBuilder _Builder = new StringBuilder();
 
-		public HTMLStringWriter()
+		public HtmlStringWriter()
 		{
 		}
 

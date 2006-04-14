@@ -14,38 +14,38 @@ using System;
 
 namespace FlexWiki
 {
-	/// <summary>
-	/// Summary description for TopicIsAmbiguousException.
-	/// </summary>
-	public class TopicIsAmbiguousException : ApplicationException
-	{
-		public TopicIsAmbiguousException() : base()
-		{
-		}
-		public TopicIsAmbiguousException(string message) : base(message)
-		{
-		}
+    public class TopicIsAmbiguousException : ApplicationException
+    {
+        private TopicVersionKey _topic;
 
-		TopicName _Topic;
+        public TopicIsAmbiguousException()
+            : base()
+        {
+        }
+        public TopicIsAmbiguousException(string message)
+            : base(message)
+        {
+        }
 
-		public TopicName Topic
-		{
-			get
-			{
-				return _Topic;
-			}
-			set
-			{
-				_Topic = value;
-			}
-		}
 
-		public static TopicIsAmbiguousException ForTopic(TopicName topic)
-		{
-			TopicIsAmbiguousException answer = new TopicIsAmbiguousException("Topic is ambiguous: " + topic.ToString());
-			answer.Topic = topic;
-			return answer;
-		}
+        public TopicVersionKey Topic
+        {
+            get
+            {
+                return _topic;
+            }
+            set
+            {
+                _topic = value;
+            }
+        }
 
-	}
+        public static TopicIsAmbiguousException ForTopic(TopicVersionKey topic)
+        {
+            TopicIsAmbiguousException answer = new TopicIsAmbiguousException("Topic is ambiguous: " + topic.ToString());
+            answer.Topic = topic;
+            return answer;
+        }
+
+    }
 }

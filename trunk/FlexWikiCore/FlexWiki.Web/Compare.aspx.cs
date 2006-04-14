@@ -31,13 +31,13 @@ namespace FlexWiki.Web
 	{
 
 		private LogEvent		  _mainEvent	  = null;
-		private AbsoluteTopicName _requestedTopic = null;
+		private NamespaceQualifiedTopicVersionKey _requestedTopic = null;
 
 		private string _topicString	 = string.Empty;
 		private int _diff		 = 0;
 		private int _oldid		 = 0;
 
-		protected AbsoluteTopicName RequestedTopic
+		protected NamespaceQualifiedTopicVersionKey RequestedTopic
 		{
 			get 
 			{ 
@@ -82,7 +82,7 @@ namespace FlexWiki.Web
 
 			try
 			{
-				_requestedTopic = new AbsoluteTopicName(_topicString);
+				_requestedTopic = new NamespaceQualifiedTopicVersionKey(_topicString);
 			}
 			catch {}
 
@@ -94,22 +94,22 @@ namespace FlexWiki.Web
 
 		protected string GetTitle()
 		{
-			string title = TheFederation.GetTopicProperty(RequestedTopic, "Title");
+			string title = Federation.GetTopicPropertyValue(RequestedTopic, "Title");
 			if (title == null || title == "")
 			{
-				title = string.Format("{0} - {1}", GetTopicName().FormattedName, GetTopicName().Namespace);
+				title = string.Format("{0} - {1}", GetTopicVersionKey().FormattedName, GetTopicVersionKey().Namespace);
 			}
-			return HTMLStringWriter.Escape(title);
+			return HtmlStringWriter.Escape(title);
 		}
 		
 		protected void StartPage()
 		{
-			if (Federation.GetPerformanceCounter(Federation.PerformanceCounterNames.TopicsCompared) != null)
+			if (Federation.GetPerformanceCounter(PerformanceCounterNames.TopicsCompared) != null)
 			{
-				Federation.GetPerformanceCounter(Federation.PerformanceCounterNames.TopicsCompared).Increment();
+				Federation.GetPerformanceCounter(PerformanceCounterNames.TopicsCompared).Increment();
 			}
 
-			_mainEvent = TheFederation.LogEventFactory.CreateAndStartEvent(Request.UserHostAddress, VisitorIdentityString, RequestedTopic.Name, LogEvent.LogEventType.CompareTopic);
+			_mainEvent = Federation.LogEventFactory.CreateAndStartEvent(Request.UserHostAddress, VisitorIdentityString, RequestedTopic.LocalName, LogEventType.CompareTopic);
 			VisitorEvent e = new VisitorEvent(RequestedTopic, VisitorEvent.Compare, DateTime.Now);
 			LogVisitorEvent(e);
 		}
@@ -121,19 +121,19 @@ namespace FlexWiki.Web
 
 		protected void DoPage()
 		{
-			AbsoluteTopicName newestTopicVersion = null;
-			AbsoluteTopicName oldTopicVersion	 = null;
+			NamespaceQualifiedTopicVersionKey newestTopicVersion = null;
+			NamespaceQualifiedTopicVersionKey oldTopicVersion	 = null;
 			int counter = 0;
-			IEnumerable changeList = TheFederation.GetTopicChanges(RequestedTopic);
+			IEnumerable changeList = Federation.GetTopicChanges(RequestedTopic.AsNamespaceQualifiedTopicName());
 			foreach (TopicChange change in changeList)
 			{
 				if (counter == _diff)
 				{
-					newestTopicVersion = new AbsoluteTopicName(change.Fullname);
+					newestTopicVersion = new NamespaceQualifiedTopicVersionKey(change.Fullname);
 				}
 				else if (counter == _oldid)
 				{
-					oldTopicVersion = new AbsoluteTopicName(change.Fullname);
+					oldTopicVersion = new NamespaceQualifiedTopicVersionKey(change.Fullname);
 					break;
 				}
 				counter++;
@@ -205,7 +205,7 @@ function TopicBarClick(event)
 	tbi.top = DynamicTopicBar.top;
 	tbi.width = staticWide;
 	tbi.height = staticHigh;
-	tbi.value = '';
+	tbi.rawValue = '';
 	tbi.focus();
 	tbi.select();
 }
@@ -231,7 +231,7 @@ function tbinput()
 </div>
 </form>
 ");
-				string formattedBody = TheFederation.GetTopicFormattedContent(newestTopicVersion, oldTopicVersion);
+				string formattedBody = Federation.GetTopicFormattedContent(newestTopicVersion, oldTopicVersion);
 				Response.Write(formattedBody);
 				Response.Write("</div>");
 

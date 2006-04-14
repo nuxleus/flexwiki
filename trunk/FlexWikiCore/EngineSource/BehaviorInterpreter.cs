@@ -16,8 +16,9 @@ using System.Collections.Specialized;
 using System.Text.RegularExpressions;
 using System.IO;
 using System.Text;
-using FlexWiki;
 
+using FlexWiki;
+using FlexWiki.Collections; 
 
 namespace FlexWiki.Formatting
 {
@@ -26,21 +27,15 @@ namespace FlexWiki.Formatting
 	/// </summary>
 	public class BehaviorInterpreter
 	{
-		string _Input = null;
-		IPresentation _Value = null;
-
-		enum InterpreterState
-		{
-			ReadyToParse,
-			ParseSuccess,
-			ParseFailure,
-			EvaluationSuccess,
-			EvaluationFailure
-		};
-
-		InterpreterState _State;
+    private ICollection	_CacheRules = new ArrayList();
+    private Federation _Federation;
+    private string _Input = null;
+    private IWikiToPresentation _Presenter;
+    private InterpreterState _State;
+    private IPresentation _Value = null;
+    private int _WikiTalkVersion = 1;	
 		
-		InterpreterState State
+		private InterpreterState State
 		{
 			get
 			{
@@ -52,7 +47,7 @@ namespace FlexWiki.Formatting
 			}
 		}
 
-		string Input
+		private string Input
 		{
 			get
 			{
@@ -64,7 +59,7 @@ namespace FlexWiki.Formatting
 			}
 		}
 
-		string _ErrorString;
+		private string _ErrorString;
 		public string ErrorString
 		{
 			get
@@ -77,16 +72,14 @@ namespace FlexWiki.Formatting
 			}
 		}
 
-		Federation _TheFederation;
-		Federation TheFederation
+		private Federation Federation
 		{
 			get
 			{
-				return _TheFederation;
+				return _Federation;
 			}
 		}
 
-		IWikiToPresentation _Presenter;
 		public IWikiToPresentation Presenter
 		{
 			get
@@ -103,7 +96,7 @@ namespace FlexWiki.Formatting
 
 		public BehaviorInterpreter(string contextString, string input, Federation aFed, int wikiTalkVersion, IWikiToPresentation presenter)
 		{
-			_TheFederation = aFed;
+			_Federation = aFed;
 			_ContextString = contextString == null ? "(unknown location)" : contextString;
 			WikiTalkVersion = wikiTalkVersion;
 			Presenter = presenter;
@@ -112,7 +105,6 @@ namespace FlexWiki.Formatting
 			State = InterpreterState.ReadyToParse;
 		}
 
-		public int _WikiTalkVersion = 1;	
 		public int WikiTalkVersion
 		{
 			get
@@ -126,7 +118,6 @@ namespace FlexWiki.Formatting
 		}
 
 		public ExposableParseTreeNode ParseTree;
-
 		/// <summary>
 		/// Parse
 		/// </summary>
@@ -158,7 +149,6 @@ namespace FlexWiki.Formatting
 			return true;
 		}
 
-		ICollection	_CacheRules = new ArrayList();
 		public ICollection CacheRules
 		{
 			get
@@ -171,7 +161,7 @@ namespace FlexWiki.Formatting
 		/// Evaluate and translate into a presentation
 		/// </summary>
 		/// <returns>true if success, false if failure</returns>
-		public bool EvaluateToPresentation(TopicContext topicContext, Hashtable externalWikimap)
+		public bool EvaluateToPresentation(TopicContext topicContext, ExternalReferencesMap externalWikimap)
 		{
 			IBELObject evaluated = EvaluateToObject(topicContext, externalWikimap);
 			if (evaluated == null)
@@ -182,7 +172,7 @@ namespace FlexWiki.Formatting
 			return true;
 		}
 
-		public IBELObject EvaluateToObject(TopicContext topicContext,  Hashtable externalWikimap)
+		public IBELObject EvaluateToObject(TopicContext topicContext,  ExternalReferencesMap externalWikimap)
 		{
 			_CacheRules = new ArrayList();
 			if (ParseTree == null)
@@ -201,44 +191,47 @@ namespace FlexWiki.Formatting
 
 				ctx.Presenter = Presenter;
 
-				TopicInfo topic = topicContext != null ? topicContext.CurrentTopic : null;
-				if (topic != null && topic.Fullname != null)
+				TopicVersionInfo topic = topicContext != null ? topicContext.CurrentTopic : null;
+				if (topic != null && topic.TopicVersionKey != null)
 				{
-					// Locate any topics via the NamespaceWith property to see if there's anybody else we should import (for all topics in the namespace)
-					ArrayList nswith = topicContext.CurrentFederation.GetTopicInfo(ctx, topicContext.CurrentTopic.ContentBase.DefinitionTopicName.Fullname).GetListProperty("NamespaceWith");
+					// Locate any topics via the NamespaceWith propertyName to see 
+                    // if there's anybody else we should import (for all topics in the namespace)
+					ArrayList nswith = topicContext.CurrentFederation.GetTopicInfo(ctx, 
+                        topicContext.CurrentTopic.NamespaceManager.DefinitionTopic.QualifiedName).GetListProperty("NamespaceWith");
 					if (nswith != null)
 					{
 						nswith.Reverse();
 						foreach (string top in nswith)
 						{
-							AbsoluteTopicName abs = topic.ContentBase.UnambiguousTopicNameFor(new RelativeTopicName(top));
+							NamespaceQualifiedTopicVersionKey abs = Federation.UnambiguousTopicNameFor(new RelativeTopicVersionKey(top), 
+                                topic.NamespaceManager.Namespace);
 							if (abs == null)
 							{
-								throw new Exception("No such topic: " + top + " (as specifed in NamespaceWith: property for " + topicContext.CurrentTopic.ContentBase.DefinitionTopicName.Fullname + ")");
+								throw new Exception("No such topic: " + top + " (as specifed in NamespaceWith: property for " + 
+                                    topicContext.CurrentTopic.NamespaceManager.DefinitionTopic.QualifiedName + ")");
 							}
 							theScope = new TopicScope(theScope, new DynamicTopic(topic.Federation, abs));
-							ctx.AddCacheRule(new TopicsCacheRule(topic.Federation, abs));
 						}
 					}
 					
-					// Locate any topics via the with property to see if there's anybody else we should import
+					// Locate any topics via the with propertyName to see if there's anybody else we should import
 					ArrayList with = topicContext.CurrentTopic.GetListProperty("With");
 					if (with != null)
 					{
 						with.Reverse();
 						foreach (string top in with)
 						{
-							AbsoluteTopicName abs = topic.ContentBase.UnambiguousTopicNameFor(new RelativeTopicName(top));
+							NamespaceQualifiedTopicVersionKey abs = Federation.UnambiguousTopicNameFor(new RelativeTopicVersionKey(top), 
+                                topic.NamespaceManager.Namespace);
 							if (abs == null)
 							{
 								throw new Exception("No such topic: " + top + " (as specifed in With: property for " + topicContext.CurrentTopic + ")");
 							}
 							theScope = new TopicScope(theScope, new DynamicTopic(topic.Federation, abs));
-							ctx.AddCacheRule(new TopicsCacheRule(topic.Federation, abs));
 						}
 					}
 					// add the topic to the current scope (this guy goes at the front of the queue!)
-					theScope = new TopicScope(theScope, new DynamicTopic(topic.Federation, topic.Fullname));
+					theScope = new TopicScope(theScope, new DynamicTopic(topic.Federation, topic.TopicVersionKey));
 
 				}
 				if (theScope != null)

@@ -60,7 +60,7 @@ namespace FlexWiki
 			return new WikiSequence(ToString());
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the logical reverse of this boolean (true for false; false for true)")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the logical reverse of this boolean (true for false; false for true)")]
 		public IBELObject Not
 		{
 			get
@@ -69,7 +69,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone | ExposedMethodFlags.NeedContext, "If this object is true, evaluate the block and answer the result of the evaluation; otherwise answer null" )]
+		[ExposedMethod( ExposedMethodFlags.NeedContext, "If this object is true, evaluate the block and answer the result of the evaluation; otherwise answer null" )]
 		public IBELObject IfTrue(ExecutionContext ctx, Block block)
 		{
 			if (Value)
@@ -78,7 +78,7 @@ namespace FlexWiki
 				return UndefinedObject.Instance;
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone | ExposedMethodFlags.NeedContext, "If this object is true, evaluate the first block and answer the result; otherwise evaluate the other block and return the result" )]
+		[ExposedMethod( ExposedMethodFlags.NeedContext, "If this object is true, evaluate the first block and answer the result; otherwise evaluate the other block and return the result" )]
 		public IBELObject IfTrueIfFalse(ExecutionContext ctx, Block trueBlock, Block falseBlock)
 		{
 			if (Value)
@@ -87,7 +87,7 @@ namespace FlexWiki
 				return falseBlock.Value(ctx);
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone | ExposedMethodFlags.NeedContext, "If this object is false, evaluate the first block and answer the result; otherwise evaluate the other block and return the result" )]
+		[ExposedMethod( ExposedMethodFlags.NeedContext, "If this object is false, evaluate the first block and answer the result; otherwise evaluate the other block and return the result" )]
 		public IBELObject IfFalseIfTrue(ExecutionContext ctx, Block falseBlock, Block trueBlock)
 		{
 			if (Value)
@@ -96,7 +96,7 @@ namespace FlexWiki
 				return falseBlock.Value(ctx);
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone | ExposedMethodFlags.NeedContext, "If this object is false, evaluate the block and answer the result of the evaluation; otherwise answer null" )]
+		[ExposedMethod( ExposedMethodFlags.NeedContext, "If this object is false, evaluate the block and answer the result of the evaluation; otherwise answer null" )]
 		public IBELObject IfFalse(ExecutionContext ctx, Block block)
 		{
 			if (!Value)
@@ -105,7 +105,7 @@ namespace FlexWiki
 				return UndefinedObject.Instance;
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Determine whether this object is equal to another object")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Determine whether this object is equal to another object")]
 		public override bool Equals(object obj)
 		{
 			if (!(obj is Boolean))

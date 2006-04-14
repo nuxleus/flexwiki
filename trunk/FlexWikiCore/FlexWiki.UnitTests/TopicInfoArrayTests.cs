@@ -20,165 +20,172 @@ using NUnit.Framework;
 
 namespace FlexWiki.UnitTests
 {
-	/// <summary>
-	/// Summary description for TopicInfoArrayTests.
-	/// </summary>
-	[TestFixture]
-	public class TopicInfoArrayTests: WikiTests
-	{
-		const string _bh = "http://boo/";
-		LinkMaker _lm;
+    /// <summary>
+    /// Summary description for TopicInfoArrayTests.
+    /// </summary>
+    [TestFixture]
+    public class TopicInfoArrayTests
+    {
+        private const string _bh = "http://boo/";
+        private Federation _federation;
+        private LinkMaker _lm;
 
-		public TopicInfoArrayTests()
-		{
-		}
+        private Federation Federation
+        {
+            get { return _federation; }
+            set { _federation = value; }
+        }
 
-		[SetUp] public void Init()
-		{
-			_lm = new LinkMaker(_bh);
-			TheFederation = new Federation(OutputFormat.HTML, _lm);
-		}
+        [SetUp]
+        public void SetUp()
+        {
+            _lm = new LinkMaker(_bh);
+            MockWikiApplication application = new MockWikiApplication(null, _lm, OutputFormat.HTML, 
+                new MockTimeProvider(TimeSpan.FromSeconds(1))); 
+            Federation = new Federation(application);
+        }
 
-		[Test]
-		public void TestIntersect()
-		{
-			TopicInfoArray list = new TopicInfoArray();
-			TopicInfoArray listToCompare = new TopicInfoArray();
 
-			list.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic", "testnamespace")));
-			list.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic3", "testnamespace")));
-			list.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic1", "testnamespace")));
-			list.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic4", "testnamespace")));
+        [Test]
+        public void TestIntersect()
+        {
+            TopicInfoArray list = new TopicInfoArray();
+            TopicInfoArray listToCompare = new TopicInfoArray();
 
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic", "testnamespace")));
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic3", "testnamespace")));
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic1", "testnamespace")));
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic2", "testnamespace")));
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic5", "testnamespace")));
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic6", "testnamespace")));
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic7", "testnamespace")));
+            list.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topicName", "testnamespace")));
+            list.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic3", "testnamespace")));
+            list.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic1", "testnamespace")));
+            list.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic4", "testnamespace")));
 
-			Assert.AreEqual(3, list.Intersect(listToCompare.Array).Count, "Comparing number of elements in list and listToCompare after Intersect");
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topicName", "testnamespace")));
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic3", "testnamespace")));
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic1", "testnamespace")));
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic2", "testnamespace")));
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic5", "testnamespace")));
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic6", "testnamespace")));
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic7", "testnamespace")));
 
-		}
+            Assert.AreEqual(3, list.Intersect(listToCompare.Array).Count, "Comparing number of elements in list and listToCompare after Intersect");
 
-		[Test]
-		public void TestIntersectWithDuplicate()
-		{
-			TopicInfoArray list = new TopicInfoArray();
-			TopicInfoArray listToCompare = new TopicInfoArray();
+        }
 
-			list.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic", "testnamespace")));
-			list.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic3", "testnamespace")));
-			list.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic1", "testnamespace")));
-			list.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic4", "testnamespace")));
-			list.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic", "testnamespace")));
+        [Test]
+        public void TestIntersectWithDuplicate()
+        {
+            TopicInfoArray list = new TopicInfoArray();
+            TopicInfoArray listToCompare = new TopicInfoArray();
 
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic", "testnamespace")));
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic3", "testnamespace")));
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic1", "testnamespace")));
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic2", "testnamespace")));
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic5", "testnamespace")));
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic6", "testnamespace")));
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic7", "testnamespace")));
+            list.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topicName", "testnamespace")));
+            list.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic3", "testnamespace")));
+            list.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic1", "testnamespace")));
+            list.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic4", "testnamespace")));
+            list.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topicName", "testnamespace")));
 
-			Assert.AreEqual(3, list.Intersect(listToCompare.Array).Count, "Comparing number of elements in list and listToCompare after Intersect");
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topicName", "testnamespace")));
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic3", "testnamespace")));
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic1", "testnamespace")));
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic2", "testnamespace")));
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic5", "testnamespace")));
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic6", "testnamespace")));
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic7", "testnamespace")));
 
-		}
+            Assert.AreEqual(3, list.Intersect(listToCompare.Array).Count, "Comparing number of elements in list and listToCompare after Intersect");
 
-		[Test]
-		public void TestUnion()
-		{
-			TopicInfoArray list = new TopicInfoArray();
-			TopicInfoArray listToCompare = new TopicInfoArray();
+        }
 
-			list.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic", "testnamespace")));
-			list.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic3", "testnamespace")));
-			list.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic1", "testnamespace")));
-			list.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic4", "testnamespace")));
+        [Test]
+        public void TestUnion()
+        {
+            TopicInfoArray list = new TopicInfoArray();
+            TopicInfoArray listToCompare = new TopicInfoArray();
 
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic", "testnamespace")));
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic3", "testnamespace")));
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic1", "testnamespace")));
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic2", "testnamespace")));
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic5", "testnamespace")));
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic6", "testnamespace")));
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic7", "testnamespace")));
+            list.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topicName", "testnamespace")));
+            list.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic3", "testnamespace")));
+            list.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic1", "testnamespace")));
+            list.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic4", "testnamespace")));
 
-			Assert.AreEqual(8, list.Union(listToCompare.Array).Count, "Comparing number of elements in list and listToCompare after Union");
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topicName", "testnamespace")));
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic3", "testnamespace")));
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic1", "testnamespace")));
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic2", "testnamespace")));
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic5", "testnamespace")));
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic6", "testnamespace")));
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic7", "testnamespace")));
 
-		}
+            Assert.AreEqual(8, list.Union(listToCompare.Array).Count, "Comparing number of elements in list and listToCompare after Union");
 
-		[Test]
-		public void TestUnionWithDuplicate()
-		{
-			TopicInfoArray list = new TopicInfoArray();
-			TopicInfoArray listToCompare = new TopicInfoArray();
+        }
 
-			list.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic", "testnamespace")));
-			list.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic3", "testnamespace")));
-			list.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic1", "testnamespace")));
-			list.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic4", "testnamespace")));
-			list.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic", "testnamespace")));
+        [Test]
+        public void TestUnionWithDuplicate()
+        {
+            TopicInfoArray list = new TopicInfoArray();
+            TopicInfoArray listToCompare = new TopicInfoArray();
 
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic", "testnamespace")));
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic3", "testnamespace")));
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic1", "testnamespace")));
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic2", "testnamespace")));
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic5", "testnamespace")));
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic6", "testnamespace")));
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic7", "testnamespace")));
+            list.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topicName", "testnamespace")));
+            list.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic3", "testnamespace")));
+            list.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic1", "testnamespace")));
+            list.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic4", "testnamespace")));
+            list.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topicName", "testnamespace")));
 
-			Assert.AreEqual(8, list.Union(listToCompare.Array).Count, "Comparing number of elements in list and listToCompare after Intersect");
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topicName", "testnamespace")));
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic3", "testnamespace")));
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic1", "testnamespace")));
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic2", "testnamespace")));
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic5", "testnamespace")));
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic6", "testnamespace")));
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic7", "testnamespace")));
 
-		}
+            Assert.AreEqual(8, list.Union(listToCompare.Array).Count, "Comparing number of elements in list and listToCompare after Intersect");
 
-		[Test]
-		public void TestDifference()
-		{
-			TopicInfoArray list = new TopicInfoArray();
-			TopicInfoArray listToCompare = new TopicInfoArray();
+        }
 
-			list.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic", "testnamespace")));
-			list.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic3", "testnamespace")));
-			list.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic1", "testnamespace")));
-			list.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic4", "testnamespace")));
+        [Test]
+        public void TestDifference()
+        {
+            TopicInfoArray list = new TopicInfoArray();
+            TopicInfoArray listToCompare = new TopicInfoArray();
 
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic", "testnamespace")));
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic3", "testnamespace")));
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic1", "testnamespace")));
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic2", "testnamespace")));
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic5", "testnamespace")));
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic6", "testnamespace")));
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic7", "testnamespace")));
+            list.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topicName", "testnamespace")));
+            list.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic3", "testnamespace")));
+            list.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic1", "testnamespace")));
+            list.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic4", "testnamespace")));
 
-			Assert.AreEqual(1, list.Difference(listToCompare.Array).Count, "Comparing number of elements in list and listToCompare after Difference");
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topicName", "testnamespace")));
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic3", "testnamespace")));
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic1", "testnamespace")));
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic2", "testnamespace")));
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic5", "testnamespace")));
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic6", "testnamespace")));
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic7", "testnamespace")));
 
-		}
+            Assert.AreEqual(1, list.Difference(listToCompare.Array).Count, "Comparing number of elements in list and listToCompare after Difference");
 
-		[Test]
-		public void TestDifferenceWithDuplicate()
-		{
-			TopicInfoArray list = new TopicInfoArray();
-			TopicInfoArray listToCompare = new TopicInfoArray();
+        }
 
-			list.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic", "testnamespace")));
-			list.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic3", "testnamespace")));
-			list.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic1", "testnamespace")));
-			list.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic4", "testnamespace")));
-			list.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic", "testnamespace")));
+        [Test]
+        public void TestDifferenceWithDuplicate()
+        {
+            TopicInfoArray list = new TopicInfoArray();
+            TopicInfoArray listToCompare = new TopicInfoArray();
 
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic", "testnamespace")));
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic3", "testnamespace")));
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic1", "testnamespace")));
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic2", "testnamespace")));
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic5", "testnamespace")));
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic6", "testnamespace")));
-			listToCompare.Add(new TopicInfo(TheFederation, new AbsoluteTopicName("topic7", "testnamespace")));
+            list.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topicName", "testnamespace")));
+            list.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic3", "testnamespace")));
+            list.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic1", "testnamespace")));
+            list.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic4", "testnamespace")));
+            list.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topicName", "testnamespace")));
 
-			Assert.AreEqual(1, list.Difference(listToCompare.Array).Count, "Comparing number of elements in list and listToCompare after Difference");
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topicName", "testnamespace")));
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic3", "testnamespace")));
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic1", "testnamespace")));
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic2", "testnamespace")));
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic5", "testnamespace")));
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic6", "testnamespace")));
+            listToCompare.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey("topic7", "testnamespace")));
 
-		}
+            Assert.AreEqual(1, list.Difference(listToCompare.Array).Count, "Comparing number of elements in list and listToCompare after Difference");
 
-	}
+        }
+
+    }
 }

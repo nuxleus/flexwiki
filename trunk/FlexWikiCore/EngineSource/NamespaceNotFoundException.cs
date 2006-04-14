@@ -26,7 +26,7 @@ namespace FlexWiki
 		{
 		}
 
-		string _Namespace;
+		private string _Namespace;
 
 		public string Namespace
 		{

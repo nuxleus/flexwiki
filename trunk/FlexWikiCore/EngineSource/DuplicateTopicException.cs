@@ -26,9 +26,9 @@ namespace FlexWiki
 		{
 		}
 
-		TopicName _Topic;
+		TopicVersionKey _Topic;
 
-		public TopicName Topic
+		public TopicVersionKey Topic
 		{
 			get
 			{
@@ -40,7 +40,7 @@ namespace FlexWiki
 			}
 		}
 
-		public static DuplicateTopicException ForTopic(TopicName tn)
+		public static DuplicateTopicException ForTopic(TopicVersionKey tn)
 		{
 			DuplicateTopicException answer = new DuplicateTopicException("Duplicate topic: " + tn.ToString());
 			answer.Topic = tn;

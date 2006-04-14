@@ -22,35 +22,11 @@ namespace FlexWiki.Formatting
 	/// Summary description for WikiOutput.
 	/// </summary>
 	/// 
-	public enum OutputFormat
-	{
-		/* 
-		Text,
-		XAML,
-		Wiki, // ?????
-		*/
-		HTML,
-		Testing
-	}
 
 	public abstract class WikiOutput
 	{
-		public static WikiOutput ForFormat(OutputFormat aFormat, WikiOutput parent)
-		{
-			switch (aFormat)
-			{
-				case OutputFormat.HTML:
-					return new HTMLWikiOutput(parent);
-
-				case OutputFormat.Testing:
-					return new TestWikiOutput(parent);
-
-				default:
-					throw new Exception("Unsupported output type requested: " + aFormat.ToString());
-			}
-		}
-
-		WikiOutput _Parent;
+		private WikiOutput _Parent;
+    private TextWriter	_TextWriter;
 
 		public bool IsNested
 		{
@@ -93,7 +69,20 @@ namespace FlexWiki.Formatting
 		}
 
 
+    public static WikiOutput ForFormat(OutputFormat aFormat, WikiOutput parent)
+    {
+      switch (aFormat)
+      {
+        case OutputFormat.HTML:
+          return new HTMLWikiOutput(parent);
 
+        case OutputFormat.Testing:
+          return new TestWikiOutput(parent);
+
+        default:
+          throw new Exception("Unsupported output type requested: " + aFormat.ToString());
+      }
+    }
 
 		override public string ToString()
 		{
@@ -123,11 +112,11 @@ namespace FlexWiki.Formatting
 		abstract public LineStyle Style {get; set;}
 		abstract public void WriteOpenPara();
 		abstract public void WriteClosePara();
-		abstract public void WriteOpenTable(TableCellInfo.AlignOption alignment, bool hasBorder, int Width);
+		abstract public void WriteOpenTable(AlignOption alignment, bool hasBorder, int Width);
 		abstract public void WriteCloseTable();
 		abstract public void WriteOpenTableRow();
 		abstract public void WriteCloseTableRow();
-		abstract public void WriteTableCell(string s,  bool isHighlighted, TableCellInfo.AlignOption alignment, int colSpan, int RowSpan, bool hasBorder, bool allowBreaks, int Width, string bgcolor);
+		abstract public void WriteTableCell(string s,  bool isHighlighted, AlignOption alignment, int colSpan, int RowSpan, bool hasBorder, bool allowBreaks, int Width, string bgcolor);
 		abstract public OutputFormat Format { get; }
 		abstract public void WriteImage(string title, string URL, string linkToURL, string height, string width, string attributes);
 		abstract public void WriteLink(string URL, string tip, string content, string attributes);
@@ -145,6 +134,5 @@ namespace FlexWiki.Formatting
 		abstract public void FormSelectField(string fieldName, int size, bool multiple, ArrayList options, string selectedOption, ArrayList values, object selectedValue, string attributes);
 
 
-		private TextWriter	_TextWriter;
 	}
 }

@@ -18,7 +18,7 @@ namespace FlexWiki
 	/// <summary>
 	/// 
 	/// </summary>
-	[ExposedClass("FormInputFieldPresentation", "Presents a form input field")]
+	[ExposedClass("FormInputFieldPresentation", "Presents a form input property")]
 	public class FormInputFieldPresentation : FlexWiki.PresentationPrimitive
 	{
 		private int		_fieldLength;

@@ -897,20 +897,20 @@ There";
 			Assert.IsNotNull(newestTopicVersion, "Have not found the newer version of topic");
 			Assert.IsNotNull(oldTopicVersion, "Have not found the older version of topic");
 
-			string[] outputMustContainList = new string[] { @"<p style=""background: palegreen"">Compare this version with an other.</p>", 
-                                                      @"<p style=""color: silver; text-decoration: line-through"">Original version</p>" };
+			string outputMustContain = @"<p style='background: palegreen'>Compare this version with an other.</p>
+<p style='color: silver; text-decoration: line-through'>Original version</p>";
 
-      foreach (string outputMustContain in outputMustContainList)
-      {
-        string o = TheFederation.GetTopicFormattedContent(newestTopicVersion, oldTopicVersion);
-        bool pass = o.IndexOf(outputMustContain) >= 0;
-        if (!pass)
-        {
-          Console.Error.WriteLine("Got     : " + o);
-          Console.Error.WriteLine("But Couldn't Find: " + outputMustContain);
-        }
-        Assert.IsTrue(pass, "The result of the compare is not as expected.");
-      }
+			
+
+			string o = TheFederation.GetTopicFormattedContent(newestTopicVersion, oldTopicVersion);
+			bool pass = o.IndexOf(outputMustContain) >= 0;
+			if (!pass)
+			{
+				Console.Error.WriteLine("Got     : " + o);
+				Console.Error.WriteLine("But Couldn't Find: " + outputMustContain);
+			}
+			Assert.IsTrue(pass, "The result of the compare is not as expected.");
+
 
 		}
 

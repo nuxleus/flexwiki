@@ -270,10 +270,11 @@ namespace FlexWiki.BuildVerificationTests
 
     }
     
+
     private StringCollection GetVersions(string ns, string topic)
     {
       StringCollection versions = new StringCollection(); 
-      FlexWiki.AbsoluteTopicName atn = new FlexWiki.AbsoluteTopicName(topic, ns); 
+      TopicName atn = new TopicName(topic, ns); 
       foreach (TopicChange change in federation.GetTopicChanges(atn))
       {
         // They appear to come in reverse chronological order, so we 

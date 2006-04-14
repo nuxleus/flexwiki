@@ -19,129 +19,100 @@ using System.IO;
 
 namespace FlexWiki
 {
-	/// <summary>
-	/// A FederationConfiguration is a persistable representation of all the configuration information needed for a Federation
-	/// </summary>
-	public class FederationConfiguration
-	{
-		/// <summary>
-		/// Create a configuration object that represents the configuration stored in the given file
-		/// </summary>
-		/// <param name="path">Path to the XML configuration file</param>
-		public static FederationConfiguration FromFile(string path)
-		{
-			string lines = "";
-			using (TextReader sr = new StreamReader(new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read)))
-			{
-				lines = sr.ReadToEnd(); 
-			}
-			FederationConfiguration answer = FederationConfiguration.FromXMLString(lines);
-			answer.FederationNamespaceMapFilename = path;
-			answer.FederationNamespaceMapLastRead = File.GetLastWriteTime(path);
-			return answer;
-		}
+    /// <summary>
+    /// A FederationConfiguration is a persistable representation of all the configuration information needed for a Federation
+    /// </summary>
+    public class FederationConfiguration
+    {
+        private static Regex s_namespaceDefinitionRegex = new Regex("^([a-zA-Z0-9\\.]+)=(.*)$");
 
-		public static FederationConfiguration FromXMLString(string xml)
-		{			
-			XmlSerializer serializer = new XmlSerializer(typeof(FederationConfiguration));
-			StringReader reader = new StringReader(xml); 
-			FederationConfiguration answer = (FederationConfiguration)serializer.Deserialize(reader);
-			return answer;
-		}
+        private string _aboutWikiString;
+        private readonly ArrayList _blacklistedExternalLinks = new ArrayList();
+        private string _borders;
+        private string _defaultNamespace;
+        private readonly ArrayList _deprecatedDefinitions = new ArrayList();
+        private bool _displaySpacesInWikiLinks; 
+        private readonly ArrayList _namespaceMappings = new ArrayList();
+        private bool _noFollowExternalHyperlinks;
+        private int _wikiTalkVersion;
 
-		public FederationConfiguration()
-		{ 
-		}
+        public FederationConfiguration()
+        {
+        }
 
-		public void WriteToFile(string path)
-		{
-			XmlSerializer serializer = new XmlSerializer(typeof(FederationConfiguration));
-			TextWriter writer = new StreamWriter(path);
-			serializer.Serialize(writer, this);
-			writer.Close();
-		}
-
-		[XmlIgnore]
-		public DateTime FederationNamespaceMapLastRead = DateTime.MinValue;
-
-		static Regex namespaceDefinitionRegex = new Regex("^([a-zA-Z0-9\\.]+)=(.*)$");
-
-		public string DefaultNamespace;
-
-		[XmlElement(ElementName = "About")]
-		public string AboutWikiString;
-
-		[XmlElement(ElementName = "Borders")]
-		public string Borders;
-
-		[XmlElement(ElementName = "WikiTalkVersion")]
-		public int WikiTalkVersion;
-
-		[XmlElement(ElementName = "NoFollowExternalHyperlinks")]
-		public int NoFollowExternalHyperlinks = 0;
-
-		[XmlElement(ElementName = "DefaultDirectoryForNewNamespaces")]
-		public string DefaultDirectoryForNewNamespaces;
-
-		ArrayList _Mappings = new ArrayList();
-
-		[XmlArray(ElementName = "NamespaceProviders"), 
-		XmlArrayItem(ElementName= "Provider", 
-			Type = typeof(NamespaceProviderDefinition))
-		]
-		public ArrayList NamespaceMappings
-		{
-			get
-			{
-				return _Mappings;
-			}
-			set
-			{
-				_Mappings = value;
-			}
-		}
-
-
-		ArrayList _BlacklistedExternalLinks = new ArrayList();
-
-		[XmlArray(ElementName = "BlacklistedExternalLinks"), 
-		XmlArrayItem(ElementName= "Link", 
-			Type = typeof(string))
-		]
-		public ArrayList BlacklistedExternalLinks
-		{
-			get
-			{
-				return _BlacklistedExternalLinks;
-			}
-			set
-			{
-				_BlacklistedExternalLinks = value;
-			}
-		}
+        [XmlElement(ElementName = "About")]
+        public string AboutWikiString
+        {
+            get { return _aboutWikiString; }
+            set { _aboutWikiString = value; }
+        }
+        [XmlArray(ElementName = "BlacklistedExternalLinks")]
+        [XmlArrayItem(ElementName = "Link", Type = typeof(string))]
+        public ArrayList BlacklistedExternalLinks
+        {
+            get
+            {
+                return _blacklistedExternalLinks;
+            }
+        }
+        [XmlElement(ElementName = "Borders")]
+        public string Borders
+        {
+            get { return _borders; }
+            set { _borders = value; }
+        }
+        public string DefaultNamespace
+        {
+            get { return _defaultNamespace; }
+            set { _defaultNamespace = value; }
+        }
+        // Support reading in the old-style <Namespaces> element -- just to help users convert
+        [XmlArray(ElementName = "Namespaces")]
+        [XmlArrayItem(ElementName = "Namespace", Type = typeof(DeprecatedNamespaceDefinition))]
+        public ArrayList DeprecatedNamespaceDefinitions
+        {
+            get
+            {
+                return _deprecatedDefinitions;
+            }
+        }
+        public bool DisplaySpacesInWikiLinks
+        {
+            get { return _displaySpacesInWikiLinks; }
+            set { _displaySpacesInWikiLinks = value; }
+        }
+        [XmlArray(ElementName = "NamespaceProviders")]
+        [XmlArrayItem(ElementName = "Provider", Type = typeof(NamespaceProviderDefinition))]
+        public ArrayList NamespaceMappings
+        {
+            get
+            {
+                return _namespaceMappings;
+            }
+        }
+        [XmlElement(ElementName = "NoFollowExternalHyperlinks")]
+        public bool NoFollowExternalHyperlinks
+        {
+            get { return _noFollowExternalHyperlinks; }
+            set { _noFollowExternalHyperlinks = value; }
+        }
+        [XmlElement(ElementName = "WikiTalkVersion")]
+        public int WikiTalkVersion
+        {
+            get { return _wikiTalkVersion; }
+            set { _wikiTalkVersion = value; }
+        }
 
 
-		ArrayList _DeprecatedDefinitions = new ArrayList();
+        public void WriteToFile(string path)
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(FederationConfiguration));
+            TextWriter writer = new StreamWriter(path);
+            serializer.Serialize(writer, this);
+            writer.Close();
+        }
 
-		// Support reading in the old-style <Namespaces> element -- just to help users convert
-		[XmlArray(ElementName = "Namespaces"), 
-		XmlArrayItem(ElementName= "Namespace", 
-			Type = typeof(DeprecatedNamespaceDefinition))
-		]
-		public ArrayList DeprecatedNamespaceDefinitions
-		{
-			get
-			{
-				return _DeprecatedDefinitions;
-			}
-			set
-			{
-				_DeprecatedDefinitions = value;
-			}
-		}
 
-		[XmlIgnore]
-		public string FederationNamespaceMapFilename;
 
-	}
+    }
 }

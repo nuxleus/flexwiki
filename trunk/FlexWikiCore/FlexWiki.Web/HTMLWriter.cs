@@ -17,7 +17,7 @@ using System.Text;
 
 namespace FlexWiki.Web
 {
-	public abstract class HTMLWriter
+	public abstract class HtmlWriter
 	{
 
 		public string Break()
@@ -297,7 +297,7 @@ namespace FlexWiki.Web
 
 		public void WriteHiddenField(string fieldName, string value)
 		{	
-			Write("<span style='display: none'><input type='text' value='" + Escape(value) + "' name='" + fieldName + "'></span>");
+			Write("<span style='display: none'><input type='text' rawValue='" + Escape(value) + "' name='" + fieldName + "'></span>");
 		}
 		
 		public void WriteInputField(string fieldName, string fieldLabel, string help, string value)
@@ -308,42 +308,15 @@ namespace FlexWiki.Web
 		public void WriteInputField(string fieldName, string fieldLabel, string help, string value, bool isReadOnly)
 		{	
 			WriteFieldHTML(fieldLabel, help, 
-				"<input type='text' size='50' " + (isReadOnly ? " READONLY " : "") + "value='" + Escape(value) + "' name='" + fieldName + "'>");
+				"<input type='text' size='50' " + (isReadOnly ? " READONLY " : "") + "rawValue='" + Escape(value) + "' name='" + fieldName + "'>");
 		}
 
 		public void WriteCheckbox(string fieldName, string fieldLabel, string help, bool value)
 		{	
 			WriteFieldHTML(fieldLabel, help, 
-				"<input type='checkbox' value='yes' " + (value ? "checked" : "") + " name='" + fieldName + "'>");
+				"<input type='checkbox' rawValue='yes' " + (value ? "checked" : "") + " name='" + fieldName + "'>");
 		}
 
-		public class ChoiceSet
-		{
-			ArrayList _DisplayStrings = new ArrayList();
-			ArrayList _ValueStrings = new ArrayList();
-
-			public void Add(string display, string value)
-			{
-				_DisplayStrings.Add(display);
-				_ValueStrings.Add(value);
-			}
-
-			public IList DisplayStrings
-			{
-				get
-				{
-					return ArrayList.ReadOnly(_DisplayStrings);
-				}
-			}
-
-			public IList ValueStrings
-			{
-				get
-				{
-					return ArrayList.ReadOnly(_ValueStrings);
-				}
-			}
-		};
 
 		public void WriteCombobox(string fieldName, string fieldLabel, string help, ChoiceSet choices, string currentValue)
 		{	
@@ -354,7 +327,7 @@ namespace FlexWiki.Web
 				string disp = (string)(choices.DisplayStrings[i]);
 				string val = (string)(choices.ValueStrings[i]);
 				string sel = (val == currentValue) ? " selected " : "";
-				b.Append("<option " + sel + " value='"+ Escape(val) + "'>" + disp + "</option>");
+				b.Append("<option " + sel + " rawValue='"+ Escape(val) + "'>" + disp + "</option>");
 			}
 			b.Append(@"</select>");		
 			WriteFieldHTML(fieldLabel, help, b.ToString());
@@ -402,7 +375,7 @@ namespace FlexWiki.Web
 		
 		public void WriteSubmitButton(string name, string label)
 		{
-			Write("<INPUT name='" + name + "' value ='" + Escape(label) + @"' type='submit'>");
+			Write("<INPUT name='" + name + "' rawValue ='" + Escape(label) + @"' type='submit'>");
 		}
 
 		public void WriteTextAreaField(string fieldName, string fieldLabel, string help, string value)
@@ -451,22 +424,6 @@ namespace FlexWiki.Web
 		{
 			Write("</form>");
 		}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 	}

@@ -24,7 +24,7 @@ namespace FlexWiki.Web
 		{
 		}
 
-		ArrayList _Columns = new ArrayList();
+		private ArrayList _Columns = new ArrayList();
 		public IList Columns
 		{
 			get

@@ -76,7 +76,7 @@ namespace FlexWiki.SqlProvider
 		/// <param name="ns">Namespace of the topic.</param>
 		/// <param name="topicName">Name of the topic.</param>
 		/// <param name="connectionString">Database Connectionstring to use for this namespace.</param>
-		/// <returns>Boolean value that indicates if the topic exists.</returns>
+		/// <returns>Boolean rawValue that indicates if the topic exists.</returns>
 		public static bool TopicExists(string ns, string topicName, string connectionString)
 		{
 			SqlParameter[] parameters = new SqlParameter[3];
@@ -92,12 +92,12 @@ namespace FlexWiki.SqlProvider
 
 		/// <summary>
 		/// Check if the topic is writable. All topics are by default writable in the Sql store./
-		/// We do not have support to set this property from the web interface.Database Connectionstring to use for this namespace.
+		/// We do not have support to set this propertyName from the web interface.Database Connectionstring to use for this namespace.
 		/// </summary>
 		/// <param name="ns">Namespace of the topic.</param>
 		/// <param name="topicName">Name of the topic.</param>
 		/// <param name="connectionString">Database Connectionstring to use for this namespace.</param>
-		/// <returns>Boolean value indicating if the topic is writable.</returns>
+		/// <returns>Boolean rawValue indicating if the topic is writable.</returns>
 		public static bool IsExistingTopicWritable(string ns, string topicName, string connectionString)
 		{
 			SqlParameter[] parameters = new SqlParameter[3];
@@ -245,7 +245,7 @@ namespace FlexWiki.SqlProvider
 		/// Get all the non archive topics in the specified namespace.
 		/// </summary>
 		/// <param name="ns">Namespace of the topic.</param>
-		/// <param name="sort">Boolean value to indicate if the topics need to be sorted in the 
+		/// <param name="sort">Boolean rawValue to indicate if the topics need to be sorted in the 
 		/// descending order based on last write time.</param>
 		/// <param name="connectionString">Database Connectionstring to use for this namespace.</param>
 		/// <returns>Array of SqlTopicInfo containing the information for all non archive topics in the namespace.</returns>
@@ -260,7 +260,7 @@ namespace FlexWiki.SqlProvider
 			if( sort )
 			{
 				// To benefit from Sql compiled stored procedure cache using 2 different
-				// stored procedures instead of passing the sort value thru to Sql.
+				// stored procedures instead of passing the sort rawValue thru to Sql.
 				storedProcedureName = "GetSqlTopicInfoForNonArchiveTopicsSortedDescending";	
 			}
 			using(SqlDataReader reader = SqlDataAccessHelper.ExecuteReader(connectionString, CommandType.StoredProcedure, storedProcedureName, parameters) )
@@ -338,22 +338,22 @@ namespace FlexWiki.SqlProvider
 		}
 
 
-		/// <summary>
-		/// Rename the specified topic with the new name.
-		/// </summary>
-		/// <param name="ns">Namespace of the topic.</param>
-		/// <param name="topicCurrentName">Current Name of the topic</param>
-		/// <param name="topicNewName">New Name for the topic.</param>
-		/// <param name="connectionString">Database Connectionstring to use for this namespace.</param>
-		public static void RenameTopic(string ns, string topicCurrentName, string topicNewName, string connectionString)
-		{
-			SqlParameter[] parameters = new SqlParameter[3];
-			parameters[0] = new SqlParameter("@namespace", ns);
-			parameters[1] = new SqlParameter("@topicCurrentName", topicCurrentName);
-			parameters[2] = new SqlParameter("@topicNewName", topicNewName);
+        ///// <summary>
+        ///// Rename the specified topic with the new name.
+        ///// </summary>
+        ///// <param name="ns">Namespace of the topic.</param>
+        ///// <param name="topicCurrentName">Current Name of the topic</param>
+        ///// <param name="topicNewName">New Name for the topic.</param>
+        ///// <param name="connectionString">Database Connectionstring to use for this namespace.</param>
+        //public static void RenameTopic(string ns, string topicCurrentName, string topicNewName, string connectionString)
+        //{
+        //    SqlParameter[] parameters = new SqlParameter[3];
+        //    parameters[0] = new SqlParameter("@namespace", ns);
+        //    parameters[1] = new SqlParameter("@topicCurrentName", topicCurrentName);
+        //    parameters[2] = new SqlParameter("@topicNewName", topicNewName);
 			
-			SqlDataAccessHelper.ExecuteNonQuery(connectionString, CommandType.StoredProcedure, "RenameTopic", parameters);
-		}
+        //    SqlDataAccessHelper.ExecuteNonQuery(connectionString, CommandType.StoredProcedure, "RenameTopic", parameters);
+        //}
 
 	}
 }

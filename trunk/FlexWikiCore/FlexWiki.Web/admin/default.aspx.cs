@@ -40,7 +40,7 @@ namespace FlexWiki.Web.Admin
 			UIResponse.ShowPage("FlexWiki Administration Home", new UIResponse.MenuWriter(ShowAdminMenu), new UIResponse.BodyWriter(ShowMain));
 		}
 
-		override protected void EnsurePluginsLoaded()
+		protected override void EnsurePluginsLoaded()
 		{
 			// We ignore errors as the config checker will get them in the context of this specific page
 			try
@@ -52,12 +52,12 @@ namespace FlexWiki.Web.Admin
 			}
 		}
    
-		void ShowMain()
+		private void ShowMain()
 		{
 			if (CheckForConfigurationFormatUpgrade())
 				return;
 
-			string config = ConfigurationSettings.AppSettings["FederationNamespaceMapFile"];
+			string config = ConfigurationManager.AppSettings["FederationNamespaceMapFile"];
 			string mappedConfig = (config == null ? null : MapPath(config));
 			ConfigurationChecker checker = new ConfigurationChecker(
 				config,
@@ -71,7 +71,8 @@ namespace FlexWiki.Web.Admin
 			Federation aFederation = null;
 			try
 			{
-				aFederation = new Federation(mappedConfig, Formatting.OutputFormat.HTML, new LinkMaker(""));
+                FlexWikiWebApplication application = new FlexWikiWebApplication(mappedConfig, new LinkMaker("")); 
+				aFederation = new Federation(application);
 			}
 			catch (Exception)
 			{
@@ -82,14 +83,14 @@ namespace FlexWiki.Web.Admin
 		}
 
 
-		void ShowFederationInfo(Federation aFederation)
+		private void ShowFederationInfo(Federation aFederation)
 		{
 			LinkMaker lm = new LinkMaker(RootUrl(Request));
 
 			UIResponse.WritePara(UIResponse.Bold("General Federation Information"));
 			UIResponse.WriteStartKVTable();
-			UIResponse.WriteKVRow("Created", HTMLWriter.Escape(aFederation.Created.ToString()));
-			UIResponse.WriteKVRow("Default Namespace", HTMLWriter.Escape(aFederation.DefaultNamespace.ToString()));
+			UIResponse.WriteKVRow("Created", HtmlWriter.Escape(aFederation.Created.ToString()));
+			UIResponse.WriteKVRow("Default Namespace", HtmlWriter.Escape(aFederation.DefaultNamespace.ToString()));
 			UIResponse.WriteEndKVTable();
 
 			UIResponse.WriteDivider();
@@ -102,17 +103,17 @@ namespace FlexWiki.Web.Admin
 			namespacesTable.AddColumn(new UIColumn("Imports"));
 
 			UIResponse.WriteStartTable(namespacesTable);
-			foreach (ContentBase each in aFederation.ContentBases)
+			foreach (NamespaceManager each in aFederation.NamespaceManagers)
 			{
 				UIResponse.WriteStartRow();
 
 				string ns = each.Namespace;
 				UIResponse.WriteCell(
 					UIResponse.Bold(
-						UIResponse.Link(lm.LinkToTopic(new AbsoluteTopicName(each.HomePage, each.Namespace), false), 
+						UIResponse.Link(lm.LinkToTopic(new NamespaceQualifiedTopicVersionKey(each.HomePage, each.Namespace), false), 
 							UIResponse.Escape(each.Namespace))));
 
-				UIResponse.WriteCell(HTMLWriter.Escape(each.Title));
+				UIResponse.WriteCell(HtmlWriter.Escape(each.Title));
 
 				string imports = "";
 				foreach (string e in each.ImportedNamespaces)
@@ -122,7 +123,7 @@ namespace FlexWiki.Web.Admin
 					imports += e;
 				}
 
-				UIResponse.WriteCell(HTMLWriter.Escape(imports));
+				UIResponse.WriteCell(HtmlWriter.Escape(imports));
 
 				UIResponse.WriteEndRow();
 

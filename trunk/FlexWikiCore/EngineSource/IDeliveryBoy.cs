@@ -11,25 +11,15 @@
 #endregion
 
 using System;
+using FlexWiki;
 
-using NUnit.Framework; 
-
-namespace FlexWiki.UnitTests
+namespace FlexWiki
 {
-  [TestFixture]
-	public class SecurityHelperTests
+	/// <summary>
+	/// A delivery boy is an object that can deliver mail
+	/// </summary>
+	public interface IDeliveryBoy
 	{
-    [Test]
-    public void Configuration()
-    {
-      MockSecurityConfigurationProvider provider = new MockSecurityConfigurationProvider(); 
-      SecurityConfiguration configuration = new SecurityConfiguration(); 
-      provider.Configuration = configuration; 
-
-      SecurityHelper.ConfigurationProvider = provider; 
-      
-      Assert.AreSame(configuration, SecurityHelper.Configuration); 
-    }
-
+		void Deliver(string to, string from, string subject, string body);
 	}
 }

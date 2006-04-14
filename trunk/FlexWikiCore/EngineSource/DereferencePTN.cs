@@ -20,8 +20,8 @@ namespace FlexWiki
 	/// </summary>
 	public class DereferencePTN : ExposableParseTreeNode
 	{
-		ExposableParseTreeNode Left;
-		ParseTreeNode Right;
+		private ExposableParseTreeNode Left;
+		private ParseTreeNode Right;
 
 		public DereferencePTN(BELLocation loc, ExposableParseTreeNode left, ParseTreeNode right) : base(loc)
 		{

@@ -26,7 +26,7 @@ namespace FlexWiki
 		{
 		}
 
-		string _Root;
+		private string _Root;
 		[XmlAttribute]
 		public string Root
 		{
@@ -40,7 +40,7 @@ namespace FlexWiki
 			}
 		}
 
-		string _Namespace;
+		private string _Namespace;
 		[XmlAttribute]
 		public string Namespace
 		{

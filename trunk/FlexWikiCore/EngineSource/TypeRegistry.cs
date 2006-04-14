@@ -22,13 +22,16 @@ namespace FlexWiki
 	/// </summary>
 	public class TypeRegistry : DynamicObject
 	{
-		public TypeRegistry()
+    private ArrayList _AllMetaTypes;
+    private ArrayList _AllTypes;
+    private Hashtable _Registry = null;
+    
+    public TypeRegistry()
 		{
 		}
 
-		Hashtable _Registry = null;
 
-		void Reg(Hashtable hash, Type t)
+		private void Reg(Hashtable hash, Type t)
 		{
 			BELType bt = BELType.BELTypeForType(t);
 			hash[bt.Name] = bt;
@@ -55,7 +58,7 @@ namespace FlexWiki
 				RegisterTypesFromAssembly(each);
 		}
 
-		void RegisterTypesFromAssembly(Assembly a)
+		private void RegisterTypesFromAssembly(Assembly a)
 		{
 			IEnumerable types = null;
 			try
@@ -84,7 +87,6 @@ namespace FlexWiki
 			}
 		}
 
-		ArrayList _AllMetaTypes;
 		public ArrayList AllMetaTypes
 		{
 			get
@@ -98,7 +100,6 @@ namespace FlexWiki
 			}
 		}
 
-		ArrayList _AllTypes;
 		public ArrayList AllTypes
 		{
 			get

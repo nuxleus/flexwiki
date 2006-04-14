@@ -43,7 +43,7 @@ namespace FlexWiki.BuildVerificationTests
 			}
 		}
 
-		// Use the "missing" value.
+		// Use the "missing" rawValue.
 		static object Missing = System.Reflection.Missing.Value;
 
 		

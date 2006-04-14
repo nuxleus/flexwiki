@@ -21,13 +21,16 @@ namespace FlexWiki
 	[ExposedClass("VisitorEvent", "Provides information about an event for a visitor to the site")]
 	public class VisitorEvent : BELObject, IComparable
 	{
-		public static string Read = "read";
+    private NamespaceQualifiedTopicVersionKey _Topic;
+    private string _Verb;
+    private DateTime _When;
+    
+    public static string Read = "read";
 		public static string Write = "write";
 		public static string Compare = "compare";
 
-		AbsoluteTopicName _Topic;
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a the (full)name of the topic")]
-		public AbsoluteTopicName Topic
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer a the (full)name of the topic")]
+		public NamespaceQualifiedTopicVersionKey Topic
 		{
 			get
 			{
@@ -35,8 +38,7 @@ namespace FlexWiki
 			}
 		}
 
-		string _Verb;
-		[ExposedMethod("Verb", ExposedMethodFlags.CachePolicyNone, "Answer the verb (e.g., 'read', 'write')")]
+		[ExposedMethod("Verb", ExposedMethodFlags.Default, "Answer the verb (e.g., 'read', 'write')")]
 		public string Verb
 		{
 			get
@@ -45,8 +47,7 @@ namespace FlexWiki
 			}
 		}
 
-		DateTime _When;
-		[ExposedMethod("When", ExposedMethodFlags.CachePolicyNone, "Answer when the event happened")]
+		[ExposedMethod("When", ExposedMethodFlags.Default, "Answer when the event happened")]
 		public DateTime When
 		{
 			get
@@ -55,14 +56,14 @@ namespace FlexWiki
 			}
 		}
 
-		public VisitorEvent(AbsoluteTopicName topic, string verb, DateTime when)
+		public VisitorEvent(NamespaceQualifiedTopicVersionKey topic, string verb, DateTime when)
 		{
 			_Topic = topic;
 			_Verb = verb;
 			_When = when;
 		}
 		
-		[ExposedMethod("Fullname", ExposedMethodFlags.CachePolicyNone, "Answer the complete name of the topic (including namespace and version, if present)")]
+		[ExposedMethod("Fullname", ExposedMethodFlags.Default, "Answer the complete name of the topic (including namespace and version, if present)")]
 		public string ExposedFullname
 		{
 			get
@@ -71,16 +72,16 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the name of the topic (without namespace)")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the name of the topic (without namespace)")]
 		public string Name
 		{
 			get
 			{
-				return Topic.Name;
+				return Topic.LocalName;
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the version stamp for the topic")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the version stamp for the topic")]
 		public string Version
 		{
 			get

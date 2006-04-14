@@ -123,8 +123,8 @@ namespace FlexWiki
 			object result = null;
 			invocationFrame.PushScope(ctx.CurrentScope); // the new frame starts with the same scope as this one
 			ctx.PushFrame(invocationFrame);
-			if (Federation.GetPerformanceCounter(Federation.PerformanceCounterNames.MethodInvocation) != null)
-				Federation.GetPerformanceCounter(Federation.PerformanceCounterNames.MethodInvocation).Increment();
+			if (Federation.GetPerformanceCounter(PerformanceCounterNames.MethodInvocation) != null)
+				Federation.GetPerformanceCounter(PerformanceCounterNames.MethodInvocation).Increment();
 			try
 			{
 				result = mi.MethodInfo.Invoke(this, args.ToArray());
@@ -134,8 +134,6 @@ namespace FlexWiki
 				throw ex.InnerException;
 			}
 			ctx.PopFrame();
-			if (mi.ExposedMethod.CachePolicy == ExposedMethodFlags.CachePolicyNever)
-				ctx.AddCacheRule(new CacheRuleNever());
 			return Wrap(result);
 		}
 		protected string SignatureFor(string name, ArrayList args)

@@ -29,14 +29,14 @@ namespace FlexWiki
 		{
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer with the intersection of topics with the supplied array of topics (no duplicates).")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer with the intersection of topics with the supplied array of topics (no duplicates).")]
 		public TopicInfoArray Intersect(ArrayList topicInfoArrayToIntersect)
 		{
 			TopicInfoArray answer = new TopicInfoArray();
 			this.Array.Sort(null);
 			topicInfoArrayToIntersect.Sort(null);
 
-			foreach(TopicInfo topicInfo in this.Array)
+			foreach(TopicVersionInfo topicInfo in this.Array)
 			{
 				if(topicInfoArrayToIntersect.BinarySearch(topicInfo) >= 0)
 				{
@@ -50,14 +50,14 @@ namespace FlexWiki
 			return answer;
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer with the union of topics with the supplied array of topics (no duplicates).")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer with the union of topics with the supplied array of topics (no duplicates).")]
 		public TopicInfoArray Union(ArrayList topicInfoArrayToIntersect)
 		{
 			TopicInfoArray answer = new TopicInfoArray();
 			this.Array.Sort(null);
 			topicInfoArrayToIntersect.Sort(null);
 
-			foreach(TopicInfo topicInfo in this.Array)
+			foreach(TopicVersionInfo topicInfo in this.Array)
 			{
 				if( answer.Array.BinarySearch(topicInfo) < 0 )
 				{
@@ -65,7 +65,7 @@ namespace FlexWiki
 				}
 			}
 
-			foreach(TopicInfo topicInfo in topicInfoArrayToIntersect)
+			foreach(TopicVersionInfo topicInfo in topicInfoArrayToIntersect)
 			{
 				if( answer.Array.BinarySearch(topicInfo) < 0 )
 				{
@@ -76,14 +76,14 @@ namespace FlexWiki
 			return answer;
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer with the difference of topics with the supplied array of topics (no duplicates).")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer with the difference of topics with the supplied array of topics (no duplicates).")]
 		public TopicInfoArray Difference(ArrayList topicInfoArrayToIntersect)
 		{
 			TopicInfoArray answer = new TopicInfoArray();
 			this.Array.Sort(null);
 			topicInfoArrayToIntersect.Sort(null);
 
-			foreach(TopicInfo topicInfo in this.Array)
+			foreach(TopicVersionInfo topicInfo in this.Array)
 			{
 				if(topicInfoArrayToIntersect.BinarySearch(topicInfo) < 0)
 				{
@@ -97,12 +97,11 @@ namespace FlexWiki
 			return answer;
 		}
 		
-		#region IHTMLRenderable Members
 
 		public void RenderToHTML(System.IO.TextWriter output)
 		{
 			output.WriteLine("<table width=\"100%\" border=\"1\" cellpadding=\"3\" cellspacing=\"0\">");
-			foreach(TopicInfo each in Array)
+			foreach(TopicVersionInfo each in Array)
 			{
 				output.WriteLine("<tr><td valign=\"top\">");
 				IHTMLRenderable child = each as IHTMLRenderable;
@@ -115,6 +114,5 @@ namespace FlexWiki
 			output.WriteLine("</table>");
 		}
 
-		#endregion
 	}
 }

@@ -34,18 +34,18 @@ namespace FlexWiki
 		};
 
 		// key = topic
-		// value = iEnum of property names
+		// rawValue = iEnum of propertyName names
 		HybridDictionary _AddedPropertiesByTopic = new HybridDictionary();
 		HybridDictionary _RemovedPropertiesByTopic = new HybridDictionary();
 		HybridDictionary _ChangedPropertiesByTopic = new HybridDictionary();
 
 		// key = propertyname
-		// value = iEnum of topic names
+		// rawValue = iEnum of topic names
 		HybridDictionary _AddedPropertiesByProperty = new HybridDictionary();
 		HybridDictionary _RemovedPropertiesByProperty = new HybridDictionary();
 		HybridDictionary _ChangedPropertiesByProperty = new HybridDictionary();
 
-		public void RecordPropertyChange(AbsoluteTopicName topic, string propertyName, PropertyChangeType aType)
+		public void RecordPropertyChange(NamespaceQualifiedTopicVersionKey topic, string propertyName, PropertyChangeType aType)
 		{
 			switch (aType)
 			{
@@ -75,11 +75,11 @@ namespace FlexWiki
 
 		public void AddUpdatesFrom(FederationUpdate src)
 		{
-			foreach (AbsoluteTopicName top in src.CreatedTopics)
+			foreach (NamespaceQualifiedTopicVersionKey top in src.CreatedTopics)
 				RecordCreatedTopic(top);
-			foreach (AbsoluteTopicName top in src.DeletedTopics)
+			foreach (NamespaceQualifiedTopicVersionKey top in src.DeletedTopics)
 				RecordDeletedTopic(top);			
-			foreach (AbsoluteTopicName top in src.UpdatedTopics)
+			foreach (NamespaceQualifiedTopicVersionKey top in src.UpdatedTopics)
 				RecordUpdatedTopic(top);
 			foreach (DictionaryEntry e in src._AddedPropertiesByTopic)
 				_AddedPropertiesByTopic[e.Key] = e.Value;
@@ -99,7 +99,7 @@ namespace FlexWiki
 				RecordNamespaceListChanged();
 		}
 
-		void AddToDictionaries(HybridDictionary byProperty, HybridDictionary byTopic, AbsoluteTopicName topic, string prop)
+		void AddToDictionaries(HybridDictionary byProperty, HybridDictionary byTopic, NamespaceQualifiedTopicVersionKey topic, string prop)
 		{
 			ArrayList tList;
 			ArrayList pList;
@@ -167,7 +167,7 @@ namespace FlexWiki
 
 		ArrayList _EmptyList = new ArrayList();
 
-		public IList RemovedPropertiesForTopic(AbsoluteTopicName topic)
+		public IList RemovedPropertiesForTopic(NamespaceQualifiedTopicVersionKey topic)
 		{
 			IList answer = (IList)(_RemovedPropertiesByTopic[topic]);
 			if (answer == null)
@@ -175,7 +175,7 @@ namespace FlexWiki
 			return answer;
 		}
 
-		public IList AddedPropertiesForTopic(AbsoluteTopicName topic)
+		public IList AddedPropertiesForTopic(NamespaceQualifiedTopicVersionKey topic)
 		{
 			IList answer = (IList)(_AddedPropertiesByTopic[topic]);
 			if (answer == null)
@@ -183,7 +183,7 @@ namespace FlexWiki
 			return answer;
 		}
 
-		public IList ChangedPropertiesForTopic(AbsoluteTopicName topic)
+		public IList ChangedPropertiesForTopic(NamespaceQualifiedTopicVersionKey topic)
 		{
 			IList answer = (IList)(_ChangedPropertiesByTopic[topic]);
 			if (answer == null)
@@ -201,7 +201,7 @@ namespace FlexWiki
 			}
 		}
 
-		public void RecordCreatedTopic(AbsoluteTopicName name)
+		public void RecordCreatedTopic(NamespaceQualifiedTopicVersionKey name)
 		{
 			if (_CreatedTopics.Contains(name))
 				return;
@@ -218,7 +218,7 @@ namespace FlexWiki
 			}
 		}
 
-		public void RecordDeletedTopic(AbsoluteTopicName name)
+		public void RecordDeletedTopic(NamespaceQualifiedTopicVersionKey name)
 		{
 			if (_DeletedTopics.Contains(name))
 				return;
@@ -235,7 +235,7 @@ namespace FlexWiki
 			}
 		}
 
-		public void RecordUpdatedTopic(AbsoluteTopicName name)
+		public void RecordUpdatedTopic(NamespaceQualifiedTopicVersionKey name)
 		{
 			if (_UpdatedTopics.Contains(name))
 				return;

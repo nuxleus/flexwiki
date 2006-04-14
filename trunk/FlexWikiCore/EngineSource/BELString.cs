@@ -26,7 +26,7 @@ namespace FlexWiki
 			Value = "";
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNever, "Answer a new string than is the concatenation of the given number of copies of this string")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer a new string than is the concatenation of the given number of copies of this string")]
 		public string Repeat(int count)
 		{
 			StringBuilder answer = new StringBuilder();
@@ -74,7 +74,7 @@ namespace FlexWiki
 			return new WikiSequence(Value);
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the number of characters in this string")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the number of characters in this string")]
 		public int Length
 		{
 			get
@@ -83,7 +83,7 @@ namespace FlexWiki
 			}
 		}
 		
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a copy of this string with the characters reversed")] 
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer a copy of this string with the characters reversed")] 
 		public string Reverse
 		{
 			get
@@ -95,7 +95,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a substring of this string starting at the given character and possibly limited to the given number of characters")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer a substring of this string starting at the given character and possibly limited to the given number of characters")]
 		public string Substring(ExecutionContext ctx, int index, [ExposedParameter(true)] int length)
 		{
 			if (ctx.TopFrame.WasParameterSupplied(2))
@@ -104,7 +104,7 @@ namespace FlexWiki
 				return Value.Substring(index);
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Determine whether this object is equal to another object")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Determine whether this object is equal to another object")]
 		public override bool Equals(object obj)
 		{
 			if (!(obj is string))
@@ -112,7 +112,7 @@ namespace FlexWiki
 			return Value.Equals(obj as string);
 		}
 		
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Determine whether this string is equal to another string (ignoring case)")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Determine whether this string is equal to another string (ignoring case)")]
 		public  bool EqualsCaseInsensitive(object obj)
 		{
 			if (!(obj is string))
@@ -120,7 +120,7 @@ namespace FlexWiki
 			return String.Compare(Value, obj as string, true) == 0;
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Determine whether this string contains another string")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Determine whether this string contains another string")]
 		public  bool Contains(object obj)
 		{
 			if (!(obj is string))
@@ -128,7 +128,7 @@ namespace FlexWiki
 			return Value.IndexOf(obj as string) != -1;
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the string converted to an integer")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the string converted to an integer")]
 		public int AsInteger
 		{
 			get

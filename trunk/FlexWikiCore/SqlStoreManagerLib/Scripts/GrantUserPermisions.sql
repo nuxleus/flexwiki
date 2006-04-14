@@ -17,7 +17,7 @@ exec sp_grantlogin N'${user}'
 exec sp_defaultdb N'${user}', N'master'
 exec sp_defaultlanguage N'${user}', N'us_english'
 GO
-if not exists (select * from dbo.sysusers where name = N'${ntuser}' and uid < 16382)
+if not exists (select * from dbo.sysusers where name = N'${user}' and uid < 16382)
 EXEC sp_grantdbaccess N'${user}'
 GO
 exec sp_addrolemember N'db_owner', N'${user}'

@@ -57,7 +57,7 @@ namespace FlexWiki
 			return seq;
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone | ExposedMethodFlags.NeedContext, "Convert this object to a Presentation")]
+		[ExposedMethod( ExposedMethodFlags.NeedContext, "Convert this object to a Presentation")]
 		public IPresentation ToPresentation(ExecutionContext ctx)
 		{
 			return ToOutputSequence().ToPresentation(ctx.Presenter);
@@ -72,7 +72,7 @@ namespace FlexWiki
 			return b.ToString();
 		}
 
-		[ExposedMethod("ToOneString", ExposedMethodFlags.CachePolicyNone, "Answer a single string that is the concatenation of all of the objects in the array converted to strings")]
+		[ExposedMethod("ToOneString", ExposedMethodFlags.Default, "Answer a single string that is the concatenation of all of the objects in the array converted to strings")]
 		public string ToOneString
 		{
 			get
@@ -84,7 +84,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the number of objects in the array")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the number of objects in the array")]
 		public int Count
 		{
 			get
@@ -93,7 +93,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the item at the given index")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the item at the given index")]
 		public IBELObject Item(int index)
 		{
 			if (index < 0 || index >= Count)
@@ -101,7 +101,7 @@ namespace FlexWiki
 			return (IBELObject)(Array[index]);
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone | ExposedMethodFlags.NeedContext, "Evalute the given block once for each object in the array; answer a new array containing the result of each block evaluation.")]
+		[ExposedMethod( ExposedMethodFlags.NeedContext, "Evalute the given block once for each object in the array; answer a new array containing the result of each block evaluation.")]
 		public BELArray Collect(ExecutionContext ctx, Block block)
 		{
 			BELArray answer = new BELArray();
@@ -115,7 +115,7 @@ namespace FlexWiki
 			return answer;
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone | ExposedMethodFlags.NeedContext, "Evaluate the block for each item inthe array; answer a new Array that includes on those objects for which the block evaluated to true.")]
+		[ExposedMethod( ExposedMethodFlags.NeedContext, "Evaluate the block for each item inthe array; answer a new Array that includes on those objects for which the block evaluated to true.")]
 		public BELArray Select(ExecutionContext ctx, Block block)
 		{
 			BELArray answer = new BELArray();
@@ -134,7 +134,7 @@ namespace FlexWiki
 			return answer;
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a new array that is a copy of this array, but trimmed to have no more than the given number of objects.")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer a new array that is a copy of this array, but trimmed to have no more than the given number of objects.")]
 		public BELArray Snip(int maxCount)
 		{
 			BELArray answer = new BELArray();			
@@ -148,7 +148,7 @@ namespace FlexWiki
 		}
 
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Sort the array; answer a new array (that is sorted)")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Sort the array; answer a new array (that is sorted)")]
 		public BELArray Sort()
 		{
 			ArrayList answer = new ArrayList(Array);
@@ -165,7 +165,7 @@ namespace FlexWiki
 		}
 
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone | ExposedMethodFlags.NeedContext, "Sort the array; evaluate the block for each object in the array to determine the object used to order that item in the sort")]
+		[ExposedMethod( ExposedMethodFlags.NeedContext, "Sort the array; evaluate the block for each object in the array to determine the object used to order that item in the sort")]
 		public BELArray SortBy(ExecutionContext ctx, Block block)
 		{
 			ArrayList answer = new ArrayList(Array);
@@ -181,7 +181,7 @@ namespace FlexWiki
 			return new BELArray(answer);
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer true if this object is empty, else false")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer true if this object is empty, else false")]
 		public bool IsEmpty
 		{
 			get
@@ -190,7 +190,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the unique elements in this array")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the unique elements in this array")]
 		public ArrayList Unique()
 		{
 			Hashtable hashTable = new Hashtable();
@@ -211,64 +211,7 @@ namespace FlexWiki
 			return uniqueElements;
 		}
 
-		class DefaultSorter : IComparer
-		{
-			#region IComparer Members
 
-			public DefaultSorter()
-			{
-			}
 
-			public int Compare(object x, object y)
-			{
-				IComparable	xc = x as IComparable;
-				if (xc == null)
-					throw new ExecutionException(null, "Can not compare objects of type " + BELType.ExternalTypeNameForType(x.GetType()));
-				IComparable	yc = y as IComparable;
-				if (yc == null)
-					throw new ExecutionException(null, "Can not compare objects of type " + BELType.ExternalTypeNameForType(y.GetType()));
-
-				return xc.CompareTo(yc);
-			}
-
-			#endregion
-		}
-
-		class CustomSorter : IComparer
-		{
-			#region IComparer Members
-
-			Block block;
-			ExecutionContext ctx;
-
-			public CustomSorter(Block b, ExecutionContext c)
-			{
-				block = b;
-				ctx = c;
-			}
-
-			public int Compare(object x, object y)
-			{
-				ArrayList a1 = new ArrayList();
-				a1.Add(x);
-				IBELObject xKey = block.Value(ctx, a1);
-
-				ArrayList a2 = new ArrayList();
-				a2.Add(y);
-				IBELObject yKey = block.Value(ctx, a2);
-
-				IComparable	xc = xKey as IComparable;
-				if (xc == null)
-					throw new ExecutionException(null, "Can not compare objects of type " + BELType.ExternalTypeNameForType(xKey.GetType()));
-				IComparable	yc = yKey as IComparable;
-				if (yc == null)
-					throw new ExecutionException(null, "Can not compare objects of type " + BELType.ExternalTypeNameForType(yKey.GetType()));
-
-				int a = xc.CompareTo(yc);
-				return a;
-			}
-
-			#endregion
-		}
 	}
 }

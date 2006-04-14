@@ -56,8 +56,8 @@ namespace FlexWiki.Web
 
 		protected void DoPage()
 		{
-			AbsoluteTopicName topic = GetTopicName();
-			ContentBase cb = TheFederation.ContentBaseForTopic(topic);
+			NamespaceQualifiedTopicVersionKey topic = GetTopicVersionKey();
+			NamespaceManager storeManager = Federation.NamespaceManagerForTopic(topic);
 			LinkMaker lm = TheLinkMaker;
 
 			Response.Write("<div style='font-family: Verdana'>");
@@ -67,7 +67,7 @@ namespace FlexWiki.Web
 			Response.Write("</div>");
 
 			Response.Write("<div style='font-size: 8pt'>");
-			Response.Write("Last changed: " + cb.GetTopicLastAuthor(topic.LocalName));
+			Response.Write("Last changed: " + storeManager.GetTopicLastAuthor(topic.LocalName));
 			Response.Write("</div>");
 
 			Response.Write("<hr noshade size='2' />");
@@ -77,7 +77,7 @@ namespace FlexWiki.Web
 
 			// TODO - enable diffs for print too!
 			// TODO - an opportunity for caching
-			Response.Write(Formatter.FormattedTopic(topic, OutputFormat.HTML, null, TheFederation, TheLinkMaker, null));
+			Response.Write(Formatter.FormattedTopic(topic, OutputFormat.HTML, null, Federation, TheLinkMaker));
 
 			Response.Write("</div>");
 		}

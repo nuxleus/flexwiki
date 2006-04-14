@@ -22,7 +22,9 @@ namespace FlexWiki
 	/// </summary>
 	public class WikiSequence : IOutputSequence
 	{
-		public WikiSequence()
+    private StringBuilder _Value = new StringBuilder();
+    
+    public WikiSequence()
 		{	
 		}
 
@@ -36,7 +38,6 @@ namespace FlexWiki
 			_Value.Append(s);
 		}
 
-		StringBuilder _Value = new StringBuilder();
 
 		public IPresentation ToPresentation(IWikiToPresentation p)
 		{

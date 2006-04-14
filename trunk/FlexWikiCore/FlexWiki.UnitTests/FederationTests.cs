@@ -18,98 +18,177 @@ using System.Text;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
 using FlexWiki.Formatting;
-using System.Xml; 
-using System.Xml.Serialization; 
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace FlexWiki.UnitTests
 {
-	[TestFixture] public class FederationTests : WikiTests
-	{
-		ContentBase	_base;
+    [TestFixture]
+    public class FederationTests
+    {
+        [Test]
+        public void GetTopicLastModificationTimeLatestVersion()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",
+                TestContentSets.MultipleVersions);
 
-		[SetUp] public void Init()
-		{
-			TheFederation = new Federation(OutputFormat.HTML, new LinkMaker("/federationtests/"));
-			string author = "tester-joebob";
+            DateTime modificationTime = federation.GetTopicLastModificationTime(
+                new TopicName("TopicOne", "NamespaceOne"));
 
-			_base = CreateStore("FlexWiki.Base"); 
+            DateTime expectedModificationTime = new DateTime(2004, 10, 28, 14, 11, 06);
+            Assert.AreEqual(expectedModificationTime, modificationTime, "Checking that modification time was correct.");
+        }
+        [Test]
+        [ExpectedException(typeof(FlexWikiException), "The namespace NamespaceTwo does not exist.")]
+        public void GetTopicLastModificationTimeNonExistentNamespace()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",
+                TestContentSets.MultipleVersions);
 
-			WriteTestTopicAndNewVersion(_base, "TopicOne", @"Hello there", author);
-			WriteTestTopicAndNewVersion(_base, "Versioned", "v1", "tester-bob");
-			WriteTestTopicAndNewVersion(_base, "Versioned", "v2", "tester-sally");
-			WriteTestTopicAndNewVersion(_base, "TopicTwo", @"Something about TopicOne and more!", author);
-			WriteTestTopicAndNewVersion(_base, "Props", @"First: one
-Second: two
-Third:[ lots
-and
+            DateTime modificationTime = federation.GetTopicLastModificationTime(
+                new TopicName("NoSuchTopic", "NamespaceTwo"));
+        }
+        [Test]
+        [ExpectedException(typeof(ArgumentException), "Could not locate a topic named NamespaceOne.NoSuchTopic")]
+        public void GetTopicLastModificationTimeNonExistentTopic()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",
+                TestContentSets.MultipleVersions);
 
-lots
-]
-more stuff
-", author);
-		}
+            DateTime modificationTime = federation.GetTopicLastModificationTime(
+                new TopicName("NoSuchTopic", "NamespaceOne"));
+        }
+        [Test]
+        [ExpectedException(typeof(FlexWikiException))]
+        public void GetTopicLastModificationTimeRelativeName()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",
+                TestContentSets.MultipleVersions);
 
-		[TearDown] public void DeInit()
-		{
-			_base.Delete();
-		}
+            DateTime modificationTime = federation.GetTopicLastModificationTime(
+                new TopicName("TopicOne"));
 
-		[Test] public void TestFederationPropagationOfContentBaseFederationUpdates()
-		{
-			AbsoluteTopicName tn = new AbsoluteTopicName("EventTest", _base.Namespace);
-			_base.WriteTopic(tn.LocalName, @"Stay1: hello
-Stay2: foo
-Go1: foo
-Go2: foo
-Change1: blag
-Change2: blag
-");
+        }
+        [Test]
+        public void GetTopicProperty()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",
+                TestContentSets.MultipleTopicsWithProperties);
 
-			FederationUpdate expected = new FederationUpdate();
-			expected.RecordPropertyChange(tn, "_ModificationTime", FederationUpdate.PropertyChangeType.PropertyUpdate);
-			expected.RecordPropertyChange(tn, "_Body", FederationUpdate.PropertyChangeType.PropertyUpdate);
-			expected.RecordPropertyChange(tn, "Go1", FederationUpdate.PropertyChangeType.PropertyRemove);
-			expected.RecordPropertyChange(tn, "Go2", FederationUpdate.PropertyChangeType.PropertyRemove);
-			expected.RecordPropertyChange(tn, "Change1", FederationUpdate.PropertyChangeType.PropertyUpdate);
-			expected.RecordPropertyChange(tn, "Change2", FederationUpdate.PropertyChangeType.PropertyUpdate);
-			
-			StartMonitoringFederationEvents();
-			_base.WriteTopic(tn.LocalName, @"Stay1: hello
-Stay2: foo
-Change1: new value
-Change2: new value
-");
-			StopMonitoringFederationEvents();
-			ContentBaseTests.CompareFederationUpdates(expected, _Events, false, true);
-		}
+            TopicProperty property = federation.GetTopicProperty(new TopicName("TopicOne", "NamespaceOne"),
+                "PropertyOne");
 
-		[Test] public void TestFederationPropertiesChangedEventForAbout()
-		{
-			FederationUpdate expected = new FederationUpdate();
-			expected.FederationPropertiesChanged = true;
-			
-			StartMonitoringFederationEvents();
-			TheFederation.AboutWikiString = "Boo";
-			StopMonitoringFederationEvents();
-			ContentBaseTests.CompareFederationUpdates(expected, _Events, false, false);
-		}
+            Assert.AreEqual(1, property.Values.Count, "Checking that the property has one value.");
+            Assert.AreEqual("Value one", property.LastValue, "Checking that the value is correct."); 
+        }
+        [Test]
+        [ExpectedException(typeof(FlexWikiException), "The namespace NoSuchNamespace does not exist.")]
+        public void GetTopicPropertyNonExistentNamespace()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",
+                TestContentSets.MultipleTopicsWithProperties);
 
-		void FederationUpdateMonitor(object sender, FederationUpdateEventArgs  e) 
-		{
-			_Events.Add(e.Updates);
-		}
+            TopicProperty property = federation.GetTopicProperty(new TopicName("TopicOne", "NoSuchNamespace"),
+                "PropertyOne");
+        }
+        [Test]
+        public void GetTopicPropertyNonExistentProperty()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",
+                TestContentSets.MultipleTopicsWithProperties);
 
-		ArrayList _Events;
+            TopicProperty property = federation.GetTopicProperty(new TopicName("TopicOne", "NamespaceOne"), 
+                "NoSuchProperty");
 
-		void StartMonitoringFederationEvents()
-		{
-			TheFederation.FederationUpdated += new Federation.FederationUpdateEventHandler(FederationUpdateMonitor);
-			_Events = new ArrayList();
-		}
+            Assert.AreEqual(0, property.Values.Count,
+                "Checking that zero property values are returned for nonexistent property.");
 
-		void StopMonitoringFederationEvents()
-		{
-			TheFederation.FederationUpdated -= new Federation.FederationUpdateEventHandler(FederationUpdateMonitor);
-		}
-	}
+        }
+        [Test]
+        public void GetTopicPropertyNonExistentTopic()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",
+                TestContentSets.MultipleTopicsWithProperties);
+
+            TopicProperty property = federation.GetTopicProperty(new TopicName("NoSuchTopic", "NamespaceOne"), 
+                "PropertyOne");
+
+            Assert.IsNull(property, "Checking that property comes back null when topic does not exist.");
+        }
+        [Test]
+        [ExpectedException(typeof(FlexWikiException), "A topic name without a namespace was specified where a fully-qualified topic name was expected. The topic name was TopicOne")]
+        public void GetTopicPropertyRelativeName()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",
+                TestContentSets.MultipleTopicsWithProperties);
+
+            TopicProperty property = federation.GetTopicProperty(new TopicName("TopicOne"),
+                "PropertyOne");
+        }
+        [Test]
+        public void NamespaceManagerForTopicNegativeNonExistentNamespace()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://federationtests",
+                TestContentSets.SingleTopicNoImports);
+            NamespaceManager manager = federation.NamespaceManagerForTopic(
+                new NamespaceQualifiedTopicVersionKey("TopicOne", "NoSuchNamespace"));
+
+            Assert.IsNull(manager, "Checking that a null manager is returned when namespace does not exist.");
+        }
+
+        [Test]
+        public void NamespaceManagerForTopicNegativeNullTopic()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://federationtests",
+                TestContentSets.SingleTopicNoImports);
+
+            NamespaceManager manager = federation.NamespaceManagerForTopic((NamespaceQualifiedTopicVersionKey) null);
+            Assert.IsNull(manager, "Checking that a null manager is returned when topic key is null.");
+
+            manager = federation.NamespaceManagerForTopic((TopicName) null);
+            Assert.IsNull(manager, "Checking that a null manager is returned when topic name is null.");
+        }
+
+        [Test]
+        public void NamespaceManagerForTopicPositive()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://federationtests",
+                TestContentSets.SingleTopicNoImports);
+            NamespaceManager manager = federation.NamespaceManagerForTopic(
+                new NamespaceQualifiedTopicVersionKey("TopicOne", "NamespaceOne"));
+
+            Assert.IsNotNull(manager, "Checking that a non-null manager was returned.");
+            Assert.AreEqual("NamespaceOne", manager.Namespace, "Checking that the correct manager was returned."); 
+        }
+
+        [Test]
+        public void NamespaceManagerForNullNamespace()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://federationtests",
+                TestContentSets.SingleEmptyNamespace); 
+            Assert.IsNull(federation.NamespaceManagerForNamespace(null),
+              "Checking that NamespaceManagerForNamespace returns null rather than throwing an exception when passed a null namespace.");
+        }
+
+        [Test]
+        public void RegisterNamespace()
+        {
+            MockWikiApplication application = new MockWikiApplication(
+                new FederationConfiguration(),
+                new LinkMaker("test://federationtests"),
+                OutputFormat.HTML,
+                new MockTimeProvider(TimeSpan.FromSeconds(1))); 
+
+            Federation federation = new Federation(application);
+            MockContentStore store = new MockContentStore();
+            NamespaceManager storeManager = federation.RegisterNamespace(store, "MockStore");
+
+            Assert.IsNotNull(storeManager, "Checking that a NamespaceManager was created.");
+            Assert.AreSame(storeManager, store.NamespaceManager,
+              "Checking that the MockContentStore is at the end of the content store chain.");
+        }
+
+
+
+    }
 }

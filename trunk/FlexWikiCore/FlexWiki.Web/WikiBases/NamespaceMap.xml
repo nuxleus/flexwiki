@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FederationConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <DefaultNamespace>MyWiki</DefaultNamespace>
-  <About>If you are new to Wiki, read OneMinuteWiki or VisitorWelcome.</About>
-  <WikiTalkVersion>1</WikiTalkVersion>
-  <DefaultDirectoryForNewNamespaces>.</DefaultDirectoryForNewNamespaces>
+  <DefaultNamespace>NamespaceOne</DefaultNamespace>
+  <WikiTalkVersion>0</WikiTalkVersion>
+  <NoFollowExternalHyperlinks>0</NoFollowExternalHyperlinks>
   <NamespaceProviders>
-    <Provider Id="B75C029B-EE08-4a07-BFBD-F59E99DEA564" Type="FlexWiki.FileSystemNamespaceProvider" AssemblyName="FlexWiki, Version=1.0.10.4515, Culture=neutral, PublicKeyToken=null">
+    <Provider Id="5a2caaff-c139-40ad-85df-cdf136c95458" Type="FlexWiki.FileSystemNamespaceProvider" AssemblyName="FlexWiki, Version=1.8.0.0, Culture=neutral, PublicKeyToken=null">
       <Parameters>
-        <Parameter Name="Root" Value=".\MyWiki" />
-        <Parameter Name="Namespace" Value="MyWiki" />
+        <Parameter Name="Namespace" Value="NamespaceOne" />
+        <Parameter Name="Root" Value="C:\data\Projects\flexwiki\FlexWikiCore\BuildVerificationTests\bin\Debug\89f07551-184a-4ac0-abd0-9f9e2f1e5ec0\WikiBases\NamespaceOne" />
+      </Parameters>
+    </Provider>
+    <Provider Id="efa37414-d13e-487a-bf13-ab506f05bd08" Type="FlexWiki.FileSystemNamespaceProvider" AssemblyName="FlexWiki, Version=1.8.0.0, Culture=neutral, PublicKeyToken=null">
+      <Parameters>
+        <Parameter Name="Namespace" Value="NamespaceTwo" />
+        <Parameter Name="Root" Value="C:\data\Projects\flexwiki\FlexWikiCore\BuildVerificationTests\bin\Debug\89f07551-184a-4ac0-abd0-9f9e2f1e5ec0\WikiBases\NamespaceTwo" />
       </Parameters>
     </Provider>
   </NamespaceProviders>
+  <BlacklistedExternalLinks />
   <Namespaces />
 </FederationConfiguration>

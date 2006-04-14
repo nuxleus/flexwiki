@@ -25,42 +25,58 @@ namespace FlexWiki.UnitTests
 {
 
 		
-	[TestFixture] public class CachingTests : WikiTests
+	[TestFixture] public class CachingTests 
 	{
-		ContentBase _cb, _cb2;
-		const string _base = "/cachingtests/";
-		LinkMaker _lm;
-		string user = "joe";
+    #region Old Caching Tests
+#if false
+    private const string _base = "/cachingtests/";
+    private ContentStoreManager _contentStoreManager;
+    private ContentStoreManager _contentStoreManager2;
+    private Federation _federation; 
+		private LinkMaker _lm;
+		private string _user = "joe";
 
-		[SetUp] public void Init()
+    private Federation Federation
+    {
+      get { return _federation; }
+      set { _federation = value; }
+    }
+
+		[SetUp] public void SetUp()
 		{
 			_lm = new LinkMaker(_base);
-			TheFederation = new Federation(OutputFormat.HTML, _lm);
-			TheFederation.WikiTalkVersion = 1;
+			Federation = new Federation(OutputFormat.HTML, _lm);
+			Federation.WikiTalkVersion = 1;
 			string ns = "FlexWiki";
 			string ns2 = "FlexWiki2";
 
-			_cb = CreateStore(ns);
-			_cb2 = CreateStore(ns2);
+			_contentStoreManager = WikiTestUtilities.CreateMockStore(Federation, ns);
+			_contentStoreManager2 = WikiTestUtilities.CreateMockStore(Federation, ns2);
 
-			WriteTestTopicAndNewVersion(_cb, _cb.DefinitionTopicName.Name, "Import: FlexWiki2", user);
-			WriteTestTopicAndNewVersion(_cb, "HomePage", "This is a simple topic RefOne plus PluralWords reference to wiki://PresentIncluder wiki://TestLibrary/foo.gif", user);
-			WriteTestTopicAndNewVersion(_cb2, "AbsentIncluder", "{{NoSuchTopic}}", user);
-			WriteTestTopicAndNewVersion(_cb2, "PresentIncluder", "{{IncludePresent}}", user);
-			WriteTestTopicAndNewVersion(_cb2, "IncludePresent", "hey! this is ReferencedFromIncludePresent", user);
-			WriteTestTopicAndNewVersion(_cb2, "TestLibrary", "URI: whatever", user);
+			WikiTestUtilities.WriteTestTopicAndNewVersion(_contentStoreManager, _contentStoreManager.DefinitionTopicName.Name, "Import: FlexWiki2", _user);
+			WikiTestUtilities.WriteTestTopicAndNewVersion(_contentStoreManager, "HomePage", "This is a simple topic RefOne plus PluralWords reference to wiki://PresentIncluder wiki://TestLibrary/foo.gif", _user);
+			WikiTestUtilities.WriteTestTopicAndNewVersion(_contentStoreManager2, "AbsentIncluder", "{{NoSuchTopic}}", _user);
+			WikiTestUtilities.WriteTestTopicAndNewVersion(_contentStoreManager2, "PresentIncluder", "{{IncludePresent}}", _user);
+			WikiTestUtilities.WriteTestTopicAndNewVersion(_contentStoreManager2, "IncludePresent", "hey! this is ReferencedFromIncludePresent", _user);
+			WikiTestUtilities.WriteTestTopicAndNewVersion(_contentStoreManager2, "TestLibrary", "URI: whatever", _user);
 		}
 
-		[Test] public void TestRulesForAllTopicsInNamespace()
+    [TearDown] public void TearDown()
+    {
+      _contentStoreManager.Delete();
+      _contentStoreManager2.Delete();
+    }
+
+    [Test] public void TestRulesForAllTopicsInNamespace()
 		{
 			ExecutionContext ctx = new ExecutionContext();
-			_cb.AllTopicsInfo(ctx);
+			_contentStoreManager.AllTopicsInfo(ctx);
 
 			// 	We should find cache rules for all the topics in the namespaces and for the definition (in case the imports change)
 			ArrayList expected = new ArrayList();
-			expected.Add(new AllTopicsInNamespaceCacheRule(TheFederation, _cb.Namespace));
-			expected.Add(new AllTopicsInNamespaceCacheRule(TheFederation, _cb2.Namespace));
-			expected.Add(_cb.CacheRuleForDefinition);
+			expected.Add(new AllTopicsInNamespaceCacheRule(Federation, _contentStoreManager.Namespace));
+			expected.Add(new AllTopicsInNamespaceCacheRule(Federation, _contentStoreManager2.Namespace));
+			expected.Add(_contentStoreManager.CacheRuleForDefinition);
 
 			VerifyCacheRules(ctx, expected);
 		}
@@ -68,11 +84,11 @@ namespace FlexWiki.UnitTests
 		[Test] public void TestRulesForTopicsInNamespace()
 		{
 			ExecutionContext ctx = new ExecutionContext();
-			_cb.Topics(ctx);
+			_contentStoreManager.Topics(ctx);
 
 			// 	We should find cache rules for all the topics in the namespaces and for the definition (in case the imports change)
 			ArrayList expected = new ArrayList();
-			expected.Add(new AllTopicsInNamespaceCacheRule(TheFederation, _cb.Namespace));
+			expected.Add(new AllTopicsInNamespaceCacheRule(Federation, _contentStoreManager.Namespace));
 
 			VerifyCacheRules(ctx, expected);
 		}
@@ -80,64 +96,64 @@ namespace FlexWiki.UnitTests
 		[Test] public void TestRulesForNamespaceDescription()
 		{
 			ExecutionContext ctx = new ExecutionContext();
-			_cb.ExposedDescription(ctx);
+			_contentStoreManager.ExposedDescription(ctx);
 			ArrayList expected = new ArrayList();
-			expected.Add(_cb.CacheRuleForDefinition);
+			expected.Add(_contentStoreManager.CacheRuleForDefinition);
 			VerifyCacheRules(ctx, expected);
 		}
 
 		[Test] public void TestRulesForNamespaceContact()
 		{
 			ExecutionContext ctx = new ExecutionContext();
-			_cb.ExposedContact(ctx);
+			_contentStoreManager.ExposedContact(ctx);
 			ArrayList expected = new ArrayList();
-			expected.Add(_cb.CacheRuleForDefinition);
+			expected.Add(_contentStoreManager.CacheRuleForDefinition);
 			VerifyCacheRules(ctx, expected);
 		}
 
 		[Test] public void TestRulesForNamespaceImage()
 		{
 			ExecutionContext ctx = new ExecutionContext();
-			_cb.ExposedImageURL(ctx);
+			_contentStoreManager.ExposedImageURL(ctx);
 			ArrayList expected = new ArrayList();
-			expected.Add(_cb.CacheRuleForDefinition);
+			expected.Add(_contentStoreManager.CacheRuleForDefinition);
 			VerifyCacheRules(ctx, expected);
 		}
 
 		[Test] public void TestRulesForNamespaceImports()
 		{
 			ExecutionContext ctx = new ExecutionContext();
-			_cb.ExposedImports(ctx);
+			_contentStoreManager.ExposedImports(ctx);
 			ArrayList expected = new ArrayList();
-			expected.Add(_cb.CacheRuleForDefinition);
+			expected.Add(_contentStoreManager.CacheRuleForDefinition);
 			VerifyCacheRules(ctx, expected);
 		}
 
 		[Test] public void TestRulesForNamespaceName()
 		{
 			ExecutionContext ctx = new ExecutionContext();
-			_cb.ExposedName(ctx);
+			_contentStoreManager.ExposedName(ctx);
 			ArrayList expected = new ArrayList();
-			expected.Add(_cb.CacheRuleForDefinition);
+			expected.Add(_contentStoreManager.CacheRuleForDefinition);
 			VerifyCacheRules(ctx, expected);
 		}
 
 		[Test] public void TestRulesForNamespaceTitle()
 		{
 			ExecutionContext ctx = new ExecutionContext();
-			_cb.ExposedTitle(ctx);
+			_contentStoreManager.ExposedTitle(ctx);
 			ArrayList expected = new ArrayList();
-			expected.Add(_cb.CacheRuleForDefinition);
+			expected.Add(_contentStoreManager.CacheRuleForDefinition);
 			VerifyCacheRules(ctx, expected);
 		}
 
 		[Test] public void TestRulesForFederationNamespaceInfo()
 		{
 			ExecutionContext ctx = new ExecutionContext();
-			TheFederation.ExposedContentBaseForNamespace(ctx, _cb.Namespace);
+			Federation.ExposedContentStoreManagerForNamespace(ctx, _contentStoreManager.Namespace);
 			ArrayList expected = new ArrayList();
-			expected.Add(_cb.CacheRuleForDefinition);
-			expected.Add(TheFederation.CacheRuleForNamespaces);
+			expected.Add(_contentStoreManager.CacheRuleForDefinition);
+			expected.Add(Federation.CacheRuleForNamespaces);
 			VerifyCacheRules(ctx, expected);
 		}
 
@@ -191,7 +207,7 @@ namespace FlexWiki.UnitTests
 		{
 			CacheRule rule = GetCacheRuleForTopic("FlexWiki.HomePage");
 			AssertTopicRule(rule, "FlexWiki.HomePage");
-			AssertTopicRule(rule, _cb.DefinitionTopicName.Fullname);
+			AssertTopicRule(rule, _contentStoreManager.DefinitionTopicName.Fullname);
 		}
 
 		[Test] public void TestBasicTopicCachingAllPossibleVersions()
@@ -209,13 +225,7 @@ namespace FlexWiki.UnitTests
 			AssertTopicRule(rule,  "FlexWiki2.PluralWords");
 		}
 
-		[TearDown] public void Deinit()
-		{
-			_cb.Delete();
-			_cb2.Delete();
-		}
-
-		void AssertTopicRule(CacheRule rule, string absName)
+    private void AssertTopicRule(CacheRule rule, string absName)
 		{
 			int count = CountTopicRuleMatches(rule, absName);
 			if (count == 0)
@@ -223,7 +233,7 @@ namespace FlexWiki.UnitTests
 			Assert.IsTrue(count > 0, "Searching for topic (" + absName + ") in cache rule"); 
 		}
 
-		int CountTopicRuleMatches(CacheRule rule, string path)
+		private int CountTopicRuleMatches(CacheRule rule, string path)
 		{
 			int found = 0;
 			foreach (CacheRule r in rule.AllLeafRules)
@@ -243,13 +253,15 @@ namespace FlexWiki.UnitTests
 			return found;
 		}
 
-		CacheRule GetCacheRuleForTopic(string topic)
+		private CacheRule GetCacheRuleForTopic(string topic)
 		{
 			AbsoluteTopicName tn = new AbsoluteTopicName(topic);
 			CompositeCacheRule rule = new CompositeCacheRule();
-			Formatter.FormattedTopic(tn, OutputFormat.Testing, null, TheFederation, _lm, rule);
+			Formatter.FormattedTopic(tn, OutputFormat.Testing, null, Federation, _lm, rule);
 			return rule;
 		}
+#endif
+    #endregion
 
 	}
 

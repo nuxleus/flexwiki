@@ -52,7 +52,7 @@ namespace FlexWiki.BuildVerificationTests
     }
 
 		/// <summary>
-		/// Get or set the value of the input field
+		/// Get or set the rawValue of the input propertyName
 		/// </summary>
 		public string Value
 		{

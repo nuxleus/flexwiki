@@ -20,29 +20,30 @@ namespace FlexWiki.Web
 	/// </summary>
 	public class WebApplicationLogEventFactory : ILogEventFactory
 	{
-		WebApplicationLogSink Sink;
+    private readonly object _lock = new object(); 
+		private WebApplicationLogSink _sink;
 
 		public WebApplicationLogEventFactory(System.Web.HttpApplicationState state, string logPath)
 		{
-			Sink = new WebApplicationLogSink(state, logPath);
+			_sink = new WebApplicationLogSink(state, logPath);
 		}
 
 		#region ILogEventFactory Members
 
-		public LogEvent CreateEvent(string ipAddress, string user, string topic, LogEvent.LogEventType type)
+		public LogEvent CreateEvent(string ipAddress, string user, string topic, LogEventType type)
 		{
-			lock (this)
+			lock (_lock)
 			{
-				LogEvent answer = new LogEvent(ipAddress, user, topic, type, Sink);
+				LogEvent answer = new LogEvent(ipAddress, user, topic, type, _sink);
 				return answer;
 			}
 		}
 
-		public LogEvent CreateAndStartEvent(string ipAddress, string user, string topic, LogEvent.LogEventType type)
+		public LogEvent CreateAndStartEvent(string ipAddress, string user, string topic, LogEventType type)
 		{
-			lock (this)
+			lock (_lock)
 			{
-				LogEvent answer = new LogEvent(ipAddress, user, topic, type, Sink);
+				LogEvent answer = new LogEvent(ipAddress, user, topic, type, _sink);
 				answer.Start();
 				return answer;
 			}

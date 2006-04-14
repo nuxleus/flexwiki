@@ -22,6 +22,7 @@ namespace FlexWiki
 		int _Pos;
 		int _Line;
 		int _Column;
+        ArrayList _Pushback = new ArrayList(); 
 
 		public Scanner(string input)
 		{
@@ -31,7 +32,6 @@ namespace FlexWiki
 			_Column = 1;
 		}
 
-		ArrayList _Pushback = new ArrayList();
 			
 		public void Pushback(Token t)
 		{
@@ -74,7 +74,7 @@ namespace FlexWiki
 			return LatestToken;
 		}
 
-		Token GetNextToken()
+		private Token GetNextToken()
 		{
 			// Find the next valid token from the following tokens:
 			//Bar = '|'

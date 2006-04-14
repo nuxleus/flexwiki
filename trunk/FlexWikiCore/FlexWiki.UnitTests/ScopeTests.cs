@@ -20,125 +20,112 @@ namespace FlexWiki.UnitTests
 	/// <summary>
 	/// Summary description for ScopeTests.
 	/// </summary>
-	[TestFixture] public class ScopeTests : WikiTests, IWikiToPresentation
+	[TestFixture] public class ScopeTests : IWikiToPresentation
 	{
-		ContentBase _cb, _cb2;
-		const string _base = "http://boo/";
-		LinkMaker _lm;
-		string user = "joe";
+    private const string _base = "http://boo/";
+    private NamespaceManager _namespaceManager;
+    private NamespaceManager _namespaceManager2;
+		private Federation _federation; 
+    private LinkMaker _lm;
+		private string _user = "joe";
 
-		string Run(string input)
-		{
-			BehaviorParser parser = new BehaviorParser("Scope Tests");
-			ExposableParseTreeNode obj = parser.Parse(input);
-			Assert.IsNotNull(obj);
-			ExecutionContext ctx = new ExecutionContext();
-			ctx.WikiTalkVersion = 1;
-			IBELObject evaluated = obj.Expose(ctx);
-			IOutputSequence seq = evaluated.ToOutputSequence();
-			return OutputSequenceToString(seq);
-		}
-
-		public string WikiToPresentation(string s)
-		{
-			return "P(" + s + ")";
-		}
-
-
-		string OutputSequenceToString(IOutputSequence s)
-		{
-			WikiOutput output = WikiOutput.ForFormat(OutputFormat.Testing, null);
-			s.ToPresentation(this).OutputTo(output);
-			return output.ToString();
-		}
+    private Federation Federation
+    {
+      get { return _federation; }
+      set { _federation = value; }
+    }
 
 		[SetUp] public void Init()
 		{
 			_lm = new LinkMaker(_base);
-			TheFederation = new Federation(OutputFormat.HTML, _lm);
-			TheFederation.WikiTalkVersion = 1;
+            MockWikiApplication application = new MockWikiApplication(null,
+                _lm, 
+                OutputFormat.HTML,
+                new MockTimeProvider(TimeSpan.FromSeconds(1)));
+			Federation = new Federation(application);
+			Federation.WikiTalkVersion = 1;
 
 			string ns = "FlexWiki";
 			string ns2 = "FlexWiki2";
-			_cb = CreateStore(ns);
-			_cb2 = CreateStore(ns2);
+			_namespaceManager = WikiTestUtilities.CreateMockStore(Federation, ns);
+			_namespaceManager2 = WikiTestUtilities.CreateMockStore(Federation, ns2);
 
-			WriteTestTopicAndNewVersion(_cb, "HomePage", "", user);
-			WriteTestTopicAndNewVersion(_cb, _cb.DefinitionTopicName.Name, @"Import: FlexWiki2", user);
-			WriteTestTopicAndNewVersion(_cb, "QualifiedLocalPropertyRef", @"
+			WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "HomePage", "", _user );
+			WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, _namespaceManager.DefinitionTopic.LocalName, @"Import: FlexWiki2", _user);
+			WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "QualifiedLocalPropertyRef", @"
 Color: green
-color=@@topics.QualifiedLocalPropertyRef.Color@@", user);
-			WriteTestTopicAndNewVersion(_cb, "UnqualifiedLocalPropertyRef", @"
+color=@@topics.QualifiedLocalPropertyRef.Color@@", _user);
+			WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "UnqualifiedLocalPropertyRef", @"
 Color: green
-color=@@Color@@", user);
-			WriteTestTopicAndNewVersion(_cb, "QualifiedLocalMethodRef", @"
+color=@@Color@@", _user);
+			WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "QualifiedLocalMethodRef", @"
 len=@@topics.QualifiedLocalMethodRef.DirectStringLength(""hello"")@@
 DirectStringLength: { str | str.Length }
-", user);
-			WriteTestTopicAndNewVersion(_cb, "UnqualifiedLocalMethodRef", @"
+", _user);
+			WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "UnqualifiedLocalMethodRef", @"
 len=@@DirectStringLength(""hello"")@@
 DirectStringLength: { str | str.Length }
-", user);
-			WriteTestTopicAndNewVersion(_cb, "LocalMethodIndirection", @"
+", _user);
+			WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "LocalMethodIndirection", @"
 len=@@StringLength(""hello"")@@
 StringLength: { str | Len(str) }
 Len: { str | str.Length }
-", user);
-			WriteTestTopicAndNewVersion(_cb, "LocalMethodIndirection2", @"
+", _user);
+			WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "LocalMethodIndirection2", @"
 len=@@StringLength(""hello"")@@
 StringLength: { str | Len(str) }
 Len: { s | s.Length }
-", user);
-			WriteTestTopicAndNewVersion(_cb, "CallerBlockLocalsShouldBeInvisible", @"
+", _user);
+			WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "CallerBlockLocalsShouldBeInvisible", @"
 len=@@StringLength(""hello"")@@
 StringLength: { str | Len(str) }
 Len: { s | str.Length }
-", user);
-			WriteTestTopicAndNewVersion(_cb2, "Profile", @"Color: puce", user);
-			WriteTestTopicAndNewVersion(_cb, "ReferAcrossNamespaces", @"@@topics.Profile.Color@@", user);
+", _user);
+			WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager2, "Profile", @"Color: puce", _user);
+			WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "ReferAcrossNamespaces", @"@@topics.Profile.Color@@", _user);
 
-			WriteTestTopicAndNewVersion(_cb, "TestChecker", @"
+			WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "TestChecker", @"
 Test: { FearFactor }
-Color: green", user);
+Color: green", _user);
 
-			WriteTestTopicAndNewVersion(_cb, "CallTestChecker", @"
+			WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "CallTestChecker", @"
 FearFactor: nighttime
 test=@@topics.TestChecker.Test@@
-", user);
+", _user);
 
-			WriteTestTopicAndNewVersion(_cb, "Topic1", @"
+			WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "Topic1", @"
 Function: { arg1 | topics.Topic2.FunctionTwo( { arg1 } ) }
-", user);
+", _user);
 
 			
-			WriteTestTopicAndNewVersion(_cb, "Topic2", @"
+			WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "Topic2", @"
 FunctionTwo: { someArg | 	someArg.Value }
-", user);
+", _user);
 
-			WriteTestTopicAndNewVersion(_cb, "Topic3", @"@@topics.Topic1.Function(100)@@", user);
+			WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "Topic3", @"@@topics.Topic1.Function(100)@@", _user);
 
 
-			WriteTestTopicAndNewVersion(_cb, "BlockCanSeeLexicalScopeCaller", @"
+			WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "BlockCanSeeLexicalScopeCaller", @"
 result=@@ topics.BlockCanSeeLexicalScopeCallee.BlockValue( { Color } ) @@
-Color: green", user);
+Color: green", _user);
 
-			WriteTestTopicAndNewVersion(_cb, "BlockCanSeeLexicalScopeCallee", @"
-BlockValue: {aBlock | aBlock.Value }", user);
+			WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "BlockCanSeeLexicalScopeCallee", @"
+BlockValue: {aBlock | aBlock.Value }", _user);
 
-			WriteTestTopicAndNewVersion(_cb, "ThisTests", @"
-topic=@@topic.Name@@
+			WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "ThisTests", @"
+topicName=@@topicName.Name@@
 namespace=@@namespace.Name@@
 nscount=@@federation.Namespaces.Count@@
 color=@@this.Color@@
 Color: red
-", user);
+", _user);
 
 		}
 
 		[TearDown] public void Deinit()
 		{
-			_cb.Delete();
-			_cb2.Delete();
+			_namespaceManager.DeleteAllTopicsAndHistory();
+			_namespaceManager2.DeleteAllTopicsAndHistory();
 		}
 
 
@@ -165,14 +152,11 @@ Color: red
 			ConfirmTopicContains("FlexWiki.ReferAcrossNamespaces", "puce");
 		}
 
-		
-
 		[Test] public void TestPassedBlockCanSeeContainingArgBlock()
 		{
 			ConfirmTopicContains("FlexWiki.Topic3", "100");
 		}
 
-		
 		[Test] public void TestBlockCanSeeLexicalScopeCaller()
 		{
 			ConfirmTopicContains("FlexWiki.BlockCanSeeLexicalScopeCaller", "result=green");
@@ -219,17 +203,17 @@ Color: red
 		}
 		
 
-		void ConfirmTopicContains(string topic, string find)
+		private void ConfirmTopicContains(string topic, string find)
 		{
 			ValidateTopicContains(topic, find, true);
 		}
 
-		void DenyTopicContains(string topic, string find)
+		private void DenyTopicContains(string topic, string find)
 		{
 			ValidateTopicContains(topic, find, false);
 		}
 
-		void ValidateTopicContains(string topic, string find, bool sense)
+		private void ValidateTopicContains(string topic, string find, bool sense)
 		{
 			string fmt = FormattedTopic(topic);
 			bool found = fmt.IndexOf(find) != -1;
@@ -242,12 +226,35 @@ Color: red
 			Assert.IsTrue(sense == found, "Searching for " + find);
 		}
 
-		string FormattedTopic(string topic)
+		private string FormattedTopic(string topic)
 		{
-			AbsoluteTopicName tn = new AbsoluteTopicName(topic);
-			CompositeCacheRule rule = new CompositeCacheRule();
-			return Formatter.FormattedTopic(tn, OutputFormat.Testing, null, TheFederation, _lm, rule);
+			NamespaceQualifiedTopicVersionKey tn = new NamespaceQualifiedTopicVersionKey(topic);
+			return Formatter.FormattedTopic(tn, OutputFormat.Testing, null, Federation, _lm);
 		}
 
+    private string Run(string input)
+    {
+      BehaviorParser parser = new BehaviorParser("Scope Tests");
+      ExposableParseTreeNode obj = parser.Parse(input);
+      Assert.IsNotNull(obj);
+      ExecutionContext ctx = new ExecutionContext();
+      ctx.WikiTalkVersion = 1;
+      IBELObject evaluated = obj.Expose(ctx);
+      IOutputSequence seq = evaluated.ToOutputSequence();
+      return OutputSequenceToString(seq);
+    }
+
+    private string OutputSequenceToString(IOutputSequence s)
+    {
+      WikiOutput output = WikiOutput.ForFormat(OutputFormat.Testing, null);
+      s.ToPresentation(this).OutputTo(output);
+      return output.ToString();
+    }
+
+    string IWikiToPresentation.WikiToPresentation(string s)
+    {
+      return "P(" + s + ")";
+    }
+    
 	}
 }

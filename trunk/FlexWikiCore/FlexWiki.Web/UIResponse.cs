@@ -1,14 +1,14 @@
-#region License Statement
-// Copyright (c) Microsoft Corporation.  All rights reserved.
-//
-// The use and distribution terms for this software are covered by the 
-// Common Public License 1.0 (http://opensource.org/licenses/cpl.php)
-// which can be found in the file CPL.TXT at the root of this distribution.
-// By using this software in any fashion, you are agreeing to be bound by 
-// the terms of this license.
-//
-// You must not remove this notice, or any other, from this software.
-#endregion
+  #region License Statement
+  // Copyright (c) Microsoft Corporation.  All rights reserved.
+  //
+  // The use and distribution terms for this software are covered by the 
+  // Common Public License 1.0 (http://opensource.org/licenses/cpl.php)
+  // which can be found in the file CPL.TXT at the root of this distribution.
+  // By using this software in any fashion, you are agreeing to be bound by 
+  // the terms of this license.
+  //
+  // You must not remove this notice, or any other, from this software.
+  #endregion
 
 
 using System;
@@ -20,7 +20,7 @@ namespace FlexWiki.Web
 	/// <summary>
 	/// Summary description for UIResponse.
 	/// </summary>
-	public class UIResponse : HTMLWriter
+	public class UIResponse : HtmlWriter
 	{
 		public delegate void MenuWriter();
 		public delegate void BodyWriter();
@@ -43,12 +43,12 @@ namespace FlexWiki.Web
 			Write("</td></tr></table>");
 		}
 
-		string _RelativeBase;
+		private string _RelativeBase;
 
 
-		HttpResponse _Response;
+		private HttpResponse _Response;
 
-		HttpResponse Response
+    private HttpResponse Response
 		{
 			get
 			{
@@ -65,9 +65,9 @@ namespace FlexWiki.Web
 			return answer;
 		}
 
-		Hashtable _CommandVisuals = null;
+		private Hashtable _CommandVisuals = null;
 
-		Hashtable CommandVisuals
+		private Hashtable CommandVisuals
 		{
 			get
 			{
@@ -98,12 +98,6 @@ namespace FlexWiki.Web
 			Response.Write(s);
 		}
 
-		public class Command
-		{
-			public static string Edit = "edit";
-			public static string Delete = "delete";
-			public static string Create = "create";
-		}
 
 		Hashtable BuildCommandVisuals()
 		{

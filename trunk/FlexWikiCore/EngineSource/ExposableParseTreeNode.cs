@@ -25,7 +25,7 @@ namespace FlexWiki
 
 		/// <summary>
 		/// Expose the reciever.  If it's something like a literal, we'll 
-		/// just end up answering a BELObject for it.  If it's a property or 
+		/// just end up answering a BELObject for it.  If it's a propertyName or 
 		/// function reference, we'll use the given 
 		/// context to look it up.
 		/// </summary>

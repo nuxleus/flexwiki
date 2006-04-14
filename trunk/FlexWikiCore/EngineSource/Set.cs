@@ -18,7 +18,7 @@ namespace FlexWiki
 {
 	public class Set : IEnumerable
 	{
-		HybridDictionary hash = new HybridDictionary();
+		private HybridDictionary hash = new HybridDictionary();
 
 		public void Add(object obj)
 		{

@@ -29,7 +29,7 @@ namespace FlexWiki
 			_Array.Add(arg);
 		}
 
-		ArrayList _Array = new ArrayList();
+		private ArrayList _Array = new ArrayList();
 
 		public override string ToString()
 		{

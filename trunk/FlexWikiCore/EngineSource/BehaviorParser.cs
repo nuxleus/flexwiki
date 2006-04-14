@@ -34,7 +34,7 @@ namespace FlexWiki
 			}
 		}
 
-		Scanner _Scanner;
+		private Scanner _Scanner;
 
 		BELLocation LocationFromToken(Token t)
 		{
@@ -55,7 +55,7 @@ namespace FlexWiki
 			return answer;
 		}
 
-		Scanner Scanner
+		private Scanner Scanner
 		{
 			get
 			{
@@ -63,7 +63,7 @@ namespace FlexWiki
 			}
 		}
 
-		void Expected(string what)
+		private void Expected(string what)
 		{
 			ExpectedWhat = what;
 			ButGotToken = Scanner.LatestToken;
@@ -114,7 +114,7 @@ namespace FlexWiki
 			ReferenceChain
 		*/
 
-		ExposableParseTreeNode Expression()
+		private ExposableParseTreeNode Expression()
 		{
 			ExposableParseTreeNode answer;
 			
@@ -146,7 +146,7 @@ namespace FlexWiki
 			symbolReference PERIOD referenceChain
 		*/
 
-		ExposableParseTreeNode ReferenceChain()
+		private ExposableParseTreeNode ReferenceChain()
 		{
 			ExposableParseTreeNode reference = SymbolReference();
 
@@ -183,7 +183,7 @@ namespace FlexWiki
 			IDENTIFIER LEFTPAREN args RIGHTPAREN blockArguments
 */
 
-		ExposableParseTreeNode SymbolReference()
+		private ExposableParseTreeNode SymbolReference()
 		{
 			string ex = "property or function name";
 			Token t = Scanner.Next();
@@ -221,7 +221,7 @@ namespace FlexWiki
 				blockLiteral qualifiedBlockArguments
 			
 		  */
-		BlockArgumentsPTN BlockArguments()
+		private BlockArgumentsPTN BlockArguments()
 		{
 			BlockPTN first = BlockLiteral();
 			if (first == null)
@@ -239,7 +239,7 @@ namespace FlexWiki
 				identifier blockLiteral qualifiedBlockArguments
 		*/
 
-		QualifiedBlockArgumentsPTN QualifiedBlockArguments()
+		private QualifiedBlockArgumentsPTN QualifiedBlockArguments()
 		{
 			QualifiedBlockArgumentsPTN answer = null;
 			Token next;
@@ -275,7 +275,7 @@ namespace FlexWiki
 					  arg := expr
 		*/
 
-		ArrayList Args()
+		private ArrayList Args()
 		{
 			string ex = "argument or right parenthesis";
 			ArrayList answer = new ArrayList();
@@ -317,7 +317,7 @@ namespace FlexWiki
 				arrayLiteral |
 				blockLiteral
 		*/
-		ExposableParseTreeNode Literal()
+		private ExposableParseTreeNode Literal()
 		{
 			Token next = Scanner.Next();
 			if (next.Type == TokenType.TokenString)
@@ -335,7 +335,7 @@ namespace FlexWiki
 			return null;
 		}
 
-		ArrayPTN ArrayLiteral()
+		private ArrayPTN ArrayLiteral()
 		{
 			Token next = Scanner.Next();
 			if (next.Type != TokenType.TokenLeftBracket)
@@ -374,7 +374,7 @@ namespace FlexWiki
 
 
 		// blockLiteral := '{'  [blockParameters] expr'}'
-		BlockPTN BlockLiteral()
+		private BlockPTN BlockLiteral()
 		{
 			Token next = Scanner.Next();
 			if (next.Type != TokenType.TokenLeftBrace)
@@ -411,7 +411,7 @@ namespace FlexWiki
 			throw new ExpectedTokenParseException(LocationFromToken(next), "right brace '}'", next);
 		}
 
-		BlockParametersPTN BlockParameters()
+		private BlockParametersPTN BlockParameters()
 		{
 			Token identifier = null;
 			Token type ;

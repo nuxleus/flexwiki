@@ -38,11 +38,11 @@ namespace FlexWiki
 		}
 
 
-		string _Tip;
-		string _URL;
-		string  _Content;
+		private string _Tip;
+		private string _URL;
+		private string  _Content;
 
-		string Tip
+		private string Tip
 		{
 			get
 			{
@@ -50,7 +50,7 @@ namespace FlexWiki
 			}
 		}
 
-		string URL
+		private string URL
 		{
 			get
 			{
@@ -58,7 +58,7 @@ namespace FlexWiki
 			}
 		}
 
-		string Content
+		private string Content
 		{
 			get
 			{

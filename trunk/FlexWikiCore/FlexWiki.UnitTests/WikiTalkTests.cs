@@ -191,7 +191,7 @@ namespace FlexWiki.UnitTests
 			Assert.AreEqual(expectedArray.Count, resultArray.Count, "Checking that the resulting array is the correct size");
 			for (int i = 0; i < resultArray.Count; i++)
 			{
-				Assert.AreEqual(expectedArray[i].GetHashCode(), resultArray[i].GetHashCode(), "Checking the element value hash codes are correct");
+				Assert.AreEqual(expectedArray[i].GetHashCode(), resultArray[i].GetHashCode(), "Checking the element rawValue hash codes are correct");
 			}
 		}
 		[Test]
@@ -214,7 +214,7 @@ namespace FlexWiki.UnitTests
 			Assert.AreEqual(sourceArray.Count, resultArray.Count, "Checking that the resulting array is the correct size");
 			for (int i = 0; i < resultArray.Count; i++)
 			{
-				Assert.AreEqual(sourceArray.Array[i].GetHashCode(), resultArray[i].GetHashCode(), "Checking the element value hash codes are correct");
+				Assert.AreEqual(sourceArray.Array[i].GetHashCode(), resultArray[i].GetHashCode(), "Checking the element rawValue hash codes are correct");
 			}
 		}
 		[Test]
@@ -251,7 +251,7 @@ namespace FlexWiki.UnitTests
 			Assert.AreEqual(expectedArray.Count, resultArray.Count, "Checking that the resulting array is the correct size");
 			for (int i = 0; i < resultArray.Count; i++)
 			{
-				Assert.AreEqual(expectedArray[i].GetHashCode(), resultArray[i].GetHashCode(), "Checking the element value hash codes are correct");
+				Assert.AreEqual(expectedArray[i].GetHashCode(), resultArray[i].GetHashCode(), "Checking the element rawValue hash codes are correct");
 			}
 		}
 		[Test]
@@ -275,7 +275,7 @@ namespace FlexWiki.UnitTests
 			Assert.AreEqual(expectedArray.Count, resultArray.Count, "Checking that the resulting array is the correct size");
 			for (int i = 0; i < resultArray.Count; i++)
 			{
-				Assert.AreEqual(((BELArray)expectedArray[i]).Array[0].GetHashCode(), ((BELArray)resultArray[i]).Array[0].GetHashCode(), "Checking the element value hash codes are correct");
+				Assert.AreEqual(((BELArray)expectedArray[i]).Array[0].GetHashCode(), ((BELArray)resultArray[i]).Array[0].GetHashCode(), "Checking the element rawValue hash codes are correct");
 			}
 		}
 		#endregion

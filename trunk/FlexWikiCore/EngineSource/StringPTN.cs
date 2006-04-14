@@ -19,12 +19,13 @@ namespace FlexWiki
 	/// </summary>
 	public class StringPTN : ExposableParseTreeNode
 	{
+        private string _Value; 
+
 		public StringPTN(BELLocation loc, string val) : base(loc)
 		{
 			_Value = val;
 		}
 
-		string _Value;
 		public string Value
 		{
 			get

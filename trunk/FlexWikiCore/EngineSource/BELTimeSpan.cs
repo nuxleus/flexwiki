@@ -36,7 +36,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Determine whether this object is equal to another object")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Determine whether this object is equal to another object")]
 		public override bool Equals(object obj)
 		{
 			if (!(obj is TimeSpan))
@@ -86,7 +86,7 @@ namespace FlexWiki
 		}
 		#endregion
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the number of days represented by this TimeSpan")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the number of days represented by this TimeSpan")]
 		public int Days
 		{
 			get
@@ -95,7 +95,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the number of hours represented by this TimeSpan")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the number of hours represented by this TimeSpan")]
 		public int Hours
 		{
 			get
@@ -104,7 +104,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the number of milliseconds represented by this TimeSpan")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the number of milliseconds represented by this TimeSpan")]
 		public int Milliseconds
 		{
 			get
@@ -113,7 +113,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the number of minutes represented by this TimeSpan")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the number of minutes represented by this TimeSpan")]
 		public int Minutes
 		{
 			get
@@ -122,7 +122,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the number of seconds represented by this TimeSpan")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the number of seconds represented by this TimeSpan")]
 		public int Seconds
 		{
 			get
@@ -131,19 +131,19 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Add the specified TimeSpan to this TimeSpan (and answer a new one)")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Add the specified TimeSpan to this TimeSpan (and answer a new one)")]
 		public TimeSpan Add(TimeSpan span)
 		{
 			return TimeSpan.Add(span);
 		}
 		
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Subtract the specified TimeSpan to this TimeSpan (and answer a new one)")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Subtract the specified TimeSpan to this TimeSpan (and answer a new one)")]
 		public TimeSpan Subtract(TimeSpan span)
 		{
 			return TimeSpan.Subtract(span);
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Compare this TimeSpan with another TimeSpan and answer -1, 0 or +1 depending on whether is is less than, equal to or greater than the other TimeSpan")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Compare this TimeSpan with another TimeSpan and answer -1, 0 or +1 depending on whether is is less than, equal to or greater than the other TimeSpan")]
 		public int CompareTo(object obj)
 		{
 			if (obj is BELTimeSpan)

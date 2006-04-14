@@ -1,901 +1,640 @@
-<VisualStudioProject>
-    <CSHARP
-        ProjectType = "Local"
-        ProductVersion = "7.10.3077"
-        SchemaVersion = "2.0"
-        ProjectGuid = "{7362F597-DAB3-437E-8A07-37D8D2FE6E56}"
-    >
-        <Build>
-            <Settings
-                ApplicationIcon = ""
-                AssemblyKeyContainerName = ""
-                AssemblyName = "FlexWiki"
-                AssemblyOriginatorKeyFile = ""
-                DefaultClientScript = "JScript"
-                DefaultHTMLPageLayout = "Grid"
-                DefaultTargetSchema = "IE50"
-                DelaySign = "false"
-                OutputType = "Library"
-                PreBuildEvent = ""
-                PostBuildEvent = ""
-                RootNamespace = "FlexWiki"
-                RunPostBuildEvent = "OnBuildSuccess"
-                StartupObject = ""
-            >
-                <Config
-                    Name = "Debug"
-                    AllowUnsafeBlocks = "false"
-                    BaseAddress = "285212672"
-                    CheckForOverflowUnderflow = "false"
-                    ConfigurationOverrideFile = ""
-                    DefineConstants = "DEBUG;TRACE"
-                    DocumentationFile = ""
-                    DebugSymbols = "true"
-                    FileAlignment = "4096"
-                    IncrementalBuild = "true"
-                    NoStdLib = "false"
-                    NoWarn = ""
-                    Optimize = "false"
-                    OutputPath = "bin\debug\"
-                    RegisterForComInterop = "false"
-                    RemoveIntegerChecks = "false"
-                    TreatWarningsAsErrors = "true"
-                    WarningLevel = "4"
-                />
-                <Config
-                    Name = "Release"
-                    AllowUnsafeBlocks = "false"
-                    BaseAddress = "285212672"
-                    CheckForOverflowUnderflow = "false"
-                    ConfigurationOverrideFile = ""
-                    DefineConstants = "TRACE"
-                    DocumentationFile = ""
-                    DebugSymbols = "true"
-                    FileAlignment = "4096"
-                    IncrementalBuild = "false"
-                    NoStdLib = "false"
-                    NoWarn = ""
-                    Optimize = "true"
-                    OutputPath = "bin\Release\"
-                    RegisterForComInterop = "false"
-                    RemoveIntegerChecks = "false"
-                    TreatWarningsAsErrors = "true"
-                    WarningLevel = "4"
-                />
-            </Settings>
-            <References>
-                <Reference
-                    Name = "System"
-                    AssemblyName = "System"
-                    HintPath = "..\..\..\..\WINXP\Microsoft.NET\Framework\v1.0.3705\System.dll"
-                />
-                <Reference
-                    Name = "System.Data"
-                    AssemblyName = "System.Data"
-                    HintPath = "..\..\..\..\WINXP\Microsoft.NET\Framework\v1.0.3705\System.Data.dll"
-                />
-                <Reference
-                    Name = "System.XML"
-                    AssemblyName = "System.Xml"
-                    HintPath = "..\..\..\..\WINXP\Microsoft.NET\Framework\v1.0.3705\System.XML.dll"
-                />
-                <Reference
-                    Name = "System.Web"
-                    AssemblyName = "System.Web"
-                    HintPath = "..\..\..\..\WINXP\Microsoft.NET\Framework\v1.0.3705\System.Web.dll"
-                />
-                <Reference
-                    Name = "System.Drawing"
-                    AssemblyName = "System.Drawing"
-                    HintPath = "..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Drawing.dll"
-                />
-                <Reference
-                    Name = "System.Windows.Forms"
-                    AssemblyName = "System.Windows.Forms"
-                    HintPath = "..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Windows.Forms.dll"
-                />
-            </References>
-        </Build>
-        <Files>
-            <Include>
-                <File
-                    RelPath = "AbsoluteTopicName.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ArrayPTN.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "AssemblyInfo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "AuthorizationConfiguration.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "AuthorizationConfigurationProviderBase.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "AuthorizationHelper.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "BackingTopic.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "BehaviorInterpreter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "BehaviorParser.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "BELArray.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "BELBoolean.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "BELDateTime.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "BELInteger.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "BELLocation.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "BELMember.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "BELObject.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "BELString.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "BELTimeSpan.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "BELType.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Block.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "BlockArgumentsPTN.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "BlockParameter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "BlockParameterPTN.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "BlockParametersPTN.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "BlockPTN.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "BlockScope.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Border.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "CachedTopic.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "CacheRule.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "CacheRuleNever.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ClassicBehaviors.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "CompositeCacheRule.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "CompositePresentation.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "CompositeWikiSequence.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ContentBase.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DefaultSecurityConfigurationProvider.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DeliveryBoy.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DeprecatedNamespaceDefinition.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DereferencePTN.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Diff.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DuplicateTopicException.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DynamicNamespace.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DynamicObject.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DynamicTopic.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ErrorMessage.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExecutionContext.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExecutionException.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExpectedTokenParseException.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExposableParseTreeNode.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExposedClass.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExposedMethod.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExposedParameter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExpressionChainPTN.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Federation.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "FederationCacheManager.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "FederationConfiguration.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "FederationUpdate.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "FederationUpdateEventArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "FederationUpdateGenerator.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "FileSystemNamespaceProvider.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "FileSystemStore.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "FlexWikiConfigurationSectionHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Formatter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "FormCheckboxPresentation.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "FormEndPresentation.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "FormHiddenFieldPresentation.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "FormImageButtonPresentation.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "FormInputFieldPresentation.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "FormRadioPresentation.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "FormResetButtonPresentation.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "FormSelectFieldPresentation.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "FormStartPresentation.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "FormSubmitButtonPresentation.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "FormTextareaPresentation.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "GenerationCompleteEventArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Home.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "HTMLWikiOutput.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "IBELObject.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "IFederationCache.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "IHTMLRenderable.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ILogEventFactory.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ILogSink.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ImagePresentation.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ImplementationException.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "INamespaceProvider.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "IntegerPTN.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "InvocationFrame.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "IOutputSequence.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "IPresentation.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "IScope.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "IValueSource.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "IWikiSequenceProducer.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "IWikiToPresentation.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "LabelPresentation.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "LinkMaker.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "LinkPresentation.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "LocalTopicName.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Log.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "LogEvent.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "MemberInvocationException.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "MethodReferencePTN.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "NamespaceNotFoundException.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "NamespaceProviderDefinition.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "NamespaceProviderParameter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "NamespaceProviderParameterDescriptor.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "NamespaceProviderParameterException.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "NamespaceScope.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "NonBreakingSpacePresentation.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "NoSuchMemberException.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ParseException.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ParseTreeNode.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Permission.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Presentation.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "PresentationPrimitive.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Presentations.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "QualifiedBlockArgumentsPTN.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "QualifiedBlockPTN.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ReadOnlyStore.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ReadWriteStore.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ReflectedValueSource.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "RelativeTopicName.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Request.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Scanner.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Set.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "SharedAssemblyInfo.cs"
-                    Link = "..\SharedAssemblyInfo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "StringPresentation.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "StringPTN.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "StyledLine.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "SymbolTable.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TableCellInfo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TestWikiOutput.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Token.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TopicChange.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TopicContext.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TopicInfo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TopicInfoArray.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TopicIsAmbiguousException.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TopicName.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TopicNotFoundException.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TopicScope.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Tracer.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TraceSink.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TypeRegistry.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "UnableToCreateTopicException.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "UndefinedObject.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "UnexpectedTokenParseException.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "UnqualifiedTopicName.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Utility.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "VisitorEvent.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "WebApplicationLogSink.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "WikiOutput.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "WikiSequence.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "WithScope.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Caching\AllTopicsInNamespaceCacheRule.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Caching\FederationNamespacesCacheRule.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Caching\FederationPropertiesCacheRule.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Caching\GenericCache.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Caching\PropertyCacheRule.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Caching\TopicsCacheRule.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-            </Include>
-        </Files>
-    </CSHARP>
-</VisualStudioProject>
-
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7362F597-DAB3-437E-8A07-37D8D2FE6E56}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>FlexWiki</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>FlexWiki</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Spart, Version=1.0.2103.23044, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\spart\Spart.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Web">
+      <Name>System.Web</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\SharedAssemblyInfo.cs">
+      <Link>SharedAssemblyInfo.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Collections\LocalTopicVersionKeyCollection.cs" />
+    <Compile Include="Collections\NamespaceQualifiedTopicNameCollection.cs" />
+    <Compile Include="NamespaceQualifiedTopicName.cs" />
+    <Compile Include="NamespaceQualifiedTopicVersionKey.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AlignOption.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ArrayPTN.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AuthorizationConfiguration.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AuthorizationConfigurationProviderBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AuthorizationPolicy.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BackingTopic.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BackingTopicData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BELLocation.cs" />
+    <Compile Include="BuiltinTopicsProvider.cs" />
+    <Compile Include="BehaviorInterpreter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BehaviorParser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BELArray.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BELBoolean.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BELDateTime.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BELInteger.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BELMember.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BELObject.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BELString.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BELTimeSpan.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BELType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Block.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BlockArgumentsPTN.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BlockParameter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BlockParameterPTN.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BlockParametersPTN.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BlockPTN.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BlockScope.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Border.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ClassicBehaviors.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Collections\NamespaceQualifiedTopicVersionKeyCollection.cs" />
+    <Compile Include="Collections\LocalTopicNameCollection.cs" />
+    <Compile Include="Collections\NamespaceCollection.cs" />
+    <Compile Include="Collections\NamespaceManagerCollection.cs" />
+    <Compile Include="Collections\ReadOnlyRelativeTopicNameCollection.cs" />
+    <Compile Include="Collections\ReferenceMap.cs" />
+    <Compile Include="Collections\ExternalReferencesMap.cs" />
+    <Compile Include="Collections\RelativeTopicVersionKeyCollection.cs" />
+    <Compile Include="Collections\TopicChangeCollection.cs" />
+    <Compile Include="Collections\TopicNameCollection.cs" />
+    <Compile Include="CompositePresentation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CompositeWikiSequence.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExposedMethodFlags.cs" />
+    <Compile Include="ExpressionChainPTN.cs" />
+    <Compile Include="FlexWikiException.cs" />
+    <Compile Include="IWikiApplication.cs" />
+    <Compile Include="LocalTopicName.cs" />
+    <Compile Include="NamespaceManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ForwardingParsedContentProvider.cs" />
+    <Compile Include="CustomSorter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DefaultAuthorizationConfigurationProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DefaultSorter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DefaultTimeProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DeprecatedNamespaceDefinition.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DereferencePTN.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Diff.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DuplicateTopicException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DynamicNamespace.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DynamicObject.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DynamicTopic.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ErrorMessage.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExecutionContext.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExecutionException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExistencePolicy.cs" />
+    <Compile Include="ExpectedTokenParseException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExposableParseTreeNode.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExposedClass.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExposedMethod.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExposedParameter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Federation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FederationConfiguration.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FederationUpdate.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FederationUpdateEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FederationUpdateEventHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FederationUpdateGenerator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FileInfoTopicData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FileSystemNamespaceProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FileSystemStore.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FileSystemStoreState.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FlexWikiConfigurationSectionHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Formatter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FormCheckboxPresentation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FormEndPresentation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FormHiddenFieldPresentation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FormImageButtonPresentation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FormInputFieldPresentation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FormRadioPresentation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FormResetButtonPresentation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FormSelectFieldPresentation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FormStartPresentation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FormSubmitButtonPresentation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FormTextareaPresentation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GenerationCompleteEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Home.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HTMLWikiOutput.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IBELObject.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IContentProvider.cs" />
+    <Compile Include="IParsedContentProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IUnparsedContentProvider.cs" />
+    <Compile Include="IDeliveryBoy.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IHTMLRenderable.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ILogEventFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ILogSink.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ImagePresentation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ImplementationException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ImportPolicy.cs" />
+    <Compile Include="INamespaceProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IntegerPTN.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="InterpreterState.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="InvocationFrame.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IOutputSequence.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IPresentation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IProvideReadOnlyView.cs" />
+    <Compile Include="IScope.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ITimeProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IValueSource.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IWikiSequenceProducer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IWikiToPresentation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="LabelPresentation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="LineData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="LineStyle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="LineType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="LinkMaker.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="LinkPresentation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="LocalTopicVersionKey.cs" />
+    <Compile Include="Log.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="LogEvent.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="LogEventType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MemberInvocationException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MethodReferencePTN.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="NamespaceNotFoundException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="NamespaceProviderDefinition.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="NamespaceProviderParameter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Collections\NamespaceProviderParameterCollection.cs" />
+    <Compile Include="NamespaceProviderParameterDescriptor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="NamespaceProviderParameterException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="NamespaceScope.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="NonBreakingSpacePresentation.cs" />
+    <Compile Include="NoSuchMemberException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="OutputFormat.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ParsedTopic.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ParseException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ParseTreeNode.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ParsingProvider.cs" />
+    <Compile Include="PerformanceCounterNames.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Permission.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Presentation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PresentationPrimitive.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Presentations.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="QualifiedBlockArgumentsPTN.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="QualifiedBlockPTN.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ReferenceFixupPolicy.cs" />
+    <Compile Include="ReflectedValueSource.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="RelativeTopicVersionKey.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="RenameTopicDetails.cs" />
+    <Compile Include="RenameTopicResult.cs" />
+    <Compile Include="Request.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Scanner.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SecurityAdministration.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Set.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StringPresentation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StringPTN.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StyledLine.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SymbolTable.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TableCellInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestWikiOutput.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TimeSort.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Token.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TokenType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TopicChange.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TopicContext.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TopicData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TopicInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TopicInfoArray.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TopicIsAmbiguousException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TopicName.cs" />
+    <Compile Include="TopicVersionKey.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TopicNotFoundException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TopicParser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TopicProperty.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TopicPropertyCollection.cs" />
+    <Compile Include="TopicPropertyValue.cs" />
+    <Compile Include="Collections\TopicPropertyValueCollection.cs" />
+    <Compile Include="TopicScope.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tracer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TraceSink.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TypeRegistry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UnableToCreateTopicException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UndefinedObject.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UnexpectedTokenParseException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UnqualifiedTopicName.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Utilities.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Utility.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="VisitorEvent.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="WebApplicationLogSink.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="WikiOutput.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="WikiSequence.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="WithScope.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

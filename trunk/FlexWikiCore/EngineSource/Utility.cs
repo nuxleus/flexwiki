@@ -48,7 +48,7 @@ namespace FlexWiki
 			return new ErrorMessage(title, body);
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyForever, "Answer a newline")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer a newline")]
 		public string Newline
 		{
 			get
@@ -57,7 +57,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyForever, "Answer a tab")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer a tab")]
 		public string Tab
 		{
 			get
@@ -66,7 +66,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyForever, "Answer a space")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer a space")]
 		public string Space
 		{
 			get

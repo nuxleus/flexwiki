@@ -43,7 +43,7 @@ namespace FlexWiki.Web.Admin
 		{			
 		}
 
-		override protected void EnsurePluginsLoaded()
+		protected override void EnsurePluginsLoaded()
 		{
 			// Don't load plugins for the checker 
 		}
@@ -73,12 +73,12 @@ namespace FlexWiki.Web.Admin
 			UIResponse.ShowPage("Configuration Checker", new UIResponse.MenuWriter(ShowAdminMenu), new UIResponse.BodyWriter(ShowMain));
 		}
    
-		void ShowMain()
+		private void ShowMain()
 		{
 			if (CheckForConfigurationFormatUpgrade())
 				return;
 
-			string config = ConfigurationSettings.AppSettings["FederationNamespaceMapFile"];
+			string config = ConfigurationManager.AppSettings["FederationNamespaceMapFile"];
 			ConfigurationChecker checker = new ConfigurationChecker(
 				config,
 				(config == null ? null : MapPath(config)));

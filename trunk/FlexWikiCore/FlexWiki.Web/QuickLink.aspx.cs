@@ -22,6 +22,8 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 
+using FlexWiki.Collections; 
+
 namespace FlexWiki.Web
 {
 	/// <summary>
@@ -57,25 +59,25 @@ namespace FlexWiki.Web
 		protected void DoSearch()
 		{
 			string defaultNamespace = Request.QueryString["QuickLinkNamespace"];
-			ContentBase cb = TheFederation.ContentBaseForNamespace(defaultNamespace);
+			NamespaceManager storeManager = Federation.NamespaceManagerForNamespace(defaultNamespace);
 
 			LinkMaker lm = TheLinkMaker;
 
-			RelativeTopicName topic = new RelativeTopicName(Request.Form["QuickLink"]);
-			IList hits = cb.AllAbsoluteTopicNamesThatExist(topic);
+            string topic = Request.Form["QuickLink"];
+            NamespaceQualifiedTopicNameCollection hits = storeManager.AllNamespaceQualifiedTopicNamesThatExist(topic);
 
 			string target = null;
 			if (hits.Count == 0)
 			{
 				// No hits, create it in the default namespace
-				target = lm.LinkToEditTopic(topic.AsAbsoluteTopicName(defaultNamespace));
+				target = lm.LinkToEditTopic(new TopicName(topic, defaultNamespace));
 			} 
 			else if (hits.Count == 1)
 			{
 				// 1 hit; take it!
 				NameValueCollection extras = new NameValueCollection();
 				extras.Add("DelayRedirect", "1");
-				target = lm.LinkToTopic((TopicName)(hits[0]), false, extras);
+				target = lm.LinkToTopic(new NamespaceQualifiedTopicVersionKey(hits[0]), false, extras);
 			}
 
 			// If we have a target, go there
@@ -96,8 +98,10 @@ namespace FlexWiki.Web
     </HEAD>
 	<p>The topic name you selected is ambiguous because it already exists in multiple namespaces.  Please select the one you want:
 <ul>");
-			foreach (AbsoluteTopicName each in hits)
-				Response.Write("<li><a href='" + lm.LinkToTopic(each) + "'>" + each.Fullname + "</a></li>");
+            foreach (TopicName each in hits)
+            {
+                Response.Write("<li><a href='" + lm.LinkToTopic(each) + "'>" + each.QualifiedName + "</a></li>");
+            }
 			Response.Write(@"
 </ul>
     </body>

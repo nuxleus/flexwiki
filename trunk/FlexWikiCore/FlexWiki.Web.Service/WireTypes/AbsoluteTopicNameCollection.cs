@@ -83,7 +83,7 @@ namespace FlexWiki.Web.Services.WireTypes
 		/// <summary>
 		/// Adds an instance of type AbsoluteTopicName to the end of this AbsoluteTopicNameCollection.
 		/// </summary>
-		/// <param name="value">
+		/// <param name="rawValue">
 		/// The AbsoluteTopicName to be added to the end of this AbsoluteTopicNameCollection.
 		/// </param>
 		public virtual void Add(AbsoluteTopicName value)
@@ -92,13 +92,13 @@ namespace FlexWiki.Web.Services.WireTypes
 		}
 
 		/// <summary>
-		/// Determines whether a specfic AbsoluteTopicName value is in this AbsoluteTopicNameCollection.
+		/// Determines whether a specfic AbsoluteTopicName rawValue is in this AbsoluteTopicNameCollection.
 		/// </summary>
-		/// <param name="value">
-		/// The AbsoluteTopicName value to locate in this AbsoluteTopicNameCollection.
+		/// <param name="rawValue">
+		/// The AbsoluteTopicName rawValue to locate in this AbsoluteTopicNameCollection.
 		/// </param>
 		/// <returns>
-		/// true if value is found in this AbsoluteTopicNameCollection;
+		/// true if rawValue is found in this AbsoluteTopicNameCollection;
 		/// false otherwise.
 		/// </returns>
 		public virtual bool Contains(AbsoluteTopicName value)
@@ -107,14 +107,14 @@ namespace FlexWiki.Web.Services.WireTypes
 		}
 
 		/// <summary>
-		/// Return the zero-based index of the first occurrence of a specific value
+		/// Return the zero-based index of the first occurrence of a specific rawValue
 		/// in this AbsoluteTopicNameCollection
 		/// </summary>
-		/// <param name="value">
-		/// The AbsoluteTopicName value to locate in the AbsoluteTopicNameCollection.
+		/// <param name="rawValue">
+		/// The AbsoluteTopicName rawValue to locate in the AbsoluteTopicNameCollection.
 		/// </param>
 		/// <returns>
-		/// The zero-based index of the first occurrence of the _ELEMENT value if found;
+		/// The zero-based index of the first occurrence of the _ELEMENT rawValue if found;
 		/// -1 otherwise.
 		/// </returns>
 		public virtual int IndexOf(AbsoluteTopicName value)
@@ -128,7 +128,7 @@ namespace FlexWiki.Web.Services.WireTypes
 		/// <param name="index">
 		/// The index at which the AbsoluteTopicName is to be inserted.
 		/// </param>
-		/// <param name="value">
+		/// <param name="rawValue">
 		/// The AbsoluteTopicName to insert.
 		/// </param>
 		public virtual void Insert(int index, AbsoluteTopicName value)
@@ -154,8 +154,8 @@ namespace FlexWiki.Web.Services.WireTypes
 		/// <summary>
 		/// Removes the first occurrence of a specific AbsoluteTopicName from this AbsoluteTopicNameCollection.
 		/// </summary>
-		/// <param name="value">
-		/// The AbsoluteTopicName value to remove from this AbsoluteTopicNameCollection.
+		/// <param name="rawValue">
+		/// The AbsoluteTopicName rawValue to remove from this AbsoluteTopicNameCollection.
 		/// </param>
 		public virtual void Remove(AbsoluteTopicName value)
 		{

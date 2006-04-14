@@ -16,16 +16,17 @@ using System.ComponentModel;
 using System.Data;
 using System.Configuration;
 using System.Drawing;
+using System.IO;
+using System.Reflection;
 using System.Web;
-using System.Web.Mail;
+using System.Net.Mail;
 using System.Web.SessionState;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
+
 using FlexWiki;
 using FlexWiki.Web;
-using System.IO;
-using System.Reflection;
 
 
 namespace FlexWiki.Web.Admin
@@ -67,7 +68,7 @@ namespace FlexWiki.Web.Admin
 			UIResponse.ShowPage("Edit Provider", new UIResponse.MenuWriter(ShowAdminMenu), new UIResponse.BodyWriter(Body));
 		}
 
-		void Body()
+		private void Body()
 		{
 			string providerId = ProviderIDParm;
 			if (ProviderIDParm == null)
@@ -86,7 +87,7 @@ namespace FlexWiki.Web.Admin
 			}
 		}
 
-		bool IsSave
+		private bool IsSave
 		{
 			get
 			{
@@ -94,12 +95,12 @@ namespace FlexWiki.Web.Admin
 			}
 		}
 
-		void ShowTypeDetailsForm(string providerID)
+		private void ShowTypeDetailsForm(string providerID)
 		{
 			bool isCreate = providerID == null;
 			INamespaceProvider provider = null;
 
-			// If we're creating, fill default values, else fill values from the specified instance (or form field if the user already submitted)
+			// If we're creating, fill default values, else fill values from the specified instance (or form propertyName if the user already submitted)
 			NamespaceProviderDefinition def = null;
 			if (providerID == null)
 			{
@@ -108,7 +109,7 @@ namespace FlexWiki.Web.Admin
 			}
 			else
 			{
-				foreach (NamespaceProviderDefinition each in TheFederation.CurrentConfiguration.NamespaceMappings)
+				foreach (NamespaceProviderDefinition each in Federation.CurrentConfiguration.NamespaceMappings)
 				{
 					if (each.Id == providerID)
 					{
@@ -135,7 +136,7 @@ namespace FlexWiki.Web.Admin
 				{
 					if (!isCreate && !each.IsPersistent)
 						continue;	// skip create only parms for non-create scenario
-					if (provider.ValidateParameter(TheFederation, each.ID, GetParm(each.ID), isCreate) != null)
+					if (provider.ValidateParameter(Federation, each.ID, GetParm(each.ID), isCreate) != null)
 					{
 						err = true;
 						break;
@@ -144,7 +145,7 @@ namespace FlexWiki.Web.Admin
 
 				if (!err)
 				{
-					errors = provider.ValidateAggregate(TheFederation, isCreate);
+					errors = provider.ValidateAggregate(Federation, isCreate);
 					if (errors == null)
 					{
 						// Great!  All's OK.  Create/modify the provider
@@ -160,17 +161,17 @@ namespace FlexWiki.Web.Admin
 						IList namespaces = null;
 						if (isCreate)
 						{
-							TheFederation.CurrentConfiguration.NamespaceMappings.Add(def);
-							namespaces = provider.CreateNamespaces(TheFederation);
+							Federation.CurrentConfiguration.NamespaceMappings.Add(def);
+							namespaces = provider.CreateNamespaces(Federation);
 						}
 						else
 						{
 							// If we're editing, we will have modified the definition in place, but we'll need to rescind and recreate
 							// the namespaces
-							provider.UpdateNamespaces(TheFederation);
+							provider.UpdateNamespaces(Federation);
 						}
 
-						TheFederation.CurrentConfiguration.WriteToFile(TheFederation.CurrentConfiguration.FederationNamespaceMapFilename);
+						Federation.Application.WriteFederationConfiguration();
 						if (isCreate)
 						{
 							UIResponse.WritePara("The provider has been created.");
@@ -180,7 +181,7 @@ namespace FlexWiki.Web.Admin
 							UIResponse.WriteStartUnorderedList();
 							foreach (string ns in namespaces)
 							{
-								UIResponse.WriteListItem(HTMLWriter.Escape(ns));
+								UIResponse.WriteListItem(HtmlWriter.Escape(ns));
 							}
 							UIResponse.WriteEndUnorderedList();
 						}
@@ -224,7 +225,7 @@ namespace FlexWiki.Web.Admin
 				}
 				bool readOnly = !isCreate && !provider.CanParameterBeEdited(each.ID);
 				UIResponse.WriteInputField(each.ID, each.Title, each.Description, val, readOnly);
-				string error = provider.ValidateParameter(TheFederation, each.ID, val, isCreate);
+				string error = provider.ValidateParameter(Federation, each.ID, val, isCreate);
 				if (error != null)
 					UIResponse.WriteFieldError(UIResponse.Escape(error));
 			}
@@ -243,41 +244,43 @@ namespace FlexWiki.Web.Admin
 
 		}
 
-		void NotifyOwnerOfCreation(string ownerMailingAddress, IList namespaces)
+		private void NotifyOwnerOfCreation(string ownerMailingAddress, IList namespaces)
 		{
 			MailMessage msg = new MailMessage();
-			string adminMail = (string)(ConfigurationSettings.AppSettings["SendNamespaceCreationMailFrom"]);
+			string adminMail = (string)(ConfigurationManager.AppSettings["SendNamespaceCreationMailFrom"]);
 			if (adminMail == null || adminMail == "")
 			{
 				Response.Write(@"<p>FlexWiki is not configured to automatically send mail notifying the contact of the namespace creation.");
 				return;
 			}
-			msg.To = ownerMailingAddress;
+			msg.To.Add(ownerMailingAddress);
 
-			string cc = (string)(ConfigurationSettings.AppSettings["SendNamespaceCreationMailToCC"]);
-			if (cc != null && cc != "")
-				msg.Cc = cc;
-			msg.BodyFormat = MailFormat.Html;
-			msg.From = adminMail;
+			string cc = (string)(ConfigurationManager.AppSettings["SendNamespaceCreationMailToCC"]);
+            if (cc != null && cc != "")
+            {
+                msg.CC.Add(cc);
+            }
+			msg.IsBodyHtml = true;
+			msg.From = new MailAddress(adminMail);
 			msg.Subject = "Wiki namespace creation request completed";
 			string body = @"<p>Your request has been completed.</p>";
 			foreach (string ns in namespaces)
 			{
-				string url = TheLinkMaker.LinkToTopic(TheFederation.ContentBaseForNamespace(ns).HomePageTopicName);
+				string url = TheLinkMaker.LinkToTopic(Federation.NamespaceManagerForNamespace(ns).HomePageTopicName);
 				Uri u = System.Web.HttpContext.Current.Request.Url;
 				url = new UriBuilder(u.Scheme, u.Host, u.Port, url).ToString();
-				body += @"<p>The namespace " + ns + " has been created.  You can visit the home page at <a href='" + url + "'>" + HTMLWriter.Escape(url) + "</a>.</p>";
+				body += @"<p>The namespace " + ns + " has been created.  You can visit the home page at <a href='" + url + "'>" + HtmlWriter.Escape(url) + "</a>.</p>";
 			}
 			bool signed = false; 
 			try
 			{
-				signed = bool.Parse(System.Configuration.ConfigurationSettings.AppSettings["SignNamespaceCreationMail"]); 
+				signed = bool.Parse(System.Configuration.ConfigurationManager.AppSettings["SignNamespaceCreationMail"]); 
 			}
 			catch
 			{
 			}
 			if (signed)
-				body += @"<p>--- " + HTMLWriter.Escape(VisitorIdentityString) + "</p>";
+				body += @"<p>--- " + HtmlWriter.Escape(VisitorIdentityString) + "</p>";
 			msg.Body = body;
 			string fail = SendMail(msg);
 			if (fail == null)
@@ -292,8 +295,8 @@ namespace FlexWiki.Web.Admin
 		}
 
 
-		static string ParmNameSaveNow = "SaveNow";
-		string SaveNowParm
+		private static string ParmNameSaveNow = "SaveNow";
+		private string SaveNowParm
 		{
 			get
 			{
@@ -302,7 +305,7 @@ namespace FlexWiki.Web.Admin
 		}
 
 		public static string ParmNameProviderID = "Provider";
-		string ProviderIDParm
+		private string ProviderIDParm
 		{
 			get
 			{
@@ -310,8 +313,8 @@ namespace FlexWiki.Web.Admin
 			}
 		}
 
-		static string ParmNameTypeName = "TypeName";
-		string TypeNameParm
+		private static string ParmNameTypeName = "TypeName";
+		private string TypeNameParm
 		{
 			get
 			{
@@ -319,7 +322,7 @@ namespace FlexWiki.Web.Admin
 			}
 		}
 
-		string GetParm(string name)
+		private string GetParm(string name)
 		{
 			if (IsPost)
 				return Request.Form[name];
@@ -328,7 +331,7 @@ namespace FlexWiki.Web.Admin
 		}
 
 
-		Type ProviderType
+		private Type ProviderType
 		{
 			get
 			{
@@ -345,7 +348,7 @@ namespace FlexWiki.Web.Admin
 			}
 		}
 
-		string AssemblyNamePart
+		private string AssemblyNamePart
 		{
 			get
 			{
@@ -359,7 +362,7 @@ namespace FlexWiki.Web.Admin
 			}
 		}
 
-		string TypeNamePart
+		private string TypeNamePart
 		{
 			get
 			{
@@ -373,7 +376,7 @@ namespace FlexWiki.Web.Admin
 			}
 		}
 
-		void ShowTypeSelectionForm()
+		private void ShowTypeSelectionForm()
 		{
 			UIResponse.WriteStartForm("EditProvider.aspx");
 			UIResponse.WritePara(@"To add a new provider, you must first identify the type of provider you want.  Once you have selected a valid one, you may be prompted for additional information, depending on the type of the provider.");
@@ -384,11 +387,11 @@ namespace FlexWiki.Web.Admin
 			if (TypeNameParm != null && TypeNameParm != "")
 				defaultProvider = TypeNameParm;
 			else
-				defaultProvider = (string)(ConfigurationSettings.AppSettings["DefaultNamespaceProviderForNamespaceCreation"]);
+				defaultProvider = (string)(ConfigurationManager.AppSettings["DefaultNamespaceProviderForNamespaceCreation"]);
 
 			string def = null;
 			// Get the list of types in the loaded assemblies that implement INamespaceProvider
-			HTMLWriter.ChoiceSet choices = new HTMLWriter.ChoiceSet();
+			ChoiceSet choices = new ChoiceSet();
 			foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
 			{
 				foreach (Type each in assembly.GetTypes())

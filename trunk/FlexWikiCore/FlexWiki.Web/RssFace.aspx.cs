@@ -20,7 +20,7 @@ using System.Web.SessionState;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
-using FlexWiki.Newsletters;
+using FlexWiki.Web.Newsletters;
 
 namespace FlexWiki.Web
 {
@@ -108,10 +108,10 @@ To subscribe the the RSS feed for the newsletter directly, use the listed link b
 		{
 			Response.Write(@"<h1>Newsletters</h1>");
 			
-			NewsletterManager nm = new NewsletterManager(TheFederation, TheLinkMaker);
+			NewsletterManager nm = new NewsletterManager(Federation, TheLinkMaker);
 
 			Hashtable hash = new Hashtable();
-			foreach (AbsoluteTopicName newsletterName in nm.GetAllNewsletterNames(ns))
+			foreach (NamespaceQualifiedTopicVersionKey newsletterName in nm.GetAllNewsletterNames(ns))
 			{
 				ArrayList topicsInThisNamespace = (ArrayList)hash[newsletterName.Namespace];
 				if (topicsInThisNamespace == null)
@@ -129,17 +129,17 @@ To subscribe the the RSS feed for the newsletter directly, use the listed link b
 			OpenTable();
 			foreach (string each in bases)
 			{
-				ContentBase cb = TheFederation.ContentBaseForNamespace(each);
+				NamespaceManager storeManager = Federation.NamespaceManagerForNamespace(each);
 				if (ns == null)
-					Response.Write(@"<tr><td colspan='2'><div class='SubscriptionNamespace'>" + EscapeHTML(cb.FriendlyTitle)  + "</div></td></tr>");
-				foreach (AbsoluteTopicName abs in (ArrayList)(hash[each]))
+					Response.Write(@"<tr><td colspan='2'><div class='SubscriptionNamespace'>" + EscapeHTML(storeManager.FriendlyTitle)  + "</div></td></tr>");
+				foreach (NamespaceQualifiedTopicVersionKey abs in (ArrayList)(hash[each]))
 				{
-					TopicInfo info = TheFederation.GetTopicInfo(abs.ToString());
+					TopicVersionInfo info = Federation.GetTopicInfo(abs.ToString());
 					string desc = info.GetProperty("Description");
 					Response.Write(@"
 <tr>
 <td><a class=""standardsButton"" href='" + RootUrl(Request) + @"Rss.aspx?newsletter=" + abs.ToString() + @"'>rss</a></td>
-<td><a href='" + TheLinkMaker.LinkToTopic(abs) + @"'>" + abs.Name + @"</a></td>
+<td><a href='" + TheLinkMaker.LinkToTopic(abs) + @"'>" + abs.LocalName + @"</a></td>
 </tr>
 <tr>
 <td></td>
@@ -155,30 +155,30 @@ To subscribe the the RSS feed for the newsletter directly, use the listed link b
 		{
 			Response.Write(@"<h1>Namespace Feeds</h1>");
 			ArrayList bases = new ArrayList();
-			foreach (string each in TheFederation.Namespaces)
+			foreach (string each in Federation.Namespaces)
 			{
 				if (ns != null && ns != each)
 					continue;
-				ContentBase cb = TheFederation.ContentBaseForNamespace(each);
-				bases.Add(cb);
+				NamespaceManager storeManager = Federation.NamespaceManagerForNamespace(each);
+				bases.Add(storeManager);
 			}
 			bases.Sort();
 
 			OpenTable();
-			foreach (ContentBase cb in bases)
+			foreach (NamespaceManager storeManager in bases)
 			{
 				if (ns == null)
-					Response.Write(@"<tr><td colspan='2'><div class='SubscriptionNamespace'>" + EscapeHTML(cb.FriendlyTitle)  + "</div></td></tr>");
+					Response.Write(@"<tr><td colspan='2'><div class='SubscriptionNamespace'>" + EscapeHTML(storeManager.FriendlyTitle)  + "</div></td></tr>");
 				Response.Write(@"
 <tr>
-<td><a class=""standardsButton"" href='" + RootUrl(Request) + @"Rss.aspx?namespace=" + cb.Namespace + @"'>rss</a></td>
-<td>Only this namespace (<a href='" + TheLinkMaker.LinkToTopic(new AbsoluteTopicName(cb.Namespace + "." + cb.HomePage)) + @"'>" + cb.FriendlyTitle + @"</a>)</td>
+<td><a class=""standardsButton"" href='" + RootUrl(Request) + @"Rss.aspx?namespace=" + storeManager.Namespace + @"'>rss</a></td>
+<td>Only this namespace (<a href='" + TheLinkMaker.LinkToTopic(new NamespaceQualifiedTopicVersionKey(storeManager.Namespace + "." + storeManager.HomePage)) + @"'>" + storeManager.FriendlyTitle + @"</a>)</td>
 </tr>
 <tr>
-<td><a class=""standardsButton"" href='" + RootUrl(Request) + @"Rss.aspx?namespace=" + cb.Namespace + @"&inherited=y'>rss</a></td>
-<td>This namespace and related namespaces (<a href='" + TheLinkMaker.LinkToTopic(new AbsoluteTopicName(cb.Namespace + "." + cb.HomePage)) + @"'>" + cb.FriendlyTitle + @"</a>");
-				foreach (ContentBase import in cb.ImportedContentBases)
-					Response.Write(", <a href='" + TheLinkMaker.LinkToTopic(new AbsoluteTopicName(import.Namespace + "." + import.HomePage)) + @"'>" + import.FriendlyTitle + @"</a>");
+<td><a class=""standardsButton"" href='" + RootUrl(Request) + @"Rss.aspx?namespace=" + storeManager.Namespace + @"&inherited=y'>rss</a></td>
+<td>This namespace and related namespaces (<a href='" + TheLinkMaker.LinkToTopic(new NamespaceQualifiedTopicVersionKey(storeManager.Namespace + "." + storeManager.HomePage)) + @"'>" + storeManager.FriendlyTitle + @"</a>");
+				foreach (NamespaceManager import in storeManager.ImportedNamespaceManagers)
+					Response.Write(", <a href='" + TheLinkMaker.LinkToTopic(new NamespaceQualifiedTopicVersionKey(import.Namespace + "." + import.HomePage)) + @"'>" + import.FriendlyTitle + @"</a>");
 				Response.Write(@")</td>
 </tr>");
 			}

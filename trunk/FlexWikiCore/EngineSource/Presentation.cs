@@ -27,8 +27,6 @@ namespace FlexWiki
 		{
 		}
 
-		#region IOutputSequence Members
-
 		public IPresentation ToPresentation(IWikiToPresentation p)
 		{
 			return this;
@@ -39,18 +37,12 @@ namespace FlexWiki
 			list.Add(this);
 		}
 
-		#endregion
-
 		public override IOutputSequence ToOutputSequence()
 		{
 			return this;			
 		}
 
 
-		#region IPresentation Members
-
 		public abstract void OutputTo(WikiOutput output);
-
-		#endregion
 	}
 }

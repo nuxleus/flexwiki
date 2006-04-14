@@ -1,3 +1,14 @@
+#region License Statement
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+//
+// The use and distribution terms for this software are covered by the 
+// Common Public License 1.0 (http://opensource.org/licenses/cpl.php)
+// which can be found in the file CPL.TXT at the root of this distribution.
+// By using this software in any fashion, you are agreeing to be bound by 
+// the terms of this license.
+//
+// You must not remove this notice, or any other, from this software.
+#endregion
 using System;
 using FlexWiki;
 using System.Collections;
@@ -9,28 +20,28 @@ namespace FlexWiki.Web
 	/// </summary>
 	public class UpdateMonitor
 	{
-		Federation _TheFederation;
+		private Federation _Federation;
 
 		public UpdateMonitor(Federation aFed)
 		{
-			_TheFederation = aFed;
+			_Federation = aFed;
 		}
 
-		Federation TheFederation
+		private Federation Federation
 		{
 			get
 			{
-				return _TheFederation;
+				return _Federation;
 			}
 		}
 
 		public void Start()
 		{
-			TheFederation.FederationUpdated += new Federation.FederationUpdateEventHandler(FederationUpdateMonitor);
+			Federation.FederationUpdated += new FederationUpdateEventHandler(FederationUpdateMonitor);
 			_Updates = new ArrayList();
 		}
 
-		void FederationUpdateMonitor(object sender, FederationUpdateEventArgs  e) 
+		private void FederationUpdateMonitor(object sender, FederationUpdateEventArgs  e) 
 		{
 			UpdateInfo info = new UpdateInfo();
 			info.Timestamp = DateTime.Now;
@@ -40,13 +51,13 @@ namespace FlexWiki.Web
 				_Updates.RemoveAt(0);
 		}
 
-		const int MAX_UPDATES_TO_HOLD = 50;
+		private const int MAX_UPDATES_TO_HOLD = 50;
 
-		ArrayList _Updates;
+		private ArrayList _Updates;
 
 		public void Stop()
 		{
-			TheFederation.FederationUpdated -= new Federation.FederationUpdateEventHandler(FederationUpdateMonitor);
+			Federation.FederationUpdated -= new FederationUpdateEventHandler(FederationUpdateMonitor);
 		}
 
 		public IList Updates
@@ -57,12 +68,6 @@ namespace FlexWiki.Web
 			}
 		}
 
-		public class UpdateInfo
-		{
-			public DateTime				Timestamp;
-			public FederationUpdate	Update;
-			// TODO -- add other info like Requesting IP address, VisitorIdentity, etc.
-		}
 
 	}
 }

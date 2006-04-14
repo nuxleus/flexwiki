@@ -77,7 +77,7 @@ namespace FlexWiki
 		}
 		#endregion
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyForever, "Answer the earliest date that can be represented")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the earliest date that can be represented")]
 		public static DateTime MinValue
 		{
 			get
@@ -86,7 +86,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyForever, "Answer the latest date that can be represented")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the latest date that can be represented")]
 		public static DateTime MaxValue
 		{
 			get
@@ -95,7 +95,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the Date component of this DateTime")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the Date component of this DateTime")]
 		public DateTime Date
 		{
 			get
@@ -105,7 +105,7 @@ namespace FlexWiki
 		}
 
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the day of the month represented by this DateTime")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the day of the month represented by this DateTime")]
 		public int Day
 		{
 			get
@@ -115,7 +115,7 @@ namespace FlexWiki
 		}
 
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the name of the day of the week represented by this DateTime")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the name of the day of the week represented by this DateTime")]
 		public string DayOfWeek
 		{
 			get
@@ -124,7 +124,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the day of the year represented by this DateTime")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the day of the year represented by this DateTime")]
 		public int DayOfYear
 		{
 			get
@@ -133,7 +133,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the hour of the day represented by this DateTime")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the hour of the day represented by this DateTime")]
 		public int Hour
 		{
 			get
@@ -143,7 +143,7 @@ namespace FlexWiki
 		}
 
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the millisecond component of the time represented by this DateTime")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the millisecond component of the time represented by this DateTime")]
 		public int Millisecond
 		{
 			get
@@ -152,7 +152,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the minute of the hourrepresented by this DateTime")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the minute of the hourrepresented by this DateTime")]
 		public int Minute
 		{
 			get
@@ -161,7 +161,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the month of the year represented by this DateTime")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the month of the year represented by this DateTime")]
 		public int Month
 		{
 			get
@@ -170,7 +170,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the seconds component of the time represented by this DateTime")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the seconds component of the time represented by this DateTime")]
 		public int Second
 		{
 			get
@@ -179,7 +179,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the time of day represented by this DateTime")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the time of day represented by this DateTime")]
 		public TimeSpan TimeOfDay
 		{
 			get
@@ -188,7 +188,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a DateTime representing today")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer a DateTime representing today")]
 		public static DateTime Today
 		{
 			get
@@ -197,7 +197,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the current date and time on this computer expressed as the coordinated universal time")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the current date and time on this computer expressed as the coordinated universal time")]
 		public static DateTime UtcNow
 		{
 			get
@@ -206,7 +206,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the current date and time")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the current date and time")]
 		public static DateTime Now
 		{
 			get
@@ -215,7 +215,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the year represented by this DateTime")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the year represented by this DateTime")]
 		public int Year
 		{
 			get
@@ -224,49 +224,49 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Add the specified TimeSpan to this DateTime")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Add the specified TimeSpan to this DateTime")]
 		public DateTime Add(TimeSpan span)
 		{
 			return DateTime.Add(span);
 		}
 		
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Add the specified number of hours to this DateTime")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Add the specified number of hours to this DateTime")]
 		public DateTime AddHours(int delta)
 		{
 			return DateTime.AddHours(delta);
 		}
 		
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Add the specified number of milliseconds to this DateTime")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Add the specified number of milliseconds to this DateTime")]
 		public DateTime AddMilliseconds(int delta)
 		{
 			return DateTime.AddMilliseconds(delta);
 		}
 		
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Add the specified number of minutes to this DateTime")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Add the specified number of minutes to this DateTime")]
 		public DateTime AddMinutes(int delta)
 		{
 			return DateTime.AddMinutes(delta);
 		}
 		
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Add the specified number of months to this DateTime")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Add the specified number of months to this DateTime")]
 		public DateTime AddMonths(int delta)
 		{
 			return DateTime.AddMonths(delta);
 		}
 		
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Add the specified number of days to this DateTime")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Add the specified number of days to this DateTime")]
 		public DateTime AddDays(int delta)
 		{
 			return DateTime.AddDays(delta);
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Add the specified number of seconds to this DateTime")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Add the specified number of seconds to this DateTime")]
 		public DateTime AddSeconds(int delta)
 		{
 			return DateTime.AddSeconds(delta);
 		}
 		
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Add the specified number of years to this DateTime")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Add the specified number of years to this DateTime")]
 		public DateTime AddYears(int delta)
 		{
 			return DateTime.AddYears(delta);
@@ -281,25 +281,25 @@ namespace FlexWiki
 			throw new ArgumentException("When using CompareTo() to compare dates, the argument must be a DateTime; got " + BELType.ExternalTypeNameForType(obj.GetType()));
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer true if the year represented by this DateTime is a leap year; else answer false")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer true if the year represented by this DateTime is a leap year; else answer false")]
 		public static bool IsLeapYear(int year)
 		{
 			return DateTime.IsLeapYear(year);
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Subtract the given time span from this DateTime")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Subtract the given time span from this DateTime")]
 		public DateTime Subtract(TimeSpan span)
 		{
 			return DateTime.Subtract(span);
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Calculate the difference between this DateTime and the supplied DateTime")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Calculate the difference between this DateTime and the supplied DateTime")]
 		public TimeSpan SpanBetween(DateTime aDateTime)
 		{
 			return DateTime.Subtract(aDateTime);
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Convert this DateTime from universal coordinated time (UTC) to local time")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Convert this DateTime from universal coordinated time (UTC) to local time")]
 		public DateTime ToLocalTime
 		{
 			get
@@ -308,7 +308,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Convert this local DateTime to universal coordinated time (UTC)")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Convert this local DateTime to universal coordinated time (UTC)")]
 		public DateTime ToUniversalTime
 		{
 			get
@@ -317,7 +317,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a long-form string representation for the date component of this DateTime")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer a long-form string representation for the date component of this DateTime")]
 		public string ToLongDateString
 		{
 			get
@@ -326,7 +326,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a short-form string representation for the date component of this DateTime")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer a short-form string representation for the date component of this DateTime")]
 		public string ToShortDateString
 		{
 			get
@@ -335,7 +335,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a long-form string representation for the time component of this DateTime")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer a long-form string representation for the time component of this DateTime")]
 		public string ToLongTimeString
 		{
 			get
@@ -344,7 +344,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a short-form string representation for the time component of this DateTime")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer a short-form string representation for the time component of this DateTime")]
 		public string ToShortTimeString
 		{
 			get
@@ -353,7 +353,7 @@ namespace FlexWiki
 			}
 		}		
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Determine whether this object is equal to another object")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Determine whether this object is equal to another object")]
 		public override bool Equals(object obj)
 		{
 			if (!(obj is DateTime))
@@ -366,13 +366,13 @@ namespace FlexWiki
 			return this.DateTime.GetHashCode();
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the number of days in the specified month of the specified year")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the number of days in the specified month of the specified year")]
 		public static int DaysInMonth(int year, int month)
 		{
 			return DateTime.DaysInMonth(year, month);
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the number of calendar weeks in the specified month of the specified year including incomplete weeks")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the number of calendar weeks in the specified month of the specified year including incomplete weeks")]
 		public static int WeeksInMonth(int year, int month, int firstDayOfWeek)
 		{
 			int numberOfWeeks = 1;

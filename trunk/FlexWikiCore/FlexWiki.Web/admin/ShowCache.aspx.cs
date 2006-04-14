@@ -40,7 +40,7 @@ namespace FlexWiki.Web.Admin
 			UIResponse.ShowPage("Cache Information", new UIResponse.MenuWriter(ShowMenu), new UIResponse.BodyWriter(ShowMain));
 		}
 
-		void ShowMenu()
+		private void ShowMenu()
 		{
 			UIResponse.WriteStartMenu("Cache");
 			UIResponse.WriteMenuItem("ShowCache.aspx?clear=1", "Clear", "Clear the cache");
@@ -67,7 +67,7 @@ namespace FlexWiki.Web.Admin
 				ShowKey(key);
 		}
 
-		void WriteFilterScript()
+		private void WriteFilterScript()
 		{
 			Response.Write("<script language='javascript'>");
 			Response.Write(@"
@@ -102,10 +102,10 @@ function FilterChanged()
 			Response.Write("</script>");
 		}
 
-		const string headerPrefix = "Row";
-		const string valuePrefix = "RowData";
+		private const string headerPrefix = "Row";
+		private const string valuePrefix = "RowData";
 
-		void ShowKeys()
+		private void ShowKeys()
 		{
 			WriteFilterScript();
 			Response.Write("<p>Search for key: <input id='Filter' onkeyup='javascript:FilterChanged()' length=30/></p>");
@@ -120,7 +120,7 @@ function FilterChanged()
 			}
 		}
 
-		void ShowKey(string key)
+		private void ShowKey(string key)
 		{
 			Response.Write("<h2>" + EscapeHTML(key) + "</h2>");
 			Response.Write("<h3>Cache Rule:</h3>");

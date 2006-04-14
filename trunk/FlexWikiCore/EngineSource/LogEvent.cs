@@ -24,14 +24,6 @@ namespace FlexWiki
 	public class LogEvent
 	{
 
-		public enum LogEventType
-		{
-			ReadTopic,
-			WriteTopic, 
-			DeleteTopic,
-			CompareTopic,
-			NewsletterGeneration
-		};
 
 		public LogEvent()
 		{
@@ -107,23 +99,23 @@ namespace FlexWiki
 
 			switch (Type)
 			{
-				case LogEvent.LogEventType.ReadTopic:
+				case LogEventType.ReadTopic:
 					action = "read";
 					break;
 
-				case LogEvent.LogEventType.WriteTopic:
+				case LogEventType.WriteTopic:
 					action = "write";
 					break;
 
-				case LogEvent.LogEventType.DeleteTopic:
+				case LogEventType.DeleteTopic:
 					action = "delete";
 					break;
 
-				case LogEvent.LogEventType.CompareTopic:
+				case LogEventType.CompareTopic:
 					action = "compare";
 					break;
 
-				case LogEvent.LogEventType.NewsletterGeneration:
+				case LogEventType.NewsletterGeneration:
 					action = "newsletter";
 					break;
 			}

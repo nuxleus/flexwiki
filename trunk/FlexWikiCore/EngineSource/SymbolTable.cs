@@ -20,11 +20,12 @@ namespace FlexWiki
 	/// </summary>
 	public class SymbolTable : IValueSource
 	{
-		public SymbolTable()
+    private Hashtable _Table = new Hashtable();
+    
+    public SymbolTable()
 		{
 		}
 
-		Hashtable _Table = new Hashtable();
 
 		public IBELObject ValueOf(string symbol, ArrayList args, ExecutionContext ctx)
 		{

@@ -83,7 +83,7 @@ namespace FlexWiki.Web.Services.WireTypes
 		/// <summary>
 		/// Adds an instance of type ContentBase to the end of this ContentBaseCollection.
 		/// </summary>
-		/// <param name="value">
+		/// <param name="rawValue">
 		/// The ContentBase to be added to the end of this ContentBaseCollection.
 		/// </param>
 		public virtual void Add(ContentBase value)
@@ -92,13 +92,13 @@ namespace FlexWiki.Web.Services.WireTypes
 		}
 
 		/// <summary>
-		/// Determines whether a specfic ContentBase value is in this ContentBaseCollection.
+		/// Determines whether a specfic ContentBase rawValue is in this ContentBaseCollection.
 		/// </summary>
-		/// <param name="value">
-		/// The ContentBase value to locate in this ContentBaseCollection.
+		/// <param name="rawValue">
+		/// The ContentBase rawValue to locate in this ContentBaseCollection.
 		/// </param>
 		/// <returns>
-		/// true if value is found in this ContentBaseCollection;
+		/// true if rawValue is found in this ContentBaseCollection;
 		/// false otherwise.
 		/// </returns>
 		public virtual bool Contains(ContentBase value)
@@ -107,14 +107,14 @@ namespace FlexWiki.Web.Services.WireTypes
 		}
 
 		/// <summary>
-		/// Return the zero-based index of the first occurrence of a specific value
+		/// Return the zero-based index of the first occurrence of a specific rawValue
 		/// in this ContentBaseCollection
 		/// </summary>
-		/// <param name="value">
-		/// The ContentBase value to locate in the ContentBaseCollection.
+		/// <param name="rawValue">
+		/// The ContentBase rawValue to locate in the ContentBaseCollection.
 		/// </param>
 		/// <returns>
-		/// The zero-based index of the first occurrence of the _ELEMENT value if found;
+		/// The zero-based index of the first occurrence of the _ELEMENT rawValue if found;
 		/// -1 otherwise.
 		/// </returns>
 		public virtual int IndexOf(ContentBase value)
@@ -128,7 +128,7 @@ namespace FlexWiki.Web.Services.WireTypes
 		/// <param name="index">
 		/// The index at which the ContentBase is to be inserted.
 		/// </param>
-		/// <param name="value">
+		/// <param name="rawValue">
 		/// The ContentBase to insert.
 		/// </param>
 		public virtual void Insert(int index, ContentBase value)
@@ -154,8 +154,8 @@ namespace FlexWiki.Web.Services.WireTypes
 		/// <summary>
 		/// Removes the first occurrence of a specific ContentBase from this ContentBaseCollection.
 		/// </summary>
-		/// <param name="value">
-		/// The ContentBase value to remove from this ContentBaseCollection.
+		/// <param name="rawValue">
+		/// The ContentBase rawValue to remove from this ContentBaseCollection.
 		/// </param>
 		public virtual void Remove(ContentBase value)
 		{

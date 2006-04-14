@@ -22,7 +22,7 @@ namespace FlexWiki
 	public class StringPresentation : PresentationPrimitive
 	{
 
-		string _Value;
+		private string _Value;
 
 		public StringPresentation(string output)
 		{

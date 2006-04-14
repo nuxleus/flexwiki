@@ -15,227 +15,232 @@ using System.Collections;
 
 namespace FlexWiki
 {
-	/// <summary>
-	/// Summary description for FileSystemNamespaceProvider.
-	/// </summary>
-	public class FileSystemNamespaceProvider : INamespaceProvider
-	{
-		public FileSystemNamespaceProvider()
-		{
-		}
+    /// <summary>
+    /// Summary description for FileSystemNamespaceProvider.
+    /// </summary>
+    public class FileSystemNamespaceProvider : INamespaceProvider
+    {
+        private const string c_namespace = "Namespace";
+        private const string c_root = "Root";
+        private const string c_contact = "Contact";
+        private const string c_title = "Title";
+        private const string c_description = "Description";
 
-		public string OwnerMailingAddress
-		{
-			get
-			{
-				return Contact;
-			}
-		}
+        private string _contact;
+        private ArrayList _parameterDescriptors;
+        private string _namespace;
+        private string _namespaceDescription;
+        private string _root;
+        private string _title;
 
-		public ArrayList _ParameterDescriptors;
-		public IList ParameterDescriptors
-		{
-			get
-			{
-				if (_ParameterDescriptors != null)
-					return ArrayList.ReadOnly(_ParameterDescriptors);
-				_ParameterDescriptors = new ArrayList();
-				_ParameterDescriptors.Add(new NamespaceProviderParameterDescriptor(Names.Namespace, "Namespace", "Name for the namespace", null, true));
-				_ParameterDescriptors.Add(new NamespaceProviderParameterDescriptor(Names.Root, "Directory", @"Physical path to directory that holds this namespace.  Leave blank to accept the default (.\[NamespaceName]).", null, true));
-				_ParameterDescriptors.Add(new NamespaceProviderParameterDescriptor(Names.Contact, "Contact", "eMail address for contact for this namespace", null, false));
-				_ParameterDescriptors.Add(new NamespaceProviderParameterDescriptor(Names.Title, "Title", "A short title for this namespace", null, false));
-				_ParameterDescriptors.Add(new NamespaceProviderParameterDescriptor(Names.Description, "Description", "A description for the namespace (use Wiki formatting)", null, false));
-				return ArrayList.ReadOnly(_ParameterDescriptors);
-			}
-		}
+        public FileSystemNamespaceProvider()
+        {
+        }
 
-		struct Names
-		{
-			static public string Namespace = "Namespace";
-			static public string Root = "Root";
-			static public string Contact = "Contact";
-			static public string Title = "Title";
-			static public string Description = "Description";
-		};
 
-		public string Description
-		{
-			get
-			{
-				return "single-namespace, content stored in file-system";
-			}
-		}
+        public string Contact
+        {
+            get
+            {
+                return _contact;
+            }
+            set
+            {
+                _contact = value;
+            }
+        }
 
-		string _Namespace;
-		public string Namespace
-		{
-			get
-			{
-				return _Namespace;
-			}
-			set
-			{
-				_Namespace = value;
-			}
-		}
+        public string Description
+        {
+            get
+            {
+                return "single-namespace, content stored in file-system";
+            }
+        }
 
-		string _Root;
-		public string Root
-		{
-			get
-			{
-				return _Root;
-			}
-			set
-			{
-				_Root = value;
-			}
-		}
+        public string Namespace
+        {
+            get
+            {
+                return _namespace;
+            }
+            set
+            {
+                _namespace = value;
+            }
+        }
 
-		string _Contact;
-		public string Contact
-		{
-			get
-			{
-				return _Contact;
-			}
-			set
-			{
-				_Contact = value;
-			}
-		}
+        public string NamespaceDescription
+        {
+            get
+            {
+                return _namespaceDescription;
+            }
+            set
+            {
+                _namespaceDescription = value;
+            }
+        }
 
-		string _Title;
-		public string Title
-		{
-			get
-			{
-				return _Title;
-			}
-			set
-			{
-				_Title = value;
-			}
-		}
+        public string OwnerMailingAddress
+        {
+            get
+            {
+                return Contact;
+            }
+        }
 
-		
-		string _NamespaceDescription;
-		public string NamespaceDescription
-		{
-			get
-			{
-				return _NamespaceDescription;
-			}
-			set
-			{
-				_NamespaceDescription = value;
-			}
-		}
-		
-		public bool CanParameterBeEdited(string param)
-		{
-			return param != Names.Namespace;
-		}
+        public IList ParameterDescriptors
+        {
+            get
+            {
+                if (_parameterDescriptors != null)
+                {
+                    return ArrayList.ReadOnly(_parameterDescriptors);
+                }
+                _parameterDescriptors = new ArrayList();
+                _parameterDescriptors.Add(new NamespaceProviderParameterDescriptor(c_namespace, "Namespace", "Name for the namespace", null, true));
+                _parameterDescriptors.Add(new NamespaceProviderParameterDescriptor(c_root, "Directory", @"Physical path to directory that holds this namespace.  Leave blank to accept the default (.\[NamespaceName]).", null, true));
+                _parameterDescriptors.Add(new NamespaceProviderParameterDescriptor(c_contact, "Contact", "eMail address for contact for this namespace", null, false));
+                _parameterDescriptors.Add(new NamespaceProviderParameterDescriptor(c_title, "Title", "A short title for this namespace", null, false));
+                _parameterDescriptors.Add(new NamespaceProviderParameterDescriptor(c_description, "Description", "A description for the namespace (use Wiki formatting)", null, false));
+                return ArrayList.ReadOnly(_parameterDescriptors);
+            }
+        }
 
-		public string GetParameter(string param)
-		{
-			if (param == Names.Namespace)
-				return Namespace;
-			else if (param == Names.Root)
-				return Root;
-			else if (param == Names.Contact)
-				return Contact;
-			else if (param == Names.Title)
-				return Title;
-			else if (param == Names.Description)
-				return NamespaceDescription;
-			else
-				throw new Exception("Unknown parameter: " + param);
-		}
+        public string Root
+        {
+            get
+            {
+                return _root;
+            }
+            set
+            {
+                _root = value;
+            }
+        }
 
-		public void SetParameter(string param, string val)
-		{
-			if (param == Names.Namespace)
-				Namespace = val;
-			else if (param == Names.Root)
-				Root = val;
-			else if (param == Names.Contact)
-				Contact = val;
-			else if (param == Names.Description)
-				NamespaceDescription = val;
-			else if (param == Names.Title)
-				Title = val;
-			else
-				throw new Exception("Unknown parameter: " + param);
-		}
+        public string Title
+        {
+            get
+            {
+                return _title;
+            }
+            set
+            {
+                _title = value;
+            }
+        }
 
-		public string ValidateParameter(Federation aFed, string param, string val, bool isCreate)
-		{
-			if (param == Names.Namespace)
-			{
-				if (val == "" || val == null)
-					return "Namespace can not be blank";
-				if (isCreate && aFed.ContentBaseForNamespace(val) != null)
-					return "Namespace already exists";
-				// TODO -- check other constraints (valid chars) for namespaces
-			}
 
-			return null;
-		}
+        private string DefaultedRoot
+        {
+            get
+            {
+                if (Root != null && Root != "")
+                    return Root;
+                return @".\" + Namespace;
+            }
+        }
 
-		public IList ValidateAggregate(Federation aFed, bool isCreate)
-		{
-			// no errors
-			return null;
-		}
 
-		string DefaultedRoot
-		{
-			get
-			{
-				if (Root != null && Root != "")
-					return Root;
-				return @".\" + Namespace;
-			}
-		}
+        public bool CanParameterBeEdited(string param)
+        {
+            return param != c_namespace;
+        }
 
-		public void LoadNamespaces(Federation aFed)
-		{
-			FileSystemStore store = new FileSystemStore(aFed, Namespace, DefaultedRoot);
-			aFed.RegisterNamespace(store);
-		}
+        public IList CreateNamespaces(Federation aFed)
+        {
+            string author = "";
+            FileSystemStore store = new FileSystemStore();
+            NamespaceManager manager = aFed.RegisterNamespace(store, Namespace);
+            manager.WriteTopic(NamespaceManager.DefinitionTopicName, "");
+            manager.SetTopicPropertyValue(NamespaceManager.DefinitionTopicName, "Contact", Contact, false, author);
+            manager.SetTopicPropertyValue(NamespaceManager.DefinitionTopicName, "Title", Title, false, author);
+            string defaultImportedNamespaces = System.Configuration.ConfigurationManager.AppSettings["DefaultImportedNamespaces"];
+            if (defaultImportedNamespaces != null)
+            {
+                manager.SetTopicPropertyValue(NamespaceManager.DefinitionTopicName, "Import", defaultImportedNamespaces, false, author);
+            }
 
-		public IList CreateNamespaces(Federation aFed)
-		{
-			FileSystemStore store = new FileSystemStore(aFed, Namespace, DefaultedRoot);
-			aFed.RegisterNamespace(store);
-			store.WriteTopic(store.DefinitionTopicName.LocalName, "");
-			store.SetFieldValue(store.DefinitionTopicName.LocalName, "Contact", Contact, false);
-			store.SetFieldValue(store.DefinitionTopicName.LocalName, "Title", Title, false);
-			string defaultImportedNamespaces = System.Configuration.ConfigurationSettings.AppSettings["DefaultImportedNamespaces"];
-			if (defaultImportedNamespaces != null)
-				store.SetFieldValue(store.DefinitionTopicName.LocalName, "Import", defaultImportedNamespaces, false);
+            // whoever is last should write a new version
+            manager.SetTopicPropertyValue(NamespaceManager.DefinitionTopicName, "Description", NamespaceDescription, true, author);
 
-			// whoever is last should write a new version
-			store.SetFieldValue(store.DefinitionTopicName.LocalName, "Description", NamespaceDescription, true);
+            ArrayList answer = new ArrayList();
+            answer.Add(Namespace);
+            return ArrayList.ReadOnly(answer);
+        }
 
-			ArrayList answer = new ArrayList();
-			answer.Add(Namespace);
-			return ArrayList.ReadOnly(answer);
-		}
+        public string GetParameter(string param)
+        {
+            if (param == c_namespace)
+                return Namespace;
+            else if (param == c_root)
+                return Root;
+            else if (param == c_contact)
+                return Contact;
+            else if (param == c_title)
+                return Title;
+            else if (param == c_description)
+                return NamespaceDescription;
+            else
+                throw new Exception("Unknown parameter: " + param);
+        }
 
-		public void UpdateNamespaces(Federation aFed)
-		{
-			// just kill the old one and reload a new one
-			aFed.UnregisterNamespace(aFed.ContentBaseForNamespace(Namespace));
-			LoadNamespaces(aFed);
-		}
+        public void LoadNamespaces(Federation aFed)
+        {
+            FileSystemStore store = new FileSystemStore();
+            aFed.RegisterNamespace(store, Namespace);
+        }
 
-		public void SavePersistentParametersToDefinition(NamespaceProviderDefinition def)
-		{
-			def.SetParameter(Names.Namespace, Namespace);
-			def.SetParameter(Names.Root, DefaultedRoot);
-		}
+        public void SavePersistentParametersToDefinition(NamespaceProviderDefinition def)
+        {
+            def.SetParameter(c_namespace, Namespace);
+            def.SetParameter(c_root, DefaultedRoot);
+        }
 
-	}
+        public void SetParameter(string param, string val)
+        {
+            if (param == c_namespace)
+                Namespace = val;
+            else if (param == c_root)
+                Root = val;
+            else if (param == c_contact)
+                Contact = val;
+            else if (param == c_description)
+                NamespaceDescription = val;
+            else if (param == c_title)
+                Title = val;
+            else
+                throw new Exception("Unknown parameter: " + param);
+        }
+
+        public IList ValidateAggregate(Federation aFed, bool isCreate)
+        {
+            // no errors
+            return null;
+        }
+
+        public string ValidateParameter(Federation aFed, string param, string val, bool isCreate)
+        {
+            if (param == c_namespace)
+            {
+                if (val == "" || val == null)
+                    return "Namespace can not be blank";
+                if (isCreate && aFed.NamespaceManagerForNamespace(val) != null)
+                    return "Namespace already exists";
+                // TODO -- check other constraints (valid chars) for namespaces
+            }
+
+            return null;
+        }
+
+        public void UpdateNamespaces(Federation aFed)
+        {
+            // just kill the old one and reload a new one
+            aFed.UnregisterNamespace(aFed.NamespaceManagerForNamespace(Namespace));
+            LoadNamespaces(aFed);
+        }
+
+    }
 }

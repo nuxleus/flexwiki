@@ -32,7 +32,7 @@ namespace FlexWiki
 		}
 
 		ArrayList _Parameters;
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer an Array of all of the parameters for this block")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer an Array of all of the parameters for this block")]
 		public ArrayList Parameters
 		{
 			get
@@ -58,7 +58,7 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod("Value", ExposedMethodFlags.CachePolicyNever | ExposedMethodFlags.AllowsVariableArguments, "Answer the value of evaluating the block")]
+		[ExposedMethod("Value",  ExposedMethodFlags.AllowsVariableArguments, "Answer the rawValue of evaluating the block")]
 		public IBELObject ExposedValue(ExecutionContext ctx)
 		{
 			return Value(ctx, ctx.TopFrame.ExtraArguments);
@@ -122,7 +122,7 @@ namespace FlexWiki
 			return answer;
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone | ExposedMethodFlags.NeedContext, "Evaluate the given block and continue to evaluate it while it evaluates to true")]
+		[ExposedMethod( ExposedMethodFlags.NeedContext, "Evaluate the given block and continue to evaluate it while it evaluates to true")]
 		public IBELObject WhileTrue(ExecutionContext ctx, Block block)
 		{
 			if (ParameterCount != 0)
@@ -130,7 +130,7 @@ namespace FlexWiki
 			return Loop(ctx, block, true);
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone | ExposedMethodFlags.NeedContext, "Evaluate the given block and continue to evaluate it while it evaluates to true")]
+		[ExposedMethod( ExposedMethodFlags.NeedContext, "Evaluate the given block and continue to evaluate it while it evaluates to true")]
 		public IBELObject WhileFalse(ExecutionContext ctx, Block block)
 		{
 			if (ParameterCount != 0)

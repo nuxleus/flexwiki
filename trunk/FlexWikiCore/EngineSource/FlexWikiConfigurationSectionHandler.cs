@@ -18,6 +18,7 @@ using System.Configuration;
 
 namespace FlexWiki
 {
+  // TODO: This should probably move out to the containing application. 
 	[XmlRoot("flexWiki")]
 	public class FlexWikiConfigurationSectionHandler : System.Configuration.IConfigurationSectionHandler
 	{
@@ -28,7 +29,7 @@ namespace FlexWiki
 
 		public static FlexWikiConfigurationSectionHandler GetConfig()
 		{
-			return ConfigurationSettings.GetConfig("flexWiki") 
+			return ConfigurationManager.GetSection("flexWiki") 
 				as FlexWikiConfigurationSectionHandler;
 		}
 

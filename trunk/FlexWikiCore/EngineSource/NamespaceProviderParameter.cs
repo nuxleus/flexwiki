@@ -16,48 +16,48 @@ using System.Reflection;
 
 namespace FlexWiki
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	public class NamespaceProviderParameter
-	{
-		public NamespaceProviderParameter(string name, string val)
-		{
-			_Name = name;
-			_Value = val;
-		}
+    /// <summary>
+    /// 
+    /// </summary>
+    public class NamespaceProviderParameter
+    {
+        public NamespaceProviderParameter(string name, string val)
+        {
+            _Name = name;
+            _Value = val;
+        }
 
-		public NamespaceProviderParameter()
-		{
-		}
+        public NamespaceProviderParameter()
+        {
+        }
 
-		[XmlAttribute]
-		public string Name
-		{
-			get
-			{
-				return _Name;
-			}
-			set
-			{
-				_Name = value;
-			}
-		}
-		string _Name;
+        [XmlAttribute]
+        public string Name
+        {
+            get
+            {
+                return _Name;
+            }
+            set
+            {
+                _Name = value;
+            }
+        }
+        string _Name;
 
-		[XmlAttribute]
-		public string Value
-		{
-			get
-			{
-				return _Value;
-			}
-			set
-			{
-				_Value = value;
-			}
-		}
-		string _Value;
+        [XmlAttribute]
+        public string Value
+        {
+            get
+            {
+                return _Value;
+            }
+            set
+            {
+                _Value = value;
+            }
+        }
+        string _Value;
 
-	}
+    }
 }

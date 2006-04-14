@@ -25,18 +25,19 @@ namespace FlexWiki
 			return new WikiSequence(ToString());
 		}
 
-		static public UndefinedObject Instance = new UndefinedObject();
+		public static UndefinedObject Instance = new UndefinedObject();
 
-		UndefinedObject() : base()
+		private UndefinedObject() : base()
 		{
 		}
+
 
 		public override string ToString()
 		{
 			return "null";
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer true if this object is null; else false")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer true if this object is null; else false")]
 		public bool IsNull
 		{
 			get
@@ -45,27 +46,27 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone | ExposedMethodFlags.NeedContext, "If this object is null, answer the result of evaluating the block; else answer null" )]
+		[ExposedMethod( ExposedMethodFlags.NeedContext, "If this object is null, answer the result of evaluating the block; else answer null" )]
 		public IBELObject IfNull(ExecutionContext ctx, Block block)
 		{
 			return block.Value(ctx);
 		}
 
 		
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone | ExposedMethodFlags.NeedContext, "If this object is not null, answer the result of evaluating the block; else answer null" )]
+		[ExposedMethod( ExposedMethodFlags.NeedContext, "If this object is not null, answer the result of evaluating the block; else answer null" )]
 		public IBELObject IfNotNull(ExecutionContext ctx, Block block)
 		{
 			return Instance;
 		}
 
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone | ExposedMethodFlags.NeedContext, "If this object is null, answer the result of evaluating the first block; else answer the result of evaluating the second block" )]
+		[ExposedMethod( ExposedMethodFlags.NeedContext, "If this object is null, answer the result of evaluating the first block; else answer the result of evaluating the second block" )]
 		public IBELObject IfNullElse(ExecutionContext ctx, Block nullBlock, Block notNullBlock)
 		{
 			return nullBlock.Value(ctx);
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone | ExposedMethodFlags.NeedContext,"If this object is not null, answer the result of evaluating the first block; else answer the result of evaluating the second block" )]
+		[ExposedMethod( ExposedMethodFlags.NeedContext,"If this object is not null, answer the result of evaluating the first block; else answer the result of evaluating the second block" )]
 		public IBELObject IfNotNullElse(ExecutionContext ctx, Block notNullBlock, Block nullBlock)
 		{
 			return nullBlock.Value(ctx);

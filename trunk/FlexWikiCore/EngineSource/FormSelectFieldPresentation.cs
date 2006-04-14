@@ -18,9 +18,9 @@ using FlexWiki.Formatting;
 namespace FlexWiki
 {
 	/// <summary>
-	/// Presents a form select field.
+	/// Presents a form select propertyName.
 	/// </summary>
-	[ExposedClass("FormSelectFieldPresentation", "Presents a form select field")]
+	[ExposedClass("FormSelectFieldPresentation", "Presents a form select property")]
 	public class FormSelectFieldPresentation : FlexWiki.PresentationPrimitive
 	{
 		#region Class data

@@ -36,7 +36,7 @@ namespace FlexWiki.Web.Admin
 			// Put user code to initialize the page here
 		}
 
-		override protected void PageLoad()
+		protected override void PageLoad()
 		{
 
 		}
@@ -49,7 +49,7 @@ namespace FlexWiki.Web.Admin
 				OfferUpgrade();
 		}
 
-		void OfferUpgrade()
+		private void OfferUpgrade()
 		{
 			UIResponse.WritePara("Your configuration file uses old style namespace definitions (see below for more details).");
 			UIResponse.WritePara("FlexWiki can automatically convert your old-style namespace definitions to the new format.  This won't change the configuration of your namespaces, but will just upgrade the configuration file to the new format.");
@@ -58,44 +58,45 @@ namespace FlexWiki.Web.Admin
 			UIResponse.WriteEndForm();
 		}
 
-		void ProcessUpgradeRequest()
+		private void ProcessUpgradeRequest()
 		{
-			UIResponse.WritePara("Upgrading...");
+            throw new NotImplementedException(); 
+            //UIResponse.WritePara("Upgrading...");
 
-			// Get the existing one
-			FederationConfiguration config = FederationConfigurationFromFile;
-			string backupFilename = config.FederationNamespaceMapFilename + ".bak";
+            //// Get the existing one
+            //FederationConfiguration config = Federation.Application.FederationConfiguration;
+            //string backupFilename = config.FederationNamespaceMapFilename + ".bak";
 
-			UIResponse.WritePara("Writing backup configuration file: " + HTMLWriter.Escape(backupFilename));
-			File.Copy(config.FederationNamespaceMapFilename, backupFilename, true);
+            //UIResponse.WritePara("Writing backup configuration file: " + HtmlWriter.Escape(backupFilename));
+            //File.Copy(config.FederationNamespaceMapFilename, backupFilename, true);
 
-			// Convert each of the old ones to a new one
-			foreach (DeprecatedNamespaceDefinition each in config.DeprecatedNamespaceDefinitions)
-			{
-				UIResponse.WritePara("Converting namespace " + HTMLWriter.Escape(each.Namespace) + "...");
+            //// Convert each of the old ones to a new one
+            //foreach (DeprecatedNamespaceDefinition each in config.DeprecatedNamespaceDefinitions)
+            //{
+            //    UIResponse.WritePara("Converting namespace " + HtmlWriter.Escape(each.Namespace) + "...");
 
-				NamespaceProviderDefinition def = new NamespaceProviderDefinition(typeof(FileSystemNamespaceProvider).Assembly.FullName, typeof(FileSystemNamespaceProvider).FullName, Guid.NewGuid().ToString());
-				def.SetParameter("Root", each.Root);
-				def.SetParameter("Namespace", each.Namespace);
-				config.NamespaceMappings.Add(def);
-			}
-			config.DeprecatedNamespaceDefinitions.Clear();
+            //    NamespaceProviderDefinition def = new NamespaceProviderDefinition(typeof(FileSystemNamespaceProvider).Assembly.FullName, typeof(FileSystemNamespaceProvider).FullName, Guid.NewGuid().ToString());
+            //    def.SetParameter("Root", each.Root);
+            //    def.SetParameter("Namespace", each.Namespace);
+            //    config.NamespaceMappings.Add(def);
+            //}
+            //config.DeprecatedNamespaceDefinitions.Clear();
 
-			foreach(NamespaceProviderDefinition providerDefinition in config.NamespaceMappings)
-			{
-				// Upgrade the id if it is null or empty.
-				if(providerDefinition.Id == null || (providerDefinition.Id != null && providerDefinition.Id.Length == 0))
-				{
-					providerDefinition.Id = Guid.NewGuid().ToString();					
-				}
-			}
+            //foreach(NamespaceProviderDefinition providerDefinition in config.NamespaceMappings)
+            //{
+            //    // Upgrade the id if it is null or empty.
+            //    if(providerDefinition.Id == null || (providerDefinition.Id != null && providerDefinition.Id.Length == 0))
+            //    {
+            //        providerDefinition.Id = Guid.NewGuid().ToString();					
+            //    }
+            //}
 
-			UIResponse.WritePara("Writing updated configuration file: " + HTMLWriter.Escape(config.FederationNamespaceMapFilename));
-			config.WriteToFile(config.FederationNamespaceMapFilename);
+            //UIResponse.WritePara("Writing updated configuration file: " + HtmlWriter.Escape(config.FederationNamespaceMapFilename));
+            //config.WriteToFile(config.FederationNamespaceMapFilename);
 
-			UIResponse.WritePara("Upgrade complete.");
+            //UIResponse.WritePara("Upgrade complete.");
 
-			UIResponse.WritePara("Visit <a href='default.aspx'>Administration Home</a>.");
+            //UIResponse.WritePara("Visit <a href='default.aspx'>Administration Home</a>.");
 
 		}
    

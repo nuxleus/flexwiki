@@ -19,14 +19,16 @@ namespace FlexWiki
 	/// </summary>
 	public class UnableToCreateTopicException : ApplicationException
 	{
-		public UnableToCreateTopicException() : base()
+    private string _Topic;
+    private string _Version;
+    
+    public UnableToCreateTopicException() : base()
 		{
 		}
 		public UnableToCreateTopicException(string message) : base(message)
 		{
 		}
 
-		string _Topic;
 
 		public string Topic
 		{
@@ -39,7 +41,6 @@ namespace FlexWiki
 				_Topic = value;
 			}
 		}
-		string _Version;
 
 		public string Version
 		{

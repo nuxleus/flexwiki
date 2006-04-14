@@ -21,8 +21,8 @@ namespace FlexWiki
 	/// </summary>
 	public class WebApplicationLogSink : ILogSink
 	{
-		System.Web.HttpApplicationState State;
-		string _LogFile;
+		private System.Web.HttpApplicationState State;
+		private string _LogFile;
 
 		public WebApplicationLogSink(System.Web.HttpApplicationState state, string file)
 		{
@@ -61,8 +61,6 @@ namespace FlexWiki
 			}
 		}
 
-		#region ILogSink Members
-
 		public void Log(LogEvent ev)
 		{
 			lock (this)
@@ -74,6 +72,5 @@ namespace FlexWiki
 			}
 		}
 
-		#endregion
 	}
 }

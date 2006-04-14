@@ -28,7 +28,7 @@ namespace FlexWiki
 
 		public string _TypeName;
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the name of the type of the parameter")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the name of the type of the parameter")]
 		public string TypeName
 		{
 			get
@@ -43,7 +43,7 @@ namespace FlexWiki
 
 		public string _Identifier;
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the name of the parameter")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the name of the parameter")]
 		public string Identifier
 		{
 			get

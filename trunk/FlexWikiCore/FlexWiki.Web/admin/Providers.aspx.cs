@@ -37,7 +37,7 @@ namespace FlexWiki.Web.Admin
 		{
 		}
 
-		override protected void DefaultPageLoad()  
+		protected override void DefaultPageLoad()  
 		{
 			MinimalPageLoad();
 		}
@@ -69,7 +69,7 @@ namespace FlexWiki.Web.Admin
 			UIResponse.ShowPage("Namespace Providers", new UIResponse.MenuWriter(ShowMenu), new UIResponse.BodyWriter(ShowProviders));
 		}
 
-		void ShowMenu()
+		private void ShowMenu()
 		{
 			UIResponse.WriteStartMenu("Providers");
 			UIResponse.WriteMenuItem("EditProvider.aspx", "Add provider", "Add a new provider instance");
@@ -80,12 +80,12 @@ namespace FlexWiki.Web.Admin
 		}
 
 		// Answer an array of arrays.  Each inner array has a collection of NamespaceProviderDefinitions with the same type
-		ArrayList ProvidersByType
+		private ArrayList ProvidersByType
 		{
 			get
 			{
 				Hashtable collector = new Hashtable();	
-				FederationConfiguration fc = FederationConfigurationFromFile;
+				FederationConfiguration fc = Federation.Application.FederationConfiguration;
 				if (fc != null)
 				{
 					foreach (NamespaceProviderDefinition each in fc.NamespaceMappings)
@@ -111,7 +111,7 @@ namespace FlexWiki.Web.Admin
 			}
 		}
 
-		void ShowProviders()
+		private void ShowProviders()
 		{
 
 			foreach (ArrayList each in ProvidersByType)
@@ -132,7 +132,7 @@ namespace FlexWiki.Web.Admin
 				foreach (NamespaceProviderDefinition inner in each)
 				{
 					UIResponse.WriteStartRow();
-					UIResponse.WriteCell(UIResponse.CommandLink("EditProvider.aspx?Provider=" + inner.Id, UIResponse.Command.Edit, "edit this provider's information"));
+					UIResponse.WriteCell(UIResponse.CommandLink("EditProvider.aspx?Provider=" + inner.Id, Command.Edit, "edit this provider's information"));
 					foreach (NamespaceProviderParameter parm in inner.Parameters)
 						UIResponse.WriteCell(UIResponse.Escape(parm.Value));
 					UIResponse.WriteEndRow();

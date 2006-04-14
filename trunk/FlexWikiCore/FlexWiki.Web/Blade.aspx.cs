@@ -42,24 +42,24 @@ namespace FlexWiki.Web
 			LinkMaker lm = TheLinkMaker;
 
 			string [] topics = ((string)(Request.QueryString["topics"])).Split (new char[] {','});
-			string [] fields = ((string)(Request.QueryString["properties"])).Split (new char[] {','});
+			string [] fields = ((string)(Request.QueryString["imports"])).Split (new char[] {','});
         
 			foreach (string topic in topics)
 			{
-				RelativeTopicName rel = new RelativeTopicName(topic);
-				AbsoluteTopicName abs;
-				IList tops = DefaultContentBase.AllAbsoluteTopicNamesThatExist(rel);
+				NamespaceQualifiedTopicVersionKey abs;
+				IList tops = DefaultNamespaceManager.AllNamespaceQualifiedTopicNamesThatExist(topic);
 				if (tops.Count == 0)
 				{
-					abs = rel.AsAbsoluteTopicName(DefaultContentBase.Namespace);		// topic doesn't exist, assume in the wiki's home content base
+                    // topic doesn't exist, assume in the wiki's home content base
+					abs = new NamespaceQualifiedTopicVersionKey(topic, DefaultNamespaceManager.Namespace);
 				} 
 				else if (tops.Count > 1)
 				{
-					throw TopicIsAmbiguousException.ForTopic(rel);
+					throw TopicIsAmbiguousException.ForTopic(new RelativeTopicVersionKey(topic));
 				}
 				else	// we got just one!
 				{
-					abs = (AbsoluteTopicName)tops[0];
+					abs = (NamespaceQualifiedTopicVersionKey)tops[0];
 				}
 
 				foreach (string field in fields)
@@ -77,11 +77,11 @@ namespace FlexWiki.Web
 						fieldClass = fieldAndClassMatch.Groups["class"].Value;
 					}
 			
-					string ns = DefaultContentBase.UnambiguousTopicNamespace(abs);
-					string fieldValue = TheFederation.GetTopicProperty(abs, fieldName);
+					string ns = DefaultNamespaceManager.UnambiguousTopicNameFor(abs.LocalName).Namespace;
+					string fieldValue = Federation.GetTopicPropertyValue(abs, fieldName);
 					string s1;
 					if (fieldName == "_Body")
-						s1 = Formatter.FormattedString(abs, fieldValue, OutputFormat.HTML, TheFederation.ContentBaseForNamespace(ns), TheLinkMaker, null);
+						s1 = Formatter.FormattedString(abs, fieldValue, OutputFormat.HTML, Federation.NamespaceManagerForNamespace(ns), TheLinkMaker);
 					else
 						s1 = fieldValue;
 					// YUCK!  We need to wrap the enclosing <p> (if present) and replace it with the <div>

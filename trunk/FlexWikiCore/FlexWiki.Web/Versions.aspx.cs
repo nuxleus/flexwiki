@@ -24,7 +24,7 @@ namespace FlexWiki.Web
 	{
 		protected System.Web.UI.WebControls.PlaceHolder phResult;
 
-		private AbsoluteTopicName _TheTopic	= null;
+		private NamespaceQualifiedTopicVersionKey _TheTopic	= null;
 		private IEnumerable changeList		= null;
 		
 		#region Web Form Designer generated code
@@ -49,22 +49,23 @@ namespace FlexWiki.Web
 
 		private void Page_Load(object sender, System.EventArgs e)
 		{
-			changeList = TheFederation.GetTopicChanges(TheTopic);
+			changeList = Federation.GetTopicChanges(new TopicName(_TheTopic.LocalName, _TheTopic.Namespace));
 			ShowPage();
 		}
 
 		protected string GetTitle()
 		{
-			string title = TheFederation.GetTopicProperty(TheTopic, "Title");
+			string title = Federation.GetTopicPropertyValue(TheTopic, "Title");
 			if (title == null || title == "")
 			{
-				title = string.Format("{0} - {1}", GetTopicName().FormattedName, GetTopicName().Namespace);
+				title = string.Format("{0} - {1}", GetTopicVersionKey().FormattedName, 
+                    GetTopicVersionKey().Namespace);
 			}
-			return HTMLStringWriter.Escape(title) + " Versions ";
+			return HtmlStringWriter.Escape(title) + " Versions ";
 		}
 		
 
-		protected AbsoluteTopicName TheTopic
+		protected NamespaceQualifiedTopicVersionKey TheTopic
 		{
 			get
 			{
@@ -81,14 +82,14 @@ namespace FlexWiki.Web
 				{
 					topic = Request.QueryString["topic"];
 				}
-				_TheTopic = new AbsoluteTopicName(topic);
+				_TheTopic = new NamespaceQualifiedTopicVersionKey(topic);
 				return _TheTopic;
 			}
 		}
 
 		protected string LinkToCompare()
 		{
-			return TheLinkMaker.LinkToCompare(TheTopic.Fullname, int.MinValue, int.MinValue);
+			return TheLinkMaker.LinkToCompare(TheTopic.QualifiedName, int.MinValue, int.MinValue);
 		}
 
 		protected void ShowPage()
@@ -121,13 +122,13 @@ namespace FlexWiki.Web
 				}
 				else
 				{
-					output.AppendFormat(" (<a href='{0}' title='Show Difference with current version'>Current</a>)", TheLinkMaker.LinkToCompare(TheTopic.Fullname, 0, row));
+					output.AppendFormat(" (<a href='{0}' title='Show Difference with current version'>Current</a>)", TheLinkMaker.LinkToCompare(TheTopic.QualifiedName, 0, row));
 				}
 
 
 				if (row < lastRow)
 				{
-					output.AppendFormat(" (<a href='{0}' style='standardsButton' title='Show Difference with preceding version' tabindex={1}>Previous</a>)", TheLinkMaker.LinkToCompare(TheTopic.Fullname, row, row+1), row+1);
+					output.AppendFormat(" (<a href='{0}' style='standardsButton' title='Show Difference with preceding version' tabindex={1}>Previous</a>)", TheLinkMaker.LinkToCompare(TheTopic.QualifiedName, row, row+1), row+1);
 				}
 				else
 				{
@@ -135,29 +136,29 @@ namespace FlexWiki.Web
 				}
 
 
-				output.AppendFormat(" <input type='radio'{1}name='oldid' value='{0}' title='Select an older version to compare'{2} />&nbsp;", row, ((first)? " style='visibility:hidden' " : ""), ((row==1)? "  checked='checked'" : ""));
-				output.AppendFormat(" <input type='radio' name='diff' value='{0}' title='Select a newer version to compare'{1} />", row, ((first)? "  checked='checked'" : ""));
+				output.AppendFormat(" <input type='radio'{1}name='oldid' rawValue='{0}' title='Select an older version to compare'{2} />&nbsp;", row, ((first)? " style='visibility:hidden' " : ""), ((row==1)? "  checked='checked'" : ""));
+				output.AppendFormat(" <input type='radio' name='diff' rawValue='{0}' title='Select a newer version to compare'{1} />", row, ((first)? "  checked='checked'" : ""));
 
-				if (change.Timestamp == DateTime.MinValue)
+				if (change.Created == DateTime.MinValue)
 				{
 					output.Append("???");
 				}
 				else 
 				{
 					output.Append("&nbsp;&nbsp;<span class='version'><a href='" + TheLinkMaker.LinkToTopic(change.Topic)  + "' title='Show this version' >");
-					if (change.Timestamp.Date == DateTime.Now.Date)
+					if (change.Created.Date == DateTime.Now.Date)
 					{
-						output.Append(" Today, " + change.Timestamp.ToString("HH:mm"));
+						output.Append(" Today, " + change.Created.ToString("HH:mm"));
 					}
 					else
 					{
-						if (change.Timestamp.Date.Year == DateTime.Now.Date.Year)
+						if (change.Created.Date.Year == DateTime.Now.Date.Year)
 						{
-							output.Append(change.Timestamp.ToString("MMM dd - HH:mm"));
+							output.Append(change.Created.ToString("MMM dd - HH:mm"));
 						}
 						else
 						{
-							output.Append(change.Timestamp.ToString("MMM dd yyyy - HH:mm"));
+							output.Append(change.Created.ToString("MMM dd yyyy - HH:mm"));
 						}
 					}
 					output.Append("</a></span>");

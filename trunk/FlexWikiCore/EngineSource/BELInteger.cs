@@ -31,7 +31,7 @@ namespace FlexWiki
 			_Value = val;
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Determine whether this object is equal to another object")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Determine whether this object is equal to another object")]
 		public override bool Equals(object obj)
 		{
 			if (!(obj is int))
@@ -63,77 +63,77 @@ namespace FlexWiki
 			return Value.ToString();
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the addition of this integer to the supplied value")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the addition of this integer to the supplied rawValue")]
 		public int Add(object value)
 		{
 			return Value + Int32.Parse(value.ToString(), System.Globalization.CultureInfo.CurrentCulture);
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the subtraction of the supplied value from this integer")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the subtraction of the supplied rawValue from this integer")]
 		public int Subtract(object value)
 		{
 			return Value - Int32.Parse(value.ToString(), System.Globalization.CultureInfo.CurrentCulture);
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the integer division of this integer by the supplied value")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the integer division of this integer by the supplied rawValue")]
 		public int Divide(object value)
 		{
 			return Value / Int32.Parse(value.ToString(), System.Globalization.CultureInfo.CurrentCulture);
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the multiplication of this integer with the supplied value")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the multiplication of this integer with the supplied rawValue")]
 		public int Multiply(object value)
 		{
 			return Value * Int32.Parse(value.ToString(), System.Globalization.CultureInfo.CurrentCulture);
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the integer addition of the supplied values")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the integer addition of the supplied values")]
 		public static int Add(object firstValue, object secondValue)
 		{
 			return Int32.Parse(firstValue.ToString(), CultureInfo.CurrentCulture) + 
 				Int32.Parse(secondValue.ToString(), CultureInfo.CurrentCulture);
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the subtraction of the second supplied value from the first")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the subtraction of the second supplied rawValue from the first")]
 		public static int Subtract(object firstValue, object secondValue)
 		{
 			return Int32.Parse(firstValue.ToString(), CultureInfo.CurrentCulture) - 
 				Int32.Parse(secondValue.ToString(), CultureInfo.CurrentCulture);
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the integer division of the first supplied value by the second")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the integer division of the first supplied rawValue by the second")]
 		public static int Divide(object firstValue, object secondValue)
 		{
 			return Int32.Parse(firstValue.ToString(), CultureInfo.CurrentCulture) / 
 				Int32.Parse(secondValue.ToString(), CultureInfo.CurrentCulture);
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the multiplication of first supplied value with the second")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the multiplication of first supplied rawValue with the second")]
 		public static int Multiply(object firstValue, object secondValue)
 		{
 			return Int32.Parse(firstValue.ToString(), CultureInfo.CurrentCulture) * 
 				Int32.Parse(secondValue.ToString(), CultureInfo.CurrentCulture);
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer true or false depending on whether this number is less than or equal to the supplied integer")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer true or false depending on whether this number is less than or equal to the supplied integer")]
 		public bool LessThanOrEqualTo(int otherValue)
 		{
 			return Value <= otherValue;
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer true or false depending on whether this number is less than the supplied integer")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer true or false depending on whether this number is less than the supplied integer")]
 		public bool LessThan(int otherValue)
 		{
 			return Value < otherValue;
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer true or false depending on whether this number is greater than or equal to the supplied integer")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer true or false depending on whether this number is greater than or equal to the supplied integer")]
 		public bool GreaterThanOrEqualTo(int otherValue)
 		{
 			return Value >= otherValue;
 		}
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer true or false depending on whether this number is greater than the supplied integer")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer true or false depending on whether this number is greater than the supplied integer")]
 		public bool GreaterThan(int otherValue)
 		{
 			return Value > otherValue;

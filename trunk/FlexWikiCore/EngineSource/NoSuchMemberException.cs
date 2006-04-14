@@ -19,6 +19,7 @@ namespace FlexWiki
 	/// </summary>
 	public class NoSuchMemberException : Exception
 	{
+    private string _Member;
 	
 		public NoSuchMemberException() : base()
 		{
@@ -28,7 +29,6 @@ namespace FlexWiki
 		{
 		}
 
-		string _Member;
 
 		public string Member
 		{

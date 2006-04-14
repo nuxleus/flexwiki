@@ -21,275 +21,236 @@ using System.Text;
 using FlexWiki.Web;
 using FlexWiki;
 
-namespace FlexWiki.Newsletters
+namespace FlexWiki.Web.Newsletters
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	public class NewsletterDaemon
-	{
-		public NewsletterDaemon(Federation fed, string rootURL, string newslettersFrom, 
-			string headInsert) : this(fed, rootURL, newslettersFrom, headInsert, false)
-		{}
+    /// <summary>
+    /// 
+    /// </summary>
+    public class NewsletterDaemon
+    {
+        private const int c_checkinInterval = 5000;
+        private const int c_maxResults = 30;
+        private const int c_workInterval = 60000;
 
-		public NewsletterDaemon(Federation fed, string rootURL, string newslettersFrom, 
-			string headInsert, bool sendAsAttachments)
-		{
-			_TheFederation = fed;
-			RootURL = rootURL;
-			_NewslettersFrom = newslettersFrom;
-			_HeadInsert = headInsert;
-			_sendAsAttachments = sendAsAttachments; 
-		}
+        private Federation _federation;
+        private string _headInsert;
+        private DateTime _lastCheckin = DateTime.MinValue;
+        private Thread _monitorThread;
+        private string _newslettersFrom;
+        private DateTime _nextWorkDue = DateTime.MinValue;
+        private readonly ArrayList _Results = new ArrayList();
+        private string _rootUrl;
+        private bool _sendAsAttachments;
+        private string _smtpPassword;
+        private string _smtpServer;
+        private string _smtpUser;
 
-		string RootURL;
-		string _NewslettersFrom;
-		string _HeadInsert;
-		bool _sendAsAttachments; 
+        private DateTime _started = DateTime.MinValue;
+        private DateTime _workLastCompleted = DateTime.MinValue;
+        private DateTime _workLastStarted = DateTime.MinValue;
+        private bool _workUnderway = false;
 
-		Thread MonitorThread;
+        
+        public NewsletterDaemon(Federation fed, string rootURL, string newslettersFrom,
+            string headInsert)
+            : this(fed, rootURL, newslettersFrom, headInsert, false)
+        { }
 
-		public void EnsureRunning()
-		{
-			if (MonitorThread != null && MonitorThread.IsAlive)
-				return;
-
-			lock (this)
-			{
-				if (MonitorThread == null || !(MonitorThread.IsAlive))
-				{
-					Start();
-				}
-				else
-				{
-					MakeSureThreadHasRecentlyCheckedIn();
-				}
-			}
-		}
-
-		public DateTime LastCheckin = DateTime.MinValue;
-		public DateTime Started = DateTime.MinValue;
-
-		void MakeSureThreadHasRecentlyCheckedIn()
-		{
-			// TODO
-		}
-
-		const int CheckinInterval = 5000;
-		const int WorkInterval = 60000;
-
-		public DateTime NextWorkDue = DateTime.MinValue;
-
-		void ThreadProc() 
-		{
-			while (true)
-			{
-				lock (this)
-				{
-					Checkin();
-					DoWorkIfItIsTime();
-				}
-				Thread.Sleep(CheckinInterval);
-			}
-		}
-
-		void DoWorkIfItIsTime()
-		{
-			if (NextWorkDue > DateTime.Now)
-				return;
-			DoWork();
-			NextWorkDue = DateTime.Now.AddMilliseconds(WorkInterval);
-		}
-
-		public bool WorkUnderway = false;
-
-		void DoWork()
-		{
-			try
-			{
-				if (WorkUnderway)
-					return;
-				WorkUnderway = true;
-				WorkLastStarted = DateTime.Now;
-				ReallyDoWork();
-			}
-			finally
-			{
-				WorkLastCompleted = DateTime.Now;			
-				WorkUnderway = false;
-			}
-		}
-
-		public DateTime WorkLastStarted = DateTime.MinValue;
-		public DateTime WorkLastCompleted = DateTime.MinValue;
-
-		Federation _TheFederation;
-		Federation TheFederation
-		{
-			get
-			{
-				return _TheFederation;
-			}
-		}
-
-		public ILogEventFactory LogEventFactory
-		{
-			get
-			{
-				return TheFederation.LogEventFactory;
-			}
-		}
+        public NewsletterDaemon(Federation fed, string rootURL, string newslettersFrom,
+            string headInsert, bool sendAsAttachments)
+        {
+            _federation = fed;
+            _rootUrl = rootURL;
+            _newslettersFrom = newslettersFrom;
+            _headInsert = headInsert;
+            _sendAsAttachments = sendAsAttachments;
+        }
 
 
-		void ReallyDoWork()
-		{
-			DaemonBasedDeliveryBoy boy;
-			boy = new DaemonBasedDeliveryBoy(SMTPServer, SMTPUser, SMTPPassword, _sendAsAttachments);
-			LinkMaker lm = new LinkMaker(RootURL);
-			NewsletterManager manager = new NewsletterManager(TheFederation, lm , boy, _NewslettersFrom, _HeadInsert);
-			StringBuilder sb = new StringBuilder();
-			StringWriter sw = new StringWriter(sb);
-			boy.Log = sw;
-			LogEvent ev = TheFederation.LogEventFactory.CreateAndStartEvent(null, null, null, LogEvent.LogEventType.NewsletterGeneration);
-			LogResult(sb);
-			sw.WriteLine("Begin: " + DateTime.Now.ToString());
-			sw.WriteLine("Thread: " + Thread.CurrentThread.Name);
-			try
-			{
-				manager.Notify(sw);
-			}
-			finally
-			{
-				ev.Record();
-				sw.WriteLine("End: " + DateTime.Now.ToString());
-			}
-			// Append to the newsletters log file:
 
-			string logFile = TheFederation.FederationNamespaceMapFilename;
-			logFile = Path.GetDirectoryName(logFile) + Path.DirectorySeparatorChar + "Newsletter.log";
-			StreamWriter sw2 = File.AppendText(logFile);
-			sw2.Write(sb.ToString());
-			sw2.Close();
-		}
+        public DateTime LastCheckin
+        {
+            get { return _lastCheckin; }
+            set { _lastCheckin = value; }
+        }
+        public ILogEventFactory LogEventFactory
+        {
+            get
+            {
+                return Federation.LogEventFactory;
+            }
+        }
+        public DateTime NextWorkDue
+        {
+            get { return _nextWorkDue; }
+            set { _nextWorkDue = value; }
+        }
+        public IEnumerable Results
+        {
+            get
+            {
+                return _Results;
+            }
+        }
+        public string SmtpPassword
+        {
+            get { return _smtpPassword; }
+            set { _smtpPassword = value; }
+        }
+        public string SmtpServer
+        {
+            get { return _smtpServer; }
+            set { _smtpServer = value; }
+        }
+        public string SmtpUser
+        {
+            get { return _smtpUser; }
+            set { _smtpUser = value; }
+        }
+        public DateTime Started
+        {
+            get { return _started; }
+            set { _started = value; }
+        }
+        public DateTime WorkLastCompleted
+        {
+            get { return _workLastCompleted; }
+            set { _workLastCompleted = value; }
+        }
+        public DateTime WorkLastStarted
+        {
+            get { return _workLastStarted; }
+            set { _workLastStarted = value; }
+        }
+        public bool WorkUnderway
+        {
+            get { return _workUnderway; }
+            set { _workUnderway = value; }
+        }
 
-		public IEnumerable Results
-		{
-			get
-			{
-				return _Results;
-			}
-		}
+        private Federation Federation
+        {
+            get
+            {
+                return _federation;
+            }
+        }
 
-		const int MaxResults = 30;
+        public void EnsureRunning()
+        {
+            if (_monitorThread != null && _monitorThread.IsAlive)
+            {
+                return;
+            }
 
-		void LogResult(StringBuilder b)
-		{
-			_Results.Insert(0, b);
-			while (_Results.Count > MaxResults)
-				_Results.RemoveAt(_Results.Count - 1);
-		}
+            lock (this)
+            {
+                if (_monitorThread == null || !(_monitorThread.IsAlive))
+                {
+                    Start();
+                }
+                else
+                {
+                    MakeSureThreadHasRecentlyCheckedIn();
+                }
+            }
+        }
 
-		ArrayList _Results = new ArrayList();
+        private void Checkin()
+        {
+            _lastCheckin = DateTime.Now;
+        }
+        private void DoWork()
+        {
+            try
+            {
+                if (WorkUnderway)
+                    return;
+                WorkUnderway = true;
+                _workLastStarted = DateTime.Now;
+                ReallyDoWork();
+            }
+            finally
+            {
+                _workLastCompleted = DateTime.Now;
+                WorkUnderway = false;
+            }
+        }
+        private void DoWorkIfItIsTime()
+        {
+            if (_nextWorkDue > DateTime.Now)
+                return;
+            DoWork();
+            _nextWorkDue = DateTime.Now.AddMilliseconds(c_workInterval);
+        }
+        private void LogResult(StringBuilder b)
+        {
+            _Results.Insert(0, b);
+            while (_Results.Count > c_maxResults)
+                _Results.RemoveAt(_Results.Count - 1);
+        }
+        private void MakeSureThreadHasRecentlyCheckedIn()
+        {
+            // TODO
+        }
+        private void ReallyDoWork()
+        {
+            DaemonBasedDeliveryBoy boy;
+            boy = new DaemonBasedDeliveryBoy(SmtpServer, SmtpUser, SmtpPassword, _sendAsAttachments);
+            LinkMaker lm = new LinkMaker(_rootUrl);
+            NewsletterManager manager = new NewsletterManager(Federation, lm, boy, _newslettersFrom, _headInsert);
+            StringBuilder sb = new StringBuilder();
+            StringWriter sw = new StringWriter(sb);
+            boy.Log = sw;
+            LogEvent ev = Federation.LogEventFactory.CreateAndStartEvent(null, null, null, LogEventType.NewsletterGeneration);
+            LogResult(sb);
+            sw.WriteLine("Begin: " + DateTime.Now.ToString());
+            sw.WriteLine("Thread: " + Thread.CurrentThread.Name);
+            try
+            {
+                manager.Notify(sw);
+            }
+            finally
+            {
+                ev.Record();
+                sw.WriteLine("End: " + DateTime.Now.ToString());
+            }
+            // Append to the newsletters details file:
 
-		public string SMTPServer;
-		public string SMTPUser;
-		public string SMTPPassword;
+            Federation.Application.AppendToLog("Newsletter.details", sb.ToString());
+        }
+        private void Start()
+        {
+            bool newslettersDisabled = false;
 
-		protected class DaemonBasedDeliveryBoy : IDeliveryBoy
-		{
-			string SMTPHost;
-			string SMTPUser;
-			string SMTPPassword;
-			bool sendAsAttachments; 
+            try
+            {
+                newslettersDisabled = bool.Parse(ConfigurationManager.AppSettings["DisableNewsletters"]);
+            }
+            catch
+            {
+            }
+            if (newslettersDisabled)
+                return;
+            _monitorThread = new Thread(new ThreadStart(ThreadProc));
+            _monitorThread.Name = "Newsletter " + DateTime.Now;
+            _monitorThread.Priority = ThreadPriority.BelowNormal;	// be kind
+            _monitorThread.Start();
+            _started = DateTime.Now;
+        }
+        private void ThreadProc()
+        {
+            while (true)
+            {
+                lock (this)
+                {
+                    Checkin();
+                    DoWorkIfItIsTime();
+                }
+                Thread.Sleep(c_checkinInterval);
+            }
+        }
 
-			public DaemonBasedDeliveryBoy(string smtphost, string smtpuser, string smtppass)
-				: this(smtphost, smtpuser, smtppass, false)
-			{
-			}
 
-			public DaemonBasedDeliveryBoy(string smtphost, string smtpuser, string smtppass, bool sendAsAttachments)
-			{
-				SMTPHost = smtphost;
-				SMTPUser = smtpuser;
-				SMTPPassword = smtppass;
-				this.sendAsAttachments = sendAsAttachments; 
-			}
-
-			public StringWriter Log;
-
-			public void Deliver(string to, string from, string subject, string body)
-			{
-				FlexWiki.Newsletters.SmtpMail mailer = new FlexWiki.Newsletters.SmtpMail();
-				StringWriter smtpLog = new StringWriter(new StringBuilder());
-				mailer.sw = smtpLog;
-				MailMessage message = new MailMessage();
-				message.To = to;
-				message.From = from;
-				message.Subject = subject;
-				if (!sendAsAttachments)
-				{
-					message.Body = body;
-					message.BodyFormat = MailFormat.Html;
-				}
-				else
-				{
-					message.Body = "The wiki has been updated. See the attached files for changes."; 
-				}
-
-				string success = null;
-				try
-				{
-					if (!sendAsAttachments)
-					{ 
-						success = mailer.Send(message, SMTPHost, SMTPUser, SMTPPassword);
-					}
-					else
-					{
-						Hashtable atts = new Hashtable(); 
-						atts.Add("Changes.htm", System.Text.Encoding.UTF8.GetBytes(body)); 
-						success = mailer.Send(message, SMTPHost, SMTPUser, SMTPPassword, atts); 
-					}
-				}
-				catch (Exception e)
-				{
-					Log.WriteLine("Exception while sending to host '" + SMTPHost + "': " + e.ToString());
-				}
-				if (success == null)
-				{
-					Log.WriteLine("SMTP deliver succeeded to: " + to);
-				}
-				else
-				{
-					Log.WriteLine("SMTP deliver failed to: " + to);
-					Log.Write(smtpLog.ToString());
-				}
-			}
-		}
-
-		void Start()
-		{
-			bool newslettersDisabled = false; 
-
-			try
-			{
-				newslettersDisabled = bool.Parse(ConfigurationSettings.AppSettings["DisableNewsletters"]); 
-			}
-			catch
-			{
-			}
-			if (newslettersDisabled)
-				return;
-			MonitorThread = new Thread(new ThreadStart(ThreadProc));
-			MonitorThread.Name = "Newsletter " + DateTime.Now;
-			MonitorThread.Priority = ThreadPriority.BelowNormal;	// be kind
-			MonitorThread.Start();
-			Started = DateTime.Now;
-		}
-
-		void Checkin()
-		{  
-			LastCheckin = DateTime.Now;
-		}
-
-	}
+    }
 }

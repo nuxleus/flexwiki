@@ -16,7 +16,7 @@ using System.Text;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Text.RegularExpressions;
-using System.Reflection; 
+using System.Reflection;
 
 using FlexWiki.Formatting;
 using FlexWiki;
@@ -26,22 +26,42 @@ using NUnit.Framework;
 
 namespace FlexWiki.UnitTests
 {
-	[TestFixture] public class FormattingServicesTests : WikiTests
-	{
-		ContentBase	_base;
-		ArrayList _versions;
-		LinkMaker _lm;
+    [TestFixture]
+    public class FormattingServicesTests
+    {
+        private Federation _federation;
+        private LinkMaker _lm;
+        private NamespaceManager _storeManager;
+        private ArrayList _versions;
 
-		[SetUp] public void Init()
-		{
-			string author = "tester-joebob";
-			_lm = new LinkMaker("http://bogusville");
-			TheFederation = new Federation(OutputFormat.HTML, _lm);
+        private Federation Federation
+        {
+            get { return _federation; }
+            set { _federation = value; }
+        }
 
-			_versions = new ArrayList();
-			_base = CreateStore("FlexWiki.Base");
+        private NamespaceManager StoreManager
+        {
+            get { return _storeManager; }
+        }
 
-			WriteTestTopicAndNewVersion(_base, "TopicOne", @"1
+
+        [SetUp]
+        public void SetUp()
+        {
+            string author = "tester-joebob";
+            _lm = new LinkMaker("http://bogusville");
+            MockWikiApplication application = new MockWikiApplication(
+                null,
+                _lm,
+                OutputFormat.HTML,
+                new MockTimeProvider(TimeSpan.FromSeconds(1)));
+            Federation = new Federation(application);
+
+            _versions = new ArrayList();
+            _storeManager = WikiTestUtilities.CreateMockStore(Federation, "FlexWiki.Base");
+
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_storeManager, "TopicOne", @"1
 2
 3
 4
@@ -50,8 +70,8 @@ namespace FlexWiki.UnitTests
 7
 8
 9", author);
-			System.Threading.Thread.Sleep(100); // need the newer one to be newer enough!
-			WriteTestTopicAndNewVersion(_base, "TopicOne", @"1
+            System.Threading.Thread.Sleep(100); // need the newer one to be newer enough!
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_storeManager, "TopicOne", @"1
 2
 a
 b
@@ -63,8 +83,8 @@ c
 7
 8
 9", author);
-			System.Threading.Thread.Sleep(100); // need the newer one to be newer enough!
-			WriteTestTopicAndNewVersion(_base, "TopicOne", @"1
+            System.Threading.Thread.Sleep(100); // need the newer one to be newer enough!
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_storeManager, "TopicOne", @"1
 2
 a
 b
@@ -73,25 +93,22 @@ b
 8
 9", author);
 
-			foreach (TopicChange change in _base.AllChangesForTopic(new LocalTopicName("TopicOne")))
-				_versions.Add(change.Version);
-		}
+            foreach (TopicChange change in _storeManager.AllChangesForTopic("TopicOne"))
+                _versions.Add(change.Version);
+        }
 
-		[TearDown] public void DeInit()
-		{
-			_base.Delete();
-		}
+        [TearDown]
+        public void TearDown()
+        {
+            _storeManager.DeleteAllTopicsAndHistory();
+        }
 
-		
-		ContentBase ContentBase()
-		{
-			return _base;
-		}
 
-		[Test] public void OldestTest()
-		{
-			// Test the oldest; should have no markers
-			VersionCompare("TopicOne", (string)_versions[_versions.Count - 1], @"<p>1</p>
+        [Test]
+        public void OldestTest()
+        {
+            // Test the oldest; should have no markers
+            VersionCompare("TopicOne", (string) _versions[_versions.Count - 1], @"<p>1</p>
 <p>2</p>
 <p>3</p>
 <p>4</p>
@@ -101,12 +118,13 @@ b
 <p>8</p>
 <p>9</p>
 ");
-		}
+        }
 
-		[Test] public void InsertTest()
-		{
-			// Inserts oldest should have the 
-			VersionCompare("TopicOne", (string)_versions[_versions.Count - 2], @"<p>1</p>
+        [Test]
+        public void InsertTest()
+        {
+            // Inserts oldest should have the 
+            VersionCompare("TopicOne", (string) _versions[_versions.Count - 2], @"<p>1</p>
 <p>2</p>
 <p style=""background: palegreen"">a</p>
 <p style=""background: palegreen"">b</p>
@@ -119,11 +137,12 @@ b
 <p>8</p>
 <p>9</p>
 ");
-		}
+        }
 
-		[Test] public void DeleteTest()
-		{
-			VersionCompare("TopicOne", (string)_versions[_versions.Count - 3], @"<p>1</p>
+        [Test]
+        public void DeleteTest()
+        {
+            VersionCompare("TopicOne", (string) _versions[_versions.Count - 3], @"<p>1</p>
 <p>2</p>
 <p>a</p>
 <p>b</p>
@@ -136,25 +155,26 @@ b
 <p>8</p>
 <p>9</p>
 ");
-		}
-
-		void VersionCompare(string topic, string version, string expecting)
-		{
-			AbsoluteTopicName abs = ContentBase().TopicNameFor(topic);
-			abs.Version = version;
-			AbsoluteTopicName oldTopic = ContentBase().VersionPreviousTo(abs.LocalName); 
+        }
 
 
-			string got = Formatter.FormattedTopic(abs, OutputFormat.Testing, oldTopic, TheFederation, _lm, null);
-			got = got.Replace("\r", "");
-			string o2 = expecting.Replace("\r", "");
+        private void VersionCompare(string topic, string version, string expecting)
+        {
+            NamespaceQualifiedTopicVersionKey latest = new NamespaceQualifiedTopicVersionKey(StoreManager.NamespaceQualifiedTopicNameFor(topic));
+            latest.Version = version;
+            NamespaceQualifiedTopicVersionKey oldTopic = StoreManager.VersionPreviousTo(
+                latest.LocalName, latest.Version);
 
-			if (got != o2)
-			{
-				Console.Error.WriteLine("Got     : " + got);
-				Console.Error.WriteLine("Expected: " + o2);
-			}
-			Assert.AreEqual(o2, got);
-		}
-	}
+            string got = Formatter.FormattedTopic(latest, OutputFormat.Testing, oldTopic, Federation, _lm);
+            got = got.Replace("\r", "");
+            string o2 = expecting.Replace("\r", "");
+
+            if (got != o2)
+            {
+                Console.Error.WriteLine("Got     : " + got);
+                Console.Error.WriteLine("Expected: " + o2);
+            }
+            Assert.AreEqual(o2, got);
+        }
+    }
 }

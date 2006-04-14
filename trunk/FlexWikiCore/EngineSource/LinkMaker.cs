@@ -13,308 +13,326 @@
 using System;
 using System.Collections;
 using System.Collections.Specialized;
-using System.Configuration; 
+using System.Configuration;
 using System.Text;
 using System.Web;
 
 
 namespace FlexWiki
 {
-	/// <summary>
-	/// LinkMaker understand how to make links to the various pages that make the wiki work
-	/// </summary>
-	[ExposedClass("LinkMaker", "Builds hyperlinks to various important pages")]
-	public class LinkMaker : BELObject
-	{
-		private string	_SiteURL;
+    /// <summary>
+    /// LinkMaker understand how to make links to the various pages that make the wiki work
+    /// </summary>
+    [ExposedClass("LinkMaker", "Builds hyperlinks to various important pages")]
+    public class LinkMaker : BELObject
+    {
+        private bool _MakeAbsoluteURLs;
+        private string _SiteURL;
 
-		public LinkMaker(string siteURL)
-		{
-			_SiteURL = siteURL;
-		}
+        public LinkMaker(string siteURL)
+        {
+            _SiteURL = siteURL;
+            string mau = ConfigurationManager.AppSettings["MakeAbsoluteURLs"];
+            if (mau != null && mau.Equals("true"))
+                _MakeAbsoluteURLs = true;
+        }
 
-		public string SiteURL()
-		{
-			return _SiteURL;
-		}
+        bool MakeAbsoluteURLs
+        {
+            get
+            {
+                return _MakeAbsoluteURLs;
+            }
+        }
 
-		public LinkMaker Clone()
-		{
-			return new LinkMaker(_SiteURL);
-		}
+        public string SiteURL()
+        {
+            return _SiteURL;
+        }
 
-		AbsoluteTopicName _ReturnToTopicForEditLinks;
+        public LinkMaker Clone()
+        {
+            return new LinkMaker(_SiteURL);
+        }
 
-		public AbsoluteTopicName ReturnToTopicForEditLinks
-		{
-			get
-			{
-				return _ReturnToTopicForEditLinks;
-			}
-			set
-			{
-				_ReturnToTopicForEditLinks = value;
-			}
-		}
+        private NamespaceQualifiedTopicVersionKey _ReturnToTopicForEditLinks;
 
-		public string LinkToUser(string user)
-		{
-			StringBuilder builder = new StringBuilder();
-			builder.Append("<a href=\"mailto:");
-			builder.Append(user);
-			builder.Append("\">");
-			builder.Append(user);
-			builder.Append("</a>");			
-			return builder.ToString();
-		}
+        public NamespaceQualifiedTopicVersionKey ReturnToTopicForEditLinks
+        {
+            get
+            {
+                return _ReturnToTopicForEditLinks;
+            }
+            set
+            {
+                _ReturnToTopicForEditLinks = value;
+            }
+        }
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a link to the given image")]
-		public string LinkToImage(string s)
-		{
-			return SimpleLinkTo(s);
-		}
+        public string LinkToUser(string user)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.Append("<a href=\"mailto:");
+            builder.Append(user);
+            builder.Append("\">");
+            builder.Append(user);
+            builder.Append("</a>");
+            return builder.ToString();
+        }
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a link to the search page for the given namespace")]
-		public string LinkToSearchNamespace(string ns)
-		{
-			return SimpleLinkTo("Search.aspx" + (ns != null ? "?namespace=" + ns : "") );
-		}
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer a link to the given image")]
+        public string LinkToImage(string s)
+        {
+            return SimpleLinkTo(s);
+        }
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a link to search for the given string in the given namespace")]
-		public string LinkToSearchFor(string Namespace, string searchExpression)
-		{
-			return SimpleLinkTo("Search.aspx" + (Namespace != null ? "?namespace=" + Namespace : "") + (searchExpression != null ? "?search=" + HttpUtility.UrlEncode(searchExpression) : "") );
-		}
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer a link to the search page for the given namespace")]
+        public string LinkToSearchNamespace(string ns)
+        {
+            return SimpleLinkTo("search.aspx" + (ns != null ? "?namespace=" + ns : ""));
+        }
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a link to a list of all the versions for the given topic")]
-		public string LinkToVersions(string fullTopicName)
-		{
-			return SimpleLinkTo("Versions.aspx" + (fullTopicName != null ? "?topic=" + HttpUtility.UrlEncode(fullTopicName) : "") );
-		}
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer a link to search for the given string in the given namespace")]
+        public string LinkToSearchFor(string Namespace, string searchExpression)
+        {
+            return SimpleLinkTo("search.aspx" + (Namespace != null ? "?namespace=" + Namespace : "") + (searchExpression != null ? "?search=" + HttpUtility.UrlEncode(searchExpression) : ""));
+        }
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a link to compare two versions for the given topic")]
-		public string LinkToCompare(string fullTopicName, int diff, int oldid)
-		{
-			return SimpleLinkTo("Compare.aspx" + (fullTopicName != null ? "?topic=" + HttpUtility.UrlEncode(fullTopicName) : "") + ((diff>=0)?"&diff=" + diff.ToString():string.Empty) + ((oldid>=0)?"&oldid=" + oldid.ToString():string.Empty));
-		}
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer a link to a list of all the versions for the given topic")]
+        public string LinkToVersions(string fullTopicName)
+        {
+            return SimpleLinkTo("versions.aspx" + (fullTopicName != null ? "?topic=" + HttpUtility.UrlEncode(fullTopicName) : ""));
+        }
 
-		public string LinkToQuicklink()
-		{
-			return SimpleLinkTo("QuickLink.aspx");
-		}
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer a link to compare two versions for the given topic")]
+        public string LinkToCompare(string fullTopicName, int diff, int oldid)
+        {
+            return SimpleLinkTo("compare.aspx" + (fullTopicName != null ? "?topic=" + HttpUtility.UrlEncode(fullTopicName) : "") + ((diff >= 0) ? "&diff=" + diff.ToString() : string.Empty) + ((oldid >= 0) ? "&oldid=" + oldid.ToString() : string.Empty));
+        }
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a link to the recent changes list for the given namespace")]
-		public string LinkToRecentChanges(string ns)
-		{
-			return SimpleLinkTo("LastModified.aspx"+ (ns != null ? "?namespace=" + ns : "") );
-		}
+        public string LinkToQuicklink()
+        {
+            return SimpleLinkTo("quicklink.aspx");
+        }
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a link to the page that allows the given topic to be renamed")]
-		public string LinkToRename(string fullyQualifiedTopicName)
-		{
-			return SimpleLinkTo("Rename.aspx"+ (fullyQualifiedTopicName != null ? "?topic=" + fullyQualifiedTopicName: "") );
-		}
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer a link to the recent changes list for the given namespace")]
+        public string LinkToRecentChanges(string ns)
+        {
+            return SimpleLinkTo("lastmodified.aspx" + (ns != null ? "?namespace=" + ns : ""));
+        }
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a link to the list of subscriptions for the given namespace (or null for all)")]
-		public string LinkToSubscriptions(string ns)
-		{
-			return SimpleLinkTo("RssFace.aspx"+ (ns != null ? "?namespace=" + ns : "") );
-		}
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer a link to the page that allows the given topic to be renamed")]
+        public string LinkToRename(string fullyQualifiedTopicName)
+        {
+            return SimpleLinkTo("rename.aspx" + (fullyQualifiedTopicName != null ? "?topic=" + fullyQualifiedTopicName : ""));
+        }
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a link to the lost and found for the given namespace")]
-		public string LinkToLostAndFound(string ns)
-		{
-			return SimpleLinkTo("LostAndFound.aspx"+ (ns != null ? "?namespace=" + ns : "") );
-		}
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer a link to the list of subscriptions for the given namespace (or null for all)")]
+        public string LinkToSubscriptions(string ns)
+        {
+            return SimpleLinkTo("rssface.aspx" + (ns != null ? "?namespace=" + ns : ""));
+        }
 
-        [ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a link to the given page based in the FlexWiki Web Root")]
-		public string SimpleLinkTo(string s)
-		{
-			StringBuilder builder = new StringBuilder();
-			builder.Append(SiteURL());
-			builder.Append(s);
-			return builder.ToString();
-		}
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer a link to the lost and found for the given namespace")]
+        public string LinkToLostAndFound(string ns)
+        {
+            return SimpleLinkTo("lostandfound.aspx" + (ns != null ? "?namespace=" + ns : ""));
+        }
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a link to the given topic")]
-		public string LinkToTopic(string topic)
-		{
-			return TopicLink(topic, false, null);
-		}
+        string SimpleLinkTo(string s)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.Append(SiteURL());
+            builder.Append(s);
+            return builder.ToString();
+        }
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a link to display the given topic with diffs highlighted")]
-		public string LinkToTopicWithDiffs(string topic)
-		{
-			return TopicLink(topic, true, null);
-		}
+        public string LinkToTopic(TopicName topic)
+        {
+            return LinkToTopic(topic.QualifiedName); 
+        }
 
-		public string LinkToTopic(TopicName topic)
-		{
-			return LinkToTopic(topic, false);
-		}
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer a link to the given topic")]
+        public string LinkToTopic(string topic)
+        {
+            return TopicLink(topic, false, null);
+        }
 
-		public string LinkToTopic(TopicName topic, bool showDiffs)
-		{
-			return TopicLink(topic.FullnameWithVersion, showDiffs, null);
-		}
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer a link to display the given topic with diffs highlighted")]
+        public string LinkToTopicWithDiffs(string topic)
+        {
+            return TopicLink(topic, true, null);
+        }
 
-		public string LinkToTopic(TopicName topic, bool showDiffs, NameValueCollection extraQueryParms)
-		{
-			return TopicLink(topic.FullnameWithVersion, showDiffs, extraQueryParms);
-		}
+        public string LinkToTopic(TopicVersionKey topic)
+        {
+            return LinkToTopic(topic, false);
+        }
 
-		string TopicLink(string top, bool showDiffs, NameValueCollection extraQueryParms)
-		{
-			StringBuilder builder = new StringBuilder();
-			RelativeTopicName topic = new RelativeTopicName(top);
-			builder.Append(SiteURL());
-			builder.Append("default.aspx/");
-			if (topic.Namespace != null && topic.Namespace != "")
-				builder.Append(HttpUtility.UrlEncode(topic.Namespace) + "/");
-			builder.Append(topic.Name);
-			if (topic.Version != null)
-				builder.Append("(" + HttpUtility.UrlEncode(topic.Version) + ")");
-			builder.Append(".html");		// hard coded for now -- later we'll be cooler!
-			StringBuilder query = new StringBuilder();
-			if (showDiffs)
-				query.Append("diff=y");
-			if (extraQueryParms != null)
-			{
-				foreach (string each in extraQueryParms)
-				{
-					if (query.Length != 0)
-						query.Append("&");
-					query.Append(each + "=" + HttpUtility.UrlEncode((string)(extraQueryParms[each])));
-				}
-			}
-			if (query.Length != 0)
-				builder.Append("?" + query.ToString());
-			return builder.ToString();
-		}
-	
+        public string LinkToTopic(TopicVersionKey topic, bool showDiffs)
+        {
+            return TopicLink(topic.QualifiedNameWithVersion, showDiffs, null);
+        }
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a link to the page that allows a user to login")]
-		public string LinkToLogin(string topic)
-		{
-			StringBuilder builder = new StringBuilder();
-			builder.Append(SiteURL());
-			builder.Append("Login.aspx?ReturnURL=" + HttpUtility.UrlEncode(TopicLink(topic, false, null)));
-			return builder.ToString();
-		}
+        public string LinkToTopic(TopicVersionKey topic, bool showDiffs, NameValueCollection extraQueryParms)
+        {
+            return TopicLink(topic.QualifiedNameWithVersion, showDiffs, extraQueryParms);
+        }
 
-		public string LinkToLogin(TopicName topic)
-		{
-			return LinkToLogin(topic.FullnameWithVersion);
-		}
-
-		public string LinkToLogoff(TopicName topic)
-		{
-			return LinkToLogoff(topic);
-		}
+        private string TopicLink(string top, bool showDiffs, NameValueCollection extraQueryParms)
+        {
+            StringBuilder builder = new StringBuilder();
+            RelativeTopicVersionKey topic = new RelativeTopicVersionKey(top);
+            builder.Append(SiteURL());
+            builder.Append("default.aspx/");
+            if (topic.Namespace != null && topic.Namespace != "")
+                builder.Append(HttpUtility.UrlEncode(topic.Namespace) + "/");
+            builder.Append(topic.LocalName);
+            if (topic.Version != null)
+                builder.Append("(" + HttpUtility.UrlEncode(topic.Version) + ")");
+            builder.Append(".html");		// hard coded for now -- later we'll be cooler!
+            StringBuilder query = new StringBuilder();
+            if (showDiffs)
+                query.Append("diff=y");
+            if (extraQueryParms != null)
+            {
+                foreach (string each in extraQueryParms)
+                {
+                    if (query.Length != 0)
+                        query.Append("&");
+                    query.Append(each + "=" + HttpUtility.UrlEncode((string) (extraQueryParms[each])));
+                }
+            }
+            if (query.Length != 0)
+                builder.Append("?" + query.ToString());
+            return builder.ToString();
+        }
 
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a link to the page that logs off the current user")]
-		public string LinkToLogoff(string topic)
-		{
-			StringBuilder builder = new StringBuilder();
-			builder.Append(SiteURL());
-			builder.Append("Logoff.aspx");
-			return builder.ToString();
-		}
-		
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a link to the 'print' view of the given topic")]
-		public string LinkToPrintView(string topic)
-		{
-			return PrintLink(topic);
-		}
-			
-		public string LinkToPrintView(TopicName topic)
-		{
-			return PrintLink(topic.FullnameWithVersion);
-		}
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer a link to the page that allows a user to login")]
+        public string LinkToLogin(string topic)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.Append(SiteURL());
+            builder.Append("login.aspx?ReturnURL=" + HttpUtility.UrlEncode(TopicLink(topic, false, null)));
+            return builder.ToString();
+        }
 
-		string PrintLink(string top)
-		{
-			StringBuilder builder = new StringBuilder();
-			builder.Append(SiteURL());
-			builder.Append("Print.aspx/");
-			builder.Append(top);
-			return builder.ToString();
-		}
+        public string LinkToLogin(TopicVersionKey topic)
+        {
+            return LinkToLogin(topic.QualifiedNameWithVersion);
+        }
 
-		public string LinkToEditTopic(AbsoluteTopicName topic)
-		{
-			return EditLink(topic.Fullname);
-		}
-
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a link to the page that lets the user edit the given topic")]
-		public string LinkToEditTopic(string topic)
-		{
-			return EditLink(topic);
-		}
-
-		string EditLink(string top)
-		{
-			StringBuilder builder = new StringBuilder();
-			builder.Append(SiteURL());
-			builder.Append("WikiEdit.aspx?topic=");
-			builder.Append(HttpUtility.UrlEncode(top));
-			if (ReturnToTopicForEditLinks != null)
-				builder.Append("&return=" + HttpUtility.UrlEncode(ReturnToTopicForEditLinks.Fullname));
-
-			return builder.ToString();
-		}
+        public string LinkToLogoff(TopicVersionKey topic)
+        {
+            return LinkToLogoff(topic);
+        }
 
 
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a link to the topic that processes a restore")]
-		public string LinkToRestore(string topic)
-		{
-			return RestoreLink(topic);
-		}
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer a link to the page that logs off the current user")]
+        public string LinkToLogoff(string topic)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.Append(SiteURL());
+            builder.Append("logoff.aspx");
+            return builder.ToString();
+        }
 
-		public string LinkToRestore(TopicName topic)
-		{
-			return RestoreLink(topic.FullnameWithVersion);
-		}
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer a link to the 'print' view of the given topic")]
+        public string LinkToPrintView(string topic)
+        {
+            return PrintLink(topic);
+        }
 
-		/// <summary>
-		/// Creates the Restore link
-		/// </summary>
-		/// <param name="topic">TopicName for the link</param>
-		/// <returns></returns>
-		string RestoreLink(string top)
-		{
-			NameValueCollection extras = new NameValueCollection();
-			extras.Add("restore","y");
-			return TopicLink(top, false, extras);
-		}
-		/// <summary>
-		/// Creates the Change User Profile link
-		/// </summary>
-		/// <param name="topic">TopicName for the link</param>
-		/// <returns></returns>
-		public string LinkToChangeUserProfile(int userID)
-		{
-			StringBuilder builder = new StringBuilder();
-			builder.Append(SiteURL());
-			builder.Append("UserProfile.aspx?UserID=");
-			builder.Append(userID.ToString());
-			builder.Append("&Mode=2");
-			return builder.ToString();
-		}
-		/// <summary>
-		/// Creates the Create User Profile link
-		/// </summary>
-		/// <param name="topic">TopicName for the link</param>
-		/// <returns></returns>
-		public string LinkToCreateUserProfile()
-		{
-			StringBuilder builder = new StringBuilder();
-			builder.Append(SiteURL());
-			builder.Append("UserProfile.aspx?UserID=0");
-			builder.Append("&Mode=1");
-			return builder.ToString();
-		}
+        public string LinkToPrintView(TopicVersionKey topic)
+        {
+            return PrintLink(topic.QualifiedNameWithVersion);
+        }
 
-	}
+        private string PrintLink(string top)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.Append(SiteURL());
+            builder.Append("print.aspx/");
+            builder.Append(top);
+            return builder.ToString();
+        }
+
+        public string LinkToEditTopic(TopicName topic)
+        {
+            return EditLink(topic.QualifiedName);
+        }
+
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer a link to the page that lets the user edit the given topic")]
+        public string LinkToEditTopic(string topic)
+        {
+            return EditLink(topic);
+        }
+
+        private string EditLink(string top)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.Append(SiteURL());
+            builder.Append("wikiedit.aspx?topic=");
+            builder.Append(HttpUtility.UrlEncode(top));
+            if (ReturnToTopicForEditLinks != null)
+            {
+                builder.Append("&return=" + HttpUtility.UrlEncode(ReturnToTopicForEditLinks.QualifiedName));
+            }
+
+            return builder.ToString();
+        }
+
+
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer a link to the topic that processes a restore")]
+        public string LinkToRestore(string topic)
+        {
+            return RestoreLink(topic);
+        }
+
+        public string LinkToRestore(TopicVersionKey topic)
+        {
+            return RestoreLink(topic.QualifiedNameWithVersion);
+        }
+
+        /// <summary>
+        /// Creates the Restore link
+        /// </summary>
+        /// <param name="topic">TopicName for the link</param>
+        /// <returns></returns>
+        private string RestoreLink(string top)
+        {
+            NameValueCollection extras = new NameValueCollection();
+            extras.Add("restore", "y");
+            return TopicLink(top, false, extras);
+        }
+        /// <summary>
+        /// Creates the Change User Profile link
+        /// </summary>
+        /// <param name="topic">TopicName for the link</param>
+        /// <returns></returns>
+        public string LinkToChangeUserProfile(int userID)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.Append(SiteURL());
+            builder.Append("UserProfile.aspx?UserID=");
+            builder.Append(userID.ToString());
+            builder.Append("&Mode=2");
+            return builder.ToString();
+        }
+        /// <summary>
+        /// Creates the Create User Profile link
+        /// </summary>
+        /// <param name="topic">TopicName for the link</param>
+        /// <returns></returns>
+        public string LinkToCreateUserProfile()
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.Append(SiteURL());
+            builder.Append("UserProfile.aspx?UserID=0");
+            builder.Append("&Mode=1");
+            return builder.ToString();
+        }
+
+    }
 }

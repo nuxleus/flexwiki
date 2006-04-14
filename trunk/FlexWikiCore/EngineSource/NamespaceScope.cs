@@ -20,13 +20,15 @@ namespace FlexWiki
 	/// </summary>
 	public class NamespaceScope : IScope
 	{
-		public NamespaceScope(IScope scope, DynamicNamespace ns)
+    private IScope _ContainingScope;
+    private DynamicNamespace _Namespace;
+    
+    public NamespaceScope(IScope scope, DynamicNamespace ns)
 		{
 			_ContainingScope = scope;
 			_Namespace = ns;
 		}
 
-		IScope _ContainingScope;
 		public IScope ContainingScope
 		{
 			get
@@ -35,7 +37,6 @@ namespace FlexWiki
 			}
 		}
 
-		DynamicNamespace _Namespace;
 		public DynamicNamespace Namespace 
 		{
 			get

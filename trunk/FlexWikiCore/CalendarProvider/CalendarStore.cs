@@ -11,214 +11,212 @@
 #endregion
 
 using System;
-using System.Text;
 using System.Collections;
-using FlexWiki;
+using System.Collections.Generic;
 using System.IO;
 
+using FlexWiki;
+using FlexWiki.Collections;
 
-namespace CalendarProvider
+namespace FlexWiki.CalendarProvider
 {
-	/// <summary>
-	/// Summary description for CalendarStore.
-	/// </summary>
-	public class CalendarStore : ReadOnlyStore
-	{
-		public CalendarStore(Federation fed, string ns, int year, int month)
-		{
-			SetFederation(fed);
-			Namespace = ns;
-			Year = year;
-			Month = month;
-			foreach (DateTime each in Dates)
-			{
-				AbsoluteTopicName abs = TopicNameForDate(each);
-				_Topics[abs] = each;
-				_Topics[abs.LocalName] = each;
-			}
+    /// <summary>
+    /// Summary description for CalendarStore.
+    /// </summary>
+    public class CalendarStore : IUnparsedContentProvider
+    {
+        public CalendarStore(int year, int month)
+        {
+            _year = year;
+            _month = month;
+        }
 
-			AbsoluteTopicName a = new AbsoluteTopicName("_NormalBorders", Namespace);
-			BackingTopic top = new BackingTopic(a, DefaultNormalBordersContent, true);
-			BackingTopics[a.Name] = top;
-			_Topics[a] = DateTime.MinValue;
-		}
+        private static DateTime s_creationConst = DateTime.Now;
 
-		public override string HomePage
-		{
-			get
-			{
-				return TopicNameForDate(FirstDate).LocalName.Name;
-			}
-			set
-			{
-			}
-		}
+        private DateTime _lastRead = DateTime.Now;
+        private int _month;
+        private readonly Hashtable _topics = new Hashtable();	// keys = names (double entry, both local and abs), values = DateTimes
+        private int _year;
 
-		DateTime FirstDate
-		{
-			get
-			{
-				foreach (DateTime each in Dates)
-					return each;
-				return DateTime.Now;	// should never happen
-			}
-		}
+        public DateTime Created
+        {
+            get
+            {
+                return DateTime.MinValue;
+            }
+        }
+        public bool Exists
+        {
+            get
+            {
+                return true;
+            }
+        }
+        public bool IsReadOnly
+        {
+            get { return true; }
+        }
+        public string HomePage
+        {
+            get
+            {
+                return TopicNameForDate(FirstDate).LocalName;
+            }
+            set
+            {
+            }
+        }
+        public DateTime LastRead
+        {
+            get
+            {
+                return _lastRead;
+            }
+        }
+        public IUnparsedContentProvider Next
+        {
+            get { throw new NotSupportedException(); }
+        }
 
+        protected IEnumerable Dates
+        {
+            get
+            {
+                ArrayList answer = new ArrayList();
+                for (int i = 1; i < DateTime.DaysInMonth(_year, _month) + 1; i++)
+                {
+                    answer.Add(new DateTime(_year, _month, i));
+                }
+                return answer;
+            }
+        }
 
+        private DateTime FirstDate
+        {
+            get
+            {
+                foreach (DateTime each in Dates)
+                {
+                    return each;
+                }
+                throw new InvalidOperationException();	// should never happen
+            }
+        }
 
-		Hashtable _Topics = new Hashtable();	// keys = names (double entry, both local and abs), values = DateTimes
+        /// <summary>
+        /// A list of TopicChanges to a topic since a given date [sorted by date]
+        /// </summary>
+        /// <param name="topic">A given date</param>
+        /// <param name="stamp">A non-null timestamp; changes before this time won't be included in the answer </param>
+        /// <returns>Enumeration of TopicChanges</returns>
+        TopicChangeCollection IContentProvider.AllChangesForTopicSince(string topic, DateTime stamp)
+        {
+            throw new NotImplementedException();
+            /*
+            ArrayList answer = new ArrayList();
+            foreach (AbsoluteTopicName each in AllVersionsForTopic(topic))
+            {
+                DateTime when = GetTopicLastModificationTime(topic);
+                if (when >= stamp)
+                    answer.Add(new TopicChange(each, when, GetTopicLastAuthor(each.LocalName)));
+            }
+            return answer;
+             */
+        }
 
-		int Year;
-		int Month;
+        TopicNameCollection IContentProvider.AllTopics()
+        {
+            throw new NotImplementedException(); 
+        }
 
-		public override bool Exists
-		{
-			get
-			{
-				return true;
-			}
-		}
+        void IContentProvider.DeleteAllTopicsAndHistory()
+        {
+            throw new NotImplementedException();
+        }
 
-		/// <summary>
-		/// A list of TopicChanges to a topic since a given date [sorted by date]
-		/// </summary>
-		/// <param name="topic">A given date</param>
-		/// <param name="stamp">A non-null timestamp; changes before this time won't be included in the answer </param>
-		/// <returns>Enumeration of TopicChanges</returns>
-		public override System.Collections.IEnumerable AllChangesForTopicSince(LocalTopicName topic, DateTime stamp, CompositeCacheRule rule)
-		{
-			ArrayList answer = new ArrayList();
-			foreach (AbsoluteTopicName each in AllVersionsForTopic(topic))
-			{
-				DateTime when = GetTopicLastWriteTime(topic);
-				if (when >= stamp)
-					answer.Add(new TopicChange(each, when, GetTopicLastAuthor(each.LocalName)));
-			}
-			return answer;
-		}
+        void IContentProvider.DeleteTopic(string topicName)
+        {
+            throw new NotImplementedException();
+        }
 
-		public override IEnumerable AllVersionsForTopic(LocalTopicName topic)
-		{
-			ArrayList answer = new ArrayList();
-			AbsoluteTopicName only = topic.AsAbsoluteTopicName(Namespace);
-			only.Version = VersionConst;
-			answer.Add(only);
-			return answer;
-		}
+        void IContentProvider.Initialize(NamespaceManager namespaceManager)
+        {
+            throw new NotImplementedException();
 
-		public override string LatestVersionForTopic(LocalTopicName topic)
-		{
-			return VersionConst;
-		}
+            //foreach (DateTime each in Dates)
+            //{
+            //    AbsoluteTopicName abs = TopicNameForDate(each);
+            //    _Topics[abs] = each;
+            //    _Topics[abs.LocalName] = each;
+            //}
 
+            //AbsoluteTopicName a = new AbsoluteTopicName("_NormalBorders", namespaceManager.Namespace);
+            //BackingTopic top = new BackingTopic(a, DefaultNormalBordersContent, true);
+            //BackingTopics[a.Name] = top;
+            //_Topics[a] = DateTime.MinValue;
+        }
 
-		static string VersionConst = "1";
-		static DateTime CreationConst = DateTime.Now;
-		static string AuthorConst = "Sample User";
+        bool IContentProvider.IsExistingTopicWritable(string topicName)
+        {
+            throw new NotImplementedException();
+        }
 
-		protected override IEnumerable AllTopicsUnsorted()
-		{
-			return AllTopicsSortedLastModifiedDescending();
-		}
+        TextReader IContentProvider.TextReaderForTopic(string topic, string version)
+        {
+            throw new NotImplementedException();
 
-		public override IEnumerable AllTopicsSortedLastModifiedDescending()
-		{
-			ArrayList answer = new ArrayList();
-			foreach (object each in _Topics.Keys)
-			{
-				if (each is AbsoluteTopicName)
-					answer.Add(each);
-			}
-			return answer;
+            //if (!TopicExistsLocally(topic))
+            //    throw TopicNotFoundException.ForTopic(topic, Namespace);
+            //BackingTopic back = GetBackingTopicNamed(topic);
+            //if (back != null)
+            //    return new StringReader(back.Body);
 
-		}
+            //StringBuilder b = new StringBuilder();
+            //DateTime dt = DateTimeFromTopicName(topic);
+            //b.Append("This page contains information about '''" + dt.ToLongDateString() + "'''.");
+            //return new StringReader(b.ToString());
+        }
+        
+        bool IContentProvider.TopicExists(string name)
+        {
+            throw new NotImplementedException();
 
-		public override DateTime GetTopicCreationTime(LocalTopicName topic)
-		{
-			return CreationConst;
-		}
+            //foreach (AbsoluteTopicName each in AllTopicsUnsorted())
+            //{
+            //    if (each.LocalName.Equals(name))
 
-		public override DateTime GetTopicLastWriteTime(LocalTopicName topic)
-		{
-			return CreationConst;
-		}
+            //        return true;
+            //}
+            //return false;
+        }
+        
+        void IContentProvider.WriteTopic(string topic, string version, string content)
+        {
+            throw new NotImplementedException();
+        }
 
-		public override string GetTopicLastAuthor(LocalTopicName topic)
-		{
-			return AuthorConst;
-		}
-
-		AbsoluteTopicName TopicNameForDate(DateTime stamp)
-		{
-			return new AbsoluteTopicName("About" + stamp.ToString("MMMMdd"), Namespace);
-		}
-
-		DateTime DateTimeFromTopicName(LocalTopicName topic)
-		{
-			return (DateTime)(_Topics[topic]);
-		}
-
-		protected IEnumerable Dates
-		{
-			get
-			{
-				ArrayList answer = new ArrayList();
-				for (int i = 1; i < DateTime.DaysInMonth(Year, Month) + 1; i++)
-				{
-					answer.Add(new DateTime(Year, Month, i));
-				}
-				return answer;
-			}
-		}
-
-		public override DateTime Created
-		{
-			get
-			{
-				return DateTime.MinValue;
-			}
-		}
-
-		DateTime _LastRead;
-
-		public override DateTime LastRead
-		{
-			get
-			{
-				return _LastRead;
-			}
-		}
-
-		public override void Validate()
-		{
-			_LastRead = DateTime.Now;
-		}
-
-		public override bool TopicExistsLocally(LocalTopicName name)
-		{
-			foreach (AbsoluteTopicName each in AllTopicsUnsorted())
-			{
-				if (each.LocalName.Equals(name))
-
-					return true;
-			}
-			return false;
-		}
-
-		public override TextReader TextReaderForTopic(LocalTopicName topic)
-		{
-			if (!TopicExistsLocally(topic))
-				throw TopicNotFoundException.ForTopic(topic, Namespace);
-			BackingTopic back = GetBackingTopicNamed(topic);
-			if (back != null)
-				return new StringReader(back.Body);
-
-			StringBuilder b = new StringBuilder();
-			DateTime dt = DateTimeFromTopicName(topic);
-			b.Append("This page contains information about '''" + dt.ToLongDateString() + "'''.");
-			return new StringReader(b.ToString());
-		}
+        void IContentProvider.WriteTopicAndNewVersion(string topic, string content, string author)
+        {
+            throw new NotImplementedException();
+        }
 
 
-	}
+        private DateTime DateTimeFromTopicName(LocalTopicVersionKey topic)
+        {
+            return (DateTime) (_topics[topic]);
+        }
+
+        private NamespaceQualifiedTopicVersionKey TopicNameForDate(DateTime stamp)
+        {
+            throw new NotImplementedException();
+            //return new AbsoluteTopicName("About" + stamp.ToString("MMMMdd"), Namespace);
+        }
+
+
+
+
+        
+        
+
+    }
 }

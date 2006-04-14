@@ -45,12 +45,12 @@ namespace FlexWiki.SqlProvider
         /// <summary>
         /// This method is used to attach array of SqlParameters to a SqlCommand.
         /// 
-        /// This method will assign a value of DbNull to any parameter with a direction of
-        /// InputOutput and a value of null.  
+        /// This method will assign a rawValue of DbNull to any parameter with a direction of
+        /// InputOutput and a rawValue of null.  
         /// 
         /// This behavior will prevent default values from being used, but
         /// this will be the less common case than an intended pure output parameter (derived as InputOutput)
-        /// where the user provided no input value.
+        /// where the user provided no input rawValue.
         /// </summary>
         /// <param name="command">The command to which the parameters will be added</param>
         /// <param name="commandParameters">An array of SqlParameters to be added to command</param>
@@ -63,7 +63,7 @@ namespace FlexWiki.SqlProvider
 				{
 					if( p != null )
 					{
-						// Check for derived output value with no value assigned
+						// Check for derived output rawValue with no rawValue assigned
 						if ( ( p.Direction == ParameterDirection.InputOutput || 
 							p.Direction == ParameterDirection.Input ) && 
 							(p.Value == null))
@@ -98,7 +98,7 @@ namespace FlexWiki.SqlProvider
 					commandParameter.ParameterName.Length <= 1 )
 					throw new Exception( 
 						string.Format( 
-							"Please provide a valid parameter name on the parameter #{0}, the ParameterName property has the following value: '{1}'.", 
+							"Please provide a valid parameter name on the parameter #{0}, the ParameterName property has the following rawValue: '{1}'.", 
 							i, commandParameter.ParameterName ) );
                 if (dataRow.Table.Columns.IndexOf(commandParameter.ParameterName.Substring(1)) != -1)
                     commandParameter.Value = dataRow[commandParameter.ParameterName.Substring(1)];
@@ -126,10 +126,10 @@ namespace FlexWiki.SqlProvider
             }
 
             // Iterate through the SqlParameters, assigning the values from the corresponding position in the 
-            // value array
+            // rawValue array
             for (int i = 0, j = commandParameters.Length; i < j; i++)
             {
-                // If the current array value derives from IDbDataParameter, then assign its Value property
+                // If the current array rawValue derives from IDbDataParameter, then assign its Value propertyName
 				if (parameterValues[i] is IDbDataParameter)
 				{
 					IDbDataParameter paramInstance = (IDbDataParameter)parameterValues[i];
@@ -259,7 +259,7 @@ namespace FlexWiki.SqlProvider
         /// stored procedure (the first time each stored procedure is called), and assign the values based on parameter order.
         /// </summary>
         /// <remarks>
-        /// This method provides no access to output parameters or the stored procedure's return value parameter.
+        /// This method provides no access to output parameters or the stored procedure's return rawValue parameter.
         /// 
         /// e.g.:  
         ///  int result = ExecuteNonQuery(connString, "PublishOrders", 24, 36);
@@ -347,7 +347,7 @@ namespace FlexWiki.SqlProvider
         /// stored procedure (the first time each stored procedure is called), and assign the values based on parameter order.
         /// </summary>
         /// <remarks>
-        /// This method provides no access to output parameters or the stored procedure's return value parameter.
+        /// This method provides no access to output parameters or the stored procedure's return rawValue parameter.
         /// 
         /// e.g.:  
         ///  int result = ExecuteNonQuery(conn, "PublishOrders", 24, 36);
@@ -434,7 +434,7 @@ namespace FlexWiki.SqlProvider
         /// stored procedure (the first time each stored procedure is called), and assign the values based on parameter order.
         /// </summary>
         /// <remarks>
-        /// This method provides no access to output parameters or the stored procedure's return value parameter.
+        /// This method provides no access to output parameters or the stored procedure's return rawValue parameter.
         /// 
         /// e.g.:  
         ///  int result = ExecuteNonQuery(conn, trans, "PublishOrders", 24, 36);
@@ -523,7 +523,7 @@ namespace FlexWiki.SqlProvider
         /// stored procedure (the first time each stored procedure is called), and assign the values based on parameter order.
         /// </summary>
         /// <remarks>
-        /// This method provides no access to output parameters or the stored procedure's return value parameter.
+        /// This method provides no access to output parameters or the stored procedure's return rawValue parameter.
         /// 
         /// e.g.:  
         ///  DataSet ds = ExecuteDataset(connString, "GetOrders", 24, 36);
@@ -620,7 +620,7 @@ namespace FlexWiki.SqlProvider
         /// stored procedure (the first time each stored procedure is called), and assign the values based on parameter order.
         /// </summary>
         /// <remarks>
-        /// This method provides no access to output parameters or the stored procedure's return value parameter.
+        /// This method provides no access to output parameters or the stored procedure's return rawValue parameter.
         /// 
         /// e.g.:  
         ///  DataSet ds = ExecuteDataset(conn, "GetOrders", 24, 36);
@@ -715,7 +715,7 @@ namespace FlexWiki.SqlProvider
         /// stored procedure (the first time each stored procedure is called), and assign the values based on parameter order.
         /// </summary>
         /// <remarks>
-        /// This method provides no access to output parameters or the stored procedure's return value parameter.
+        /// This method provides no access to output parameters or the stored procedure's return rawValue parameter.
         /// 
         /// e.g.:  
         ///  DataSet ds = ExecuteDataset(trans, "GetOrders", 24, 36);
@@ -779,7 +779,7 @@ namespace FlexWiki.SqlProvider
         /// <param name="commandText">The stored procedure name or T-SQL command</param>
         /// <param name="commandParameters">An array of SqlParameters to be associated with the command or 'null' if no parameters are required</param>
         /// <param name="connectionOwnership">Indicates whether the connection parameter was provided by the caller, or created by SqlHelper</param>
-        /// <returns>SqlDataReader containing the results of the command</returns>
+        /// <returns>SqlDataReader containing the details of the command</returns>
         private static SqlDataReader ExecuteReader(SqlConnection connection, SqlTransaction transaction, CommandType commandType, string commandText, SqlParameter[] commandParameters, SqlConnectionOwnership connectionOwnership)
         {	
 			if( connection == null ) throw new ArgumentNullException( "connection" );
@@ -889,7 +889,7 @@ namespace FlexWiki.SqlProvider
         /// stored procedure (the first time each stored procedure is called), and assign the values based on parameter order.
         /// </summary>
         /// <remarks>
-        /// This method provides no access to output parameters or the stored procedure's return value parameter.
+        /// This method provides no access to output parameters or the stored procedure's return rawValue parameter.
         /// 
         /// e.g.:  
         ///  SqlDataReader dr = ExecuteReader(connString, "GetOrders", 24, 36);
@@ -951,7 +951,7 @@ namespace FlexWiki.SqlProvider
         /// <returns>A SqlDataReader containing the resultset generated by the command</returns>
         public static SqlDataReader ExecuteReader(SqlConnection connection, CommandType commandType, string commandText, params SqlParameter[] commandParameters)
         {
-            // Pass through the call to the private overload using a null transaction value and an externally owned connection
+            // Pass through the call to the private overload using a null transaction rawValue and an externally owned connection
             return ExecuteReader(connection, (SqlTransaction)null, commandType, commandText, commandParameters, SqlConnectionOwnership.External);
         }
 
@@ -961,7 +961,7 @@ namespace FlexWiki.SqlProvider
         /// stored procedure (the first time each stored procedure is called), and assign the values based on parameter order.
         /// </summary>
         /// <remarks>
-        /// This method provides no access to output parameters or the stored procedure's return value parameter.
+        /// This method provides no access to output parameters or the stored procedure's return rawValue parameter.
         /// 
         /// e.g.:  
         ///  SqlDataReader dr = ExecuteReader(conn, "GetOrders", 24, 36);
@@ -1036,7 +1036,7 @@ namespace FlexWiki.SqlProvider
         /// stored procedure (the first time each stored procedure is called), and assign the values based on parameter order.
         /// </summary>
         /// <remarks>
-        /// This method provides no access to output parameters or the stored procedure's return value parameter.
+        /// This method provides no access to output parameters or the stored procedure's return rawValue parameter.
         /// 
         /// e.g.:  
         ///  SqlDataReader dr = ExecuteReader(trans, "GetOrders", 24, 36);
@@ -1082,7 +1082,7 @@ namespace FlexWiki.SqlProvider
         /// <param name="connectionString">A valid connection string for a SqlConnection</param>
         /// <param name="commandType">The CommandType (stored procedure, text, etc.)</param>
         /// <param name="commandText">The stored procedure name or T-SQL command</param>
-        /// <returns>An object containing the value in the 1x1 resultset generated by the command</returns>
+        /// <returns>An object containing the rawValue in the 1x1 resultset generated by the command</returns>
         public static object ExecuteScalar(string connectionString, CommandType commandType, string commandText)
         {
             // Pass through the call providing null for the set of SqlParameters
@@ -1101,7 +1101,7 @@ namespace FlexWiki.SqlProvider
         /// <param name="commandType">The CommandType (stored procedure, text, etc.)</param>
         /// <param name="commandText">The stored procedure name or T-SQL command</param>
         /// <param name="commandParameters">An array of SqlParamters used to execute the command</param>
-        /// <returns>An object containing the value in the 1x1 resultset generated by the command</returns>
+        /// <returns>An object containing the rawValue in the 1x1 resultset generated by the command</returns>
         public static object ExecuteScalar(string connectionString, CommandType commandType, string commandText, params SqlParameter[] commandParameters)
         {
           if( connectionString == null || connectionString.Length == 0 ) throw new ArgumentNullException( "connectionString" );
@@ -1121,7 +1121,7 @@ namespace FlexWiki.SqlProvider
         /// stored procedure (the first time each stored procedure is called), and assign the values based on parameter order.
         /// </summary>
         /// <remarks>
-        /// This method provides no access to output parameters or the stored procedure's return value parameter.
+        /// This method provides no access to output parameters or the stored procedure's return rawValue parameter.
         /// 
         /// e.g.:  
         ///  int orderCount = (int)ExecuteScalar(connString, "GetOrderCount", 24, 36);
@@ -1129,7 +1129,7 @@ namespace FlexWiki.SqlProvider
         /// <param name="connectionString">A valid connection string for a SqlConnection</param>
         /// <param name="spName">The name of the stored procedure</param>
         /// <param name="parameterValues">An array of objects to be assigned as the input values of the stored procedure</param>
-        /// <returns>An object containing the value in the 1x1 resultset generated by the command</returns>
+        /// <returns>An object containing the rawValue in the 1x1 resultset generated by the command</returns>
         public static object ExecuteScalar(string connectionString, string spName, params object[] parameterValues)
         {
 			if( connectionString == null || connectionString.Length == 0 ) throw new ArgumentNullException( "connectionString" );
@@ -1164,7 +1164,7 @@ namespace FlexWiki.SqlProvider
         /// <param name="connection">A valid SqlConnection</param>
         /// <param name="commandType">The CommandType (stored procedure, text, etc.)</param>
         /// <param name="commandText">The stored procedure name or T-SQL command</param>
-        /// <returns>An object containing the value in the 1x1 resultset generated by the command</returns>
+        /// <returns>An object containing the rawValue in the 1x1 resultset generated by the command</returns>
         public static object ExecuteScalar(SqlConnection connection, CommandType commandType, string commandText)
         {
             // Pass through the call providing null for the set of SqlParameters
@@ -1183,7 +1183,7 @@ namespace FlexWiki.SqlProvider
         /// <param name="commandType">The CommandType (stored procedure, text, etc.)</param>
         /// <param name="commandText">The stored procedure name or T-SQL command</param>
         /// <param name="commandParameters">An array of SqlParamters used to execute the command</param>
-        /// <returns>An object containing the value in the 1x1 resultset generated by the command</returns>
+        /// <returns>An object containing the rawValue in the 1x1 resultset generated by the command</returns>
 		public static object ExecuteScalar(SqlConnection connection, CommandType commandType, string commandText, params SqlParameter[] commandParameters)
 		{
 			if( connection == null ) throw new ArgumentNullException( "connection" );
@@ -1194,7 +1194,7 @@ namespace FlexWiki.SqlProvider
 			bool mustCloseConnection = false;
 			PrepareCommand(cmd, connection, (SqlTransaction)null, commandType, commandText, commandParameters, out mustCloseConnection );
     			
-			// Execute the command & return the results
+			// Execute the command & return the details
 			object retval = cmd.ExecuteScalar();
     			
 			// Detach the SqlParameters from the command object, so they can be used again
@@ -1212,7 +1212,7 @@ namespace FlexWiki.SqlProvider
         /// stored procedure (the first time each stored procedure is called), and assign the values based on parameter order.
         /// </summary>
         /// <remarks>
-        /// This method provides no access to output parameters or the stored procedure's return value parameter.
+        /// This method provides no access to output parameters or the stored procedure's return rawValue parameter.
         /// 
         /// e.g.:  
         ///  int orderCount = (int)ExecuteScalar(conn, "GetOrderCount", 24, 36);
@@ -1220,7 +1220,7 @@ namespace FlexWiki.SqlProvider
         /// <param name="connection">A valid SqlConnection</param>
         /// <param name="spName">The name of the stored procedure</param>
         /// <param name="parameterValues">An array of objects to be assigned as the input values of the stored procedure</param>
-        /// <returns>An object containing the value in the 1x1 resultset generated by the command</returns>
+        /// <returns>An object containing the rawValue in the 1x1 resultset generated by the command</returns>
         public static object ExecuteScalar(SqlConnection connection, string spName, params object[] parameterValues)
         {
 			if( connection == null ) throw new ArgumentNullException( "connection" );
@@ -1255,7 +1255,7 @@ namespace FlexWiki.SqlProvider
         /// <param name="transaction">A valid SqlTransaction</param>
         /// <param name="commandType">The CommandType (stored procedure, text, etc.)</param>
         /// <param name="commandText">The stored procedure name or T-SQL command</param>
-        /// <returns>An object containing the value in the 1x1 resultset generated by the command</returns>
+        /// <returns>An object containing the rawValue in the 1x1 resultset generated by the command</returns>
         public static object ExecuteScalar(SqlTransaction transaction, CommandType commandType, string commandText)
         {
             // Pass through the call providing null for the set of SqlParameters
@@ -1274,7 +1274,7 @@ namespace FlexWiki.SqlProvider
         /// <param name="commandType">The CommandType (stored procedure, text, etc.)</param>
         /// <param name="commandText">The stored procedure name or T-SQL command</param>
         /// <param name="commandParameters">An array of SqlParamters used to execute the command</param>
-        /// <returns>An object containing the value in the 1x1 resultset generated by the command</returns>
+        /// <returns>An object containing the rawValue in the 1x1 resultset generated by the command</returns>
 		public static object ExecuteScalar(SqlTransaction transaction, CommandType commandType, string commandText, params SqlParameter[] commandParameters)
 		{
 			if( transaction == null ) throw new ArgumentNullException( "transaction" );
@@ -1285,7 +1285,7 @@ namespace FlexWiki.SqlProvider
 			bool mustCloseConnection = false;
 			PrepareCommand(cmd, transaction.Connection, transaction, commandType, commandText, commandParameters, out mustCloseConnection );
     			
-			// Execute the command & return the results
+			// Execute the command & return the details
 			object retval = cmd.ExecuteScalar();
     			
 			// Detach the SqlParameters from the command object, so they can be used again
@@ -1299,7 +1299,7 @@ namespace FlexWiki.SqlProvider
         /// stored procedure (the first time each stored procedure is called), and assign the values based on parameter order.
         /// </summary>
         /// <remarks>
-        /// This method provides no access to output parameters or the stored procedure's return value parameter.
+        /// This method provides no access to output parameters or the stored procedure's return rawValue parameter.
         /// 
         /// e.g.:  
         ///  int orderCount = (int)ExecuteScalar(trans, "GetOrderCount", 24, 36);
@@ -1307,7 +1307,7 @@ namespace FlexWiki.SqlProvider
         /// <param name="transaction">A valid SqlTransaction</param>
         /// <param name="spName">The name of the stored procedure</param>
         /// <param name="parameterValues">An array of objects to be assigned as the input values of the stored procedure</param>
-        /// <returns>An object containing the value in the 1x1 resultset generated by the command</returns>
+        /// <returns>An object containing the rawValue in the 1x1 resultset generated by the command</returns>
         public static object ExecuteScalar(SqlTransaction transaction, string spName, params object[] parameterValues)
         {
 			if( transaction == null ) throw new ArgumentNullException( "transaction" );
@@ -1399,7 +1399,7 @@ namespace FlexWiki.SqlProvider
         /// stored procedure (the first time each stored procedure is called), and assign the values based on parameter order.
         /// </summary>
         /// <remarks>
-        /// This method provides no access to output parameters or the stored procedure's return value parameter.
+        /// This method provides no access to output parameters or the stored procedure's return rawValue parameter.
         /// 
         /// e.g.:  
         ///  XmlReader r = ExecuteXmlReader(conn, "GetOrders", 24, 36);
@@ -1486,7 +1486,7 @@ namespace FlexWiki.SqlProvider
         /// stored procedure (the first time each stored procedure is called), and assign the values based on parameter order.
         /// </summary>
         /// <remarks>
-        /// This method provides no access to output parameters or the stored procedure's return value parameter.
+        /// This method provides no access to output parameters or the stored procedure's return rawValue parameter.
         /// 
         /// e.g.:  
         ///  XmlReader r = ExecuteXmlReader(trans, "GetOrders", 24, 36);
@@ -1590,7 +1590,7 @@ namespace FlexWiki.SqlProvider
         /// stored procedure (the first time each stored procedure is called), and assign the values based on parameter order.
         /// </summary>
         /// <remarks>
-        /// This method provides no access to output parameters or the stored procedure's return value parameter.
+        /// This method provides no access to output parameters or the stored procedure's return rawValue parameter.
         /// 
         /// e.g.:  
         ///  FillDataset(connString, CommandType.StoredProcedure, "GetOrders", ds, new string[] {"orders"}, 24);
@@ -1667,7 +1667,7 @@ namespace FlexWiki.SqlProvider
         /// stored procedure (the first time each stored procedure is called), and assign the values based on parameter order.
         /// </summary>
         /// <remarks>
-        /// This method provides no access to output parameters or the stored procedure's return value parameter.
+        /// This method provides no access to output parameters or the stored procedure's return rawValue parameter.
         /// 
         /// e.g.:  
         ///  FillDataset(conn, "GetOrders", ds, new string[] {"orders"}, 24, 36);
@@ -1756,7 +1756,7 @@ namespace FlexWiki.SqlProvider
         /// stored procedure (the first time each stored procedure is called), and assign the values based on parameter order.
         /// </summary>
         /// <remarks>
-        /// This method provides no access to output parameters or the stored procedure's return value parameter.
+        /// This method provides no access to output parameters or the stored procedure's return rawValue parameter.
         /// 
         /// e.g.:  
         ///  FillDataset(trans, "GetOrders", ds, new string[]{"orders"}, 24, 36);
@@ -1835,7 +1835,7 @@ namespace FlexWiki.SqlProvider
 					string tableName = "Table";
 					for (int index=0; index < tableNames.Length; index++)
 					{
-						if( tableNames[index] == null || tableNames[index].Length == 0 ) throw new ArgumentException( "The tableNames parameter must contain a list of tables, a value was provided as null or empty string.", "tableNames" );
+						if( tableNames[index] == null || tableNames[index].Length == 0 ) throw new ArgumentException( "The tableNames parameter must contain a list of tables, a rawValue was provided as null or empty string.", "tableNames" );
 						dataAdapter.TableMappings.Add(tableName, tableNames[index]);
 						tableName += (index + 1).ToString();
 					}
@@ -2239,7 +2239,7 @@ namespace FlexWiki.SqlProvider
         /// <param name="connectionString">A valid connection string for a SqlConnection</param>
         /// <param name="spName">The name of the stored procedure</param>
         /// <param name="dataRow">The dataRow used to hold the stored procedure's parameter values.</param>
-        /// <returns>An object containing the value in the 1x1 resultset generated by the command</returns>
+        /// <returns>An object containing the rawValue in the 1x1 resultset generated by the command</returns>
         public static object ExecuteScalarTypedParams(String connectionString, String spName, DataRow dataRow)
         {
 			if( connectionString == null || connectionString.Length == 0 ) throw new ArgumentNullException( "connectionString" );
@@ -2271,7 +2271,7 @@ namespace FlexWiki.SqlProvider
         /// <param name="connection">A valid SqlConnection object</param>
         /// <param name="spName">The name of the stored procedure</param>
         /// <param name="dataRow">The dataRow used to hold the stored procedure's parameter values.</param>
-        /// <returns>An object containing the value in the 1x1 resultset generated by the command</returns>
+        /// <returns>An object containing the rawValue in the 1x1 resultset generated by the command</returns>
         public static object ExecuteScalarTypedParams(SqlConnection connection, String spName, DataRow dataRow)
         {
 			if( connection == null ) throw new ArgumentNullException( "connection" );
@@ -2303,7 +2303,7 @@ namespace FlexWiki.SqlProvider
         /// <param name="transaction">A valid SqlTransaction object</param>
         /// <param name="spName">The name of the stored procedure</param>
         /// <param name="dataRow">The dataRow used to hold the stored procedure's parameter values.</param>
-        /// <returns>An object containing the value in the 1x1 resultset generated by the command</returns>
+        /// <returns>An object containing the rawValue in the 1x1 resultset generated by the command</returns>
         public static object ExecuteScalarTypedParams(SqlTransaction transaction, String spName, DataRow dataRow)
         {
 			if( transaction == null ) throw new ArgumentNullException( "transaction" );
@@ -2397,217 +2397,4 @@ namespace FlexWiki.SqlProvider
 
     }
 
-	/// <summary>
-	/// SqlHelperParameterCache provides functions to leverage a static cache of procedure parameters, and the
-	/// ability to discover parameters for stored procedures at run-time.
-	/// </summary>
-	public sealed class SqlHelperParameterCache
-	{
-		#region private methods, variables, and constructors
-
-		//Since this class provides only static methods, make the default constructor private to prevent 
-		//instances from being created with "new SqlHelperParameterCache()"
-		private SqlHelperParameterCache() {}
-
-		private static Hashtable paramCache = Hashtable.Synchronized(new Hashtable());
-
-        /// <summary>
-        /// Resolve at run time the appropriate set of SqlParameters for a stored procedure
-        /// </summary>
-        /// <param name="connection">A valid SqlConnection object</param>
-        /// <param name="spName">The name of the stored procedure</param>
-        /// <param name="includeReturnValueParameter">Whether or not to include their return value parameter</param>
-        /// <returns>The parameter array discovered.</returns>
-		private static SqlParameter[] DiscoverSpParameterSet(SqlConnection connection, string spName, bool includeReturnValueParameter)
-		{
-			if( connection == null ) throw new ArgumentNullException( "connection" );
-			if( spName == null || spName.Length == 0 ) throw new ArgumentNullException( "spName" );
-
-			SqlCommand cmd = new SqlCommand(spName, connection);
-			cmd.CommandType = CommandType.StoredProcedure;
-
-			connection.Open();
-			SqlCommandBuilder.DeriveParameters(cmd);
-			connection.Close();
-
-			if (!includeReturnValueParameter) 
-			{
-				cmd.Parameters.RemoveAt(0);
-			}
-                
-			SqlParameter[] discoveredParameters = new SqlParameter[cmd.Parameters.Count];
-
-			cmd.Parameters.CopyTo(discoveredParameters, 0);
-
-			// Init the parameters with a DBNull value
-			foreach (SqlParameter discoveredParameter in discoveredParameters)
-			{
-				discoveredParameter.Value = DBNull.Value;
-			}
-			return discoveredParameters;
-		}
-
-		/// <summary>
-		/// Deep copy of cached SqlParameter array
-		/// </summary>
-		/// <param name="originalParameters"></param>
-		/// <returns></returns>
-		private static SqlParameter[] CloneParameters(SqlParameter[] originalParameters)
-		{
-			SqlParameter[] clonedParameters = new SqlParameter[originalParameters.Length];
-
-			for (int i = 0, j = originalParameters.Length; i < j; i++)
-			{
-				clonedParameters[i] = (SqlParameter)((ICloneable)originalParameters[i]).Clone();
-			}
-
-			return clonedParameters;
-		}
-
-		#endregion private methods, variables, and constructors
-
-		#region caching functions
-
-		/// <summary>
-		/// Add parameter array to the cache
-		/// </summary>
-		/// <param name="connectionString">A valid connection string for a SqlConnection</param>
-		/// <param name="commandText">The stored procedure name or T-SQL command</param>
-		/// <param name="commandParameters">An array of SqlParamters to be cached</param>
-		public static void CacheParameterSet(string connectionString, string commandText, params SqlParameter[] commandParameters)
-		{
-			if( connectionString == null || connectionString.Length == 0 ) throw new ArgumentNullException( "connectionString" );
-			if( commandText == null || commandText.Length == 0 ) throw new ArgumentNullException( "commandText" );
-
-			string hashKey = connectionString + ":" + commandText;
-
-			paramCache[hashKey] = commandParameters;
-		}
-
-		/// <summary>
-		/// Retrieve a parameter array from the cache
-		/// </summary>
-		/// <param name="connectionString">A valid connection string for a SqlConnection</param>
-		/// <param name="commandText">The stored procedure name or T-SQL command</param>
-		/// <returns>An array of SqlParamters</returns>
-		public static SqlParameter[] GetCachedParameterSet(string connectionString, string commandText)
-		{
-			if( connectionString == null || connectionString.Length == 0 ) throw new ArgumentNullException( "connectionString" );
-			if( commandText == null || commandText.Length == 0 ) throw new ArgumentNullException( "commandText" );
-
-			string hashKey = connectionString + ":" + commandText;
-
-			SqlParameter[] cachedParameters = paramCache[hashKey] as SqlParameter[];
-			if (cachedParameters == null)
-			{			
-				return null;
-			}
-			else
-			{
-				return CloneParameters(cachedParameters);
-			}
-		}
-
-		#endregion caching functions
-
-		#region Parameter Discovery Functions
-
-		/// <summary>
-		/// Retrieves the set of SqlParameters appropriate for the stored procedure
-		/// </summary>
-		/// <remarks>
-		/// This method will query the database for this information, and then store it in a cache for future requests.
-		/// </remarks>
-		/// <param name="connectionString">A valid connection string for a SqlConnection</param>
-		/// <param name="spName">The name of the stored procedure</param>
-		/// <returns>An array of SqlParameters</returns>
-		public static SqlParameter[] GetSpParameterSet(string connectionString, string spName)
-		{
-			return GetSpParameterSet(connectionString, spName, false);
-		}
-
-		/// <summary>
-		/// Retrieves the set of SqlParameters appropriate for the stored procedure
-		/// </summary>
-		/// <remarks>
-		/// This method will query the database for this information, and then store it in a cache for future requests.
-		/// </remarks>
-		/// <param name="connectionString">A valid connection string for a SqlConnection</param>
-		/// <param name="spName">The name of the stored procedure</param>
-		/// <param name="includeReturnValueParameter">A bool value indicating whether the return value parameter should be included in the results</param>
-		/// <returns>An array of SqlParameters</returns>
-		public static SqlParameter[] GetSpParameterSet(string connectionString, string spName, bool includeReturnValueParameter)
-		{
-			if( connectionString == null || connectionString.Length == 0 ) throw new ArgumentNullException( "connectionString" );
-			if( spName == null || spName.Length == 0 ) throw new ArgumentNullException( "spName" );
-
-            using(SqlConnection connection = new SqlConnection(connectionString))
-            {
-                return GetSpParameterSetInternal(connection, spName, includeReturnValueParameter);
-            }
-		}
-
-        /// <summary>
-        /// Retrieves the set of SqlParameters appropriate for the stored procedure
-        /// </summary>
-        /// <remarks>
-        /// This method will query the database for this information, and then store it in a cache for future requests.
-        /// </remarks>
-        /// <param name="connection">A valid SqlConnection object</param>
-        /// <param name="spName">The name of the stored procedure</param>
-        /// <returns>An array of SqlParameters</returns>
-        internal static SqlParameter[] GetSpParameterSet(SqlConnection connection, string spName)
-        {
-            return GetSpParameterSet(connection, spName, false);
-        }
-
-        /// <summary>
-        /// Retrieves the set of SqlParameters appropriate for the stored procedure
-        /// </summary>
-        /// <remarks>
-        /// This method will query the database for this information, and then store it in a cache for future requests.
-        /// </remarks>
-        /// <param name="connection">A valid SqlConnection object</param>
-        /// <param name="spName">The name of the stored procedure</param>
-        /// <param name="includeReturnValueParameter">A bool value indicating whether the return value parameter should be included in the results</param>
-        /// <returns>An array of SqlParameters</returns>
-        internal static SqlParameter[] GetSpParameterSet(SqlConnection connection, string spName, bool includeReturnValueParameter)
-        {
-			if( connection == null ) throw new ArgumentNullException( "connection" );
-            using (SqlConnection clonedConnection = (SqlConnection)((ICloneable)connection).Clone())
-            {
-                return GetSpParameterSetInternal(clonedConnection, spName, includeReturnValueParameter);
-            }
-        }
-
-        /// <summary>
-        /// Retrieves the set of SqlParameters appropriate for the stored procedure
-        /// </summary>
-        /// <param name="connection">A valid SqlConnection object</param>
-        /// <param name="spName">The name of the stored procedure</param>
-        /// <param name="includeReturnValueParameter">A bool value indicating whether the return value parameter should be included in the results</param>
-        /// <returns>An array of SqlParameters</returns>
-        private static SqlParameter[] GetSpParameterSetInternal(SqlConnection connection, string spName, bool includeReturnValueParameter)
-        {
-			if( connection == null ) throw new ArgumentNullException( "connection" );
-			if( spName == null || spName.Length == 0 ) throw new ArgumentNullException( "spName" );
-
-            string hashKey = connection.ConnectionString + ":" + spName + (includeReturnValueParameter ? ":include ReturnValue Parameter":"");
-
-            SqlParameter[] cachedParameters;
-        	
-            cachedParameters = paramCache[hashKey] as SqlParameter[];
-            if (cachedParameters == null)
-            {	
-                SqlParameter[] spParameters = DiscoverSpParameterSet(connection, spName, includeReturnValueParameter);
-		        paramCache[hashKey] = spParameters;
-                cachedParameters = spParameters;
-            }
-        	
-            return CloneParameters(cachedParameters);
-        }
-        
-		#endregion Parameter Discovery Functions
-
-	}
 }

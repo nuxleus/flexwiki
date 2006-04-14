@@ -13,6 +13,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Net; 
 using System.Threading;
 
 using NUnit.Framework;
@@ -27,18 +28,6 @@ namespace FlexWiki.BuildVerificationTests
 	[TestFixture]
 	public class CoreUITests : UITests 
 	{
-		public CoreUITests() : base()
-		{
-		}
-
-		AbsoluteTopicName HomePage
-		{
-			get
-			{
-				return new AbsoluteTopicName(TheFederation.DefaultContentBase.HomePage, TheFederation.DefaultContentBase.Namespace);
-			}
-		}
-		
 		[Test]
 		public void CheckHomePage()
 		{
@@ -47,22 +36,20 @@ namespace FlexWiki.BuildVerificationTests
 			Assert.IsTrue(doc.Body.OuterHTML.IndexOf("The two most important things ") > 0);
 		}
 
-		
 		[Test]
 		public void ControlPageTitle()
 		{
-			AbsoluteTopicName top = new AbsoluteTopicName("TitledTopic", TheFederation.DefaultContentBase.Namespace);
+			NamespaceQualifiedTopicVersionKey top = new NamespaceQualifiedTopicVersionKey("TitledTopic", Federation.DefaultNamespaceManager.Namespace);
 			string t = TheLinkMaker.LinkToTopic(top);
 			DocumentElement doc = TheBrowser.Navigate(t, true);
 			
 			Assert.AreEqual("This fat hen", doc.Title);
 		}
 
-		
 		[Test]
 		public void ControlTopicBar()
 		{
-			AbsoluteTopicName top = new AbsoluteTopicName("TitledTopic", TheFederation.DefaultContentBase.Namespace);
+			NamespaceQualifiedTopicVersionKey top = new NamespaceQualifiedTopicVersionKey("TitledTopic", Federation.DefaultNamespaceManager.Namespace);
 			string t = TheLinkMaker.LinkToTopic(top);
 			DocumentElement doc = TheBrowser.Navigate(t, true);
 			HTMLElement staticTopicBar = (HTMLElement)doc.GetElementByName("StaticTopicBar");
@@ -73,11 +60,11 @@ namespace FlexWiki.BuildVerificationTests
 		[Test]
 		public void CreateTestPage()
 		{
-			AbsoluteTopicName top = new AbsoluteTopicName("DummyPage", TheFederation.DefaultContentBase.Namespace);
+			NamespaceQualifiedTopicVersionKey top = new NamespaceQualifiedTopicVersionKey("DummyPage", Federation.DefaultNamespaceManager.Namespace);
 
 			bool exists;
 			
-			exists = TheFederation.TopicExists(top);
+			exists = Federation.TopicExists(top);
 			Assert.IsTrue(!exists);
 
 			string home = TheLinkMaker.LinkToTopic(top);
@@ -89,15 +76,39 @@ namespace FlexWiki.BuildVerificationTests
 
 			save.Click(true);
 			// Make sure it actually got saved
-			exists = TheFederation.TopicExists(top);
+			exists = Federation.TopicExists(top);
 			Assert.IsTrue(exists);
 		}
 
+/// <summary>
+    /// Checks for the presence of bug 1039466: Wiki links always point to localhost
+    /// </summary>
     [Test]
+    public void LinkMakerBug()
+    {
+      NamespaceQualifiedTopicVersionKey topic = new NamespaceQualifiedTopicVersionKey("TopicFour", "NamespaceTwo"); 
+      string topicUri = TheLinkMaker.LinkToTopic(topic);
+      Uri byName = new Uri(topicUri); 
+      string ip = Dns.GetHostEntry(byName.Host).AddressList[0].ToString(); 
+      Uri byIP   = new Uri(string.Format("{0}://{1}:{2}{3}", byName.Scheme, ip, byName.Port, byName.AbsolutePath));
+      
+      DocumentElement docByName = TheBrowser.Navigate(byName.ToString(), true);
+      string expectedByName = new Uri(string.Format("{0}://{1}:{2}", byName.Scheme, byName.Host, byName.Port)).ToString();
+      Assert.IsFalse(docByName.Body.InnerHTML.IndexOf(expectedByName) == -1, 
+        "Checking that links by name were rendered correctly: " + expectedByName); 
+
+      DocumentElement docByIP   = TheBrowser.Navigate(byIP.ToString(), true); 
+      string expectedByIP = new Uri(string.Format("{0}://{1}:{2}", byIP.Scheme, byIP.Host, byIP.Port)).ToString();
+      Assert.IsFalse(docByName.Body.InnerHTML.IndexOf(expectedByIP) == -1, 
+        "Checking that links by IP were rendered correctly: " + expectedByIP); 
+    }
+
+
+     [Test]
     public void Rename()
     {
-      AbsoluteTopicName before = new AbsoluteTopicName("RenameableTopic", "NamespaceOne"); 
-      string renameUrl = TheLinkMaker.LinkToRename(before.Fullname); 
+      NamespaceQualifiedTopicVersionKey before = new NamespaceQualifiedTopicVersionKey("RenameableTopic", "NamespaceOne"); 
+      string renameUrl = TheLinkMaker.LinkToRename(before.QualifiedName); 
       DocumentElement doc = TheBrowser.Navigate(renameUrl, true); 
 
       InputElement newName = doc.GetElementByName("newName") as InputElement; 
@@ -112,13 +123,13 @@ namespace FlexWiki.BuildVerificationTests
       // tests that are timing-dependent.
       Thread.Sleep(3000); 
 
-      AbsoluteTopicName after = new AbsoluteTopicName("RenamedTopic", "NamespaceOne"); 
+      NamespaceQualifiedTopicVersionKey after = new NamespaceQualifiedTopicVersionKey("RenamedTopic", "NamespaceOne"); 
 
-      Assert.IsTrue(TheFederation.TopicExists(after)); 
-      string beforeContents = TheFederation.ContentBaseForNamespace(before.Namespace).TextReaderForTopic(before.LocalName).ReadToEnd(); 
-      string afterContents = TheFederation.ContentBaseForNamespace(after.Namespace).TextReaderForTopic(after.LocalName).ReadToEnd(); 
+      Assert.IsTrue(Federation.TopicExists(after)); 
+      string beforeContents = Federation.Read(before); 
+      string afterContents = Federation.Read(after); 
 
-      Assert.AreEqual("RenamedTopic", TheFederation.GetTopicProperty(before, "Redirect"), 
+      Assert.AreEqual("RenamedTopic", Federation.GetTopicPropertyValue(before, "Redirect"), 
         "Checking that the redirect was put in place"); 
       Assert.AreEqual("This topic can be renamed.", afterContents, 
         "Checking that the renamed topic has the correct contents."); 
@@ -130,7 +141,7 @@ namespace FlexWiki.BuildVerificationTests
 		{
 //				System.Diagnostics.Debugger.Break();
 
-			string rc = TheLinkMaker.LinkToRecentChanges(TheFederation.DefaultNamespace);
+			string rc = TheLinkMaker.LinkToRecentChanges(Federation.DefaultNamespace);
 			DocumentElement doc = TheBrowser.Navigate(rc, true);
 			SelectElement sel = (SelectElement)doc.GetElementByID("NamespaceFilter");
 			Assert.IsNotNull(sel);
@@ -151,6 +162,15 @@ namespace FlexWiki.BuildVerificationTests
 				Assert.IsTrue(found, "Finding namespace " + n);
 			}
 		}
+
+
+    private NamespaceQualifiedTopicVersionKey HomePage
+    {
+      get
+      {
+        return new NamespaceQualifiedTopicVersionKey(Federation.DefaultNamespaceManager.HomePage, Federation.DefaultNamespaceManager.Namespace);
+      }
+    }
 
 	}
 }

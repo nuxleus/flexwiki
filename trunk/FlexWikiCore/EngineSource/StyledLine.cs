@@ -16,22 +16,11 @@ using FlexWiki;
 
 namespace FlexWiki.Formatting
 {
-	/// <summary>
-	/// Summary description for StyledLine.
-	/// </summary>
-	/// 
-	
-	public enum LineStyle
-	{
-		Add,
-		Delete,
-		Unchanged
-	};
 
 	public class StyledLine
 	{
-		string _Text;
-		LineStyle _Style;
+		private string _Text;
+		private LineStyle _Style;
 
 		public StyledLine(string s, LineStyle style)
 		{

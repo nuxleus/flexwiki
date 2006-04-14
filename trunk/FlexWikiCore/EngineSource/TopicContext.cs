@@ -23,71 +23,73 @@ namespace FlexWiki
 	[ExposedClass("TopicContext", "Tracks the context in which WikiTalk execution is occurring")]
 	public class TopicContext : BELObject
 	{
-		public TopicContext(Federation f, ContentBase cb, TopicInfo topic)
+    private NamespaceManager _currentNamespaceManager;
+    private Federation _currentFederation;
+    private TopicVersionInfo _currentTopic;
+    private Hashtable _externalWikiMap;
+    
+    public TopicContext(Federation f, NamespaceManager namespaceManager, TopicVersionInfo topic)
 		{
 			CurrentFederation = f;
-			CurrentContentBase = cb;
+			CurrentNamespaceManager = namespaceManager;
 			CurrentTopic = topic;
 		}
 
-		public override IOutputSequence ToOutputSequence()
+		
+    public override IOutputSequence ToOutputSequence()
 		{
 			return new WikiSequence(ToString());
 		}
 
 
-		Federation _CurrentFederation;
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the federation")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the federation")]
 		public Federation CurrentFederation
 		{
 			get
 			{
-				return _CurrentFederation;
+				return _currentFederation;
 			}
 			set
 			{
-				_CurrentFederation = value;
+				_currentFederation = value;
 			}
 		}
 
-		TopicInfo _CurrentTopic;
-		[ExposedMethod("CurrentTopic", ExposedMethodFlags.CachePolicyNone, "Answer a TopicInfo object describing the current topic")]
-		public TopicInfo CurrentTopic
+		[ExposedMethod("CurrentTopic", ExposedMethodFlags.Default, "Answer a TopicInfo object describing the current topic")]
+		public TopicVersionInfo CurrentTopic
 		{
 			get
 			{
-				return _CurrentTopic;
+				return _currentTopic;
 			}
 			set
 			{
-				_CurrentTopic = value;
+				_currentTopic = value;
 			}
 		}
 
-		ContentBase _CurrentContentBase;
-		[ExposedMethod("CurrentNamespace", ExposedMethodFlags.CachePolicyNone, "Answer the current namespace")]
-		public ContentBase CurrentContentBase
+		[ExposedMethod("CurrentNamespace", ExposedMethodFlags.Default, "Answer the current namespace")]
+		public NamespaceManager CurrentNamespaceManager
 		{
 			get
 			{
-				return _CurrentContentBase;
+				return _currentNamespaceManager;
 			}
 			set
 			{
-				_CurrentContentBase = value;
+				_currentNamespaceManager = value;
 			}
 		}
 
-		Hashtable _ExternalWikiMap;
 		public Hashtable ExternalWikiMap
 		{
 			get
 			{
-				return _ExternalWikiMap;
+				return _externalWikiMap;
 			}
 			set
 			{
-				_ExternalWikiMap = value;
+				_externalWikiMap = value;
 			}
 		}
 	}

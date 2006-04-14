@@ -14,99 +14,100 @@ using System;
 
 namespace FlexWiki
 {
-	/// <summary>
-	/// Summary description for BackingTopic.
-	/// </summary>
-	public class BackingTopic
-	{
-		public BackingTopic(AbsoluteTopicName name)
-		{
-			_FullName = name;
-		}
+    /// <summary>
+    /// Summary description for BackingTopic.
+    /// </summary>
+    public class BackingTopic
+    {
+        private string _Body = "";
+        private bool _CanOverride;
+        private DateTime _CreationTime = DateTime.MinValue;
+        private NamespaceQualifiedTopicVersionKey _FullName;
+        private string _LastAuthor = Federation.AnonymousUserName;
+        private DateTime _LastModificationTime = DateTime.MinValue;
 
-		public BackingTopic(AbsoluteTopicName name, string body, bool canOverride)
-		{
-			_FullName = name;
-			Body = body;
-			CanOverride = canOverride;
-		}
+        public BackingTopic(NamespaceQualifiedTopicVersionKey name)
+        {
+            _FullName = name;
+        }
 
-		AbsoluteTopicName _FullName;
-
-		public AbsoluteTopicName FullName
-		{
-			get
-			{
-				return _FullName;
-			}
-		}
-
-		string _Body = "";
-		public string Body
-		{
-			get
-			{
-				return _Body;
-			}
-			set
-			{
-				_Body = value;
-			}
-		}
-
-		bool _CanOverride;
-		public bool CanOverride
-		{
-			get
-			{
-				return _CanOverride;
-			}
-			set
-			{
-				_CanOverride = value;
-			}
-		}
-
-		string _LastAuthor = ContentBase.AnonymousUserName;
-		public string LastAuthor
-		{
-			get
-			{
-				return _LastAuthor;
-			}
-			set
-			{
-				_LastAuthor = value;
-			}
-		}
-
-		DateTime _CreationTime = DateTime.MinValue;
-		public DateTime CreationTime
-		{
-			get
-			{
-				return _CreationTime;
-			}
-			set
-			{
-				_CreationTime = value;
-			}
-		}
-
-		DateTime _LastModificationTime = DateTime.MinValue;
-		public DateTime LastModificationTime
-		{
-			get
-			{
-				return _LastModificationTime;
-			}
-			set
-			{
-				_LastModificationTime = value;
-			}
-		}
+        public BackingTopic(NamespaceQualifiedTopicVersionKey name, string body, bool canOverride)
+        {
+            _FullName = name;
+            Body = body;
+            CanOverride = canOverride;
+        }
 
 
+        public NamespaceQualifiedTopicVersionKey FullName
+        {
+            get
+            {
+                return _FullName;
+            }
+        }
 
-	}
+        public string Body
+        {
+            get
+            {
+                return _Body;
+            }
+            set
+            {
+                _Body = value;
+            }
+        }
+
+        public bool CanOverride
+        {
+            get
+            {
+                return _CanOverride;
+            }
+            set
+            {
+                _CanOverride = value;
+            }
+        }
+
+        public string LastAuthor
+        {
+            get
+            {
+                return _LastAuthor;
+            }
+            set
+            {
+                _LastAuthor = value;
+            }
+        }
+
+        public DateTime CreationTime
+        {
+            get
+            {
+                return _CreationTime;
+            }
+            set
+            {
+                _CreationTime = value;
+            }
+        }
+
+        public DateTime LastModificationTime
+        {
+            get
+            {
+                return _LastModificationTime;
+            }
+            set
+            {
+                _LastModificationTime = value;
+            }
+        }
+
+
+
+    }
 }

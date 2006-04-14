@@ -51,7 +51,7 @@ namespace FlexWiki.Web
 		protected string urlForDiffs;
 		protected string urlForNoDiffs;
 
-		static bool IsAbsoluteURL(string pattern)
+		private static bool IsAbsoluteURL(string pattern)
 		{
 			if (pattern.StartsWith(System.Uri.UriSchemeHttp + System.Uri.SchemeDelimiter))
 				return true;
@@ -65,13 +65,13 @@ namespace FlexWiki.Web
 
 		protected void DoHead()
 		{
-			AbsoluteTopicName topic = GetTopicName();	 
+			NamespaceQualifiedTopicVersionKey topic = GetTopicVersionKey();	 
 			LinkMaker lm = TheLinkMaker;
 
 			if (Request.QueryString["version"] == null || Request.QueryString["version"] == "")
 			{
 				// Consider establishing a redirect if there's a redirect to a topic or an URL
-				string redir = TheFederation.GetTopicProperty(GetTopicName(), "Redirect");
+				string redir = Federation.GetTopicPropertyValue(GetTopicVersionKey(), "Redirect");
 				if (redir != "")
 				{
 					string URI = null;
@@ -80,14 +80,13 @@ namespace FlexWiki.Web
 					else
 					{
 						// Might be a topic
-						Regex name = new Regex(Formatter.wikiName);
+						Regex name = new Regex(Formatter.s_wikiName);
 						string trimmed = redir.Trim();
 						if (name.IsMatch(trimmed))
 						{
-							RelativeTopicName rel = new RelativeTopicName(trimmed);
-							IList all = TheFederation.ContentBaseForTopic(GetTopicName()).AllAbsoluteTopicNamesThatExist(rel);
+							IList all = Federation.NamespaceManagerForTopic(GetTopicVersionKey()).AllNamespaceQualifiedTopicNamesThatExist(trimmed);
 							if (all.Count == 1)
-								URI = lm.LinkToTopic((TopicName)(all[0]));
+								URI = lm.LinkToTopic((TopicVersionKey)(all[0]));
 							else
 							{
 								if (all.Count == 0)
@@ -106,13 +105,14 @@ namespace FlexWiki.Web
 					}
 				}
 
-				string keywords = TheFederation.GetTopicProperty(GetTopicName(), "Keywords");
+				string keywords = Federation.GetTopicPropertyValue(GetTopicVersionKey(), "Keywords");
 				if (keywords != "")
 					Response.Write("<META name=\"keywords\" content=\"" + keywords + "\">\n");
-				string description = TheFederation.GetTopicProperty(GetTopicName(), "Summary");
+				string description = Federation.GetTopicPropertyValue(GetTopicVersionKey(), "Summary");
 				if (description != "")
 					Response.Write("<META name=\"description\" content=\"" + description + "\">\n");
-				Response.Write("<META name=\"author\" content=\"" + TheFederation.GetTopicLastModifiedBy(GetTopicName()) + "\">\n");
+				Response.Write("<META name=\"author\" content=\"" + Federation.GetTopicLastModifiedBy(
+                    GetTopicVersionKey().AsNamespaceQualifiedTopicName()) + "\">\n");
 
 			}
 			else
@@ -127,11 +127,11 @@ namespace FlexWiki.Web
 
 		protected void DoPage()
 		{
-			ContentBase cb = DefaultContentBase;
+			NamespaceManager storeManager = DefaultNamespaceManager;
 			LinkMaker lm = TheLinkMaker;
-			AbsoluteTopicName topic = GetTopicName();	
+			NamespaceQualifiedTopicVersionKey topic = GetTopicVersionKey();	
 			bool diffs = Request.QueryString["diff"] == "y";
-			AbsoluteTopicName diffVersion = null;
+			NamespaceQualifiedTopicVersionKey diffVersion = null;
 			bool restore = Request.QueryString["restore"] == "y";
 			if (restore==true)
 			{
@@ -139,18 +139,20 @@ namespace FlexWiki.Web
 			}
 
 			// Go edit if we try to view it and it doesn't exist
-			if (!cb.TopicExists(topic))
+			if (!storeManager.TopicExists(topic.LocalName, ImportPolicy.DoNotIncludeImports))
 			{ 
-				Response.Redirect(lm.LinkToEditTopic(topic));
+				Response.Redirect(lm.LinkToEditTopic(topic.AsNamespaceQualifiedTopicName()));
 				return;
 			}
 
 			if (diffs)
 			{
-				diffVersion = cb.VersionPreviousTo(topic.LocalName);
+				diffVersion = storeManager.VersionPreviousTo(topic.LocalName, topic.Version);
 			}
 
-			Response.Write("<body onclick='javascript: BodyClick()' ondblclick=\"location.href='" + this.TheLinkMaker.LinkToEditTopic(topic) + "'\" scroll='no'>");
+			Response.Write("<body onclick='javascript: BodyClick()' ondblclick=\"location.href='" + 
+                this.TheLinkMaker.LinkToEditTopic(topic.AsNamespaceQualifiedTopicName()) + 
+                "'\" scroll='no'>");
 			Response.Write(@"<div id='TopicTip' class='TopicTip' ></div>");
 
 			bool first = true;
@@ -161,8 +163,8 @@ namespace FlexWiki.Web
 			///
 
 			// Get the core data (the formatted topic and the list of changes) from the cache.  If it's not there, generate it!
-			string formattedBody = TheFederation.GetTopicFormattedContent(topic, diffVersion);
-			IEnumerable changeList = TheFederation.GetTopicChanges(topic);
+			string formattedBody = Federation.GetTopicFormattedContent(topic, diffVersion);
+			IEnumerable changeList = Federation.GetTopicChanges(topic.AsNamespaceQualifiedTopicName());
 
 			// Now generate the page!
 
@@ -179,24 +181,24 @@ namespace FlexWiki.Web
 				}
 				else
 					s += "&nbsp;&nbsp;&nbsp;&nbsp;";
-				if (change.Timestamp.Date == DateTime.Now.Date)
-					s += change.Timestamp.ToString("HH:mm");
+				if (change.Created.Date == DateTime.Now.Date)
+					s += change.Created.ToString("HH:mm");
 				else
 				{
-					if (change.Timestamp.Date.Year == DateTime.Now.Date.Year)
-						s += change.Timestamp.ToString("MMM d  H:mm");
+					if (change.Created.Date.Year == DateTime.Now.Date.Year)
+						s += change.Created.ToString("MMM d  H:mm");
 					else
-						s += change.Timestamp.ToString("MMM d yyyy  H:mm");
+						s += change.Created.ToString("MMM d yyyy  H:mm");
 				}	
 				s += "&nbsp;&nbsp;(" + change.Author + ")";	
-				AbsoluteTopicName linkTo = change.Topic;
+				NamespaceQualifiedTopicVersionKey linkTo = change.Topic;
 				if (first)
 					linkTo.Version = null;	// don't include the version for the latest one
-				options += "<option value='"+ lm.LinkToTopic(linkTo)  + "' " + sel + ">" + s + "</option>";
+				options += "<option rawValue='"+ lm.LinkToTopic(linkTo)  + "' " + sel + ">" + s + "</option>";
 				first = false;
 			}					
 
-			AbsoluteTopicName permaTopic = new AbsoluteTopicName(topic.FullnameWithVersion);
+			NamespaceQualifiedTopicVersionKey permaTopic = new NamespaceQualifiedTopicVersionKey(topic.QualifiedNameWithVersion);
 			if (permaTopic.Version == null)
 			{
 				permaTopic.Version = mostRecentVersion;
@@ -268,7 +270,7 @@ function TopicBarClick(event)
 	tbi.top = DynamicTopicBar.top;
 	tbi.width = staticWide;
 	tbi.height = staticHigh;
-	tbi.value = '';
+	tbi.rawValue = '';
 	tbi.focus();
 	tbi.select();
 }
@@ -304,11 +306,11 @@ function tbinput()
 
 			/////////////////////////////
 
-			ContentBase cb1 = TheFederation.ContentBaseForNamespace(topic.Namespace);
-			OpenPane(Response.Output, cb1.FriendlyTitle, lm.LinkToImage("images/home.gif"), lm.LinkToTopic(new AbsoluteTopicName(cb1.HomePage, cb1.Namespace)), "Go to the home page");
+			NamespaceManager cb1 = Federation.NamespaceManagerForNamespace(topic.Namespace);
+			OpenPane(Response.Output, cb1.FriendlyTitle, lm.LinkToImage("images/home.gif"), lm.LinkToTopic(new NamespaceQualifiedTopicVersionKey(cb1.HomePage, cb1.Namespace)), "Go to the home page");
 			if (cb1.ImageURL != null)
 				Response.Write("<img align='right' src='" + cb1.ImageURL + "'>");
-			Response.Write(Formatter.FormattedString(topic, cb1.Description, OutputFormat.HTML, cb1, lm, null));
+			Response.Write(Formatter.FormattedString(topic, cb1.Description, OutputFormat.HTML, cb1, lm));
 			ClosePane(Response.Output);
 
 			/////////////////////////////
@@ -317,7 +319,7 @@ function tbinput()
 
 			if (topic.Version == null)
 			{
-				Command(lm, "Edit", "Edit this topic", lm.LinkToEditTopic(topic));
+				Command(lm, "Edit", "Edit this topic", lm.LinkToEditTopic(topic.AsNamespaceQualifiedTopicName()));
 			}
 			else
 			{
@@ -334,8 +336,8 @@ function tbinput()
 			Response.Write("<td valign='top'>");
 
 			Command(lm, "Lost&nbsp;and&nbsp;Found", "Show unreferenced topics", lm.LinkToLostAndFound(topic.Namespace));
-			Command(lm, "Find&nbsp;References", "Find mentions of this topic in other topics", RootUrl(Request) + "Search.aspx?search=" + topic.Name);
-			Command(lm, "Rename", "Rename this topic (use with care)", RootUrl(Request) + "Rename.aspx?topic=" + topic.Fullname);
+			Command(lm, "Find&nbsp;References", "Find mentions of this topic in other topics", RootUrl(Request) + "Search.aspx?search=" + topic.LocalName);
+			Command(lm, "Rename", "Rename this topic (use with care)", RootUrl(Request) + "Rename.aspx?topic=" + topic.QualifiedName);
 			Response.Write("</td>");
 			Response.Write("</tr></table>");
 
@@ -345,8 +347,8 @@ function tbinput()
 			Response.Write("<table border='0' cellpadding='0' cellspacing='0' width='100%'><tr>");
 			Response.Write("<td valign='top'>");
 			Response.Write(@"<form  style='margin-bottom:0;'  method='get' action='" + lm.LinkToSearchNamespace("") + @"'  id='SearchForm' >
-<input class='SearchBox' type='text'  name='search' length='25' value =''><INPUT type='image' src='" + lm.LinkToImage("images/go-dark.gif") + @"' title='Start search'>
-<input style='display: none' type='text'  name='namespace' value ='" + topic.Namespace + @"'>
+<input class='SearchBox' type='text'  name='search' length='25' rawValue =''><INPUT type='image' src='" + lm.LinkToImage("images/go-dark.gif") + @"' title='Start search'>
+<input style='display: none' type='text'  name='namespace' rawValue ='" + topic.Namespace + @"'>
 ");
 			Response.Write("</form>");
 			Response.Write("</td>");
@@ -368,11 +370,11 @@ function tbinput()
 			ClosePane(Response.Output);
 
 			/////////////////////////////
-			string about = TheFederation.AboutWikiString;
+			string about = Federation.AboutWikiString;
 			if (about != null)
 			{
 				OpenPane(Response.Output, "About", lm.LinkToImage("images/help.gif"), null, null);
-				Response.Write(Formatter.FormattedString(topic, about, OutputFormat.HTML, TheFederation.DefaultContentBase, lm, null));
+				Response.Write(Formatter.FormattedString(topic, about, OutputFormat.HTML, Federation.DefaultNamespaceManager, lm));
 				ClosePane(Response.Output);
 			}
 			Response.Write("</td></tr>");
@@ -388,7 +390,7 @@ function tbinput()
 				// The next line is designed to hide the loggoff command if the user is logged in via NTLM; 
 				// I'm not 100% sure the test is right
 				if ("Negotiate" != User.Identity.AuthenticationType)
-					Command(lm, "Logoff","Log off of the application",lm.LinkToLogoff(GetTopicName()));
+					Command(lm, "Logoff","Log off of the application",lm.LinkToLogoff(GetTopicVersionKey()));
 				ClosePane(Response.Output);
 				
 			}
@@ -403,7 +405,7 @@ function tbinput()
 
 		}
 
-		void Command(LinkMaker lm, string command, string helptext, string url)
+		private void Command(LinkMaker lm, string command, string helptext, string url)
 		{
 			Response.Write("<table cellspacing='0' cellpadding='1' class='CommandTable' border='0'><tr><td valign='middle'>");
 			Response.Write("<img src='" + lm.LinkToImage("images/go-dark.gif") + "'>");
@@ -416,7 +418,7 @@ function tbinput()
 
 		}
 
-		void WriteRecentPane()
+		private void WriteRecentPane()
 		{
 			OpenPane(Response.Output, "Recent Topics");
 			Response.Write("    ");

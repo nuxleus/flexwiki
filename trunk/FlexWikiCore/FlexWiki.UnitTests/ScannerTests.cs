@@ -21,13 +21,14 @@ namespace FlexWiki.UnitTests
 	/// </summary>
 	[TestFixture] public class ScannerTests
 	{
-		[SetUp] public void Init()
+		[SetUp] public void SetUp()
 		{
 		}
 
-		[TearDown] public void Deinit()
+		[TearDown] public void TearDown()
 		{
 		}
+
 
 		[Test] public void Emptyness()
 		{
@@ -35,7 +36,6 @@ namespace FlexWiki.UnitTests
 			Token t = scanner.Next();
 			Assert.AreEqual(TokenType.TokenEndOfInput, t.Type); 
 		}
-
 
 		[Test] public void LastTokenTest()
 		{

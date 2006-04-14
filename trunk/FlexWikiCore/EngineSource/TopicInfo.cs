@@ -12,205 +12,201 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
+
+using FlexWiki.Collections; 
 
 namespace FlexWiki
 {
-	/// <summary>
-	/// Summary description for Topic.
-	/// </summary>
-	[ExposedClass("TopicInfo", "Provides information about a topic")]
-	public class TopicInfo : BELObject, IComparable
-	{
-		public TopicInfo(Federation aFed, AbsoluteTopicName name)
-		{
-			_Fullname = name;
-			_Federation = aFed;
-		}
+    /// <summary>
+    /// Summary description for Topic.
+    /// </summary>
+    // TODO: Should we update WikiTalk to reflect the new name of this object at some point?
+    [ExposedClass("TopicInfo", "Provides information about a topic")]
+    public class TopicVersionInfo : BELObject, IComparable
+    {
+        // Fields
 
-		public override string ToString()
-		{
-			string answer = "TopicInfo for ";
-			if (Fullname != null)
-				answer += Fullname;
-			return answer;
-		}
+        private NamespaceManager _namespaceManager;
+        private Federation _federation;
+        private NamespaceQualifiedTopicVersionKey _topicVersionKey;
 
+        // Constructors
 
-		AbsoluteTopicName _Fullname;
+        public TopicVersionInfo(Federation aFed, NamespaceQualifiedTopicVersionKey name)
+        {
+            _topicVersionKey = name;
+            _federation = aFed;
+        }
 
-		public AbsoluteTopicName Fullname
-		{
-			get
-			{
-				return _Fullname;
-			}
-		}
+        // Properties
 
-		[ExposedMethod("Fullname", ExposedMethodFlags.CachePolicyNone, "Answer the complete name of the topic (including namespace and version, if present)")]
-		public string ExposedFullname
-		{
-			get
-			{
-				return _Fullname.ToString();
-			}
-		}
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer a list of TopicChanges describing this topic's history")]
+        public TopicChangeCollection Changes
+        {
+            get
+            {
+                TopicChangeCollection answer = new TopicChangeCollection();
+                foreach (TopicChange each in Federation.GetTopicChanges(new TopicName(TopicVersionKey.QualifiedName)))
+                {
+                    answer.Add(each);
+                }
+                return answer;
+            }
+        }
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer a DateTime inndicating when the topic was created")]
+        public DateTime Created
+        {
+            get
+            {
+                return Federation.GetTopicCreationTime(TopicVersionKey);
+            }
+        }
+        public bool Exists
+        {
+            get
+            {
+                return NamespaceManager.TopicExists(TopicVersionKey.LocalName, ImportPolicy.DoNotIncludeImports);
+            }
+        }
+        [ExposedMethod("Fullname", ExposedMethodFlags.Default, "Answer the complete name of the topic (including namespace and version, if present)")]
+        public string ExposedFullname
+        {
+            get
+            {
+                return _topicVersionKey.ToString();
+            }
+        }
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer the Federation containing the topic")]
+        public Federation Federation
+        {
+            get
+            {
+                return _federation;
+            }
+        }
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer the Keywords property's rawValue")]
+        public string Keywords
+        {
+            get
+            {
+                return GetProperty("Keywords");
+            }
+        }
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer an array containgin all the keywords listed in the Keywords property")]
+        public ArrayList KeywordsList
+        {
+            get
+            {
+                return GetListProperty("Keywords");
+            }
+        }
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer a DateTime inndicating when the topic was last modified")]
+        public DateTime LastModified
+        {
+            get
+            {
+                return Federation.GetTopicModificationTime(TopicVersionKey);
+            }
+        }
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer a string indicating who last modified the topic")]
+        public string LastModifiedBy
+        {
+            get
+            {
+                return Federation.GetTopicLastModifiedBy(TopicName);
+            }
+        }
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer a the (full)name of the topic")]
+        public string Name
+        {
+            get
+            {
+                return TopicVersionKey.LocalName;
+            }
+        }
+        [ExposedMethod("Namespace", ExposedMethodFlags.Default, "Answer the Namespace for this topic")]
+        public NamespaceManager NamespaceManager
+        {
+            get
+            {
+                if (_namespaceManager != null)
+                    return _namespaceManager;
+                _namespaceManager = Federation.NamespaceManagerForTopic(TopicVersionKey);
+                return _namespaceManager;
+            }
+        }
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer the list of property names for this topic")]
+        public IList<string> PropertyNames
+        {
+            get
+            {
+                return Federation.GetTopicProperties(TopicVersionKey).Names;
+            }
+        }
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer the Summary property's rawValue")]
+        public string Summary
+        {
+            get
+            {
+                return GetProperty("Summary");
+            }
+        }
+        public TopicName TopicName
+        {
+            get
+            {
+                return new TopicName(TopicVersionKey.LocalName, TopicVersionKey.Namespace); 
+            }
+        }
+        public NamespaceQualifiedTopicVersionKey TopicVersionKey
+        {
+            get
+            {
+                return _topicVersionKey;
+            }
+        }
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer the version stamp for this version of the topic")]
+        public string Version
+        {
+            get
+            {
+                return TopicVersionKey.Version;
+            }
+        }
 
+        // Methods
 
-		Federation _Federation;
-
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the Federation containing the topic")]
-		public Federation Federation
-		{
-			get
-			{
-				return _Federation;
-			}
-		}
-
-		ContentBase _ContentBase;
-		[ExposedMethod("Namespace", ExposedMethodFlags.CachePolicyNone, "Answer the Namespace for this topic")]
-		public ContentBase ContentBase
-		{
-			get
-			{
-				if (_ContentBase != null)
-					return _ContentBase;
-				_ContentBase = Federation.ContentBaseForTopic(Fullname);
-				return _ContentBase;
-			}
-		}
-
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a list of TopicChanges describing this topic's history")]
-		public ArrayList Changes
-		{
-			get
-			{
-				ArrayList answer = new ArrayList();
-				foreach (TopicChange each in Federation.GetTopicChanges(Fullname))
-					answer.Add(each);
-				return answer;
-			}
-		}
-
-		public bool Exists
-		{
-			get
-			{
-				return ContentBase.TopicExists(Fullname);
-			}
-		}
-
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a the (full)name of the topic")]
-		public string Name
-		{
-			get
-			{
-				return Fullname.Name;
-			}
-		}
-
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the version stamp for this version of the topic")]
-		public string Version
-		{
-			get
-			{
-				return Fullname.Version;
-			}
-		}
-
-
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the given property from the topic")]
-		public string GetProperty(string propertyName)
-		{
-			return Federation.GetTopicProperty(Fullname, propertyName);
-		}
-
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer an array of the values in the given list property")]
-		public ArrayList GetListProperty(string propertyName)
-		{
-			return Federation.GetTopicListPropertyValue(Fullname, propertyName);
-		}
-
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer true if the given toipic has the given property; else false")]
-		public bool HasProperty(string propertyName)
-		{
-			Hashtable hash = Federation.GetTopicProperties(Fullname);
-			if (hash == null)
-				return false;
-			return hash.ContainsKey(propertyName);
-		}
-
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the list of property names for this topic")]
-		public ArrayList PropertyNames
-		{
-			get
-			{
-				return new ArrayList(Federation.GetTopicProperties(Fullname).Keys);
-			}
-		}
-
-
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the Summary property's value")]
-		public string Summary
-		{
-			get
-			{
-				return GetProperty("Summary");
-			}
-		}
-
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer the Keywords property's value")]
-		public string Keywords
-		{
-			get
-			{
-				return GetProperty("Keywords");
-			}
-		}
-
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer an array containgin all the keywords listed in the Keywords property")]
-		public ArrayList KeywordsList
-		{
-			get
-			{
-				return GetListProperty("Keywords");
-			}
-		}
-
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a DateTime inndicating when the topic was last modified")]
-		public DateTime LastModified
-		{
-			get
-			{
-				return Federation.GetTopicModificationTime(Fullname); 
-			}
-		}
-
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a DateTime inndicating when the topic was created")]
-		public DateTime Created
-		{
-			get
-			{
-				return Federation.GetTopicCreationTime(Fullname); 
-			}
-		}
-
-		[ExposedMethod(ExposedMethodFlags.CachePolicyNone, "Answer a string indicating who last modified the topic")]
-		public string LastModifiedBy
-		{
-			get
-			{
-				return Federation.GetTopicLastModifiedBy(Fullname); 
-			}
-		}
-		#region IComparable Members
-
-		public int CompareTo(object obj)
-		{
-			return this.Fullname.Fullname.CompareTo(((TopicInfo)obj).Fullname.Fullname);
-		}
-
-		#endregion
-
-	}
+        public int CompareTo(object obj)
+        {
+            return this.TopicVersionKey.QualifiedName.CompareTo(((TopicVersionInfo)obj).TopicVersionKey.QualifiedName);
+        }
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer an array of the values in the given list property")]
+        public ArrayList GetListProperty(string propertyName)
+        {
+            return Federation.GetTopicListPropertyValue(TopicVersionKey, propertyName);
+        }
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer the given property from the topic")]
+        public string GetProperty(string propertyName)
+        {
+            return Federation.GetTopicPropertyValue(TopicVersionKey, propertyName);
+        }
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer true if the given toipic has the given property; else false")]
+        public bool HasProperty(string propertyName)
+        {
+            TopicPropertyCollection properties = Federation.GetTopicProperties(TopicVersionKey);
+            if (properties == null)
+                return false;
+            return properties.Contains(propertyName);
+        }
+        public override string ToString()
+        {
+            string answer = "TopicInfo for ";
+            if (TopicVersionKey != null)
+            {
+                answer += TopicVersionKey;
+            }
+            return answer;
+        }
+    }
 }

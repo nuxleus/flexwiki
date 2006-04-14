@@ -23,8 +23,8 @@ namespace FlexWiki.Web
 	/// </summary>
 	public class CacheManager : IFederationCache
 	{
-		Cache	_Cache;
-		Cache TheCache
+		private Cache	_Cache;
+		private Cache TheCache
 		{
 			get
 			{
@@ -46,8 +46,8 @@ namespace FlexWiki.Web
 		}
 
 
-		const string trackerKey = "___CacheRuleTrackerKey";
-		Hashtable Tracker
+		private const string trackerKey = "___CacheRuleTrackerKey";
+		private Hashtable Tracker
 		{
 			get
 			{
