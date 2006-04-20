@@ -1,0 +1,17 @@
+This release of SandBar is available at no charge for you to use in your freeware products
+royalty-free. This license does not allow distribution of SandBar with software that is
+sold or generates income in any way. Use of this release is subject to my name being
+displayed as a credit in the About dialog in your application. If this is unacceptable you
+will need to purchase the commercial license.
+
+When distributing this product with software where the source code is available (under
+GPL or other similar licenses) you are required to distribute this license file with the
+binary. This is to ensure other developers understand fully the terms of this release.
+
+By using, downloading or posessing this product you agree not to attempt to decompile or
+reverse engineer it in any way. Enjoy!
+
+
+Tim Dawson
+
+http://www.divil.co.uk/net/
