@@ -126,7 +126,7 @@
 
   <!-- The name for the virtual directory that gets created in
        the install target. -->
-  <property name="install.vdir.name" value="${nant.project.name}TestBuild" 
+  <property name="install.vdir.name" value="${nant.project.name}${vermajor}${verminor}TestBuild" 
       unless="${property::exists('install.vdir.name')}" />
 
   <!-- Set this property to true here (or override elsewhere) to skip
