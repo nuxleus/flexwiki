@@ -1,42 +1,106 @@
-body, table, form, input, td, th, p, textarea, select {font-family: verdana, helvetica, arial; font-size: 11px;}
+body, table, form, input, td, th, p, textarea, select
+{
+	font-family: verdana, helvetica, arial;
+	font-size: 11px;
+}
 
-a:hover{ color:#FFCC00; }
+a:hover { color:#FC0; }
 
-.main-panel { color:#FFCC00; }
+.main-panel { color:#FC0; }
 
-.link { color:#FFFFFF; text-decoration:none; }
-.link-failed { color:#FF3300; text-decoration:none; }
-.buildresults-header { color: #FFF; font-weight: bold; }
-.buildresults-data { color: #9F3; }
-.buildresults-data-failed { color: #FF3300; }
+.link { color:#00F;  }
+.buildresults-header { color: #000; font-weight: bold; }
+.buildresults-data { color: #000; }
+.buildresults-data-failed { color: #F30; }
 
 .stylesection { margin-left: 4px; }
-.header-title { font-size:12px; color:#000000; font-weight:bold; }
+.header-title { font-size:12px; color:#000; font-weight:bold; padding-bottom:10pt; }
 .header-label { font-weight:bold; }
-.header-data { color:#000000; }
+.header-data { color:#000; }
+.header-data-error { font-family:courier, monospaced; color:#000; white-space:pre; }
 
-.modifications-data { font-size:9px; color:#000000; }
-.modifications-sectionheader { background-color:#000066; color:#FFFFFF; }
-.modifications-oddrow { background-color:#CCCCCC }
-.modifications-evenrow { background-color:#FFFFCC }
+.section-table { margin-top:10px; }
+.sectionheader { background-color:#006; color:#FFF; }
+.section-data { font-size:9px; color:#000; }
+.section-oddrow { background-color:#F0F7FF; }
+.section-evenrow { background-color:#FFF; }
+.section-error { font-size:9px; color:#F30; white-space:pre; }
 
-.changelists-oddrow { background-color:#CCCCCC }
-.changelists-evenrow { background-color:#FFFFCC }
-.changelists-file-spacer { background-color:#FFFFFF }
-.changelists-file-evenrow { background-color:#EEEEEE }
-.changelists-file-oddrow { background-color:#FFFFEE }
-.changelists-file-header { font-size:9px; background-color:#666666; color:#FFFFFF; }
+.warning { color:orange }
+.error { color:red }
 
-.compile-data { font-size:9px; color:#000000; }
-.compile-error-data { font-size:9px; color:#FF3300; }
-.compile-warn-data { font-size:9px; color:#CC9900; }
-.compile-sectionheader { background-color:#000066; color:#FFFFFF; }
+.RecentBuildsPanel {
+	border-style: solid;
+	border-width: 1px;
+        border-color: #333399;
+	margin-bottom:5;
+}
 
-.distributables-data { font-size:9px; color:#000000; }
-.distributables-sectionheader { background-color:#000066; color:#FFFFFF; }
-.distributables-oddrow { background-color:#CCCCCC }
+.RecentBuildsPanel th 
+{
+	background-color: #333399;
+	text-align: center;
+	font-weight: bold;
+	padding: 3px;
+	color: ivory;
+}
 
-.unittests-sectionheader { background-color:#000066; color:#FFFFFF; }
-.unittests-oddrow { background-color:#CCCCCC }
-.unittests-data { font-size:9px; color:#000000; }
-.unittests-error { font-size:9px; color:#FF3300; }
+.RecentBuildsPanel td {
+	padding: 3;
+        background-color: white;
+}
+
+.breadcrumbs
+{
+        color: darkgrey;
+}
+.breadcrumbs a {
+        color: ivory;
+        text-decoration: none;
+}
+
+.breadcrumbs a:hover 
+{ 
+        color:#FC0; 
+}
+
+.ProjectGridHeader
+{
+        color: ivory;
+}
+.ProjectGridHeader a {
+        color: ivory;
+        text-decoration: none;
+}
+.ProjectGridHeader a:hover 
+{ 
+        color:#FC0; 
+}
+
+.SideBar a
+{
+        text-decoration: none;
+        color: #333399;
+}
+
+.SideBar .build-passed-link { color:Green; text-decoration:none; }
+.SideBar .build-failed-link { color:Red; text-decoration:none; }
+
+.build-passed-link { color:Green; text-decoration:none; }
+.build-failed-link { color:Red; text-decoration:none; }
+
+.log
+{
+	overflow: auto;
+}
+
+.wholepage
+{
+        background-color: #000066;
+}
+
+.TopControls
+{
+        background-color: #333399;
+        color: ivory;
+}
