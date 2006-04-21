@@ -1,0 +1,23 @@
+David changed it again at 9am
+David Changed this at 3pm PST
+Change at 1:00PM
+Change at 11:00PM
+Change at 8:49AM
+Change at 9:14AM
+Change at 9:28am
+Change at 9:47am
+
+Test change at 1:08PM
+Test change at 8:51AM
+Test change at 10:25AM
+Test change at 6:07PM
+Tommy changed this at 17:12
+David changes to force build
+Test change to check for problems.
+Derek changes to force build - committing new files doesn't seem to trigger a build
+
+Changes after branch to test that build picks up on changes in this branch only. 
+Change to check that updating and tagging is working correctly. 
+Further changes to check that updating and tagging is working correctly. 
+
+A change after installing the new version of ccnet, in the 1.8 branch to check that it picks up changes. 
