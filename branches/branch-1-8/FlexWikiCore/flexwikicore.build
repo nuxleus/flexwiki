@@ -146,7 +146,7 @@
 
   <!-- Set this property to true here (or override elsewhere) to skip
        running fxcop as part of the build. -->
-  <property name="fxcop.skip" value="false"
+  <property name="fxcop.skip" value="true"
       unless="${property::exists('fxcop.skip')}" />
 
   <!-- Set this property to true here (or override elsewhere) to skip
@@ -264,10 +264,10 @@
 	      <import name="System.Reflection" />
 	    </imports>
 	    <attributes>
-	      <attribute type="AssemblyVersionAttribute"
-		        value="${vermajor}.${verminor}.${verbuild}.${verrevision}" />
-		    <attribute type="AssemblyCopyrightAttribute"
-		        value="Copyright (c) 2005 Microsoft Corporation" />
+          <attribute type="AssemblyVersionAttribute"
+              value="${vermajor}.${verminor}.${verbuild}.${verrevision}" />
+          <attribute type="AssemblyCopyrightAttribute"
+		      value="Copyright (c) 2005 Microsoft Corporation" />
 	    </attributes>
 	  </asminfo>
 
@@ -662,7 +662,6 @@
     
   </target>
 
-
   <!-- The clean target cleans out any files that are created as part
        of the build process --> 
   <target name="clean">
@@ -671,6 +670,5 @@
     <delete dir="${reportdir}"  if="${directory::exists(reportdir)}"/>
     <delete dir="${installdir}" if="${directory::exists(installdir)}"/>
   </target>
-
 
 </project>
