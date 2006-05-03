@@ -64,7 +64,7 @@ namespace FlexWiki.Web
 			LinkMaker lm = TheLinkMaker;
 
             string topic = Request.Form["QuickLink"];
-            NamespaceQualifiedTopicNameCollection hits = storeManager.AllNamespaceQualifiedTopicNamesThatExist(topic);
+            QualifiedTopicNameCollection hits = storeManager.AllQualifiedTopicNamesThatExist(topic);
 
 			string target = null;
 			if (hits.Count == 0)
@@ -77,7 +77,7 @@ namespace FlexWiki.Web
 				// 1 hit; take it!
 				NameValueCollection extras = new NameValueCollection();
 				extras.Add("DelayRedirect", "1");
-				target = lm.LinkToTopic(new NamespaceQualifiedTopicVersionKey(hits[0]), false, extras);
+				target = lm.LinkToTopic(new QualifiedTopicRevision(hits[0]), false, extras);
 			}
 
 			// If we have a target, go there

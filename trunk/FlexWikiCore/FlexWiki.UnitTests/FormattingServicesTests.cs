@@ -160,9 +160,9 @@ b
 
         private void VersionCompare(string topic, string version, string expecting)
         {
-            NamespaceQualifiedTopicVersionKey latest = new NamespaceQualifiedTopicVersionKey(StoreManager.NamespaceQualifiedTopicNameFor(topic));
+            QualifiedTopicRevision latest = new QualifiedTopicRevision(StoreManager.QualifiedTopicNameFor(topic));
             latest.Version = version;
-            NamespaceQualifiedTopicVersionKey oldTopic = StoreManager.VersionPreviousTo(
+            QualifiedTopicRevision oldTopic = StoreManager.VersionPreviousTo(
                 latest.LocalName, latest.Version);
 
             string got = Formatter.FormattedTopic(latest, OutputFormat.Testing, oldTopic, Federation, _lm);

@@ -23,7 +23,7 @@ namespace FlexWiki.CalendarProvider
     /// <summary>
     /// Summary description for CalendarStore.
     /// </summary>
-    public class CalendarStore : IUnparsedContentProvider
+    public class CalendarStore : UnparsedContentProviderBase
     {
         public CalendarStore(int year, int month)
         {
@@ -73,7 +73,7 @@ namespace FlexWiki.CalendarProvider
                 return _lastRead;
             }
         }
-        public IUnparsedContentProvider Next
+        public UnparsedContentProviderBase Next
         {
             get { throw new NotSupportedException(); }
         }
@@ -109,7 +109,7 @@ namespace FlexWiki.CalendarProvider
         /// <param name="topic">A given date</param>
         /// <param name="stamp">A non-null timestamp; changes before this time won't be included in the answer </param>
         /// <returns>Enumeration of TopicChanges</returns>
-        TopicChangeCollection IContentProvider.AllChangesForTopicSince(string topic, DateTime stamp)
+        TopicChangeCollection ContentProviderBase.AllChangesForTopicSince(string topic, DateTime stamp)
         {
             throw new NotImplementedException();
             /*
@@ -124,22 +124,22 @@ namespace FlexWiki.CalendarProvider
              */
         }
 
-        TopicNameCollection IContentProvider.AllTopics()
+        QualifiedTopicNameCollection ContentProviderBase.AllTopics()
         {
             throw new NotImplementedException(); 
         }
 
-        void IContentProvider.DeleteAllTopicsAndHistory()
+        void ContentProviderBase.DeleteAllTopicsAndHistory()
         {
             throw new NotImplementedException();
         }
 
-        void IContentProvider.DeleteTopic(string topicName)
+        void ContentProviderBase.DeleteTopic(string topicName)
         {
             throw new NotImplementedException();
         }
 
-        void IContentProvider.Initialize(NamespaceManager namespaceManager)
+        void ContentProviderBase.Initialize(NamespaceManager namespaceManager)
         {
             throw new NotImplementedException();
 
@@ -156,12 +156,12 @@ namespace FlexWiki.CalendarProvider
             //_Topics[a] = DateTime.MinValue;
         }
 
-        bool IContentProvider.IsExistingTopicWritable(string topicName)
+        bool ContentProviderBase.IsExistingTopicWritable(string topicName)
         {
             throw new NotImplementedException();
         }
 
-        TextReader IContentProvider.TextReaderForTopic(string topic, string version)
+        TextReader ContentProviderBase.TextReaderForTopic(string topic, string version)
         {
             throw new NotImplementedException();
 
@@ -177,7 +177,7 @@ namespace FlexWiki.CalendarProvider
             //return new StringReader(b.ToString());
         }
         
-        bool IContentProvider.TopicExists(string name)
+        bool ContentProviderBase.TopicExists(string name)
         {
             throw new NotImplementedException();
 
@@ -190,23 +190,23 @@ namespace FlexWiki.CalendarProvider
             //return false;
         }
         
-        void IContentProvider.WriteTopic(string topic, string version, string content)
+        void ContentProviderBase.WriteTopic(string topic, string version, string content)
         {
             throw new NotImplementedException();
         }
 
-        void IContentProvider.WriteTopicAndNewVersion(string topic, string content, string author)
+        void ContentProviderBase.WriteTopicAndNewVersion(string topic, string content, string author)
         {
             throw new NotImplementedException();
         }
 
 
-        private DateTime DateTimeFromTopicName(LocalTopicVersionKey topic)
+        private DateTime DateTimeFromTopicName(UnqualifiedTopicRevision topic)
         {
             return (DateTime) (_topics[topic]);
         }
 
-        private NamespaceQualifiedTopicVersionKey TopicNameForDate(DateTime stamp)
+        private QualifiedTopicRevision TopicNameForDate(DateTime stamp)
         {
             throw new NotImplementedException();
             //return new AbsoluteTopicName("About" + stamp.ToString("MMMMdd"), Namespace);

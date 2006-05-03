@@ -228,7 +228,7 @@ Color: red
 
 		private string FormattedTopic(string topic)
 		{
-			NamespaceQualifiedTopicVersionKey tn = new NamespaceQualifiedTopicVersionKey(topic);
+			QualifiedTopicRevision tn = new QualifiedTopicRevision(topic);
 			return Formatter.FormattedTopic(tn, OutputFormat.Testing, null, Federation, _lm);
 		}
 

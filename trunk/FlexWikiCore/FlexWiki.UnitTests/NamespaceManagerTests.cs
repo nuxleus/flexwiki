@@ -38,7 +38,7 @@ namespace FlexWiki.UnitTests
               TestContentSets.SingleTopicNoImports);
             NamespaceManager storeManager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            TopicName topicName = storeManager.NamespaceQualifiedTopicNameFor("TopicOne");
+            TopicName topicName = storeManager.QualifiedTopicNameFor("TopicOne");
             Assert.AreEqual("NamespaceOne.TopicOne", topicName.QualifiedName,
                 "Checking that NamespaceQualifiedTopicNameFor returns a fully qualified name.");
 
@@ -50,7 +50,7 @@ namespace FlexWiki.UnitTests
               TestContentSets.SingleTopicNoImports);
             NamespaceManager storeManager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            TopicName topicName = storeManager.NamespaceQualifiedTopicNameFor("NoSuchTopic");
+            TopicName topicName = storeManager.QualifiedTopicNameFor("NoSuchTopic");
             Assert.AreEqual("NamespaceOne.NoSuchTopic", topicName.QualifiedName,
                 "Checking that NamespaceQualifiedNameFor returns a fully qualified name even for a nonexistent topic.");
         }
@@ -62,7 +62,7 @@ namespace FlexWiki.UnitTests
 
             string topicName = "TopicOne";
             NamespaceManager storeManager = federation.NamespaceManagerForNamespace("NamespaceOne");
-            NamespaceQualifiedTopicNameCollection topicNames = storeManager.AllNamespaceQualifiedTopicNamesThatExist(topicName);
+            QualifiedTopicNameCollection topicNames = storeManager.AllQualifiedTopicNamesThatExist(topicName);
 
             Assert.AreEqual(1, topicNames.Count, "Checking that the correct number of topics were returned.");
         }
@@ -74,7 +74,7 @@ namespace FlexWiki.UnitTests
 
             string topicName = "TopicOne";
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
-            NamespaceQualifiedTopicNameCollection topicNames = manager.AllNamespaceQualifiedTopicNamesThatExist(topicName);
+            QualifiedTopicNameCollection topicNames = manager.AllQualifiedTopicNamesThatExist(topicName);
 
             Assert.AreEqual(2, topicNames.Count, "Checking that the correct number of topics was returned.");
 
@@ -187,12 +187,12 @@ namespace FlexWiki.UnitTests
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
             string topicName = "ReferencingTopic";
-            NamespaceQualifiedTopicVersionKeyCollection referencedTopics = manager.AllReferencesByTopic(topicName, ExistencePolicy.All);
+            QualifiedTopicRevisionCollection referencedTopics = manager.AllReferencesByTopic(topicName, ExistencePolicy.All);
 
             AssertReferencesCorrect(referencedTopics,
-              new NamespaceQualifiedTopicVersionKey("ReferencedTopic", "NamespaceOne"),
-              new NamespaceQualifiedTopicVersionKey("ReferencedTopic", "NamespaceTwo"),
-              new NamespaceQualifiedTopicVersionKey("NonExistentTopic", "NamespaceOne")
+              new QualifiedTopicRevision("ReferencedTopic", "NamespaceOne"),
+              new QualifiedTopicRevision("ReferencedTopic", "NamespaceTwo"),
+              new QualifiedTopicRevision("NonExistentTopic", "NamespaceOne")
             );
 
         }
@@ -204,11 +204,11 @@ namespace FlexWiki.UnitTests
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
             string topicName = "ReferencingTopic";
-            NamespaceQualifiedTopicVersionKeyCollection referencedTopics = manager.AllReferencesByTopic(topicName, ExistencePolicy.ExistingOnly);
+            QualifiedTopicRevisionCollection referencedTopics = manager.AllReferencesByTopic(topicName, ExistencePolicy.ExistingOnly);
 
             AssertReferencesCorrect(referencedTopics,
-              new NamespaceQualifiedTopicVersionKey("ReferencedTopic", "NamespaceOne"),
-              new NamespaceQualifiedTopicVersionKey("ReferencedTopic", "NamespaceTwo")
+              new QualifiedTopicRevision("ReferencedTopic", "NamespaceOne"),
+              new QualifiedTopicRevision("ReferencedTopic", "NamespaceTwo")
             );
         }
         [Test]
@@ -219,7 +219,7 @@ namespace FlexWiki.UnitTests
               TestContentSets.NonImportingReferencingSet);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            NamespaceQualifiedTopicVersionKeyCollection referencedTopics = manager.AllReferencesByTopic(null, ExistencePolicy.ExistingOnly);
+            QualifiedTopicRevisionCollection referencedTopics = manager.AllReferencesByTopic(null, ExistencePolicy.ExistingOnly);
         }
         [Test]
         public void AllReferencesByTopicWithImportExistingOnly()
@@ -229,13 +229,13 @@ namespace FlexWiki.UnitTests
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
             string topicName = "ReferencingTopic";
-            NamespaceQualifiedTopicVersionKeyCollection referencedTopics = manager.AllReferencesByTopic(topicName, ExistencePolicy.ExistingOnly);
+            QualifiedTopicRevisionCollection referencedTopics = manager.AllReferencesByTopic(topicName, ExistencePolicy.ExistingOnly);
 
             AssertReferencesCorrect(referencedTopics,
-                new NamespaceQualifiedTopicVersionKey("ReferencedTopic", "NamespaceOne"),
-                new NamespaceQualifiedTopicVersionKey("ReferencedTopic", "NamespaceTwo"),
-                new NamespaceQualifiedTopicVersionKey("ImportedTopic", "NamespaceTwo"),
-                new NamespaceQualifiedTopicVersionKey("OtherTopic", "NamespaceTwo")
+                new QualifiedTopicRevision("ReferencedTopic", "NamespaceOne"),
+                new QualifiedTopicRevision("ReferencedTopic", "NamespaceTwo"),
+                new QualifiedTopicRevision("ImportedTopic", "NamespaceTwo"),
+                new QualifiedTopicRevision("OtherTopic", "NamespaceTwo")
             );
 
         }
@@ -247,16 +247,16 @@ namespace FlexWiki.UnitTests
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
             string topicName = "ReferencingTopic";
-            NamespaceQualifiedTopicVersionKeyCollection referencedTopics = manager.AllReferencesByTopic(topicName, ExistencePolicy.All);
+            QualifiedTopicRevisionCollection referencedTopics = manager.AllReferencesByTopic(topicName, ExistencePolicy.All);
 
             AssertReferencesCorrect(referencedTopics,
-                new NamespaceQualifiedTopicVersionKey("ReferencedTopic", "NamespaceOne"),
-                new NamespaceQualifiedTopicVersionKey("ReferencedTopic", "NamespaceTwo"),
-                new NamespaceQualifiedTopicVersionKey("NonexistentTopic", "NamespaceOne"),
-                new NamespaceQualifiedTopicVersionKey("NonexistentTopic", "NamespaceTwo"),
-                new NamespaceQualifiedTopicVersionKey("ImportedTopic", "NamespaceOne"),
-                new NamespaceQualifiedTopicVersionKey("ImportedTopic", "NamespaceTwo"),
-                new NamespaceQualifiedTopicVersionKey("OtherTopic", "NamespaceTwo")
+                new QualifiedTopicRevision("ReferencedTopic", "NamespaceOne"),
+                new QualifiedTopicRevision("ReferencedTopic", "NamespaceTwo"),
+                new QualifiedTopicRevision("NonexistentTopic", "NamespaceOne"),
+                new QualifiedTopicRevision("NonexistentTopic", "NamespaceTwo"),
+                new QualifiedTopicRevision("ImportedTopic", "NamespaceOne"),
+                new QualifiedTopicRevision("ImportedTopic", "NamespaceTwo"),
+                new QualifiedTopicRevision("OtherTopic", "NamespaceTwo")
             );
         }
         [Test]
@@ -266,7 +266,7 @@ namespace FlexWiki.UnitTests
               TestContentSets.SingleEmptyNamespace);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            TopicNameCollection topics = manager.AllTopics(ImportPolicy.DoNotIncludeImports);
+            QualifiedTopicNameCollection topics = manager.AllTopics(ImportPolicy.DoNotIncludeImports);
 
             Assert.AreEqual(0, topics.Count, "Checking that no topics were returned.");
 
@@ -278,7 +278,7 @@ namespace FlexWiki.UnitTests
               TestContentSets.ImportingReferencingSet);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            TopicNameCollection topics = manager.AllTopics(ImportPolicy.DoNotIncludeImports);
+            QualifiedTopicNameCollection topics = manager.AllTopics(ImportPolicy.DoNotIncludeImports);
 
             AssertTopicsCorrectUnordered(topics,
                 new TopicName("_ContentBaseDefinition", "NamespaceOne"),
@@ -292,7 +292,7 @@ namespace FlexWiki.UnitTests
               TestContentSets.ImportingReferencingSet);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            TopicNameCollection topics = manager.AllTopics(ImportPolicy.IncludeImports);
+            QualifiedTopicNameCollection topics = manager.AllTopics(ImportPolicy.IncludeImports);
 
             AssertTopicsCorrectUnordered(topics,
                 new TopicName("_ContentBaseDefinition", "NamespaceOne"),
@@ -310,7 +310,7 @@ namespace FlexWiki.UnitTests
               TestContentSets.SingleTopicNoImports);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            TopicNameCollection topics = manager.AllTopics(ImportPolicy.DoNotIncludeImports);
+            QualifiedTopicNameCollection topics = manager.AllTopics(ImportPolicy.DoNotIncludeImports);
 
             AssertTopicsCorrectUnordered(topics, new TopicName("TopicOne", "NamespaceOne"));
         }
@@ -321,7 +321,7 @@ namespace FlexWiki.UnitTests
               TestContentSets.ImportingReferencingSet);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            TopicNameCollection topics = manager.AllTopics(ImportPolicy.DoNotIncludeImports, NameSort);
+            QualifiedTopicNameCollection topics = manager.AllTopics(ImportPolicy.DoNotIncludeImports, NameSort);
 
             AssertTopicsCorrectOrdered(topics,
                 new TopicName("_ContentBaseDefinition", "NamespaceOne"),
@@ -336,7 +336,7 @@ namespace FlexWiki.UnitTests
               TestContentSets.ImportingReferencingSet);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            TopicNameCollection topics = manager.AllTopics(ImportPolicy.IncludeImports, NameSort);
+            QualifiedTopicNameCollection topics = manager.AllTopics(ImportPolicy.IncludeImports, NameSort);
 
             AssertTopicsCorrectOrdered(topics,
                 new TopicName("_ContentBaseDefinition", "NamespaceOne"),
@@ -354,7 +354,7 @@ namespace FlexWiki.UnitTests
               TestContentSets.ImportingReferencingSet);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            TopicNameCollection topics = manager.AllTopicsSortedLastModifiedDescending();
+            QualifiedTopicNameCollection topics = manager.AllTopicsSortedLastModifiedDescending();
 
             AssertTopicsCorrectOrdered(topics,
                 new TopicName("ReferencedTopic", "NamespaceOne"),
@@ -886,15 +886,15 @@ namespace FlexWiki.UnitTests
 
             Assert.AreEqual(3, map["ReferencingTopic"].Count, "Checking that ReferencingTopic references three topics.");
             Assert.AreEqual(
-                new NamespaceQualifiedTopicVersionKey("ReferencedTopic", "NamespaceOne"),
+                new QualifiedTopicRevision("ReferencedTopic", "NamespaceOne"),
                 map["ReferencingTopic"][0],
                 "Checking that the first reference in ReferencingTopic is correct.");
             Assert.AreEqual(
-                new NamespaceQualifiedTopicVersionKey("ReferencedTopic", "NamespaceTwo"),
+                new QualifiedTopicRevision("ReferencedTopic", "NamespaceTwo"),
                 map["ReferencingTopic"][1],
                 "Checking that the second reference in ReferencingTopic is correct.");
             Assert.AreEqual(
-                new NamespaceQualifiedTopicVersionKey("NonExistentTopic", "NamespaceOne"),
+                new QualifiedTopicRevision("NonExistentTopic", "NamespaceOne"),
                 map["ReferencingTopic"][2],
                 "Checking that the third reference in ReferencingTopic is correct.");
 
@@ -914,11 +914,11 @@ namespace FlexWiki.UnitTests
 
             Assert.AreEqual(2, map["ReferencingTopic"].Count, "Checking that ReferencingTopic references two topics.");
             Assert.AreEqual(
-                new NamespaceQualifiedTopicVersionKey("ReferencedTopic", "NamespaceOne"),
+                new QualifiedTopicRevision("ReferencedTopic", "NamespaceOne"),
                 map["ReferencingTopic"][0],
                 "Checking that the first reference in ReferencingTopic is correct.");
             Assert.AreEqual(
-                new NamespaceQualifiedTopicVersionKey("ReferencedTopic", "NamespaceTwo"),
+                new QualifiedTopicRevision("ReferencedTopic", "NamespaceTwo"),
                 map["ReferencingTopic"][1],
                 "Checking that the second reference in ReferencingTopic is correct.");
 
@@ -1777,7 +1777,7 @@ PropertyOne: List, of, values")
                 TestContentSets.ImportingReferencingSet);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            RelativeTopicVersionKey topicName = new RelativeTopicVersionKey("NoSuchTopic");
+            RelativeTopicRevision topicName = new RelativeTopicRevision("NoSuchTopic");
 
             Assert.IsFalse(manager.TopicExists(topicName, ImportPolicy.DoNotIncludeImports),
                 "Checking that a nonexistent topic returns false from TopicExists.");
@@ -1790,7 +1790,7 @@ PropertyOne: List, of, values")
                 TestContentSets.ImportingReferencingSet);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            RelativeTopicVersionKey topicName = new RelativeTopicVersionKey("ReferencingTopic");
+            RelativeTopicRevision topicName = new RelativeTopicRevision("ReferencingTopic");
 
             Assert.IsTrue(manager.TopicExists(topicName, ImportPolicy.DoNotIncludeImports),
                 "Checking that an existing topic returns true from TopicExists.");
@@ -1803,7 +1803,7 @@ PropertyOne: List, of, values")
                 TestContentSets.ImportingReferencingSet);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            RelativeTopicVersionKey topicName = new RelativeTopicVersionKey("NoSuchTopic", "SomeNamespace");
+            RelativeTopicRevision topicName = new RelativeTopicRevision("NoSuchTopic", "SomeNamespace");
 
             Assert.IsFalse(manager.TopicExists(topicName, ImportPolicy.DoNotIncludeImports),
                 "Checking that a nonexistent topic returns false from TopicExists.");
@@ -1815,7 +1815,7 @@ PropertyOne: List, of, values")
                 TestContentSets.ImportingReferencingSet);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            RelativeTopicVersionKey topicName = new RelativeTopicVersionKey("OtherTopic", "NamespaceTwo");
+            RelativeTopicRevision topicName = new RelativeTopicRevision("OtherTopic", "NamespaceTwo");
 
             Assert.IsTrue(manager.TopicExists(topicName, ImportPolicy.DoNotIncludeImports),
                 "Checking that an existing topic returns true from TopicExists.");
@@ -1941,7 +1941,7 @@ PropertyOne: List, of, values")
 
             TopicChangeCollection changes = manager.AllChangesForTopic("TopicOne");
 
-            NamespaceQualifiedTopicVersionKey key = manager.VersionPreviousTo("TopicOne", changes[1].Version);
+            QualifiedTopicRevision key = manager.VersionPreviousTo("TopicOne", changes[1].Version);
 
             Assert.AreEqual("NamespaceOne.TopicOne", key.QualifiedName,
                 "Checking that the right topic is returned.");
@@ -1957,7 +1957,7 @@ PropertyOne: List, of, values")
 
             TopicChangeCollection changes = manager.AllChangesForTopic("TopicOne");
 
-            NamespaceQualifiedTopicVersionKey key = manager.VersionPreviousTo("TopicOne", changes[0].Version);
+            QualifiedTopicRevision key = manager.VersionPreviousTo("TopicOne", changes[0].Version);
 
             Assert.IsNull(key, "Checking that null is returned when asking for the version previous to the first.");
         }
@@ -1968,7 +1968,7 @@ PropertyOne: List, of, values")
                 TestContentSets.MultipleVersions);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            NamespaceQualifiedTopicVersionKey key = manager.VersionPreviousTo("NoSuchTopic", null);
+            QualifiedTopicRevision key = manager.VersionPreviousTo("NoSuchTopic", null);
 
             Assert.IsNull(key, "Checking that null key is returned when requesting a nonexistent topic.");
         }
@@ -1979,7 +1979,7 @@ PropertyOne: List, of, values")
                 TestContentSets.MultipleVersions);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            NamespaceQualifiedTopicVersionKey key = manager.VersionPreviousTo("TopicOne", "Foobar");
+            QualifiedTopicRevision key = manager.VersionPreviousTo("TopicOne", "Foobar");
 
             Assert.IsNull(key, "Checking that null key is returned when requesting a nonexistent version.");
         }
@@ -1992,7 +1992,7 @@ PropertyOne: List, of, values")
 
             TopicChangeCollection changes = manager.AllChangesForTopic("TopicOne");
 
-            NamespaceQualifiedTopicVersionKey key = manager.VersionPreviousTo("TopicOne", null);
+            QualifiedTopicRevision key = manager.VersionPreviousTo("TopicOne", null);
 
             TopicChange penultimate = changes[changes.Count - 2];
 
@@ -2120,8 +2120,8 @@ PropertyOne: List, of, values")
         }
 
 
-        private void AssertReferencesCorrect(NamespaceQualifiedTopicVersionKeyCollection actualTopics,
-          params NamespaceQualifiedTopicVersionKey[] expectedTopics)
+        private void AssertReferencesCorrect(QualifiedTopicRevisionCollection actualTopics,
+          params QualifiedTopicRevision[] expectedTopics)
         {
             Assert.AreEqual(expectedTopics.Length, actualTopics.Count, "Checking that the correct number of topics were returned.");
 
@@ -2151,7 +2151,7 @@ PropertyOne: List, of, values")
                     string.Format("Checking that value {0} is correct.", i)); 
             }
         }
-        private void AssertTopicsCorrectOrdered(TopicNameCollection actualTopics,
+        private void AssertTopicsCorrectOrdered(QualifiedTopicNameCollection actualTopics,
             params TopicName[] expectedTopics)
         {
             Assert.AreEqual(expectedTopics.Length, actualTopics.Count,
@@ -2163,7 +2163,7 @@ PropertyOne: List, of, values")
                 Assert.AreEqual(expectedTopics[i].QualifiedName, actualTopics[i].QualifiedName, message);
             }
         }
-        private void AssertTopicsCorrectUnordered(TopicNameCollection actualTopics,
+        private void AssertTopicsCorrectUnordered(QualifiedTopicNameCollection actualTopics,
             params TopicName[] expectedTopics)
         {
             Assert.AreEqual(expectedTopics.Length, actualTopics.Count,

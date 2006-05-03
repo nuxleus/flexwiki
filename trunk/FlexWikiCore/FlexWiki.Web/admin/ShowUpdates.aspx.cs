@@ -57,7 +57,7 @@ namespace FlexWiki.Web.Admin
 				if (update.Update.CreatedTopics.Count > 0)
 				{
 					UIResponse.Write("<tr><td  class='UpdateKey' valign='top'>Topics Created</td><td  class='UpdateValue' valign='top'>");
-					foreach (NamespaceQualifiedTopicVersionKey t in update.Update.CreatedTopics)
+					foreach (QualifiedTopicRevision t in update.Update.CreatedTopics)
 					{
 						UIResponse.Write(EscapeHTML(t.QualifiedNameWithVersion));
 						UIResponse.Write("<br />");
@@ -68,7 +68,7 @@ namespace FlexWiki.Web.Admin
 				if (update.Update.UpdatedTopics.Count > 0)
 				{
 					UIResponse.Write("<tr><td  class='UpdateKey' valign='top'>Topics Updated</td><td  class='UpdateValue' valign='top'>");
-					foreach (NamespaceQualifiedTopicVersionKey t in update.Update.UpdatedTopics)
+					foreach (QualifiedTopicRevision t in update.Update.UpdatedTopics)
 					{
 						UIResponse.Write(EscapeHTML(t.QualifiedNameWithVersion));
 						UIResponse.Write("<br />");
@@ -80,7 +80,7 @@ namespace FlexWiki.Web.Admin
 				if (update.Update.DeletedTopics.Count > 0)
 				{
 					UIResponse.Write("<tr><td  class='UpdateKey' valign='top'>Topics Deleted</td><td  class='UpdateValue' valign='top'>");
-					foreach (NamespaceQualifiedTopicVersionKey t in update.Update.DeletedTopics)
+					foreach (QualifiedTopicRevision t in update.Update.DeletedTopics)
 					{
 						UIResponse.Write(EscapeHTML(t.QualifiedNameWithVersion));
 						UIResponse.Write("<br />");
@@ -94,7 +94,7 @@ namespace FlexWiki.Web.Admin
 				{
 					UIResponse.Write("<tr><td  class='UpdateKey' valign='top'>Topics with Property Updates</td><td  class='UpdateValue' valign='top'>");
 					UIResponse.Write("<table cellpadding='2' cellspacing='0' border='0'>");
-					foreach (NamespaceQualifiedTopicVersionKey t in update.Update.AllTopicsWithChangedProperties)
+					foreach (QualifiedTopicRevision t in update.Update.AllTopicsWithChangedProperties)
 					{
 						UIResponse.Write("<tr><td class='UpdateDivider' colspan=2 valign='top'>" + t.QualifiedNameWithVersion + "</td></tr>");
 						

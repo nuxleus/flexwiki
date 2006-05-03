@@ -15,7 +15,7 @@ using System.Collections.Generic;
 
 namespace FlexWiki.Collections
 {
-    public class ReferenceMap : Dictionary<string, NamespaceQualifiedTopicVersionKeyCollection>
+    public class ReferenceMap : Dictionary<string, QualifiedTopicRevisionCollection>
     {
     }
 }

@@ -110,7 +110,7 @@ namespace FlexWiki.Web.Admin
 				string ns = each.Namespace;
 				UIResponse.WriteCell(
 					UIResponse.Bold(
-						UIResponse.Link(lm.LinkToTopic(new NamespaceQualifiedTopicVersionKey(each.HomePage, each.Namespace), false), 
+						UIResponse.Link(lm.LinkToTopic(new QualifiedTopicRevision(each.HomePage, each.Namespace), false), 
 							UIResponse.Escape(each.Namespace))));
 
 				UIResponse.WriteCell(HtmlWriter.Escape(each.Title));

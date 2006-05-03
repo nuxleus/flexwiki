@@ -14,16 +14,31 @@ using System;
 
 namespace FlexWiki
 {
-	/// <summary>
-	/// Summary description for UnqualifiedTopicName.
-	/// </summary>
-	public class UnqualifiedTopicName
-	{
-		public UnqualifiedTopicName()
-		{
-			//
-			// TODO: Add constructor logic here
-			//
-		}
-	}
+    public class UnqualifiedTopicName : TopicName
+    {
+        public UnqualifiedTopicName()
+        {
+        }
+
+        public UnqualifiedTopicName(string localName)
+            : base(localName)
+        {
+            if (base.Namespace != null)
+            {
+                throw new ArgumentException("An illegal local name was specified: the namespace separator is not allowed as part of a local name.");
+            }
+        }
+
+        public override string Namespace
+        {
+            get
+            {
+                return null; 
+            }
+            set
+            {
+                throw new NotSupportedException("Namespace may not be set on a local name.");
+            }
+        }
+    }
 }

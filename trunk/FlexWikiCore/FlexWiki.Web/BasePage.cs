@@ -267,7 +267,7 @@ namespace FlexWiki.Web
                 return path + "/";
             }
         }
-        protected NamespaceQualifiedTopicVersionKey GetTopicVersionKey()
+        protected QualifiedTopicRevision GetTopicVersionKey()
         {
             string topic;
 
@@ -281,10 +281,10 @@ namespace FlexWiki.Web
             bool isNewStyle = topic.IndexOf("/") != -1;	// if we have a slash, it's new
 
             // OK, we've got the namespace and the name now
-            NamespaceQualifiedTopicVersionKey abs;
+            QualifiedTopicRevision abs;
             if (topic == null || topic.Length == 0)
             {
-                abs = new NamespaceQualifiedTopicVersionKey(DefaultNamespaceManager.HomePage, DefaultNamespaceManager.Namespace);
+                abs = new QualifiedTopicRevision(DefaultNamespaceManager.HomePage, DefaultNamespaceManager.Namespace);
             }
             else
             {
@@ -299,11 +299,11 @@ namespace FlexWiki.Web
                     if (tailDot != -1)
                         top = top.Substring(0, tailDot);	// trim of the extension (e.g., ".html")
 
-                    abs = new NamespaceQualifiedTopicVersionKey(ns + "." + top);
+                    abs = new QualifiedTopicRevision(ns + "." + top);
                 }
                 else
                 {
-                    abs = new NamespaceQualifiedTopicVersionKey(topic);
+                    abs = new QualifiedTopicRevision(topic);
                 }
             }
             return abs;
@@ -357,7 +357,7 @@ namespace FlexWiki.Web
         protected string InsertStylesheetReferences()
         {
             string answer = MainStylesheetReference();
-            NamespaceQualifiedTopicVersionKey abs = GetTopicVersionKey();
+            QualifiedTopicRevision abs = GetTopicVersionKey();
             string styleSheet = null;
             if (abs.Namespace != null)
                 styleSheet = Federation.GetTopicPropertyValue(abs, "Stylesheet");
@@ -472,13 +472,13 @@ namespace FlexWiki.Web
         /// </summary>
         /// <param name="topic">Topic Version to Restore</param>
         /// <returns></returns>
-        protected TopicVersionKey RestorePreviousVersion(NamespaceQualifiedTopicVersionKey topic)
+        protected TopicRevision RestorePreviousVersion(QualifiedTopicRevision topic)
         {
             LogEvent e = Federation.LogEventFactory.CreateAndStartEvent(Request.UserHostAddress, VisitorIdentityString, topic.ToString(), LogEventType.WriteTopic);
             try
             {
-                NamespaceQualifiedTopicVersionKey newVersionName = new NamespaceQualifiedTopicVersionKey(topic.LocalName, topic.Namespace);
-                newVersionName.Version = TopicVersionKey.NewVersionStringForUser(VisitorIdentityString);
+                QualifiedTopicRevision newVersionName = new QualifiedTopicRevision(topic.LocalName, topic.Namespace);
+                newVersionName.Version = TopicRevision.NewVersionStringForUser(VisitorIdentityString);
                 NamespaceManager namespaceManager = Federation.NamespaceManagerForNamespace(topic.Namespace);
                 namespaceManager.WriteTopicAndNewVersion(newVersionName.LocalName,
                     Federation.Read(topic), VisitorIdentityString);
@@ -487,7 +487,7 @@ namespace FlexWiki.Web
             {
                 e.Record();
             }
-            return new NamespaceQualifiedTopicVersionKey(topic.LocalName, topic.Namespace);
+            return new QualifiedTopicRevision(topic.LocalName, topic.Namespace);
         }
         /// <summary>
         /// Returns the URL suitable for composition with FlexWiki web pages to create

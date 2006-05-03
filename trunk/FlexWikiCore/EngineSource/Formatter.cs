@@ -99,7 +99,7 @@ namespace FlexWiki.Formatting
         /// <param name="lm">Link maker (unless no relativeTo content base is provide)</param>
         /// <param name="accumulator">composite cache rule in which to accumulate cache rules</param>
         /// <returns></returns>
-        public static string FormattedString(NamespaceQualifiedTopicVersionKey topic, string input, OutputFormat format, NamespaceManager relativeToContentStore, LinkMaker lm)
+        public static string FormattedString(QualifiedTopicRevision topic, string input, OutputFormat format, NamespaceManager relativeToContentStore, LinkMaker lm)
         {
             // TODO -- some of the cases in which this call happens actually *are* nested, even though the false arg
             // below says that they aren't.  This causes scripts to be emitted multiple times -- should clean up.
@@ -124,7 +124,7 @@ namespace FlexWiki.Formatting
         /// <param name="showDiffs">true to show diffs</param>
         /// <param name="accumulator">composite cache rule in which to accumulate cache rules</param>
         /// <returns></returns>
-        public static string FormattedTopic(NamespaceQualifiedTopicVersionKey topic, OutputFormat format, NamespaceQualifiedTopicVersionKey previousVersion, Federation aFederation, LinkMaker lm)
+        public static string FormattedTopic(QualifiedTopicRevision topic, OutputFormat format, QualifiedTopicRevision previousVersion, Federation aFederation, LinkMaker lm)
         {
             NamespaceManager relativeToBase = aFederation.NamespaceManagerForNamespace(topic.Namespace);
             return FormattedTopicWithSpecificDiffs(topic, format, previousVersion, aFederation, lm);
@@ -139,7 +139,7 @@ namespace FlexWiki.Formatting
         /// <param name="showDiffs">true to show diffs</param>
         /// <param name="accumulator">composite cache rule in which to accumulate cache rules (ignored for diffs)</param>
         /// <returns></returns>
-        public static string FormattedTopicWithSpecificDiffs(NamespaceQualifiedTopicVersionKey topic, OutputFormat format, NamespaceQualifiedTopicVersionKey diffWithThisVersion, Federation aFederation, LinkMaker lm)
+        public static string FormattedTopicWithSpecificDiffs(QualifiedTopicRevision topic, OutputFormat format, QualifiedTopicRevision diffWithThisVersion, Federation aFederation, LinkMaker lm)
         {
 
             // Setup a special link maker that knows what to make the edit links return to 
@@ -214,9 +214,9 @@ namespace FlexWiki.Formatting
         /// <summary>
         /// Topic name for which we're doing formatting (if known; can be null)
         /// </summary>
-        private NamespaceQualifiedTopicVersionKey _topic;
+        private QualifiedTopicRevision _topic;
 
-        private NamespaceQualifiedTopicVersionKey CurrentTopic
+        private QualifiedTopicRevision CurrentTopic
         {
             get
             {
@@ -284,7 +284,7 @@ namespace FlexWiki.Formatting
         /// <param name="external">External wiki map</param>
         /// <param name="headingLevelBase">Relative heading level</param>
         /// <param name="accumulator">composite cache rule in which to accumulate cache rules</param>
-        static public void Format(NamespaceQualifiedTopicVersionKey topic, string source, WikiOutput output,
+        static public void Format(QualifiedTopicRevision topic, string source, WikiOutput output,
             NamespaceManager namespaceManager, LinkMaker maker, ExternalReferencesMap external, int headingLevelBase)
         {
             Formatter f = new Formatter(topic, source, output, namespaceManager, maker, external, headingLevelBase);
@@ -302,7 +302,7 @@ namespace FlexWiki.Formatting
         /// <param name="headingLevelBase">Relative heading level</param>
         /// <param name="accumulator">composite cache rule in which to accumulate cache rules</param>
         /// 
-        static public void Format(NamespaceQualifiedTopicVersionKey topic, IList source, WikiOutput output,
+        static public void Format(QualifiedTopicRevision topic, IList source, WikiOutput output,
             NamespaceManager namespaceManager, LinkMaker maker, ExternalReferencesMap external, int headingLevelBase)
         {
             Formatter f = new Formatter(topic, source, output, namespaceManager, maker, external, headingLevelBase);
@@ -311,7 +311,7 @@ namespace FlexWiki.Formatting
         #endregion
 
         #region WikiToPresentation
-        static public IWikiToPresentation WikiToPresentation(NamespaceQualifiedTopicVersionKey topic, WikiOutput output,
+        static public IWikiToPresentation WikiToPresentation(QualifiedTopicRevision topic, WikiOutput output,
             NamespaceManager namespaceManager, LinkMaker maker, ExternalReferencesMap external, int headingLevelBase)
         {
             ArrayList lines = new ArrayList();
@@ -332,7 +332,7 @@ namespace FlexWiki.Formatting
         /// <param name="headingLevelBase">Relative heading level</param>
         /// <param name="accumulator">composite cache rule in which to accumulate cache rules</param>
         /// 
-        Formatter(NamespaceQualifiedTopicVersionKey topic, string source, WikiOutput output, NamespaceManager namespaceManager,
+        Formatter(QualifiedTopicRevision topic, string source, WikiOutput output, NamespaceManager namespaceManager,
             LinkMaker maker, ExternalReferencesMap external, int headingLevelBase)
         {
             _topic = topic;
@@ -355,7 +355,7 @@ namespace FlexWiki.Formatting
         /// <param name="headingLevelBase">Relative heading level</param>
         /// <param name="accumulator">composite cache rule in which to accumulate cache rules</param>
         /// 
-        Formatter(NamespaceQualifiedTopicVersionKey topic, IList source, WikiOutput output, NamespaceManager namespaceManager,
+        Formatter(QualifiedTopicRevision topic, IList source, WikiOutput output, NamespaceManager namespaceManager,
             LinkMaker maker, ExternalReferencesMap external, int headingLevelBase)
         {
             _topic = topic;
@@ -929,7 +929,7 @@ namespace FlexWiki.Formatting
                 {
                     Regex nameGetter = new Regex("(?<topic>" + s_wikiName + ")");
                     string name = nameGetter.Matches(each)[0].Groups["topic"].Value;
-                    RelativeTopicVersionKey topicName = new RelativeTopicVersionKey(name);
+                    TopicRevision topicRevision = new TopicRevision(name);
 
                     // Count the tabs
                     int tabs = 0;
@@ -941,11 +941,11 @@ namespace FlexWiki.Formatting
                     }
 
                     Ensure(typeof(NeutralState));
-                    if (NamespaceManager.TopicExists(topicName, ImportPolicy.IncludeImports))
+                    if (NamespaceManager.TopicExists(topicRevision, ImportPolicy.IncludeImports))
                     {
                         if ((!IsBeyondSafeNestingDepth) && (false == currentMultilinePropertyIsHidden))
                         {
-                            _output.Write(IncludedTopic(topicName, _headingLevelBase + tabs));
+                            _output.Write(IncludedTopic(topicRevision, _headingLevelBase + tabs));
                         }
                     }
                     else
@@ -1336,13 +1336,13 @@ namespace FlexWiki.Formatting
 
 
         #region IncludedTopic
-        private string IncludedTopic(TopicVersionKey topic, int headingLevelBase)
+        private string IncludedTopic(TopicRevision topic, int headingLevelBase)
         {
             // TODO: how do we identify specific versions? [maybe this just works now? since versionids are a formal part of a wikiname???]
             // TODO: how do we show diffs?
             string ns = NamespaceManager.UnambiguousTopicNameFor(topic.LocalName).Namespace;
             NamespaceManager containingNamespaceManager = Federation.NamespaceManagerForNamespace(ns);
-            NamespaceQualifiedTopicVersionKey abs = new NamespaceQualifiedTopicVersionKey(topic.LocalName, ns);
+            QualifiedTopicRevision abs = new QualifiedTopicRevision(topic.LocalName, ns);
             string content = containingNamespaceManager.Read(abs.LocalName).TrimEnd();
             WikiOutput output = WikiOutput.ForFormat(_output.Format, Output);
             Formatter.Format(abs, content, output, NamespaceManager, LinkMaker(), _externalWikiMap, headingLevelBase);
@@ -1883,7 +1883,7 @@ namespace FlexWiki.Formatting
                 if (path == "" || path == "/")
                 {
                     // We've got only a topic
-                    RelativeTopicVersionKey topicName = new RelativeTopicVersionKey(authority);
+                    TopicRevision topicName = new TopicRevision(authority);
                     // See if we want the whole topic or just a propertyName (via a fragment)
                     if (fragment != "")
                     {
@@ -1923,7 +1923,7 @@ namespace FlexWiki.Formatting
                 {
                     // Case 2 - We're being asked for a resource in a resource library
                     TopicName abs = null;
-                    RelativeTopicVersionKey topicName = new RelativeTopicVersionKey(authority);
+                    TopicRevision topicName = new TopicRevision(authority);
                     bool ambig = false;
                     try
                     {
@@ -1993,7 +1993,7 @@ namespace FlexWiki.Formatting
         private string TipForTopic(TopicName topic)
         {
             string answer = Federation.GetTopicPropertyValue(
-                new NamespaceQualifiedTopicVersionKey(topic.LocalName, topic.Namespace), "Summary");
+                new QualifiedTopicRevision(topic.LocalName, topic.Namespace), "Summary");
             if (answer == "")
                 answer = null;
             return answer;
@@ -2024,17 +2024,17 @@ namespace FlexWiki.Formatting
                 if ((null == relName.Namespace) || (null != Federation.NamespaceManagerForNamespace(relName.Namespace)))
                 {
                     // Build a list of all the possible absoluteNames for this topic
-                    NamespaceQualifiedTopicNameCollection qualifiedNames = new NamespaceQualifiedTopicNameCollection();
+                    QualifiedTopicNameCollection qualifiedNames = new QualifiedTopicNameCollection();
                     // Start with the singulars in the various reachable namespaces, then add the plurals
-                    qualifiedNames.AddRange(Federation.AllNamespaceQualifiedTopicNamesThatExist(relName, NamespaceManager.Namespace));
+                    qualifiedNames.AddRange(Federation.AllQualifiedTopicNamesThatExist(relName, NamespaceManager.Namespace));
                     foreach (TopicName alternate in relName.AlternateForms())
                     {
-                        qualifiedNames.AddRange(NamespaceManager.AllNamespaceQualifiedTopicNamesThatExist(alternate.LocalName));
+                        qualifiedNames.AddRange(NamespaceManager.AllQualifiedTopicNamesThatExist(alternate.LocalName));
                     }
 
                     // Now see if we got any hits or not
                     string rep = beforeOrRelabel + "(" + RegexEscapeTopic(each) + ")" + s_afterWikiName;
-                    NamespaceQualifiedTopicVersionKey appearedAs = new NamespaceQualifiedTopicVersionKey(each);  // in case it was a plural form, be sure to show it as it appeared
+                    QualifiedTopicRevision appearedAs = new QualifiedTopicRevision(each);  // in case it was a plural form, be sure to show it as it appeared
                     string displayname = TopicParser.StripTopicNameEscapes((NamespaceManager.DisplaySpacesInWikiLinks ? appearedAs.FormattedName : appearedAs.LocalName));
                     if (relabel.Length > 0)
                     {

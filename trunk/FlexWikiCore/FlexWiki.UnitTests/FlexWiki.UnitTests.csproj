@@ -115,6 +115,7 @@
     <Compile Include="CachingTests.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="UnqualifiedTopicNameTests.cs" />
     <Compile Include="MockTopicCollection.cs" />
     <Compile Include="MockTopicHistory.cs" />
     <Compile Include="MockTopicHistoryCollection.cs" />
@@ -171,6 +172,7 @@
     <Compile Include="MoreNamespaceManagerTests.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="QualifiedTopicNameTests.cs" />
     <Compile Include="RegistryTests.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -202,7 +204,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="TopicNameTests.cs" />
-    <Compile Include="TopicVersionKeyTests.cs">
+    <Compile Include="TopicRevisionTests.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="TopicParserTests.cs">

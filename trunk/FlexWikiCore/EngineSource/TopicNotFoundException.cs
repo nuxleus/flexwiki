@@ -19,7 +19,7 @@ namespace FlexWiki
 	/// </summary>
 	public class TopicNotFoundException : ApplicationException
 	{
-    private TopicVersionKey _Topic;
+    private TopicRevision _Topic;
     private string _Version;
     
     public TopicNotFoundException() : base()
@@ -30,7 +30,7 @@ namespace FlexWiki
 		}
 
 
-		public TopicVersionKey Topic
+		public TopicRevision Topic
 		{
 			get
 			{
@@ -54,22 +54,22 @@ namespace FlexWiki
 			}
 		}
 
-		public static TopicNotFoundException ForTopic(TopicVersionKey topic)
+		public static TopicNotFoundException ForTopic(TopicRevision topic)
 		{
 			TopicNotFoundException answer = new TopicNotFoundException("Topic not found: " + topic.ToString());
 			answer.Topic = topic;
 			return answer;
 		}
 
-		public static TopicNotFoundException ForTopic(LocalTopicVersionKey topic, string ns)
+		public static TopicNotFoundException ForTopic(UnqualifiedTopicRevision topic, string ns)
 		{
-			NamespaceQualifiedTopicVersionKey t = new NamespaceQualifiedTopicVersionKey(topic.NameWithVersion, ns);
+			QualifiedTopicRevision t = new QualifiedTopicRevision(topic.NameWithVersion, ns);
 			return ForTopic(t);
 		}
 
         public static TopicNotFoundException ForTopic(string topic, string ns)
         {
-            return ForTopic(new LocalTopicVersionKey(topic), ns); 
+            return ForTopic(new UnqualifiedTopicRevision(topic), ns); 
         }
 
 

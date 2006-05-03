@@ -69,14 +69,14 @@ namespace FlexWiki
             TopicName topicName = new TopicName(topic); 
 
             NamespaceManager manager = CurrentFederation.NamespaceManagerForNamespace(Namespace);
-            NamespaceQualifiedTopicNameCollection alternatives = manager.AllPossibleNamespaceQualifiedTopicNames(topicName); 
+            QualifiedTopicNameCollection alternatives = manager.AllPossibleQualifiedTopicNames(topicName); 
 
-			foreach (NamespaceQualifiedTopicName tn in alternatives)
+			foreach (QualifiedTopicName tn in alternatives)
 			{
 				NamespaceManager namespaceManager = CurrentFederation.NamespaceManagerForTopic(tn);
 				if (!namespaceManager.TopicExists(tn.LocalName, ImportPolicy.DoNotIncludeImports))
 					continue;
-				answer = new DynamicTopic(CurrentFederation, new NamespaceQualifiedTopicVersionKey(tn));
+				answer = new DynamicTopic(CurrentFederation, new QualifiedTopicRevision(tn));
 				_topics[topic] = answer;
 				return answer;
 			}

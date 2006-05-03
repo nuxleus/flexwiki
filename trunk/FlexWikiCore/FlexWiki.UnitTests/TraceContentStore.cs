@@ -8,7 +8,7 @@ using FlexWiki.Collections;
 
 namespace FlexWiki.UnitTests
 {
-    internal class TraceContentProvider : IUnparsedContentProvider
+    internal class TraceContentProvider : UnparsedContentProviderBase
     {
         public DateTime Created
         {
@@ -34,7 +34,7 @@ namespace FlexWiki.UnitTests
                 throw new NotImplementedException(); 
             }
         }
-        public IUnparsedContentProvider Next
+        public UnparsedContentProviderBase Next
         {
             get
             {
@@ -61,7 +61,7 @@ namespace FlexWiki.UnitTests
             RegisterCall(MethodInfo.GetCurrentMethod());
             throw new NotImplementedException(); 
         }
-        public TopicNameCollection AllTopics()
+        public QualifiedTopicNameCollection AllTopics()
         {
             RegisterCall(MethodInfo.GetCurrentMethod());
             throw new NotImplementedException();
@@ -76,7 +76,7 @@ namespace FlexWiki.UnitTests
             RegisterCall(MethodInfo.GetCurrentMethod());
             throw new NotImplementedException();
         }
-        public RelativeTopicVersionKeyCollection GetReferences(string referencingTopic)
+        public RelativeTopicRevisionCollection GetReferences(string referencingTopic)
         {
             RegisterCall(MethodInfo.GetCurrentMethod());
             throw new NotImplementedException();

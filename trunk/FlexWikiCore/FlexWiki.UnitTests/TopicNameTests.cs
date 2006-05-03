@@ -77,16 +77,16 @@ namespace FlexWiki.UnitTests
         [Ignore("These are from the 1.8 code and need to be refactored.")]
         public void LegacyTests()
         {
-            Assert.AreEqual("Hello", new NamespaceQualifiedTopicVersionKey("Hello").LocalName);
-            Assert.AreEqual("Hello", new NamespaceQualifiedTopicVersionKey("Dog.Hello").LocalName);
-            Assert.AreEqual("Dog", new NamespaceQualifiedTopicVersionKey("Dog.Hello").Namespace);
-            Assert.AreEqual("Cat.Dog", new NamespaceQualifiedTopicVersionKey("Cat.Dog.Hello").Namespace);
-            Assert.AreEqual("Hello", new NamespaceQualifiedTopicVersionKey("Cat.Dog.Hello").LocalName);
+            Assert.AreEqual("Hello", new QualifiedTopicRevision("Hello").LocalName);
+            Assert.AreEqual("Hello", new QualifiedTopicRevision("Dog.Hello").LocalName);
+            Assert.AreEqual("Dog", new QualifiedTopicRevision("Dog.Hello").Namespace);
+            Assert.AreEqual("Cat.Dog", new QualifiedTopicRevision("Cat.Dog.Hello").Namespace);
+            Assert.AreEqual("Hello", new QualifiedTopicRevision("Cat.Dog.Hello").LocalName);
 
-            Assert.AreEqual(null, new NamespaceQualifiedTopicVersionKey("Hello()").Version);
-            Assert.AreEqual("123-abc", new NamespaceQualifiedTopicVersionKey("Hello(123-abc)").Version);
-            Assert.AreEqual("Hello", new NamespaceQualifiedTopicVersionKey("Hello(123-abc)").LocalName);
-            Assert.AreEqual(null, new NamespaceQualifiedTopicVersionKey("Hello(123-abc)").Namespace);
+            Assert.AreEqual(null, new QualifiedTopicRevision("Hello()").Version);
+            Assert.AreEqual("123-abc", new QualifiedTopicRevision("Hello(123-abc)").Version);
+            Assert.AreEqual("Hello", new QualifiedTopicRevision("Hello(123-abc)").LocalName);
+            Assert.AreEqual(null, new QualifiedTopicRevision("Hello(123-abc)").Namespace);
         }
         [Test]
         [ExpectedException(typeof(ArgumentException), "A null topic name is not legal.")]
@@ -113,7 +113,7 @@ namespace FlexWiki.UnitTests
         {
             TopicName topicName = new TopicName("Namespace.TopicName");
 
-            NamespaceQualifiedTopicName qualifiedName = topicName.ResolveRelativeTo("SomeNamespace");
+            QualifiedTopicName qualifiedName = topicName.ResolveRelativeTo("SomeNamespace");
 
             Assert.AreEqual("Namespace.TopicName", qualifiedName.QualifiedName,
                 "Checking that the original namespace is kept when resolving an already-qualified name."); 
@@ -123,7 +123,7 @@ namespace FlexWiki.UnitTests
         {
             TopicName topicName = new TopicName("TopicName");
 
-            NamespaceQualifiedTopicName qualifiedName = topicName.ResolveRelativeTo("SomeNamespace");
+            QualifiedTopicName qualifiedName = topicName.ResolveRelativeTo("SomeNamespace");
 
             Assert.AreEqual("SomeNamespace.TopicName", qualifiedName.QualifiedName,
                 "Checking that the new namespace is used when resolving an unqualified name.");

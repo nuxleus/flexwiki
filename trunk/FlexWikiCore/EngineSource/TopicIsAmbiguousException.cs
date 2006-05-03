@@ -16,7 +16,7 @@ namespace FlexWiki
 {
     public class TopicIsAmbiguousException : ApplicationException
     {
-        private TopicVersionKey _topic;
+        private TopicRevision _topic;
 
         public TopicIsAmbiguousException()
             : base()
@@ -28,7 +28,7 @@ namespace FlexWiki
         }
 
 
-        public TopicVersionKey Topic
+        public TopicRevision Topic
         {
             get
             {
@@ -40,7 +40,7 @@ namespace FlexWiki
             }
         }
 
-        public static TopicIsAmbiguousException ForTopic(TopicVersionKey topic)
+        public static TopicIsAmbiguousException ForTopic(TopicRevision topic)
         {
             TopicIsAmbiguousException answer = new TopicIsAmbiguousException("Topic is ambiguous: " + topic.ToString());
             answer.Topic = topic;

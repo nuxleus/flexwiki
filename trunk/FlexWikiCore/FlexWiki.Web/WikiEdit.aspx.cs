@@ -146,7 +146,7 @@ namespace FlexWiki.Web
 
 		protected void ProcessSave(bool back)
 		{
-			NamespaceQualifiedTopicVersionKey returnTo = null;
+			QualifiedTopicRevision returnTo = null;
 
 			//Check Null edits
 			string oldContent = string.Empty;
@@ -162,8 +162,8 @@ namespace FlexWiki.Web
 				
 				try
 				{
-					NamespaceQualifiedTopicVersionKey newVersionName = new NamespaceQualifiedTopicVersionKey(TheTopic.LocalName, TheTopic.Namespace);
-					newVersionName.Version = TopicVersionKey.NewVersionStringForUser(VisitorIdentityString);
+					QualifiedTopicRevision newVersionName = new QualifiedTopicRevision(TheTopic.LocalName, TheTopic.Namespace);
+					newVersionName.Version = TopicRevision.NewVersionStringForUser(VisitorIdentityString);
 					NamespaceManager storeManager = Federation.NamespaceManagerForNamespace(TheTopic.Namespace);
 					storeManager.WriteTopicAndNewVersion(newVersionName.LocalName, PostedTopicText, VisitorIdentityString);		
 					returnTo = TheTopic;
@@ -175,7 +175,7 @@ namespace FlexWiki.Web
 					}
 
 					if (back && ReturnTopic != null)
-						returnTo = new NamespaceQualifiedTopicVersionKey(ReturnTopic);
+						returnTo = new QualifiedTopicRevision(ReturnTopic);
 				}
 				finally
 				{
@@ -192,8 +192,8 @@ namespace FlexWiki.Web
 
 		}
 
-		private NamespaceQualifiedTopicVersionKey _TheTopic;
-		protected NamespaceQualifiedTopicVersionKey TheTopic
+		private QualifiedTopicRevision _TheTopic;
+		protected QualifiedTopicRevision TheTopic
 		{
 			get
 			{
@@ -204,7 +204,7 @@ namespace FlexWiki.Web
 					topic = Request.Form["Topic"];
 				else
 					topic = Request.QueryString["topic"];
-				_TheTopic = new NamespaceQualifiedTopicVersionKey(topic);
+				_TheTopic = new QualifiedTopicRevision(topic);
 				return _TheTopic;
 			}
 		}
@@ -288,7 +288,7 @@ Add your wiki text here.
 			{
 				// Build up a combo box for selecting the template.
 				StringBuilder builder = new StringBuilder("<select name=\"templateSelect\" id=\"templateSelect\">\n");
-				foreach (NamespaceQualifiedTopicVersionKey topic in templates)
+				foreach (QualifiedTopicRevision topic in templates)
 				{
 					builder.Append("\t<optionrawValuee=\"");
 					builder.Append(Formatter.EscapeHTML(Federation.Read(topic)));
@@ -306,7 +306,7 @@ Add your wiki text here.
 				if (null != this.Request.QueryString["template"])
 				{
 					string templateName = this.Request["template"];
-					NamespaceQualifiedTopicVersionKey topicVersionKey = new NamespaceQualifiedTopicVersionKey(templateName, currentContentBase.Namespace);
+					QualifiedTopicRevision topicVersionKey = new QualifiedTopicRevision(templateName, currentContentBase.Namespace);
 					if ((content == null) && (true == currentContentBase.TopicExists(topicVersionKey.LocalName, 
                         ImportPolicy.DoNotIncludeImports)))
 					{

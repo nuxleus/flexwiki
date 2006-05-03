@@ -291,7 +291,7 @@ second line
         public void TestInlineWikiTalk()
         {
             WikiOutput output = WikiOutput.ForFormat(OutputFormat.HTML, null);
-            NamespaceQualifiedTopicVersionKey top = new NamespaceQualifiedTopicVersionKey("InlineTestTopic", _namespaceManager.Namespace);
+            QualifiedTopicRevision top = new QualifiedTopicRevision("InlineTestTopic", _namespaceManager.Namespace);
             Formatter.Format(top, Federation.NamespaceManagerForTopic(top).Read(top.LocalName), output,
                 _namespaceManager, _lm, _externals, 0);
             string result = output.ToString();
@@ -303,9 +303,9 @@ second line
         [Test]
         public void TopicBehaviorProperty()
         {
-            FormattedTopicContainsTest(new NamespaceQualifiedTopicVersionKey("TestTopicWithBehaviorProperties", _namespaceManager.Namespace), "len=5");
-            FormattedTopicContainsTest(new NamespaceQualifiedTopicVersionKey("TestTopicWithBehaviorProperties", _namespaceManager.Namespace), "lenWith=6");
-            FormattedTopicContainsTest(new NamespaceQualifiedTopicVersionKey("TestTopicWithBehaviorProperties", _namespaceManager.Namespace), "lenSpanning=20");
+            FormattedTopicContainsTest(new QualifiedTopicRevision("TestTopicWithBehaviorProperties", _namespaceManager.Namespace), "len=5");
+            FormattedTopicContainsTest(new QualifiedTopicRevision("TestTopicWithBehaviorProperties", _namespaceManager.Namespace), "lenWith=6");
+            FormattedTopicContainsTest(new QualifiedTopicRevision("TestTopicWithBehaviorProperties", _namespaceManager.Namespace), "lenSpanning=20");
         }
         #endregion
 
@@ -323,8 +323,8 @@ second line
         public void NamespaceAsTopicPreceedsQualifiedNames()
         {
             string s = FormattedTestText(@"FlexWiki bad FlexWiki.OneMinuteWiki");
-            AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("FlexWiki")) + @""">FlexWiki</a> bad");
-            AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("OneMinuteWiki")) + @""">OneMinuteWiki</a>");
+            AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("FlexWiki")) + @""">FlexWiki</a> bad");
+            AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("OneMinuteWiki")) + @""">OneMinuteWiki</a>");
         }
         #endregion
 
@@ -333,7 +333,7 @@ second line
         public void WikiURIForTopic()
         {
             string s = FormattedTestText("wiki://IncludeNestURI");
-            AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("IncludeNestURI")) + @""">IncludeNestURI</a>");
+            AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("IncludeNestURI")) + @""">IncludeNestURI</a>");
         }
         #endregion
 
@@ -388,7 +388,7 @@ second line
         public void IncludeFailure()
         {
             FormatTest(@"{{NoSuchTopic}}",
-              @"<p>{{<a title=""Click here to create thistopicNamec"" class=""create"" href=""" + _lm.LinkToEditTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("NoSuchTopic")) + @""">NoSuchTopic</a>}}</p>
+              @"<p>{{<a title=""Click here to create thistopicNamec"" class=""create"" href=""" + _lm.LinkToEditTopic(_namespaceManager.QualifiedTopicNameFor("NoSuchTopic")) + @""">NoSuchTopic</a>}}</p>
 ");
 
         }
@@ -426,7 +426,7 @@ second line
         public void RelabelTests()
         {
             string s = FormattedTestText(@"""tell me about dogs"":BigDog");
-            AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("BigDog")) + @""">tell me about dogs</a>");
+            AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("BigDog")) + @""">tell me about dogs</a>");
         }
         #endregion
 
@@ -605,7 +605,7 @@ second line
         {
             FormatTestContains(
               "HomePage#Anchor",
-              "href=\"" + _lm.LinkToTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("HomePage")) + "#Anchor\">HomePage#Anchor</a>");
+              "href=\"" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("HomePage")) + "#Anchor\">HomePage#Anchor</a>");
         }
         #endregion
 
@@ -615,7 +615,7 @@ second line
         {
             FormatTestContains(
               "\"Relabel\":HomePage#Anchor",
-              "href=\"" + _lm.LinkToTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("HomePage")) + "#Anchor\">Relabel</a>");
+              "href=\"" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("HomePage")) + "#Anchor\">Relabel</a>");
         }
         #endregion
 
@@ -625,10 +625,10 @@ second line
         {
             FormatTestContains(
                 @"[_Underscore] +and+ *@@[""after""]@@*",
-                _lm.LinkToTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("_Underscore")));
+                _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("_Underscore")));
             FormatTestContains(
                 @"[_Underscore] +and+ after@Google",
-                _lm.LinkToTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("_Underscore")));
+                _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("_Underscore")));
         }
         #endregion
 
@@ -641,9 +641,9 @@ second line
               @"Some VerySimpleLinksFatPig
 StartOfLineShouldLink blah blah blah
 blah blah EndOfLineShouldLink",
-              @"<p>Some <a title=""Click here to create thistopicNamec"" class=""create"" href=""" + _lm.LinkToEditTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("VerySimpleLinksFatPig")) + @""">VerySimpleLinksFatPig</a></p>
-<p><a title=""Click here to create thistopicNamec"" class=""create"" href=""" + _lm.LinkToEditTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("StartOfLineShouldLink")) + @""">StartOfLineShouldLink</a> blah blah blah</p>
-<p>blah blah <a title=""Click here to create thistopicNamec"" class=""create"" href=""" + _lm.LinkToEditTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("EndOfLineShouldLink")) + @""">EndOfLineShouldLink</a></p>
+              @"<p>Some <a title=""Click here to create thistopicNamec"" class=""create"" href=""" + _lm.LinkToEditTopic(_namespaceManager.QualifiedTopicNameFor("VerySimpleLinksFatPig")) + @""">VerySimpleLinksFatPig</a></p>
+<p><a title=""Click here to create thistopicNamec"" class=""create"" href=""" + _lm.LinkToEditTopic(_namespaceManager.QualifiedTopicNameFor("StartOfLineShouldLink")) + @""">StartOfLineShouldLink</a> blah blah blah</p>
+<p>blah blah <a title=""Click here to create thistopicNamec"" class=""create"" href=""" + _lm.LinkToEditTopic(_namespaceManager.QualifiedTopicNameFor("EndOfLineShouldLink")) + @""">EndOfLineShouldLink</a></p>
 ");
         }
         #endregion
@@ -687,7 +687,7 @@ blah blah EndOfLineShouldLink",
         {
             FormatTest(
               @"!HelloWorld",
-              @"<h1><a title=""Click here to create thistopicNamec"" class=""create"" href=""" + _lm.LinkToEditTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("HelloWorld")) + @""">HelloWorld</a></h1>
+              @"<h1><a title=""Click here to create thistopicNamec"" class=""create"" href=""" + _lm.LinkToEditTopic(_namespaceManager.QualifiedTopicNameFor("HelloWorld")) + @""">HelloWorld</a></h1>
 
 ");
         }
@@ -712,11 +712,11 @@ blah blah EndOfLineShouldLink",
 
             FormatTestContains(
               @"A ""xxxx FooBar 01"":HomePage link",
-              @"href=""" + _lm.LinkToTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("HomePage")) + @""">xxxx FooBar 01</a> link");
+              @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("HomePage")) + @""">xxxx FooBar 01</a> link");
 
             FormatTestContains(
               @"A ""MyHomePage"":HomePagetopicNameic",
-              @"href=""" + _lm.LinkToEditTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("HomePage2")) + @""">MyHomePage</a>topicNamec");
+              @"href=""" + _lm.LinkToEditTopic(_namespaceManager.QualifiedTopicNameFor("HomePage2")) + @""">MyHomePage</a>topicNamec");
 
             FormatTest(
               @"A ""xxxx FooBar 1x"":[http://server1], ""xxxx FooBar 11"":[http://server2] link.",
@@ -772,11 +772,11 @@ blah blah EndOfLineShouldLink",
         {
             FormatTestContains(
               @"A [test test] new topicName",
-              @"href=""" + _lm.LinkToEditTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("test test")) + @""">test test</a> newtopicNamec");
+              @"href=""" + _lm.LinkToEditTopic(_namespaceManager.QualifiedTopicNameFor("test test")) + @""">test test</a> newtopicNamec");
 
             FormatTestContains(
               @"A ""NewTest"":[test test] netopicNameic",
-              @"href=""" + _lm.LinkToEditTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("test test")) + @""">NewTest</a> newtopicNamec");
+              @"href=""" + _lm.LinkToEditTopic(_namespaceManager.QualifiedTopicNameFor("test test")) + @""">NewTest</a> newtopicNamec");
 
             //			FormatTest(
             //				@"""Spacelink"":http://localhost/space in link/test.htm",
@@ -804,7 +804,7 @@ blah blah EndOfLineShouldLink",
         {
             FormatTest(
               @"This is Some2Link to a topicName.",
-              @"<p>This is <a title=""Click here to create thistopicNamec"" class=""create"" href=""" + _lm.LinkToEditTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("Some2Link")) + @""">Some2Link</a> to atopicNamec.</p>
+              @"<p>This is <a title=""Click here to create thistopicNamec"" class=""create"" href=""" + _lm.LinkToEditTopic(_namespaceManager.QualifiedTopicNameFor("Some2Link")) + @""">Some2Link</a> to atopicNamec.</p>
 ");
         }
         #endregion
@@ -815,21 +815,21 @@ blah blah EndOfLineShouldLink",
         {
             FormatTestContains(
               @"BigDogs",
-              @"href=""" + _lm.LinkToTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("BigDog")) + @""">BigDogs</a>");
+              @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("BigDog")) + @""">BigDogs</a>");
             FormatTestContains(
               @"BigPolicies",
-              @"href=""" + _lm.LinkToTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("BigPolicy")) + @""">BigPolicies</a>");
+              @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("BigPolicy")) + @""">BigPolicies</a>");
             FormatTestContains(
               @"BigAddresses",
-              @"href=""" + _lm.LinkToTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("BigAddress")) + @""">BigAddresses</a>");
+              @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("BigAddress")) + @""">BigAddresses</a>");
             FormatTestContains(
               @"BigBoxes",
-              @"href=""" + _lm.LinkToTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("BigBox")) + @""">BigBoxes</a>");
+              @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("BigBox")) + @""">BigBoxes</a>");
 
             // Test for plural before singular
             string s = FormattedTestText(@"See what happens when I mention BigBoxes; the topic is called BigBox.");
-            AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("BigBox")) + @""">BigBoxes</a>");
-            AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("BigBox")) + @""">BigBox</a>");
+            AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("BigBox")) + @""">BigBoxes</a>");
+            AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("BigBox")) + @""">BigBox</a>");
         }
         #endregion
 
@@ -1110,17 +1110,17 @@ file://servername/umuff&#126;/folder%20name/file.txt",
             FormatTest(
               @"LinkThis, AndLinkThis, dontLinkThis, (LinkThis), _LinkAndEmphasisThis_ *LinkAndBold* (LinkThisOneToo)",
                 @"<p><a title=""Click here to create this topic"" class=""create"" href="""
-                    + _lm.LinkToEditTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("LinkThis"))
+                    + _lm.LinkToEditTopic(_namespaceManager.QualifiedTopicNameFor("LinkThis"))
                     + @""">LinkThis</a>, <a title=""Click here to create this topic"" class=""create"" href="""
-                    + _lm.LinkToEditTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("AndLinkThis"))
+                    + _lm.LinkToEditTopic(_namespaceManager.QualifiedTopicNameFor("AndLinkThis"))
                     + @""">AndLinkThis</a>, dontLinkThis, (<a title=""Click here to create this topic"" class=""create"" href="""
-                    + _lm.LinkToEditTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("LinkThis"))
+                    + _lm.LinkToEditTopic(_namespaceManager.QualifiedTopicNameFor("LinkThis"))
                     + @""">LinkThis</a>), <em><a title=""Click here to create this topic"" class=""create"" href="""
-                    + _lm.LinkToEditTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("LinkAndEmphasisThis"))
+                    + _lm.LinkToEditTopic(_namespaceManager.QualifiedTopicNameFor("LinkAndEmphasisThis"))
                     + @""">LinkAndEmphasisThis</a></em> <strong><a title=""Click here to create this topic"" class=""create"" href="""
-                    + _lm.LinkToEditTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("LinkAndBold"))
+                    + _lm.LinkToEditTopic(_namespaceManager.QualifiedTopicNameFor("LinkAndBold"))
                     + @""">LinkAndBold</a></strong> (<a title=""Click here to create this topic"" class=""create"" href="""
-                    + _lm.LinkToEditTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("LinkThisOneToo")) + @""">LinkThisOneToo</a>)</p>
+                    + _lm.LinkToEditTopic(_namespaceManager.QualifiedTopicNameFor("LinkThisOneToo")) + @""">LinkThisOneToo</a>)</p>
 ");
         }
         #endregion
@@ -1222,7 +1222,7 @@ file://servername/umuff&#126;/folder%20name/file.txt",
         public void WikinameInTableTest()
         {
             string s = FormattedTestText(@"||BigDog||");
-            AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("BigDog")) + @""">BigDog</a>");
+            AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("BigDog")) + @""">BigDog</a>");
         }
         #endregion
 
@@ -1257,8 +1257,8 @@ file://servername/umuff&#126;/folder%20name/file.txt",
         public void BracketedLinks()
         {
             string s = FormattedTestText(@"[BigBox] summer [eDocuments] and [e] and [HelloWorld] and [aZero123]");
-            AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("BigBox")) + @""">BigBox</a>");
-            AssertStringContains(s, @"<a title=""Click here to create thistopicNamec"" class=""create"" href=""" + _lm.LinkToEditTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("eDocuments")) + @""">eDocuments</a> and <a title=""Click here to create thitopicNameic"" class=""create"" href=""" + _lm.LinkToEditTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("e")) + @""">e</a> and <a title=""Click here to create thitopicNameic"" class=""create"" href=""" + _lm.LinkToEditTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("HelloWorld")) + @""">HelloWorld</a> and <a title=""Click here to create thitopicNameic"" class=""create"" href=""" + _lm.LinkToEditTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("aZero123")) + @""">aZero123</a>");
+            AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("BigBox")) + @""">BigBox</a>");
+            AssertStringContains(s, @"<a title=""Click here to create thistopicNamec"" class=""create"" href=""" + _lm.LinkToEditTopic(_namespaceManager.QualifiedTopicNameFor("eDocuments")) + @""">eDocuments</a> and <a title=""Click here to create thitopicNameic"" class=""create"" href=""" + _lm.LinkToEditTopic(_namespaceManager.QualifiedTopicNameFor("e")) + @""">e</a> and <a title=""Click here to create thitopicNameic"" class=""create"" href=""" + _lm.LinkToEditTopic(_namespaceManager.QualifiedTopicNameFor("HelloWorld")) + @""">HelloWorld</a> and <a title=""Click here to create thitopicNameic"" class=""create"" href=""" + _lm.LinkToEditTopic(_namespaceManager.QualifiedTopicNameFor("aZero123")) + @""">aZero123</a>");
         }
         #endregion
 
@@ -1443,7 +1443,7 @@ And the text in the parens and brackets should be code formatted:
         public void BehaviorTest()
         {
             string s = FormattedTestText(@"@@ProductName@@");
-            AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_namespaceManager.NamespaceQualifiedTopicNameFor("FlexWiki")) + @""">FlexWiki</a>");
+            AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("FlexWiki")) + @""">FlexWiki</a>");
         }
         #endregion
 
@@ -2372,7 +2372,7 @@ Baz
             }
             FormatTest(
                 @s,
-                @"<p><a title=""Click here to create this topic"" class=""create"" href=""" + _lm.LinkToEditTopic(_namespaceManager.NamespaceQualifiedTopicNameFor(topicName)) + @""">" + topicName + @"</a></p>
+                @"<p><a title=""Click here to create this topic"" class=""create"" href=""" + _lm.LinkToEditTopic(_namespaceManager.QualifiedTopicNameFor(topicName)) + @""">" + topicName + @"</a></p>
 ");
         }
         #endregion
@@ -2396,7 +2396,7 @@ Baz
             return FormattedTestText(inputString, null);
         }
 
-        private string FormattedTestText(string inputString, NamespaceQualifiedTopicVersionKey top)
+        private string FormattedTestText(string inputString, QualifiedTopicRevision top)
         {
             WikiOutput output = WikiOutput.ForFormat(OutputFormat.Testing, null);
             Formatter.Format(top, inputString, output, _namespaceManager, _lm, _externals, 0);
@@ -2405,12 +2405,12 @@ Baz
             return o1;
         }
 
-        private string FormattedTopic(NamespaceQualifiedTopicVersionKey top)
+        private string FormattedTopic(QualifiedTopicRevision top)
         {
             return FormattedTestText(Federation.NamespaceManagerForTopic(top).Read(top.LocalName), top);
         }
 
-        private void FormattedTopicContainsTest(NamespaceQualifiedTopicVersionKey top, string find)
+        private void FormattedTopicContainsTest(QualifiedTopicRevision top, string find)
         {
             FormatTestContains(FormattedTopic(top), find);
         }
@@ -2426,7 +2426,7 @@ Baz
             FormatTest(inputString, outputString, null);
         }
 
-        private void FormatTest(string inputString, string outputString, NamespaceQualifiedTopicVersionKey top)
+        private void FormatTest(string inputString, string outputString, QualifiedTopicRevision top)
         {
             string o1 = FormattedTestText(inputString, top);
             string o2 = outputString.Replace("\r", "");

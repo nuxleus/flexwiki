@@ -94,7 +94,7 @@ namespace FlexWiki.Web
 	");
 				ContentStoreAnalysis analysis = new ContentStoreAnalysis(storeManager);
 
-				NamespaceQualifiedTopicVersionKey home = new NamespaceQualifiedTopicVersionKey(storeManager.HomePage, storeManager.Namespace);
+				QualifiedTopicRevision home = new QualifiedTopicRevision(storeManager.HomePage, storeManager.Namespace);
 				Response.Write("<ul>");
 				foreach (Set eachIsland in analysis.Islands)
 				{
@@ -102,7 +102,7 @@ namespace FlexWiki.Web
 						continue;		// skip the mainland!
 					bool first = true;
 					Response.Write("<li>");
-					foreach (NamespaceQualifiedTopicVersionKey eachTopic in eachIsland)
+					foreach (QualifiedTopicRevision eachTopic in eachIsland)
 					{
 						TopicAnalysis tan = analysis.AnalysisFor(eachTopic);
 						if (!first)

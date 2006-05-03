@@ -65,7 +65,7 @@ namespace PrintTopic
 
 		static void Print(Federation federation, TopicName topic)
 		{
-			string formattedBody = federation.GetTopicFormattedContent(new NamespaceQualifiedTopicVersionKey(topic), null);
+			string formattedBody = federation.GetTopicFormattedContent(new QualifiedTopicRevision(topic), null);
 
 			// Now calculate the borders
 			string leftBorder = federation.GetTopicFormattedBorder(topic, Border.Left);

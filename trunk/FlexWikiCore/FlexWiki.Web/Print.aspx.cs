@@ -56,7 +56,7 @@ namespace FlexWiki.Web
 
 		protected void DoPage()
 		{
-			NamespaceQualifiedTopicVersionKey topic = GetTopicVersionKey();
+			QualifiedTopicRevision topic = GetTopicVersionKey();
 			NamespaceManager storeManager = Federation.NamespaceManagerForTopic(topic);
 			LinkMaker lm = TheLinkMaker;
 

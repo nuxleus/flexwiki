@@ -29,11 +29,11 @@ namespace FlexWiki
 
         private NamespaceManager _namespaceManager;
         private Federation _federation;
-        private NamespaceQualifiedTopicVersionKey _topicVersionKey;
+        private QualifiedTopicRevision _topicVersionKey;
 
         // Constructors
 
-        public TopicVersionInfo(Federation aFed, NamespaceQualifiedTopicVersionKey name)
+        public TopicVersionInfo(Federation aFed, QualifiedTopicRevision name)
         {
             _topicVersionKey = name;
             _federation = aFed;
@@ -47,7 +47,7 @@ namespace FlexWiki
             get
             {
                 TopicChangeCollection answer = new TopicChangeCollection();
-                foreach (TopicChange each in Federation.GetTopicChanges(new TopicName(TopicVersionKey.QualifiedName)))
+                foreach (TopicChange each in Federation.GetTopicChanges(new TopicName(TopicRevision.QualifiedName)))
                 {
                     answer.Add(each);
                 }
@@ -59,14 +59,14 @@ namespace FlexWiki
         {
             get
             {
-                return Federation.GetTopicCreationTime(TopicVersionKey);
+                return Federation.GetTopicCreationTime(TopicRevision);
             }
         }
         public bool Exists
         {
             get
             {
-                return NamespaceManager.TopicExists(TopicVersionKey.LocalName, ImportPolicy.DoNotIncludeImports);
+                return NamespaceManager.TopicExists(TopicRevision.LocalName, ImportPolicy.DoNotIncludeImports);
             }
         }
         [ExposedMethod("Fullname", ExposedMethodFlags.Default, "Answer the complete name of the topic (including namespace and version, if present)")]
@@ -106,7 +106,7 @@ namespace FlexWiki
         {
             get
             {
-                return Federation.GetTopicModificationTime(TopicVersionKey);
+                return Federation.GetTopicModificationTime(TopicRevision);
             }
         }
         [ExposedMethod(ExposedMethodFlags.Default, "Answer a string indicating who last modified the topic")]
@@ -122,7 +122,7 @@ namespace FlexWiki
         {
             get
             {
-                return TopicVersionKey.LocalName;
+                return TopicRevision.LocalName;
             }
         }
         [ExposedMethod("Namespace", ExposedMethodFlags.Default, "Answer the Namespace for this topic")]
@@ -132,7 +132,7 @@ namespace FlexWiki
             {
                 if (_namespaceManager != null)
                     return _namespaceManager;
-                _namespaceManager = Federation.NamespaceManagerForTopic(TopicVersionKey);
+                _namespaceManager = Federation.NamespaceManagerForTopic(TopicRevision);
                 return _namespaceManager;
             }
         }
@@ -141,7 +141,7 @@ namespace FlexWiki
         {
             get
             {
-                return Federation.GetTopicProperties(TopicVersionKey).Names;
+                return Federation.GetTopicProperties(TopicRevision).Names;
             }
         }
         [ExposedMethod(ExposedMethodFlags.Default, "Answer the Summary property's rawValue")]
@@ -156,10 +156,10 @@ namespace FlexWiki
         {
             get
             {
-                return new TopicName(TopicVersionKey.LocalName, TopicVersionKey.Namespace); 
+                return new TopicName(TopicRevision.LocalName, TopicRevision.Namespace); 
             }
         }
-        public NamespaceQualifiedTopicVersionKey TopicVersionKey
+        public QualifiedTopicRevision TopicRevision
         {
             get
             {
@@ -171,7 +171,7 @@ namespace FlexWiki
         {
             get
             {
-                return TopicVersionKey.Version;
+                return TopicRevision.Version;
             }
         }
 
@@ -179,22 +179,22 @@ namespace FlexWiki
 
         public int CompareTo(object obj)
         {
-            return this.TopicVersionKey.QualifiedName.CompareTo(((TopicVersionInfo)obj).TopicVersionKey.QualifiedName);
+            return this.TopicRevision.QualifiedName.CompareTo(((TopicVersionInfo)obj).TopicRevision.QualifiedName);
         }
         [ExposedMethod(ExposedMethodFlags.Default, "Answer an array of the values in the given list property")]
         public ArrayList GetListProperty(string propertyName)
         {
-            return Federation.GetTopicListPropertyValue(TopicVersionKey, propertyName);
+            return Federation.GetTopicListPropertyValue(TopicRevision, propertyName);
         }
         [ExposedMethod(ExposedMethodFlags.Default, "Answer the given property from the topic")]
         public string GetProperty(string propertyName)
         {
-            return Federation.GetTopicPropertyValue(TopicVersionKey, propertyName);
+            return Federation.GetTopicPropertyValue(TopicRevision, propertyName);
         }
         [ExposedMethod(ExposedMethodFlags.Default, "Answer true if the given toipic has the given property; else false")]
         public bool HasProperty(string propertyName)
         {
-            TopicPropertyCollection properties = Federation.GetTopicProperties(TopicVersionKey);
+            TopicPropertyCollection properties = Federation.GetTopicProperties(TopicRevision);
             if (properties == null)
                 return false;
             return properties.Contains(propertyName);
@@ -202,9 +202,9 @@ namespace FlexWiki
         public override string ToString()
         {
             string answer = "TopicInfo for ";
-            if (TopicVersionKey != null)
+            if (TopicRevision != null)
             {
-                answer += TopicVersionKey;
+                answer += TopicRevision;
             }
             return answer;
         }

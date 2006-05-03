@@ -21,7 +21,7 @@ namespace FlexWiki
 	[ExposedClass("VisitorEvent", "Provides information about an event for a visitor to the site")]
 	public class VisitorEvent : BELObject, IComparable
 	{
-    private NamespaceQualifiedTopicVersionKey _Topic;
+    private QualifiedTopicRevision _Topic;
     private string _Verb;
     private DateTime _When;
     
@@ -30,7 +30,7 @@ namespace FlexWiki
 		public static string Compare = "compare";
 
 		[ExposedMethod(ExposedMethodFlags.Default, "Answer a the (full)name of the topic")]
-		public NamespaceQualifiedTopicVersionKey Topic
+		public QualifiedTopicRevision Topic
 		{
 			get
 			{
@@ -56,7 +56,7 @@ namespace FlexWiki
 			}
 		}
 
-		public VisitorEvent(NamespaceQualifiedTopicVersionKey topic, string verb, DateTime when)
+		public VisitorEvent(QualifiedTopicRevision topic, string verb, DateTime when)
 		{
 			_Topic = topic;
 			_Verb = verb;

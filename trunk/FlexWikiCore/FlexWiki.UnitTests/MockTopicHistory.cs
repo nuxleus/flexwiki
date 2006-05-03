@@ -18,7 +18,7 @@ namespace FlexWiki.UnitTests
             _author = author;
             _created = created;
             _modified = created; 
-            _version = TopicVersionKey.NewVersionStringForUser(author, created);
+            _version = TopicRevision.NewVersionStringForUser(author, created);
         }
 
         internal string Author

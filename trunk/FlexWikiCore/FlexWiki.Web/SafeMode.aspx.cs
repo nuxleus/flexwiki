@@ -65,7 +65,7 @@ namespace FlexWiki.Web
 
 		protected void DoHead()
 		{
-			NamespaceQualifiedTopicVersionKey topic = GetTopicVersionKey();	 
+			QualifiedTopicRevision topic = GetTopicVersionKey();	 
 			LinkMaker lm = TheLinkMaker;
 
 			if (Request.QueryString["version"] == null || Request.QueryString["version"] == "")
@@ -84,9 +84,9 @@ namespace FlexWiki.Web
 						string trimmed = redir.Trim();
 						if (name.IsMatch(trimmed))
 						{
-							IList all = Federation.NamespaceManagerForTopic(GetTopicVersionKey()).AllNamespaceQualifiedTopicNamesThatExist(trimmed);
+							IList all = Federation.NamespaceManagerForTopic(GetTopicVersionKey()).AllQualifiedTopicNamesThatExist(trimmed);
 							if (all.Count == 1)
-								URI = lm.LinkToTopic((TopicVersionKey)(all[0]));
+								URI = lm.LinkToTopic((TopicRevision)(all[0]));
 							else
 							{
 								if (all.Count == 0)
@@ -112,7 +112,7 @@ namespace FlexWiki.Web
 				if (description != "")
 					Response.Write("<META name=\"description\" content=\"" + description + "\">\n");
 				Response.Write("<META name=\"author\" content=\"" + Federation.GetTopicLastModifiedBy(
-                    GetTopicVersionKey().AsNamespaceQualifiedTopicName()) + "\">\n");
+                    GetTopicVersionKey().AsQualifiedTopicName()) + "\">\n");
 
 			}
 			else
@@ -129,9 +129,9 @@ namespace FlexWiki.Web
 		{
 			NamespaceManager storeManager = DefaultNamespaceManager;
 			LinkMaker lm = TheLinkMaker;
-			NamespaceQualifiedTopicVersionKey topic = GetTopicVersionKey();	
+			QualifiedTopicRevision topic = GetTopicVersionKey();	
 			bool diffs = Request.QueryString["diff"] == "y";
-			NamespaceQualifiedTopicVersionKey diffVersion = null;
+			QualifiedTopicRevision diffVersion = null;
 			bool restore = Request.QueryString["restore"] == "y";
 			if (restore==true)
 			{
@@ -141,7 +141,7 @@ namespace FlexWiki.Web
 			// Go edit if we try to view it and it doesn't exist
 			if (!storeManager.TopicExists(topic.LocalName, ImportPolicy.DoNotIncludeImports))
 			{ 
-				Response.Redirect(lm.LinkToEditTopic(topic.AsNamespaceQualifiedTopicName()));
+				Response.Redirect(lm.LinkToEditTopic(topic.AsQualifiedTopicName()));
 				return;
 			}
 
@@ -151,7 +151,7 @@ namespace FlexWiki.Web
 			}
 
 			Response.Write("<body onclick='javascript: BodyClick()' ondblclick=\"location.href='" + 
-                this.TheLinkMaker.LinkToEditTopic(topic.AsNamespaceQualifiedTopicName()) + 
+                this.TheLinkMaker.LinkToEditTopic(topic.AsQualifiedTopicName()) + 
                 "'\" scroll='no'>");
 			Response.Write(@"<div id='TopicTip' class='TopicTip' ></div>");
 
@@ -164,7 +164,7 @@ namespace FlexWiki.Web
 
 			// Get the core data (the formatted topic and the list of changes) from the cache.  If it's not there, generate it!
 			string formattedBody = Federation.GetTopicFormattedContent(topic, diffVersion);
-			IEnumerable changeList = Federation.GetTopicChanges(topic.AsNamespaceQualifiedTopicName());
+			IEnumerable changeList = Federation.GetTopicChanges(topic.AsQualifiedTopicName());
 
 			// Now generate the page!
 
@@ -191,14 +191,14 @@ namespace FlexWiki.Web
 						s += change.Created.ToString("MMM d yyyy  H:mm");
 				}	
 				s += "&nbsp;&nbsp;(" + change.Author + ")";	
-				NamespaceQualifiedTopicVersionKey linkTo = change.Topic;
+				QualifiedTopicRevision linkTo = change.Topic;
 				if (first)
 					linkTo.Version = null;	// don't include the version for the latest one
 				options += "<option rawValue='"+ lm.LinkToTopic(linkTo)  + "' " + sel + ">" + s + "</option>";
 				first = false;
 			}					
 
-			NamespaceQualifiedTopicVersionKey permaTopic = new NamespaceQualifiedTopicVersionKey(topic.QualifiedNameWithVersion);
+			QualifiedTopicRevision permaTopic = new QualifiedTopicRevision(topic.QualifiedNameWithVersion);
 			if (permaTopic.Version == null)
 			{
 				permaTopic.Version = mostRecentVersion;
@@ -307,7 +307,7 @@ function tbinput()
 			/////////////////////////////
 
 			NamespaceManager cb1 = Federation.NamespaceManagerForNamespace(topic.Namespace);
-			OpenPane(Response.Output, cb1.FriendlyTitle, lm.LinkToImage("images/home.gif"), lm.LinkToTopic(new NamespaceQualifiedTopicVersionKey(cb1.HomePage, cb1.Namespace)), "Go to the home page");
+			OpenPane(Response.Output, cb1.FriendlyTitle, lm.LinkToImage("images/home.gif"), lm.LinkToTopic(new QualifiedTopicRevision(cb1.HomePage, cb1.Namespace)), "Go to the home page");
 			if (cb1.ImageURL != null)
 				Response.Write("<img align='right' src='" + cb1.ImageURL + "'>");
 			Response.Write(Formatter.FormattedString(topic, cb1.Description, OutputFormat.HTML, cb1, lm));
@@ -319,7 +319,7 @@ function tbinput()
 
 			if (topic.Version == null)
 			{
-				Command(lm, "Edit", "Edit this topic", lm.LinkToEditTopic(topic.AsNamespaceQualifiedTopicName()));
+				Command(lm, "Edit", "Edit this topic", lm.LinkToEditTopic(topic.AsQualifiedTopicName()));
 			}
 			else
 			{

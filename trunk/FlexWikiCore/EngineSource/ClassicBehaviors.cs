@@ -272,7 +272,7 @@ namespace FlexWiki
                 NamespaceManager namespaceManager = ctx.CurrentNamespaceManager;
                 if (namespaceManager == null)
                     namespaceManager = ctx.CurrentFederation.DefaultNamespaceManager;
-                RelativeTopicVersionKey rel = new RelativeTopicVersionKey(topic);
+                TopicRevision rel = new TopicRevision(topic);
                 abs = namespaceManager.UnambiguousTopicNameFor(rel.LocalName);
             }
             catch (TopicIsAmbiguousException)
@@ -326,7 +326,7 @@ namespace FlexWiki
                     interWikisTopic = "_InterWikis";
                 }
 
-                NamespaceQualifiedTopicVersionKey topic = new NamespaceQualifiedTopicVersionKey(interWikisTopic, fed.DefaultNamespace);
+                QualifiedTopicRevision topic = new QualifiedTopicRevision(interWikisTopic, fed.DefaultNamespace);
                 if (!fed.TopicExists(topic))
                 {
                     throw new ArgumentException("Failed to find InterWikisTopic [" + interWikisTopic + "].");

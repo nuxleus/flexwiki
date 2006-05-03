@@ -110,7 +110,7 @@ ImageURL: http://localhost/wiki/images/",
         public void AllNamespaceQualifiedNamesThatExistNegativeNoImport()
         {
             EstablishRoles("NoAccess");
-            IList topics = _storeTwo.AllNamespaceQualifiedTopicNamesThatExist("TopicOne");
+            IList topics = _storeTwo.AllQualifiedTopicNamesThatExist("TopicOne");
 
             Assert.AreEqual(0, topics.Count, "Checking that no topics were returned");
         }
@@ -122,7 +122,7 @@ ImageURL: http://localhost/wiki/images/",
         public void AllNamespaceQualifiedNamesThatExistNegativeWithImport()
         {
             EstablishRoles("NoAccess");
-            IList topics = _storeOne.AllNamespaceQualifiedTopicNamesThatExist("TopicOne");
+            IList topics = _storeOne.AllQualifiedTopicNamesThatExist("TopicOne");
 
             Assert.AreEqual(0, topics.Count, "Checking that no topics were returned");
         }
@@ -131,7 +131,7 @@ ImageURL: http://localhost/wiki/images/",
         public void AllNamespaceQualifiedNamesThatExistFullPositive()
         {
             EstablishRoles("NamespaceOneReaders", "WikiReaders");
-            IList topics = _storeOne.AllNamespaceQualifiedTopicNamesThatExist("TopicOne");
+            IList topics = _storeOne.AllQualifiedTopicNamesThatExist("TopicOne");
 
             Assert.AreEqual(2, topics.Count, "Checking that two topics were returned");
         }
@@ -140,7 +140,7 @@ ImageURL: http://localhost/wiki/images/",
         public void AllNamespaceQualifiedNamesThatExistPartialPositive()
         {
             EstablishRoles("NamespaceOneReaders");
-            IList topics = _storeOne.AllNamespaceQualifiedTopicNamesThatExist("TopicOne");
+            IList topics = _storeOne.AllQualifiedTopicNamesThatExist("TopicOne");
 
             Assert.AreEqual(1, topics.Count, "Checking that only one topic was returned");
         }
@@ -196,8 +196,8 @@ ImageURL: http://localhost/wiki/images/",
             // Check that when we have access to the other namespace, we can see all the existing 
             // references
             EstablishRoles("NamespaceOneReaders", "WikiReaders");
-            NamespaceQualifiedTopicVersionKey topic = new NamespaceQualifiedTopicVersionKey("ReferencingTopic", _storeOne.Namespace);
-            NamespaceQualifiedTopicVersionKeyCollection references = _storeOne.AllReferencesByTopic(topic.LocalName, 
+            QualifiedTopicRevision topic = new QualifiedTopicRevision("ReferencingTopic", _storeOne.Namespace);
+            QualifiedTopicRevisionCollection references = _storeOne.AllReferencesByTopic(topic.LocalName, 
                 ExistencePolicy.ExistingOnly);
             Assert.AreEqual(3, references.Count, "Checking that all extant references were returned");
         }
@@ -208,8 +208,8 @@ ImageURL: http://localhost/wiki/images/",
             // Check that when we have no access to the other namespace, we can't see all the existing 
             // references
             EstablishRoles("NamespaceOneReaders");
-            NamespaceQualifiedTopicVersionKey topic = new NamespaceQualifiedTopicVersionKey("ReferencingTopic", _storeOne.Namespace);
-            NamespaceQualifiedTopicVersionKeyCollection references = _storeOne.AllReferencesByTopic(topic.LocalName, 
+            QualifiedTopicRevision topic = new QualifiedTopicRevision("ReferencingTopic", _storeOne.Namespace);
+            QualifiedTopicRevisionCollection references = _storeOne.AllReferencesByTopic(topic.LocalName, 
                 ExistencePolicy.ExistingOnly);
             Assert.AreEqual(2, references.Count, "Checking that all extant references were returned");
         }
@@ -220,8 +220,8 @@ ImageURL: http://localhost/wiki/images/",
             // Check that if we don't have read access to the topicName, then we shouldn't even
             // be able to find out what references it might have. 
             EstablishRoles();
-            NamespaceQualifiedTopicVersionKey topic = new NamespaceQualifiedTopicVersionKey("ReferencingTopic", _storeOne.Namespace);
-            NamespaceQualifiedTopicVersionKeyCollection references = _storeOne.AllReferencesByTopic(topic.LocalName, 
+            QualifiedTopicRevision topic = new QualifiedTopicRevision("ReferencingTopic", _storeOne.Namespace);
+            QualifiedTopicRevisionCollection references = _storeOne.AllReferencesByTopic(topic.LocalName, 
                 ExistencePolicy.All);
             Assert.AreEqual(0, references.Count, "Checking that no references were retrieved");
         }
@@ -232,8 +232,8 @@ ImageURL: http://localhost/wiki/images/",
             // Check that even when we have no read access to foreign namespaces, we can still
             // know that a potential reference exists
             EstablishRoles("NamespaceOneReaders");
-            NamespaceQualifiedTopicVersionKey topic = new NamespaceQualifiedTopicVersionKey("ReferencingTopic", _storeOne.Namespace);
-            NamespaceQualifiedTopicVersionKeyCollection references = _storeOne.AllReferencesByTopic(topic.LocalName, 
+            QualifiedTopicRevision topic = new QualifiedTopicRevision("ReferencingTopic", _storeOne.Namespace);
+            QualifiedTopicRevisionCollection references = _storeOne.AllReferencesByTopic(topic.LocalName, 
                 ExistencePolicy.All);
             Assert.AreEqual(4, references.Count, "Checking that all references were retrieved");
         }
@@ -658,7 +658,7 @@ ImageURL: http://localhost/wiki/images/",
       string topicName)
         {
             return new TopicContext(federation, storeManager, new TopicVersionInfo(federation,
-              new NamespaceQualifiedTopicVersionKey(topicName, storeManager.Namespace)));
+              new QualifiedTopicRevision(topicName, storeManager.Namespace)));
         }
         private void EstablishRoles(params string[] roles)
         {

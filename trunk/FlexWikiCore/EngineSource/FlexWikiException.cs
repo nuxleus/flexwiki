@@ -26,7 +26,7 @@ namespace FlexWiki
         {
         }
 
-        internal static FlexWikiException NamespaceQualifiedTopicNameExpected(TopicName topicName)
+        internal static FlexWikiException QualifiedTopicNameExpected(TopicName topicName)
         {
             if (topicName == null)
             {
@@ -45,6 +45,11 @@ namespace FlexWiki
             }
             return new FlexWikiException("The namespace " + (topic.Namespace ?? "<<null>>") +
                 " does not exist."); 
+        }
+
+        internal static FlexWikiException VersionDoesNotExist(TopicRevision revision)
+        {
+            return VersionDoesNotExist(revision.Name, revision.Version); 
         }
 
         internal static FlexWikiException VersionDoesNotExist(TopicName topic, string version)

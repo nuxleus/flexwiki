@@ -32,7 +32,7 @@ namespace FlexWiki.Web
     Hashtable topicToTopicAnalysis;
     ReferenceMap referenceMap;
 
-    public TopicAnalysis AnalysisFor(NamespaceQualifiedTopicVersionKey topic)
+    public TopicAnalysis AnalysisFor(QualifiedTopicRevision topic)
     {
       return (TopicAnalysis)(topicToTopicAnalysis[topic]);
     }
@@ -58,7 +58,7 @@ namespace FlexWiki.Web
       {
         // Response.Write("Consider: " + outerTopic + "<br>");
         Set islands = new Set();
-        NamespaceQualifiedTopicVersionKeyCollection linkedTopics = referenceMap[outerTopic];
+        QualifiedTopicRevisionCollection linkedTopics = referenceMap[outerTopic];
         // Response.Write("Linked topics count: " + linkedTopics.Count + "<br>");
 
         TopicAnalysis outerTopicAnalysis = (TopicAnalysis)(topicToTopicAnalysis[outerTopic]);
@@ -84,7 +84,7 @@ namespace FlexWiki.Web
         //			if (linkedtopic is on an island)
         //				islands add that island
         Set inNamespaceLinks = new Set();
-        foreach (NamespaceQualifiedTopicVersionKey linkedTopic in linkedTopics)
+        foreach (QualifiedTopicRevision linkedTopic in linkedTopics)
         {
           // Only analyze in this namespace
           if (linkedTopic.Namespace != _namespaceManager.Namespace)
@@ -142,7 +142,7 @@ namespace FlexWiki.Web
         // Add the island and the linkedTopics
         newIsland.Add(outerTopic);
         outerTopicAnalysis.Island = newIsland;
-        foreach (NamespaceQualifiedTopicVersionKey linkedTopic in inNamespaceLinks)
+        foreach (QualifiedTopicRevision linkedTopic in inNamespaceLinks)
         {
           newIsland.Add(linkedTopic);
           ((TopicAnalysis)(topicToTopicAnalysis[linkedTopic])).Island = newIsland;
@@ -157,7 +157,7 @@ namespace FlexWiki.Web
               newIsland.Add(o);
             ocean.Remove(eachIsland);
             // Now update all the pointers from the TopicAnalysiss
-            foreach (NamespaceQualifiedTopicVersionKey eachTopic in eachIsland)
+            foreach (QualifiedTopicRevision eachTopic in eachIsland)
               ((TopicAnalysis)(topicToTopicAnalysis[eachTopic])).Island = newIsland;
           }
         }

@@ -39,7 +39,7 @@ namespace FlexWiki.BuildVerificationTests
 		[Test]
 		public void ControlPageTitle()
 		{
-			NamespaceQualifiedTopicVersionKey top = new NamespaceQualifiedTopicVersionKey("TitledTopic", Federation.DefaultNamespaceManager.Namespace);
+			QualifiedTopicRevision top = new QualifiedTopicRevision("TitledTopic", Federation.DefaultNamespaceManager.Namespace);
 			string t = TheLinkMaker.LinkToTopic(top);
 			DocumentElement doc = TheBrowser.Navigate(t, true);
 			
@@ -49,7 +49,7 @@ namespace FlexWiki.BuildVerificationTests
 		[Test]
 		public void ControlTopicBar()
 		{
-			NamespaceQualifiedTopicVersionKey top = new NamespaceQualifiedTopicVersionKey("TitledTopic", Federation.DefaultNamespaceManager.Namespace);
+			QualifiedTopicRevision top = new QualifiedTopicRevision("TitledTopic", Federation.DefaultNamespaceManager.Namespace);
 			string t = TheLinkMaker.LinkToTopic(top);
 			DocumentElement doc = TheBrowser.Navigate(t, true);
 			HTMLElement staticTopicBar = (HTMLElement)doc.GetElementByName("StaticTopicBar");
@@ -60,7 +60,7 @@ namespace FlexWiki.BuildVerificationTests
 		[Test]
 		public void CreateTestPage()
 		{
-			NamespaceQualifiedTopicVersionKey top = new NamespaceQualifiedTopicVersionKey("DummyPage", Federation.DefaultNamespaceManager.Namespace);
+			QualifiedTopicRevision top = new QualifiedTopicRevision("DummyPage", Federation.DefaultNamespaceManager.Namespace);
 
 			bool exists;
 			
@@ -86,7 +86,7 @@ namespace FlexWiki.BuildVerificationTests
     [Test]
     public void LinkMakerBug()
     {
-      NamespaceQualifiedTopicVersionKey topic = new NamespaceQualifiedTopicVersionKey("TopicFour", "NamespaceTwo"); 
+      QualifiedTopicRevision topic = new QualifiedTopicRevision("TopicFour", "NamespaceTwo"); 
       string topicUri = TheLinkMaker.LinkToTopic(topic);
       Uri byName = new Uri(topicUri); 
       string ip = Dns.GetHostEntry(byName.Host).AddressList[0].ToString(); 
@@ -107,7 +107,7 @@ namespace FlexWiki.BuildVerificationTests
      [Test]
     public void Rename()
     {
-      NamespaceQualifiedTopicVersionKey before = new NamespaceQualifiedTopicVersionKey("RenameableTopic", "NamespaceOne"); 
+      QualifiedTopicRevision before = new QualifiedTopicRevision("RenameableTopic", "NamespaceOne"); 
       string renameUrl = TheLinkMaker.LinkToRename(before.QualifiedName); 
       DocumentElement doc = TheBrowser.Navigate(renameUrl, true); 
 
@@ -123,7 +123,7 @@ namespace FlexWiki.BuildVerificationTests
       // tests that are timing-dependent.
       Thread.Sleep(3000); 
 
-      NamespaceQualifiedTopicVersionKey after = new NamespaceQualifiedTopicVersionKey("RenamedTopic", "NamespaceOne"); 
+      QualifiedTopicRevision after = new QualifiedTopicRevision("RenamedTopic", "NamespaceOne"); 
 
       Assert.IsTrue(Federation.TopicExists(after)); 
       string beforeContents = Federation.Read(before); 
@@ -164,11 +164,11 @@ namespace FlexWiki.BuildVerificationTests
 		}
 
 
-    private NamespaceQualifiedTopicVersionKey HomePage
+    private QualifiedTopicRevision HomePage
     {
       get
       {
-        return new NamespaceQualifiedTopicVersionKey(Federation.DefaultNamespaceManager.HomePage, Federation.DefaultNamespaceManager.Namespace);
+        return new QualifiedTopicRevision(Federation.DefaultNamespaceManager.HomePage, Federation.DefaultNamespaceManager.Namespace);
       }
     }
 

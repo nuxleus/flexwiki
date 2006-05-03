@@ -62,7 +62,7 @@ namespace FlexWiki.Web
 			string ns = Request.Form["defaultNamespace"];
 			string tn = Request.Form["topic"];
 
-			NamespaceQualifiedTopicVersionKey topicName = new NamespaceQualifiedTopicVersionKey(tn, ns);
+			QualifiedTopicRevision topicName = new QualifiedTopicRevision(tn, ns);
 
 			Response.Write("<div class='PreviewMain'>");
 			Response.Write(Formatter.FormattedString(topicName, body, OutputFormat.HTML, Federation.NamespaceManagerForNamespace(ns), TheLinkMaker));

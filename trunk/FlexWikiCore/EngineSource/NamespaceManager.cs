@@ -46,7 +46,7 @@ namespace FlexWiki
         /// </summary>
         private static string s_externalWikisTopic = "ExternalWikis";
 
-        private IParsedContentProvider _contentProviderChain;
+        private ContentProviderBase _contentProviderChain;
         private ExternalReferencesMap _emptyExternalReferencesMap = new ExternalReferencesMap();
         private Federation _federation;
         private readonly NamespaceProviderParameterCollection _parameters = new NamespaceProviderParameterCollection();
@@ -55,7 +55,7 @@ namespace FlexWiki
 
         // Constructors
 
-        internal NamespaceManager(Federation federation, IParsedContentProvider contentProvider,
+        internal NamespaceManager(Federation federation, ContentProviderBase contentProvider,
             string ns, NamespaceProviderParameterCollection parameters)
         {
             _federation = federation;
@@ -69,8 +69,6 @@ namespace FlexWiki
                     _parameters.Add(parameter);
                 }
             }
-
-            contentProvider.Initialize(this);
         }
 
         // Properties
@@ -83,14 +81,14 @@ namespace FlexWiki
             }
         }
         /// <summary>
-        /// Answer the full <see cref="NamespaceQualifiedTopicName" /> for the definition topic for this content base
+        /// Answer the full <see cref="QualifiedTopicName" /> for the definition topic for this content base
         /// </summary>
         [XmlIgnore]
-        public TopicName DefinitionTopic
+        public QualifiedTopicName DefinitionTopic
         {
             get
             {
-                return new NamespaceQualifiedTopicName(DefinitionTopicName, Namespace);
+                return new QualifiedTopicName(DefinitionTopicName, Namespace);
             }
         }
         public static string DefinitionTopicName
@@ -181,7 +179,7 @@ namespace FlexWiki
         {
             get
             {
-                ParsedTopic parsedTopic = ContentProviderChain.GetParsedTopic(ExternalWikisTopic);
+                ParsedTopic parsedTopic = ContentProviderChain.GetParsedTopic(new UnqualifiedTopicRevision(ExternalWikisTopic));
 
                 if (parsedTopic == null)
                 {
@@ -386,7 +384,7 @@ namespace FlexWiki
             }
         }
 
-        private IParsedContentProvider ContentProviderChain
+        private ContentProviderBase ContentProviderChain
         {
             get
             {
@@ -410,6 +408,10 @@ namespace FlexWiki
         /// <returns>Enumeration of TopicChanges </returns>
         public TopicChangeCollection AllChangesForTopic(string topic)
         {
+            return AllChangesForTopic(new UnqualifiedTopicName(topic)); 
+        }
+        public TopicChangeCollection AllChangesForTopic(UnqualifiedTopicName topic)
+        {
             return AllChangesForTopicSince(topic, DateTime.MinValue);
         }
         /// <summary>
@@ -419,7 +421,11 @@ namespace FlexWiki
         /// <param name="stamp">A non-null timestamp; changes before this time won't be included in the answer </param>
         /// <param name="rule">A composite cache rule to fill with rules that represented accumulated dependencies (or null)</param>
         /// <returns>Enumeration of TopicChanges</returns>
-        public TopicChangeCollection AllChangesForTopicSince(string topic, DateTime stamp)
+        public TopicChangeCollection AllChangesForTopicSince(string topic, DateTime since)
+        {
+            return AllChangesForTopicSince(new UnqualifiedTopicName(topic), since); 
+        }
+        public TopicChangeCollection AllChangesForTopicSince(UnqualifiedTopicName topic, DateTime stamp)
         {
             return ContentProviderChain.AllChangesForTopicSince(topic, stamp);
         }
@@ -428,26 +434,26 @@ namespace FlexWiki
         /// </summary>
         /// <param name="topic"></param>
         /// <returns></returns>
-        public NamespaceQualifiedTopicNameCollection AllNamespaceQualifiedTopicNamesThatExist(string topicName)
+        public QualifiedTopicNameCollection AllQualifiedTopicNamesThatExist(string topicName)
         {
-            NamespaceQualifiedTopicNameCollection answer = new NamespaceQualifiedTopicNameCollection();
+            QualifiedTopicNameCollection answer = new QualifiedTopicNameCollection();
 
             if (TopicExists(topicName, ImportPolicy.DoNotIncludeImports))
             {
-                answer.Add(NamespaceQualifiedTopicNameFor(topicName));
+                answer.Add(QualifiedTopicNameFor(topicName));
             }
 
             foreach (NamespaceManager manager in ImportedNamespaceManagers)
             {
                 if (manager.TopicExists(topicName, ImportPolicy.DoNotIncludeImports))
                 {
-                    answer.Add(manager.NamespaceQualifiedTopicNameFor(topicName));
+                    answer.Add(manager.QualifiedTopicNameFor(topicName));
                 }
             }
 
             return answer;
         }
-        public NamespaceQualifiedTopicNameCollection AllPossibleNamespaceQualifiedTopicNames(TopicName topicName)
+        public QualifiedTopicNameCollection AllPossibleQualifiedTopicNames(TopicName topicName)
         {
             throw new NotImplementedException();
         }
@@ -457,14 +463,18 @@ namespace FlexWiki
         /// <param name="referencing">Specific topic for which reference information is desired</param>
         /// <param name="existencePolicy">Specifies whether to only return the referenced topics that actually exist</param>
         /// <returns>A list of topics referenced by the specified topic.</returns>
-        public NamespaceQualifiedTopicVersionKeyCollection AllReferencesByTopic(string referencingTopic, ExistencePolicy existencePolicy)
+        public QualifiedTopicRevisionCollection AllReferencesByTopic(string referencingTopic, ExistencePolicy existencePolicy)
+        {
+            return AllReferencesByTopic(new UnqualifiedTopicName(referencingTopic), existencePolicy); 
+        }
+        public QualifiedTopicRevisionCollection AllReferencesByTopic(UnqualifiedTopicName referencingTopic, ExistencePolicy existencePolicy)
         {
             if (referencingTopic == null)
             {
                 throw new ArgumentNullException("referencingTopic");
             }
 
-            RelativeTopicVersionKeyCollection references = ContentProviderChain.GetParsedTopic(referencingTopic).TopicLinks;
+            TopicRevisionCollection references = ContentProviderChain.GetParsedTopic(new UnqualifiedTopicRevision(referencingTopic.LocalName)).TopicLinks;
 
             // In-scope namespaces include this namespace and every imported namespace.
             IList<string> inScopeNamespaces = new List<string>();
@@ -475,8 +485,8 @@ namespace FlexWiki
             }
 
             // Since the list that comes back might be read-only, we make a new one. 
-            NamespaceQualifiedTopicVersionKeyCollection resolvedReferences = new NamespaceQualifiedTopicVersionKeyCollection();
-            foreach (RelativeTopicVersionKey reference in references)
+            QualifiedTopicRevisionCollection resolvedReferences = new QualifiedTopicRevisionCollection();
+            foreach (TopicRevision reference in references)
             {
                 // If the reference has no namespace, consider it to be relative to 
                 // every in-scope namespace
@@ -484,12 +494,12 @@ namespace FlexWiki
                 {
                     foreach (string inScopeNamespace in inScopeNamespaces)
                     {
-                        resolvedReferences.Add(reference.AsAbsoluteTopicVersionKey(inScopeNamespace));
+                        resolvedReferences.Add(reference.ResolveRelativeTo(inScopeNamespace));
                     }
                 }
                 else
                 {
-                    resolvedReferences.Add(new NamespaceQualifiedTopicVersionKey(reference.LocalName, reference.Namespace));
+                    resolvedReferences.Add(new QualifiedTopicRevision(reference.LocalName, reference.Namespace));
                 }
             }
 
@@ -497,9 +507,9 @@ namespace FlexWiki
             {
                 // We can't remove items from a list we're iterating over, so 
                 // we need to make a new list. 
-                NamespaceQualifiedTopicVersionKeyCollection filteredReferences = new NamespaceQualifiedTopicVersionKeyCollection();
+                QualifiedTopicRevisionCollection filteredReferences = new QualifiedTopicRevisionCollection();
 
-                foreach (NamespaceQualifiedTopicVersionKey resolvedReference in resolvedReferences)
+                foreach (QualifiedTopicRevision resolvedReference in resolvedReferences)
                 {
                     NamespaceManager manager = Federation.NamespaceManagerForNamespace(resolvedReference.Namespace);
 
@@ -526,8 +536,8 @@ namespace FlexWiki
         /// </summary>
         /// <param name="importPolicy">Indicates whether topics in imported namespaces
         /// should be included in the details.</param>
-        /// <returns>A collection of <see cref="NamespaceQualifiedTopicName" /> objects.</returns>
-        public NamespaceQualifiedTopicNameCollection AllTopics(ImportPolicy importPolicy)
+        /// <returns>A collection of <see cref="QualifiedTopicName" /> objects.</returns>
+        public QualifiedTopicNameCollection AllTopics(ImportPolicy importPolicy)
         {
             return AllTopics(importPolicy, null);
         }
@@ -536,15 +546,15 @@ namespace FlexWiki
         /// </summary>
         /// <param name="importPolicy">Indicates whether topics in imported namespaces
         /// should be included in the details.</param>
-        /// <param name="sortCriterion">A <see cref="Comparision&gt;NamespaceQualifiedTopicName&lt;"/> to use to
+        /// <param name="sortCriterion">A <see cref="Comparision&gt;QualifiedTopicName&lt;"/> to use to
         /// sort the output, or null not to sort.</param>
-        /// <returns>A (potentially sorted) list of <see cref="NamespaceQualifiedTopicName"/> objects.</returns>
+        /// <returns>A (potentially sorted) list of <see cref="QualifiedTopicName"/> objects.</returns>
         /// <remarks>Order is not guaranteed in the absence of a sortCriteria.</remarks>
-        public NamespaceQualifiedTopicNameCollection AllTopics(ImportPolicy importPolicy, Comparison<NamespaceQualifiedTopicName> sortCriterion)
+        public QualifiedTopicNameCollection AllTopics(ImportPolicy importPolicy, Comparison<QualifiedTopicName> sortCriterion)
         {
-            NamespaceQualifiedTopicNameCollection answer = new NamespaceQualifiedTopicNameCollection();
+            QualifiedTopicNameCollection answer = new QualifiedTopicNameCollection();
 
-            NamespaceQualifiedTopicNameCollection unsortedTopics = ContentProviderChain.AllTopics();
+            QualifiedTopicNameCollection unsortedTopics = ContentProviderChain.AllTopics();
 
             answer.AddRange(unsortedTopics); 
 
@@ -566,8 +576,8 @@ namespace FlexWiki
         /// <summary>
         /// Answer an enumeration of all topic in the <see cref="ContentBase"/>, sorted by last modified (does not include those in imported namespaces)
         /// </summary>
-        /// <returns>List of <see cref="NamespaceQualifiedTopicName"/> objects.</returns>
-        public NamespaceQualifiedTopicNameCollection AllTopicsSortedLastModifiedDescending()
+        /// <returns>List of <see cref="QualifiedTopicName"/> objects.</returns>
+        public QualifiedTopicNameCollection AllTopicsSortedLastModifiedDescending()
         {
             return AllTopics(ImportPolicy.DoNotIncludeImports, CompareModificationTime);
         }
@@ -597,6 +607,10 @@ namespace FlexWiki
         /// </summary>
         /// <param name="topic"></param>
         public void DeleteTopic(string topic)
+        {
+            DeleteTopic(new UnqualifiedTopicName(topic)); 
+        }
+        public void DeleteTopic(UnqualifiedTopicName topic)
         {
             ContentProviderChain.DeleteTopic(topic);
         }
@@ -684,7 +698,7 @@ namespace FlexWiki
 
             if (changes == null)
             {
-                throw TopicNotFoundException.ForTopic(new LocalTopicVersionKey(topic), Namespace); 
+                throw TopicNotFoundException.ForTopic(new UnqualifiedTopicRevision(topic), Namespace); 
             }
 
             if (version == null)
@@ -702,12 +716,12 @@ namespace FlexWiki
                 }
             }
 
-            throw TopicNotFoundException.ForTopic(new LocalTopicVersionKey(topic), Namespace); 
+            throw TopicNotFoundException.ForTopic(new UnqualifiedTopicRevision(topic), Namespace); 
         }
         [ExposedMethod(ExposedMethodFlags.Default, "Get information about the given topic")]
         public TopicVersionInfo GetTopicInfo(string topicName)
         {
-            NamespaceQualifiedTopicVersionKey abs = new NamespaceQualifiedTopicVersionKey(topicName, Namespace);
+            QualifiedTopicRevision abs = new QualifiedTopicRevision(topicName, Namespace);
             return new TopicVersionInfo(Federation, abs);
         }
         /// <summary>
@@ -756,7 +770,11 @@ namespace FlexWiki
         }
         public TopicPropertyCollection GetTopicProperties(string topic)
         {
-            ParsedTopic parsedTopic = ContentProviderChain.GetParsedTopic(topic);
+            return GetTopicProperties(new UnqualifiedTopicName(topic)); 
+        }
+        public TopicPropertyCollection GetTopicProperties(UnqualifiedTopicName topic)
+        {
+            ParsedTopic parsedTopic = ContentProviderChain.GetParsedTopic(new UnqualifiedTopicRevision(topic));
             
             if (parsedTopic == null)
             {
@@ -776,7 +794,11 @@ namespace FlexWiki
         /// exists. However, if the property is not present, the object will have no values.</remarks>
         public TopicProperty GetTopicProperty(string topic, string propertyName)
         {
-            ParsedTopic parsedTopic = ContentProviderChain.GetParsedTopic(topic);
+            return GetTopicProperty(new UnqualifiedTopicName(topic), propertyName); 
+        }
+        public TopicProperty GetTopicProperty(UnqualifiedTopicName topic, string propertyName)
+        {
+            ParsedTopic parsedTopic = ContentProviderChain.GetParsedTopic(new UnqualifiedTopicRevision(topic));
 
             if (parsedTopic == null)
             {
@@ -806,6 +828,10 @@ namespace FlexWiki
         /// <returns>true if the topic exists AND is writable by the current user; else false</returns>
         public bool IsExistingTopicWritable(string topic)
         {
+            return IsExistingTopicWritable(new UnqualifiedTopicName(topic)); 
+        }
+        public bool IsExistingTopicWritable(UnqualifiedTopicName topic)
+        {
             return ContentProviderChain.IsExistingTopicWritable(topic);
         }
         /// <summary>
@@ -814,6 +840,10 @@ namespace FlexWiki
         /// <param name="topic">The topic</param>
         /// <returns>The most recent version string for the topic</returns>
         public string LatestVersionForTopic(string topic)
+        {
+            return LatestVersionForTopic(new UnqualifiedTopicName(topic)); 
+        }
+        public string LatestVersionForTopic(UnqualifiedTopicName topic)
         {
             IList<TopicChange> changes = AllChangesForTopic(topic);
 
@@ -846,13 +876,17 @@ namespace FlexWiki
             return lastModified;
         }
         /// <summary>
-        /// Answer an <see cref="NamespaceQualifiedTopicName"/> for the given topic name local to this ContentProviderChain.
+        /// Answer an <see cref="QualifiedTopicName"/> for the given topic name local to this ContentProviderChain.
         /// </summary>
         /// <param name="localTopicName">A topic name</param>
         /// <returns>An AbsoluteTopicName</returns>
-        public NamespaceQualifiedTopicName NamespaceQualifiedTopicNameFor(string localTopicName)
+        public QualifiedTopicName QualifiedTopicNameFor(string localTopicName)
         {
-            return new NamespaceQualifiedTopicName(localTopicName, Namespace);
+            return QualifiedTopicNameFor(new UnqualifiedTopicName(localTopicName)); 
+        }
+        public QualifiedTopicName QualifiedTopicNameFor(UnqualifiedTopicName localTopicName)
+        {
+            return new QualifiedTopicName(localTopicName.LocalName, Namespace);
         }
         /// <summary>
         /// Answer the contents of a given topic.
@@ -861,7 +895,11 @@ namespace FlexWiki
         /// <returns>The contents of the topic or null if it can't be read (e.g., doesn't exist).</returns>
         public string Read(string topic)
         {
-            return Read(topic, null); 
+            return Read(new UnqualifiedTopicName(topic)); 
+        }
+        public string Read(UnqualifiedTopicName topic)
+        {
+            return Read(new UnqualifiedTopicRevision(topic.LocalName, null)); 
         }
         /// <summary>
         /// Answer the contents of a given topic.
@@ -869,9 +907,9 @@ namespace FlexWiki
         /// <param name="topic">The topic.</param>
         /// <param name="version">The version to read, or null for the latest version.</param>
         /// <returns>The contents of the topic or null if it can't be read (e.g., doesn't exist)</returns>
-        public string Read(string topic, string version)
+        public string Read(UnqualifiedTopicRevision revision)
         {
-            using (TextReader st = TextReaderForTopic(topic, version))
+            using (TextReader st = TextReaderForTopic(revision))
             {
                 if (st == null)
                 {
@@ -888,7 +926,7 @@ namespace FlexWiki
         /// <param name="newName">The new name</param>
         /// <param name="fixup">true to fixup referenced topic *in this namespace*; false to do no fixups</param>
         /// <returns>ArrayList of strings that can be reported back to the user of what happened during the fixup process</returns>
-        public RenameTopicDetails RenameTopic(string oldName, string newName, ReferenceFixupPolicy fixupPolicy, string author)
+        public RenameTopicDetails RenameTopic(UnqualifiedTopicName oldName, UnqualifiedTopicName newName, ReferenceFixupPolicy fixupPolicy, string author)
         {
             RenameTopicDetails details = new RenameTopicDetails();
 
@@ -904,19 +942,19 @@ namespace FlexWiki
                 return details;
             }
 
-            string oldTopicOldContents = Read(oldName);
+            string oldTopicOldContents = Read(oldName.LocalName);
             string oldTopicNewContents = string.Format("Redirect: {0}\n\nThis topic was renamed to {0}.",
                 newName);
 
-            WriteTopicAndNewVersion(oldName, oldTopicNewContents, author);
-            WriteTopicAndNewVersion(newName, oldTopicOldContents, author);
+            WriteTopicAndNewVersion(oldName.LocalName, oldTopicNewContents, author);
+            WriteTopicAndNewVersion(newName.LocalName, oldTopicOldContents, author);
 
             if (fixupPolicy == ReferenceFixupPolicy.FixReferences)
             {
                 foreach (TopicName topicName in AllTopics(ImportPolicy.DoNotIncludeImports))
                 {
                     bool renamed = RenameTopicReferences(topicName.LocalName,
-                        oldName, newName, author);
+                        oldName.LocalName, newName.LocalName, author);
 
                     if (renamed)
                     {
@@ -1013,13 +1051,21 @@ namespace FlexWiki
         /// <returns>TextReader</returns>
         public TextReader TextReaderForTopic(string topic)
         {
-            return TextReaderForTopic(topic, null);
+            return TextReaderForTopic(new UnqualifiedTopicName(topic)); 
         }
-        public TextReader TextReaderForTopic(string topic, string version)
+        public TextReader TextReaderForTopic(UnqualifiedTopicName topic)
         {
-            return ContentProviderChain.TextReaderForTopic(topic, version); 
+            return TextReaderForTopic(new UnqualifiedTopicRevision(topic.LocalName, null));
+        }
+        public TextReader TextReaderForTopic(UnqualifiedTopicRevision revision)
+        {
+            return ContentProviderChain.TextReaderForTopic(revision); 
         }
         public bool TopicExists(string topic, ImportPolicy importPolicy)
+        {
+            return TopicExists(new UnqualifiedTopicName(topic), importPolicy); 
+        }
+        public bool TopicExists(UnqualifiedTopicName topic, ImportPolicy importPolicy)
         {
             bool existsLocally = ContentProviderChain.TopicExists(topic);
 
@@ -1053,11 +1099,11 @@ namespace FlexWiki
         /// <param name="topic">The topic to check for</param>
         /// <returns>true if the topic exists</returns>
         /// <remarks>importPolicy is ignored if the topic name is absolute.</remarks>
-        public bool TopicExists(RelativeTopicVersionKey topic, ImportPolicy importPolicy)
+        public bool TopicExists(TopicRevision topic, ImportPolicy importPolicy)
         {
             if (topic.IsNamespaceQualified)
             {
-                return Federation.TopicExists(new NamespaceQualifiedTopicVersionKey(topic.LocalName, topic.Namespace));
+                return Federation.TopicExists(new QualifiedTopicRevision(topic.LocalName, topic.Namespace));
             }
             else
             {
@@ -1093,7 +1139,7 @@ namespace FlexWiki
             ArrayList answer = new ArrayList();
             foreach (TopicName name in AllTopics(ImportPolicy.DoNotIncludeImports))
             {
-                answer.Add(new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey(name)));
+                answer.Add(new TopicVersionInfo(Federation, new QualifiedTopicRevision(name)));
             }
 
             // Add cache rules for all the topics in the namespaces and for the definition (in case the imports change)
@@ -1123,7 +1169,7 @@ namespace FlexWiki
             }
             if (list.Count > 1)
             {
-                throw TopicIsAmbiguousException.ForTopic(new RelativeTopicVersionKey(topic));
+                throw TopicIsAmbiguousException.ForTopic(new TopicRevision(topic));
             }
             return new TopicName(topic, (string)list[0]);
         }
@@ -1132,9 +1178,9 @@ namespace FlexWiki
         /// </summary>
         /// <param name="topic">The name (with version) of the topic for which you want the change previous to</param>
         /// <returns>TopicChange or null if none</returns>
-        public NamespaceQualifiedTopicVersionKey VersionPreviousTo(string topic, string version)
+        public QualifiedTopicRevision VersionPreviousTo(string topic, string version)
         {
-            NamespaceQualifiedTopicVersionKey answer = new NamespaceQualifiedTopicVersionKey(topic, Namespace);
+            QualifiedTopicRevision answer = new QualifiedTopicRevision(topic, Namespace);
             answer.Version = version;
 
             TopicChangeCollection changes = AllChangesForTopic(topic);
@@ -1184,7 +1230,7 @@ namespace FlexWiki
         /// <param name="content">New content</param>
         public void WriteTopic(string topic, string contents)
         {
-            WriteTopic(topic, null, contents); 
+            WriteTopic(new UnqualifiedTopicRevision(topic), contents); 
         }
         /// <summary>
         /// Write new contents over the specified version of the topic (doesn't write a new version).
@@ -1192,16 +1238,16 @@ namespace FlexWiki
         /// <param name="topic">Topic to overwrite.</param>
         /// <param name="version">Version to overwrite.</param>
         /// <param name="content">New content.</param>
-        public void WriteTopic(string topic, string version, string content)
+        public void WriteTopic(UnqualifiedTopicRevision revision, string content)
         {
-            if (version != null)
+            if (revision.Version != null)
             {
-                if (!TopicVersionExists(topic, version))
+                if (!TopicVersionExists(revision))
                 {
-                    throw FlexWikiException.VersionDoesNotExist(new TopicName(topic, Namespace), version); 
+                    throw FlexWikiException.VersionDoesNotExist(revision); 
                 }
             }
-            ContentProviderChain.WriteTopic(topic, version, content);
+            ContentProviderChain.WriteTopic(revision, content);
         }
         /// <summary>
         /// Write a topic (and create a historical version)
@@ -1210,7 +1256,7 @@ namespace FlexWiki
         /// <param name="content">The content</param>
         public void WriteTopicAndNewVersion(string topic, string content, string author)
         {
-            ContentProviderChain.WriteTopicAndNewVersion(topic, content, author);
+            ContentProviderChain.WriteTopicAndNewVersion(new UnqualifiedTopicName(topic), content, author);
         }
 
         // Private methods
@@ -1269,7 +1315,7 @@ namespace FlexWiki
             MatchCollection wikiNames = Formatter.extractWikiNames.Matches(current);
             ArrayList processed = new ArrayList();
             bool any = false;
-            TopicVersionKey newTopicKey = new NamespaceQualifiedTopicVersionKey(newName);
+            TopicRevision newTopicKey = new QualifiedTopicRevision(newName);
             TopicName newTopicName = new TopicName(newTopicKey.LocalName, newTopicKey.Namespace); 
             foreach (Match m in wikiNames)
             {
@@ -1280,7 +1326,7 @@ namespace FlexWiki
                 }
                 processed.Add(each);
 
-                RelativeTopicVersionKey relName = new RelativeTopicVersionKey(TopicParser.StripTopicNameEscapes(each));
+                TopicRevision relName = new TopicRevision(TopicParser.StripTopicNameEscapes(each));
 
                 // See if this is the old name.  The only way it can be is if it's unqualified or if it's qualified with the current namespace.
 
@@ -1316,7 +1362,7 @@ namespace FlexWiki
         private TopicInfoArray RetrieveAllTopicsWith(string propertyName, string desiredValue, ImportPolicy importPolicy)
         {
             TopicInfoArray topicInfos = new TopicInfoArray();
-            foreach (NamespaceQualifiedTopicName namespaceQualifiedTopicName in AllTopics(importPolicy))
+            foreach (QualifiedTopicName namespaceQualifiedTopicName in AllTopics(importPolicy))
             {
                 TopicProperty property = Federation.GetTopicProperty(namespaceQualifiedTopicName, 
                     propertyName);
@@ -1331,7 +1377,7 @@ namespace FlexWiki
                             if (desiredValue == null || (0 == String.Compare(desiredValue, value, true)))
                             {
                                 topicInfos.Add(new TopicVersionInfo(this.Federation,
-                                    new NamespaceQualifiedTopicVersionKey(namespaceQualifiedTopicName)));
+                                    new QualifiedTopicRevision(namespaceQualifiedTopicName)));
                                 break;
                             }
                         }
@@ -1343,9 +1389,9 @@ namespace FlexWiki
 
         }
 
-        private bool TopicVersionExists(string topic, string version)
+        private bool TopicVersionExists(UnqualifiedTopicRevision revision)
         {
-            TopicChangeCollection changes = AllChangesForTopic(topic);
+            TopicChangeCollection changes = AllChangesForTopic(revision.Name);
 
             if (changes == null)
             {
@@ -1354,7 +1400,7 @@ namespace FlexWiki
 
             foreach (TopicChange change in changes)
             {
-                if (change.Version == version)
+                if (change.Version == revision.Version)
                 {
                     return true; 
                 }

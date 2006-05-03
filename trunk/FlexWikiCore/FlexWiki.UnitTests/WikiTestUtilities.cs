@@ -84,11 +84,11 @@ namespace FlexWiki.UnitTests
             return federation.RegisterNamespace(store, ns, parameters);
         }
 
-        internal static NamespaceQualifiedTopicVersionKey WriteTestTopicAndNewVersion(NamespaceManager namespaceManager,
+        internal static QualifiedTopicRevision WriteTestTopicAndNewVersion(NamespaceManager namespaceManager,
           string localName, string content, string author)
         {
-            NamespaceQualifiedTopicVersionKey name = new NamespaceQualifiedTopicVersionKey(localName, namespaceManager.Namespace);
-            name.Version = NamespaceQualifiedTopicVersionKey.NewVersionStringForUser(author, 
+            QualifiedTopicRevision name = new QualifiedTopicRevision(localName, namespaceManager.Namespace);
+            name.Version = QualifiedTopicRevision.NewVersionStringForUser(author, 
                 namespaceManager.Federation.TimeProvider.Now);
             namespaceManager.WriteTopicAndNewVersion(name.LocalName, content, author);
             return name;

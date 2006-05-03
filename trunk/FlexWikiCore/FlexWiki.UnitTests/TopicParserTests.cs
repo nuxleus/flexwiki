@@ -127,9 +127,9 @@ PropertyOne: ValueC");
 a link to WikiTopicOne and WikiTopicTwo and ForeignNamespace.WikiTopicOne");
 
             AssertTopicLinksCorrect(parsedTopic.TopicLinks,
-                new RelativeTopicVersionKey("WikiTopicOne"),
-                new RelativeTopicVersionKey("WikiTopicTwo"),
-                new RelativeTopicVersionKey("WikiTopicOne", "ForeignNamespace"));
+                new RelativeTopicRevision("WikiTopicOne"),
+                new RelativeTopicRevision("WikiTopicTwo"),
+                new RelativeTopicRevision("WikiTopicOne", "ForeignNamespace"));
         }
         
         [Test]
@@ -147,8 +147,8 @@ a link to WikiTopicOne and WikiTopicTwo and ForeignNamespace.WikiTopicOne");
 a link to WikiTopicOne, another link to WikiTopicOne, and a link to WikiTopicTwo.");
 
             AssertTopicLinksCorrect(parsedTopic.TopicLinks,
-                new RelativeTopicVersionKey("WikiTopicOne"),
-                new RelativeTopicVersionKey("WikiTopicTwo"));
+                new RelativeTopicRevision("WikiTopicOne"),
+                new RelativeTopicRevision("WikiTopicTwo"));
         }
 
         [Test]
@@ -158,8 +158,8 @@ a link to WikiTopicOne, another link to WikiTopicOne, and a link to WikiTopicTwo
 to WikiTopicOne and WikiTopicTwo");
 
             AssertTopicLinksCorrect(parsedTopic.TopicLinks,
-                new RelativeTopicVersionKey("WikiTopicOne"),
-                new RelativeTopicVersionKey("WikiTopicTwo")
+                new RelativeTopicRevision("WikiTopicOne"),
+                new RelativeTopicRevision("WikiTopicTwo")
                 );
         }
 
@@ -179,8 +179,8 @@ to WikiTopicOne and WikiTopicTwo");
 			}
         }
 
-        private static void AssertTopicLinksCorrect(IList<RelativeTopicVersionKey> actualLinks,
-            params RelativeTopicVersionKey[] expectedLinks)
+        private static void AssertTopicLinksCorrect(IList<RelativeTopicRevision> actualLinks,
+            params RelativeTopicRevision[] expectedLinks)
         {
             Assert.AreEqual(expectedLinks.Length, actualLinks.Count,
                 "Checking that the right number of links were returned.");

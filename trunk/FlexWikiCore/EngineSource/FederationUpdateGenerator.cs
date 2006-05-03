@@ -45,28 +45,28 @@ namespace FlexWiki
 			throw new Exception("FederationUpdateGenerator can not process changes with an empty generation context stack.  This is a coding error.");
 		}
 
-		public void RecordPropertyChange(NamespaceQualifiedTopicVersionKey topic, string propertyName, FederationUpdate.PropertyChangeType aType)
+		public void RecordPropertyChange(QualifiedTopicRevision topic, string propertyName, FederationUpdate.PropertyChangeType aType)
 		{
 			if (_Update == null)
 				ThrowMissingContext();
 			_Update.RecordPropertyChange(topic, propertyName, aType);
 		}
 
-		public void RecordCreatedTopic(NamespaceQualifiedTopicVersionKey name)
+		public void RecordCreatedTopic(QualifiedTopicRevision name)
 		{
 			if (_Update == null)
 				ThrowMissingContext();
 			_Update.RecordCreatedTopic(name);
 		}
 
-		public void RecordDeletedTopic(NamespaceQualifiedTopicVersionKey name)
+		public void RecordDeletedTopic(QualifiedTopicRevision name)
 		{
 			if (_Update == null)
 				ThrowMissingContext();
 			_Update.RecordDeletedTopic(name);
 		}
 
-		public void RecordUpdatedTopic(NamespaceQualifiedTopicVersionKey name)
+		public void RecordUpdatedTopic(QualifiedTopicRevision name)
 		{
 			if (_Update == null)
 				ThrowMissingContext();

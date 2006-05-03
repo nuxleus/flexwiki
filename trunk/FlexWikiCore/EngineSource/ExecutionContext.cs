@@ -111,13 +111,13 @@ namespace FlexWiki
                 return _currentTopicContext;
             }
         }
-        public NamespaceQualifiedTopicVersionKey CurrentTopicName
+        public QualifiedTopicRevision CurrentTopicName
         {
             get
             {
                 if (CurrentTopicContext == null)
                     return null;
-                return CurrentTopicContext.CurrentTopic.TopicVersionKey;
+                return CurrentTopicContext.CurrentTopic.TopicRevision;
             }
         }
         public ExternalReferencesMap ExternalWikiMap

@@ -192,7 +192,7 @@ namespace FlexWiki.Formatting
 				ctx.Presenter = Presenter;
 
 				TopicVersionInfo topic = topicContext != null ? topicContext.CurrentTopic : null;
-				if (topic != null && topic.TopicVersionKey != null)
+				if (topic != null && topic.TopicRevision != null)
 				{
 					// Locate any topics via the NamespaceWith propertyName to see 
                     // if there's anybody else we should import (for all topics in the namespace)
@@ -203,7 +203,7 @@ namespace FlexWiki.Formatting
 						nswith.Reverse();
 						foreach (string top in nswith)
 						{
-							NamespaceQualifiedTopicVersionKey abs = Federation.UnambiguousTopicNameFor(new RelativeTopicVersionKey(top), 
+							QualifiedTopicRevision abs = Federation.UnambiguousTopicNameFor(new TopicRevision(top), 
                                 topic.NamespaceManager.Namespace);
 							if (abs == null)
 							{
@@ -221,7 +221,7 @@ namespace FlexWiki.Formatting
 						with.Reverse();
 						foreach (string top in with)
 						{
-							NamespaceQualifiedTopicVersionKey abs = Federation.UnambiguousTopicNameFor(new RelativeTopicVersionKey(top), 
+							QualifiedTopicRevision abs = Federation.UnambiguousTopicNameFor(new TopicRevision(top), 
                                 topic.NamespaceManager.Namespace);
 							if (abs == null)
 							{
@@ -231,7 +231,7 @@ namespace FlexWiki.Formatting
 						}
 					}
 					// add the topic to the current scope (this guy goes at the front of the queue!)
-					theScope = new TopicScope(theScope, new DynamicTopic(topic.Federation, topic.TopicVersionKey));
+					theScope = new TopicScope(theScope, new DynamicTopic(topic.Federation, topic.TopicRevision));
 
 				}
 				if (theScope != null)

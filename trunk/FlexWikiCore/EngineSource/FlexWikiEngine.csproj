@@ -97,10 +97,13 @@
       <Link>SharedAssemblyInfo.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Collections\LocalTopicVersionKeyCollection.cs" />
-    <Compile Include="Collections\NamespaceQualifiedTopicNameCollection.cs" />
-    <Compile Include="NamespaceQualifiedTopicName.cs" />
-    <Compile Include="NamespaceQualifiedTopicVersionKey.cs">
+    <Compile Include="Collections\UnqualifiedTopicRevisionCollection.cs" />
+    <Compile Include="Collections\QualifiedTopicNameCollection.cs" />
+    <Compile Include="Collections\RelativeTopicRevisionCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="QualifiedTopicName.cs" />
+    <Compile Include="QualifiedTopicRevision.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="AlignOption.cs">
@@ -189,14 +192,12 @@
     <Compile Include="ClassicBehaviors.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Collections\NamespaceQualifiedTopicVersionKeyCollection.cs" />
-    <Compile Include="Collections\LocalTopicNameCollection.cs" />
+    <Compile Include="Collections\QualifiedTopicRevisionCollection.cs" />
+    <Compile Include="Collections\UnqualifiedTopicNameCollection.cs" />
     <Compile Include="Collections\NamespaceCollection.cs" />
     <Compile Include="Collections\NamespaceManagerCollection.cs" />
-    <Compile Include="Collections\ReadOnlyRelativeTopicNameCollection.cs" />
     <Compile Include="Collections\ReferenceMap.cs" />
     <Compile Include="Collections\ExternalReferencesMap.cs" />
-    <Compile Include="Collections\RelativeTopicVersionKeyCollection.cs" />
     <Compile Include="Collections\TopicChangeCollection.cs" />
     <Compile Include="Collections\TopicNameCollection.cs" />
     <Compile Include="CompositePresentation.cs">
@@ -209,11 +210,10 @@
     <Compile Include="ExpressionChainPTN.cs" />
     <Compile Include="FlexWikiException.cs" />
     <Compile Include="IWikiApplication.cs" />
-    <Compile Include="LocalTopicName.cs" />
+    <Compile Include="UnqualifiedTopicName.cs" />
     <Compile Include="NamespaceManager.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ForwardingParsedContentProvider.cs" />
     <Compile Include="CustomSorter.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -353,11 +353,7 @@
     <Compile Include="IBELObject.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="IContentProvider.cs" />
-    <Compile Include="IParsedContentProvider.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="IUnparsedContentProvider.cs" />
+    <Compile Include="ContentProviderBase.cs" />
     <Compile Include="IDeliveryBoy.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -429,7 +425,7 @@
     <Compile Include="LinkPresentation.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="LocalTopicVersionKey.cs" />
+    <Compile Include="UnqualifiedTopicRevision.cs" />
     <Compile Include="Log.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -506,9 +502,6 @@
     <Compile Include="ReflectedValueSource.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="RelativeTopicVersionKey.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="RenameTopicDetails.cs" />
     <Compile Include="RenameTopicResult.cs" />
     <Compile Include="Request.cs">
@@ -569,7 +562,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="TopicName.cs" />
-    <Compile Include="TopicVersionKey.cs">
+    <Compile Include="TopicRevision.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="TopicNotFoundException.cs">
@@ -603,9 +596,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="UnexpectedTokenParseException.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="UnqualifiedTopicName.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Utilities.cs">

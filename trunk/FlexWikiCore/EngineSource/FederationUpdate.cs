@@ -45,7 +45,7 @@ namespace FlexWiki
 		HybridDictionary _RemovedPropertiesByProperty = new HybridDictionary();
 		HybridDictionary _ChangedPropertiesByProperty = new HybridDictionary();
 
-		public void RecordPropertyChange(NamespaceQualifiedTopicVersionKey topic, string propertyName, PropertyChangeType aType)
+		public void RecordPropertyChange(QualifiedTopicRevision topic, string propertyName, PropertyChangeType aType)
 		{
 			switch (aType)
 			{
@@ -75,11 +75,11 @@ namespace FlexWiki
 
 		public void AddUpdatesFrom(FederationUpdate src)
 		{
-			foreach (NamespaceQualifiedTopicVersionKey top in src.CreatedTopics)
+			foreach (QualifiedTopicRevision top in src.CreatedTopics)
 				RecordCreatedTopic(top);
-			foreach (NamespaceQualifiedTopicVersionKey top in src.DeletedTopics)
+			foreach (QualifiedTopicRevision top in src.DeletedTopics)
 				RecordDeletedTopic(top);			
-			foreach (NamespaceQualifiedTopicVersionKey top in src.UpdatedTopics)
+			foreach (QualifiedTopicRevision top in src.UpdatedTopics)
 				RecordUpdatedTopic(top);
 			foreach (DictionaryEntry e in src._AddedPropertiesByTopic)
 				_AddedPropertiesByTopic[e.Key] = e.Value;
@@ -99,7 +99,7 @@ namespace FlexWiki
 				RecordNamespaceListChanged();
 		}
 
-		void AddToDictionaries(HybridDictionary byProperty, HybridDictionary byTopic, NamespaceQualifiedTopicVersionKey topic, string prop)
+		void AddToDictionaries(HybridDictionary byProperty, HybridDictionary byTopic, QualifiedTopicRevision topic, string prop)
 		{
 			ArrayList tList;
 			ArrayList pList;
@@ -167,7 +167,7 @@ namespace FlexWiki
 
 		ArrayList _EmptyList = new ArrayList();
 
-		public IList RemovedPropertiesForTopic(NamespaceQualifiedTopicVersionKey topic)
+		public IList RemovedPropertiesForTopic(QualifiedTopicRevision topic)
 		{
 			IList answer = (IList)(_RemovedPropertiesByTopic[topic]);
 			if (answer == null)
@@ -175,7 +175,7 @@ namespace FlexWiki
 			return answer;
 		}
 
-		public IList AddedPropertiesForTopic(NamespaceQualifiedTopicVersionKey topic)
+		public IList AddedPropertiesForTopic(QualifiedTopicRevision topic)
 		{
 			IList answer = (IList)(_AddedPropertiesByTopic[topic]);
 			if (answer == null)
@@ -183,7 +183,7 @@ namespace FlexWiki
 			return answer;
 		}
 
-		public IList ChangedPropertiesForTopic(NamespaceQualifiedTopicVersionKey topic)
+		public IList ChangedPropertiesForTopic(QualifiedTopicRevision topic)
 		{
 			IList answer = (IList)(_ChangedPropertiesByTopic[topic]);
 			if (answer == null)
@@ -201,7 +201,7 @@ namespace FlexWiki
 			}
 		}
 
-		public void RecordCreatedTopic(NamespaceQualifiedTopicVersionKey name)
+		public void RecordCreatedTopic(QualifiedTopicRevision name)
 		{
 			if (_CreatedTopics.Contains(name))
 				return;
@@ -218,7 +218,7 @@ namespace FlexWiki
 			}
 		}
 
-		public void RecordDeletedTopic(NamespaceQualifiedTopicVersionKey name)
+		public void RecordDeletedTopic(QualifiedTopicRevision name)
 		{
 			if (_DeletedTopics.Contains(name))
 				return;
@@ -235,7 +235,7 @@ namespace FlexWiki
 			}
 		}
 
-		public void RecordUpdatedTopic(NamespaceQualifiedTopicVersionKey name)
+		public void RecordUpdatedTopic(QualifiedTopicRevision name)
 		{
 			if (_UpdatedTopics.Contains(name))
 				return;

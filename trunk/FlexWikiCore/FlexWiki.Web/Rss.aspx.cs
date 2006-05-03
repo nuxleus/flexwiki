@@ -105,14 +105,14 @@ namespace FlexWiki.Web
             newsletter.WriteElementString("title", newsletterName);
             newsletter.WriteElementString("description", desc);
 
-            Uri link = new Uri(new Uri(FullRootUrl(Request)), TheLinkMaker.LinkToTopic(info.TopicVersionKey, true));
+            Uri link = new Uri(new Uri(FullRootUrl(Request)), TheLinkMaker.LinkToTopic(info.TopicRevision, true));
             newsletter.WriteElementString("link", link.AbsoluteUri);
 
             DateTime last = DateTime.MinValue;
-            foreach (TopicName topic in nm.AllTopicsForNewsletter(info.TopicVersionKey))
+            foreach (TopicName topic in nm.AllTopicsForNewsletter(info.TopicRevision))
             {
                 FormatRssItem(topic, newsletter);
-                TopicVersionInfo each = new TopicVersionInfo(Federation, new NamespaceQualifiedTopicVersionKey(topic));
+                TopicVersionInfo each = new TopicVersionInfo(Federation, new QualifiedTopicRevision(topic));
                 DateTime lm = each.LastModified;
                 if (lm > last)
                 {
@@ -148,7 +148,7 @@ namespace FlexWiki.Web
             Uri link = new Uri(
                 new Uri(FullRootUrl(Request)),
                 TheLinkMaker.LinkToTopic(
-                  new NamespaceQualifiedTopicVersionKey(
+                  new QualifiedTopicRevision(
                     preferredNamespace +
                     "." +
                     Federation.NamespaceManagerForNamespace(preferredNamespace).HomePage
@@ -204,7 +204,7 @@ namespace FlexWiki.Web
                 Federation.GetTopicCreationTime(topic).ToUniversalTime().ToString("r")
                 );
 
-            Uri link = new Uri(new Uri(FullRootUrl(Request)), TheLinkMaker.LinkToTopic(new NamespaceQualifiedTopicVersionKey(topic), 
+            Uri link = new Uri(new Uri(FullRootUrl(Request)), TheLinkMaker.LinkToTopic(new QualifiedTopicRevision(topic), 
                 true));
             newsletter.WriteElementString("link", link.AbsoluteUri);
 
@@ -254,7 +254,7 @@ namespace FlexWiki.Web
             if (useHTML)
             {
                 Uri link = new Uri(new Uri(FullRootUrl(Request)), TheLinkMaker.LinkToTopic(
-                    new NamespaceQualifiedTopicVersionKey(topic), true));
+                    new QualifiedTopicRevision(topic), true));
                 newsletter.WriteStartElement("a");
                 newsletter.WriteAttributeString("title", HtmlWriter.Escape(topic.QualifiedName));
                 newsletter.WriteAttributeString("href", link.AbsoluteUri);

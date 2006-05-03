@@ -31,13 +31,13 @@ namespace FlexWiki.Web
 	{
 
 		private LogEvent		  _mainEvent	  = null;
-		private NamespaceQualifiedTopicVersionKey _requestedTopic = null;
+		private QualifiedTopicRevision _requestedTopic = null;
 
 		private string _topicString	 = string.Empty;
 		private int _diff		 = 0;
 		private int _oldid		 = 0;
 
-		protected NamespaceQualifiedTopicVersionKey RequestedTopic
+		protected QualifiedTopicRevision RequestedTopic
 		{
 			get 
 			{ 
@@ -82,7 +82,7 @@ namespace FlexWiki.Web
 
 			try
 			{
-				_requestedTopic = new NamespaceQualifiedTopicVersionKey(_topicString);
+				_requestedTopic = new QualifiedTopicRevision(_topicString);
 			}
 			catch {}
 
@@ -121,19 +121,19 @@ namespace FlexWiki.Web
 
 		protected void DoPage()
 		{
-			NamespaceQualifiedTopicVersionKey newestTopicVersion = null;
-			NamespaceQualifiedTopicVersionKey oldTopicVersion	 = null;
+			QualifiedTopicRevision newestTopicVersion = null;
+			QualifiedTopicRevision oldTopicVersion	 = null;
 			int counter = 0;
-			IEnumerable changeList = Federation.GetTopicChanges(RequestedTopic.AsNamespaceQualifiedTopicName());
+			IEnumerable changeList = Federation.GetTopicChanges(RequestedTopic.AsQualifiedTopicName());
 			foreach (TopicChange change in changeList)
 			{
 				if (counter == _diff)
 				{
-					newestTopicVersion = new NamespaceQualifiedTopicVersionKey(change.Fullname);
+					newestTopicVersion = new QualifiedTopicRevision(change.Fullname);
 				}
 				else if (counter == _oldid)
 				{
-					oldTopicVersion = new NamespaceQualifiedTopicVersionKey(change.Fullname);
+					oldTopicVersion = new QualifiedTopicRevision(change.Fullname);
 					break;
 				}
 				counter++;

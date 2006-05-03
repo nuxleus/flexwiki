@@ -107,7 +107,7 @@ namespace FlexWiki
             get { return _localName; }
             set { _localName = value; }
         }
-        public string Namespace
+        public virtual string Namespace
         {
             get { return _namespace; }
             set { _namespace = value; }
@@ -155,15 +155,15 @@ namespace FlexWiki
             }
             return answer;
         }
-        public NamespaceQualifiedTopicName ResolveRelativeTo(string ns)
+        public QualifiedTopicName ResolveRelativeTo(string ns)
         {
             if (IsAbsolute)
             {
-                return new NamespaceQualifiedTopicName(LocalName, Namespace);
+                return new QualifiedTopicName(LocalName, Namespace);
             }
             else
             {
-                return new NamespaceQualifiedTopicName(LocalName, ns);
+                return new QualifiedTopicName(LocalName, ns);
             }
         }
 

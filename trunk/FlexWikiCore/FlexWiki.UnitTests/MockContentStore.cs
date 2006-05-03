@@ -24,7 +24,7 @@ namespace FlexWiki.UnitTests
     /// <summary>
     /// A content store whose purpose is to provide storage during unit tests.
     /// </summary>
-    internal class MockContentStore : IUnparsedContentProvider
+    internal class MockContentStore : UnparsedContentProviderBase
     {
         private NamespaceManager _namespaceManager;
         private DateTime _created;
@@ -81,7 +81,7 @@ namespace FlexWiki.UnitTests
             }
         }
 
-        public IUnparsedContentProvider Next
+        public UnparsedContentProviderBase Next
         {
             get
             {
@@ -115,8 +115,8 @@ namespace FlexWiki.UnitTests
             {
                 if (topicHistory.Created >= stamp)
                 {
-                    NamespaceQualifiedTopicVersionKey namespaceQualifiedTopic = new NamespaceQualifiedTopicVersionKey(topicName, Namespace);
-                    namespaceQualifiedTopic.Version = TopicVersionKey.NewVersionStringForUser(topicHistory.Author, topicHistory.Created);
+                    QualifiedTopicRevision namespaceQualifiedTopic = new QualifiedTopicRevision(topicName, Namespace);
+                    namespaceQualifiedTopic.Version = TopicRevision.NewVersionStringForUser(topicHistory.Author, topicHistory.Created);
                     changes.Add(new TopicChange(namespaceQualifiedTopic, topicHistory.Created, topicHistory.Author));
                 }
             }
@@ -124,13 +124,13 @@ namespace FlexWiki.UnitTests
             return changes;
         }
 
-        public TopicNameCollection AllTopics()
+        public QualifiedTopicNameCollection AllTopics()
         {
-            TopicNameCollection topics = new TopicNameCollection();
+            QualifiedTopicNameCollection topics = new QualifiedTopicNameCollection();
 
             foreach (MockTopic topic in AllTopics(ExistencePolicy.ExistingOnly))
             {
-                topics.Add(new TopicName(topic.Name, this.Namespace));
+                topics.Add(new QualifiedTopicName(topic.Name, this.Namespace));
             }
 
             return topics;

@@ -55,9 +55,9 @@ namespace FlexWiki
             return new LinkMaker(_SiteURL);
         }
 
-        private NamespaceQualifiedTopicVersionKey _ReturnToTopicForEditLinks;
+        private QualifiedTopicRevision _ReturnToTopicForEditLinks;
 
-        public NamespaceQualifiedTopicVersionKey ReturnToTopicForEditLinks
+        public QualifiedTopicRevision ReturnToTopicForEditLinks
         {
             get
             {
@@ -164,17 +164,17 @@ namespace FlexWiki
             return TopicLink(topic, true, null);
         }
 
-        public string LinkToTopic(TopicVersionKey topic)
+        public string LinkToTopic(TopicRevision topic)
         {
             return LinkToTopic(topic, false);
         }
 
-        public string LinkToTopic(TopicVersionKey topic, bool showDiffs)
+        public string LinkToTopic(TopicRevision topic, bool showDiffs)
         {
             return TopicLink(topic.QualifiedNameWithVersion, showDiffs, null);
         }
 
-        public string LinkToTopic(TopicVersionKey topic, bool showDiffs, NameValueCollection extraQueryParms)
+        public string LinkToTopic(TopicRevision topic, bool showDiffs, NameValueCollection extraQueryParms)
         {
             return TopicLink(topic.QualifiedNameWithVersion, showDiffs, extraQueryParms);
         }
@@ -182,7 +182,7 @@ namespace FlexWiki
         private string TopicLink(string top, bool showDiffs, NameValueCollection extraQueryParms)
         {
             StringBuilder builder = new StringBuilder();
-            RelativeTopicVersionKey topic = new RelativeTopicVersionKey(top);
+            TopicRevision topic = new TopicRevision(top);
             builder.Append(SiteURL());
             builder.Append("default.aspx/");
             if (topic.Namespace != null && topic.Namespace != "")
@@ -218,12 +218,12 @@ namespace FlexWiki
             return builder.ToString();
         }
 
-        public string LinkToLogin(TopicVersionKey topic)
+        public string LinkToLogin(TopicRevision topic)
         {
             return LinkToLogin(topic.QualifiedNameWithVersion);
         }
 
-        public string LinkToLogoff(TopicVersionKey topic)
+        public string LinkToLogoff(TopicRevision topic)
         {
             return LinkToLogoff(topic);
         }
@@ -244,7 +244,7 @@ namespace FlexWiki
             return PrintLink(topic);
         }
 
-        public string LinkToPrintView(TopicVersionKey topic)
+        public string LinkToPrintView(TopicRevision topic)
         {
             return PrintLink(topic.QualifiedNameWithVersion);
         }
@@ -290,7 +290,7 @@ namespace FlexWiki
             return RestoreLink(topic);
         }
 
-        public string LinkToRestore(TopicVersionKey topic)
+        public string LinkToRestore(TopicRevision topic)
         {
             return RestoreLink(topic.QualifiedNameWithVersion);
         }

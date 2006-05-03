@@ -546,7 +546,7 @@ namespace FlexWiki.BeL.Debugger
             {
                 if (_CurrentTopicContext != null)
                     return _CurrentTopicContext;
-                NamespaceQualifiedTopicVersionKey tn = new NamespaceQualifiedTopicVersionKey(comboBoxTopic.Text);
+                QualifiedTopicRevision tn = new QualifiedTopicRevision(comboBoxTopic.Text);
                 if (comboBoxTopic.Text.Length == 0)
                     return null;
                 _CurrentTopicContext = new TopicContext(CurrentFederation, CurrentFederation.NamespaceManagerForTopic(tn), new TopicVersionInfo(CurrentFederation, tn));

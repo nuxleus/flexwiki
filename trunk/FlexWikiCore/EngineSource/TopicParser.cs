@@ -75,7 +75,7 @@ namespace FlexWiki
         public static ParsedTopic Parse(string text)
         {
             TopicPropertyCollection properties = ParseProperties(text);
-            RelativeTopicVersionKeyCollection topicLinks = ParseTopicLinks(text);
+            TopicRevisionCollection topicLinks = ParseTopicLinks(text);
             ExternalReferencesMap externalReferences = ParseExternalReferences(text);
 
             ParsedTopic parsedTopic = new ParsedTopic(properties, topicLinks, externalReferences);
@@ -162,9 +162,9 @@ namespace FlexWiki
             }
             return properties;
         }
-        private static RelativeTopicVersionKeyCollection ParseTopicLinks(string text)
+        private static TopicRevisionCollection ParseTopicLinks(string text)
         {
-            RelativeTopicVersionKeyCollection referencedTopics = new RelativeTopicVersionKeyCollection();
+            TopicRevisionCollection referencedTopics = new TopicRevisionCollection();
 
             // TODO: Move Formatter functionality to TopicParser
             MatchCollection wikiNames = Formatter.extractWikiNames.Matches(text);
@@ -181,7 +181,7 @@ namespace FlexWiki
 
                 processed.Add(each);
 
-                RelativeTopicVersionKey referencedTopic = new RelativeTopicVersionKey(StripTopicNameEscapes(each));
+                TopicRevision referencedTopic = new TopicRevision(StripTopicNameEscapes(each));
                 referencedTopics.Add(referencedTopic);
             }
 

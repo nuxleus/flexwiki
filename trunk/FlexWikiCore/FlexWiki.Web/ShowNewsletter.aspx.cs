@@ -54,21 +54,21 @@ namespace FlexWiki.Web
 		}
 		#endregion
 
-		protected NamespaceQualifiedTopicVersionKey Newsletter
+		protected QualifiedTopicRevision Newsletter
 		{
 			get
 			{
 				string nl = Request.QueryString["newsletter"];
 				if (nl == null)
 					return null;
-				return new NamespaceQualifiedTopicVersionKey(nl);
+				return new QualifiedTopicRevision(nl);
 			}
 		}
 
 		protected void DoPage()
 		{
 			NewsletterManager manager = new NewsletterManager(Federation, TheLinkMaker, null, null, null);
-			NamespaceQualifiedTopicVersionKey newsletter = Newsletter;
+			QualifiedTopicRevision newsletter = Newsletter;
 			
 			DateTime since;
 			string headInsert = null;
@@ -94,8 +94,8 @@ namespace FlexWiki.Web
 				since = since.Subtract(new TimeSpan(24, 0, 0));
 				// Arbitrary newsletter
 				ArrayList al = new ArrayList();
-				al.Add(new NamespaceQualifiedTopicVersionKey("Microsoft.Projects.Wiki.HomePage"));
-				al.Add(new NamespaceQualifiedTopicVersionKey("Microsoft.Projects.Wiki.SecondPage"));
+				al.Add(new QualifiedTopicRevision("Microsoft.Projects.Wiki.HomePage"));
+				al.Add(new QualifiedTopicRevision("Microsoft.Projects.Wiki.SecondPage"));
 				topics = al;
 				homeNamespace = Federation.DefaultNamespace;
 			}

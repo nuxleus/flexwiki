@@ -28,7 +28,7 @@ namespace FlexWiki
     /// <summary>
     /// 
     /// </summary>
-    public class FileSystemStore : IUnparsedContentProvider
+    public class FileSystemStore : ContentProviderBase
     {
         // Fields
 
@@ -37,12 +37,17 @@ namespace FlexWiki
         private DateTime _created = DateTime.Now;
         private DateTime _definitionTopicLastRead = DateTime.MinValue;
         private DateTime _lastRead;
-        private NamespaceManager _storeManager;
         /// <summary>
         /// The file system path to the folder that contains the content
         /// </summary>
         private string _root;
         private FileSystemStoreState _fileSystemStoreState = FileSystemStoreState.New;
+
+        // Constructors
+
+        public FileSystemStore() : base(null)
+        {
+        }
 
         // Properties
 
@@ -73,9 +78,9 @@ namespace FlexWiki
         }
         private Federation Federation
         {
-            get { return StoreManager.Federation; }
+            get { return NamespaceManager.Federation; }
         }
-        bool IContentProvider.Exists
+        public override bool Exists
         {
             get
             {
@@ -85,28 +90,20 @@ namespace FlexWiki
         /// <summary>
         /// Implements <see cref="IContentProvider.IsReadOnly"/>.
         /// </summary>
-        bool IContentProvider.IsReadOnly
+        public override bool IsReadOnly
         {
             get { throw new NotImplementedException(); }
         }
-        DateTime IContentProvider.LastRead
+        public override DateTime LastRead
         {
             get
             {
                 return _lastRead;
             }
         }
-        IUnparsedContentProvider IUnparsedContentProvider.Next
-        {
-            get { throw new NotImplementedException(); }
-        }
-        private NamespaceManager StoreManager
-        {
-            get { return _storeManager; }
-        }
         private string Namespace
         {
-            get { return StoreManager.Namespace; }
+            get { return NamespaceManager.Namespace; }
         }
 
         // Methods
@@ -119,11 +116,11 @@ namespace FlexWiki
         /// <returns>Enumeration of TopicChanges</returns>
         /// <remarks>Returns a collection with zero elements in it when the topic name does not exist, or has been deleted, 
         /// or if the calling user does not have the <see cref="Permission.Read"/> permission.</remarks>
-        TopicChangeCollection IContentProvider.AllChangesForTopicSince(string topic, DateTime stamp)
+        public override TopicChangeCollection AllChangesForTopicSince(UnqualifiedTopicName topic, DateTime stamp)
         {
             TopicChangeCollection answer = new TopicChangeCollection();
 
-            FileInfo[] infos = FileInfosForTopic(topic);
+            FileInfo[] infos = FileInfosForTopic(topic.LocalName);
             ArrayList sortable = new ArrayList();
             foreach (FileInfo each in infos)
             {
@@ -137,7 +134,7 @@ namespace FlexWiki
                 {
                     continue;
                 }
-                NamespaceQualifiedTopicVersionKey name = new NamespaceQualifiedTopicVersionKey(topic, Namespace);
+                QualifiedTopicRevision name = new QualifiedTopicRevision(topic.ResolveRelativeTo(Namespace));
                 name.Version = each.Version;
                 TopicChange change = TopicChangeFromName(name);
                 answer.Add(change);
@@ -147,7 +144,7 @@ namespace FlexWiki
         /// <summary>
         /// Delete a content base (kills all .wiki and .awiki files; removed the dir if empty)
         /// </summary>
-        void IContentProvider.DeleteAllTopicsAndHistory()
+        public override void DeleteAllTopicsAndHistory()
         {
             DirectoryInfo dir = new DirectoryInfo(Root);
             foreach (FileInfo each in dir.GetFiles("*.wiki"))
@@ -169,7 +166,7 @@ namespace FlexWiki
         /// Delete a topic
         /// </summary>
         /// <param name="topic"></param>
-        void IContentProvider.DeleteTopic(string topic)
+        public override void DeleteTopic(UnqualifiedTopicName topic)
         {
             string path = TopicPath(topic, null);
             if (!File.Exists(path))
@@ -180,8 +177,6 @@ namespace FlexWiki
             File.Delete(path);
 
             // Fire the event
-            FederationUpdate update = new FederationUpdate();
-            update.RecordDeletedTopic(new NamespaceQualifiedTopicVersionKey(topic, Namespace));
             //OnFederationUpdated(new FederationUpdateEventArgs(update));
         }
         public static string ExtractTopicFromHistoricalFilename(string filename)
@@ -205,45 +200,18 @@ namespace FlexWiki
             int close = filename.LastIndexOf(")");
             return filename.Substring(p + 1, close - p - 1);
         }
-        void IContentProvider.Initialize(NamespaceManager manager)
+        public override void Initialize(NamespaceManager namespaceManager)
         {
-            _storeManager = manager;
-            // TODO: Change
-            _root = "foo";
-            throw new NotImplementedException();
+            base.Initialize(namespaceManager);
 
-            // Calculate the root -- taking into account the relative location of the directory if needed
-            //string basedir;
-            //if (Federation.FederationNamespaceMapFilename == null)
-            //{
-            //    basedir = "";
-            //}
-            //else
-            //{
-            //    basedir = Path.GetDirectoryName(Federation.FederationNamespaceMapFilename);
-            //}
-            //// TODO: figure out a way to not require Federation to know about the location of the map file
-            //string root = Path.Combine(basedir, StoreManager.Parameters["Root"].Value);
-            //root = Path.GetFullPath(root);
-            //_root = root;
-            //_fileSystemStoreState = FileSystemStoreState.New;
-            //if (Directory.Exists(root))
-            //{
-            //    Read();
-            //}
-            //else
-            //{
-            //    //CA This used to be wrapped in a try/catch that threw away DirectoryNotFoundException,
-            //    //CA but that didn't seem like a particularly good idea, so I got rid of it.
-            //    Directory.CreateDirectory(root);
-            //}
+            _root = NamespaceManager.Parameters["root"].Value; 
         }
         /// <summary>
         /// Answer whether a topic exists and is writable
         /// </summary>
         /// <param name="topic">The topic (must directly be in this content base)</param>
         /// <returns>true if the topic exists AND is writable by the current user; else false</returns>
-        bool IContentProvider.IsExistingTopicWritable(string topic)
+        public override bool IsExistingTopicWritable(UnqualifiedTopicName topic)
         {
 
             string path = TopicPath(topic, null);
@@ -272,17 +240,17 @@ namespace FlexWiki
         /// <param name="topic"></param>
         /// <exception cref="TopicNotFoundException">Thrown when the topic doesn't exist</exception>
         /// <returns>TextReader</returns>
-        TextReader IContentProvider.TextReaderForTopic(string topic, string version)
+        public override TextReader TextReaderForTopic(UnqualifiedTopicRevision topicRevision)
         {
-            string topicFile = TopicPath(topic, version);
+            string topicFile = TopicPath(topicRevision);
             if (topicFile == null || !File.Exists(topicFile))
             {
-                throw TopicNotFoundException.ForTopic(new LocalTopicVersionKey(topic), Namespace);
+                throw TopicNotFoundException.ForTopic(topicRevision, Namespace);
             }
             return new StreamReader(new FileStream(topicFile, FileMode.Open, FileAccess.Read, FileShare.Read));
         }
 
-        public static TopicChange TopicChangeFromName(NamespaceQualifiedTopicVersionKey topic)
+        public static TopicChange TopicChangeFromName(QualifiedTopicRevision topic)
         {
             try
             {
@@ -331,9 +299,9 @@ namespace FlexWiki
         /// </summary>
         /// <param name="name">Name of the topic</param>
         /// <returns>true if it exists</returns>
-        bool IContentProvider.TopicExists(string name)
+        public override bool TopicExists(UnqualifiedTopicName topicName)
         {
-            return File.Exists(MakePath(Root, name));
+            return File.Exists(MakePath(Root, topicName.LocalName));
         }
 
 
@@ -341,8 +309,8 @@ namespace FlexWiki
         /// Answer an enumeration of all topic in the ContentProviderChain, sorted using the supplied IComparer (does not include imports)
         /// </summary>
         /// <param name="comparer">Used to sort the topics in the answer</param>
-        /// <returns>A collection of <see cref="NamespaceQualifiedTopicName"> objects.</see></returns>
-        protected NamespaceQualifiedTopicNameCollection AllTopicsSorted(IComparer comparer)
+        /// <returns>A collection of <see cref="QualifiedTopicName"> objects.</see></returns>
+        protected QualifiedTopicNameCollection AllTopicsSorted(IComparer comparer)
         {
             throw new NotImplementedException();
 
@@ -355,7 +323,7 @@ namespace FlexWiki
             //    all.Add(td);
             //    present.Add(td.Name);
             //}
-            //foreach (BackingTopic each in StoreManager.BackingTopics.Values)
+            //foreach (BackingTopic each in NamespaceManager.BackingTopics.Values)
             //{
             //    BackingTopicData td = new BackingTopicData(each);
             //    if (present.Contains(td.Name))
@@ -376,7 +344,7 @@ namespace FlexWiki
             //return answer;
         }
 
-        NamespaceQualifiedTopicNameCollection IContentProvider.AllTopics()
+        public override QualifiedTopicNameCollection AllTopics()
         {
             return AllTopicsSorted(null);
         }
@@ -387,10 +355,10 @@ namespace FlexWiki
         /// <param name="topic">Topic to write</param>
         /// <param name="content">New content</param>
         /// <param name="sink">Object to recieve change info about the topic</param>
-        void IContentProvider.WriteTopic(string topic, string version, string content)
+        public override void WriteTopic(UnqualifiedTopicRevision topicRevision, string content)
         {
             string root = Root;
-            string fullpath = MakePath(root, topic);
+            string fullpath = MakePath(root, topicRevision.LocalName);
             bool isNew = !(File.Exists(fullpath));
 
             // Change it
@@ -401,7 +369,7 @@ namespace FlexWiki
 
         }
 
-        void IContentProvider.WriteTopicAndNewVersion(string topic, string content, string author)
+        public override void WriteTopicAndNewVersion(UnqualifiedTopicName topic, string content, string author)
         {
             throw new NotImplementedException();
         }
@@ -456,7 +424,7 @@ namespace FlexWiki
             }
         }
 
-        private static string MakeTopicFilename(TopicVersionKey topic)
+        private static string MakeTopicFilename(TopicRevision topic)
         {
             if (topic.Version == null)
             {
@@ -475,20 +443,20 @@ namespace FlexWiki
                 throw new Exception("Recursion problem: already loading ContentProviderChain for " + _root);
             }
 
-            StoreManager.ImportedNamespaces.Clear();
-            //StoreManager.Description = null;
-            //StoreManager.Title = null;
-            //StoreManager.ImageURL = null;
-            //            StoreManager.Contact = null;
+            NamespaceManager.ImportedNamespaces.Clear();
+            //NamespaceManager.Description = null;
+            //NamespaceManager.Title = null;
+            //NamespaceManager.ImageURL = null;
+            //            NamespaceManager.Contact = null;
 
             _fileSystemStoreState = FileSystemStoreState.Loading;
             _lastRead = DateTime.Now;
 
-            //StoreManager.DisplaySpacesInWikiLinks = false; // the default, applied if *.config key is missing and _ContentBaseDefinition propertyName is missing			
+            //NamespaceManager.DisplaySpacesInWikiLinks = false; // the default, applied if *.config key is missing and _ContentBaseDefinition propertyName is missing			
             // TODO: Change this so it doesn't work this way any more. Reading from AppSettings is a bad idea. 
             //if (System.Configuration.ConfigurationManager.AppSettings["DisplaySpacesInWikiLinks"] != null)
             //{
-            //    StoreManager.DisplaySpacesInWikiLinks = Convert.ToBoolean(System.Configuration.ConfigurationManager.AppSettings["DisplaySpacesInWikiLinks"]);
+            //    NamespaceManager.DisplaySpacesInWikiLinks = Convert.ToBoolean(System.Configuration.ConfigurationManager.AppSettings["DisplaySpacesInWikiLinks"]);
             //}
 
             string filename = DefinitionTopicFilePath;
@@ -506,19 +474,19 @@ namespace FlexWiki
                 Hashtable hash = null;
                 //Hashtable hash = NamespaceManager.ExtractExplicitFieldsFromTopicBody(body);
 
-                //StoreManager.Title = (string)hash["Title"];
+                //NamespaceManager.Title = (string)hash["Title"];
                 string homePage = (string)hash["HomePage"];
                 if (homePage != null)
                 {
-                    StoreManager.HomePage = homePage;
+                    NamespaceManager.HomePage = homePage;
                 }
-                //                StoreManager.Description = (string)hash["Description"];
-                //StoreManager.ImageURL = (string)hash["ImageURL"];
-                //StoreManager.Contact = (string)hash["Contact"];
+                //                NamespaceManager.Description = (string)hash["Description"];
+                //NamespaceManager.ImageURL = (string)hash["ImageURL"];
+                //NamespaceManager.Contact = (string)hash["Contact"];
 
                 //if (hash.ContainsKey("DisplaySpacesInWikiLinks")) // _ContentBaseDefinition propertyName overrides *.config setting
                 //{
-                //    StoreManager.DisplaySpacesInWikiLinks = Convert.ToBoolean(hash["DisplaySpacesInWikiLinks"]);
+                //    NamespaceManager.DisplaySpacesInWikiLinks = Convert.ToBoolean(hash["DisplaySpacesInWikiLinks"]);
                 //}
 
                 string importList = (string)hash["Import"];
@@ -526,7 +494,7 @@ namespace FlexWiki
                 {
                     foreach (string each in Federation.ParseListPropertyValue(importList))
                     {
-                        StoreManager.ImportedNamespaces.Add(each);
+                        NamespaceManager.ImportedNamespaces.Add(each);
                     }
                 }
             }
@@ -549,6 +517,16 @@ namespace FlexWiki
         private bool TipFileExists(string name)
         {
             return File.Exists(MakePath(Root, name));
+        }
+
+        private string TopicPath(UnqualifiedTopicRevision revision)
+        {
+            return TopicPath(revision.Name, revision.Version); 
+        }
+
+        private string TopicPath(UnqualifiedTopicName topic, string version)
+        {
+            return TopicPath(topic.LocalName, version); 
         }
 
         private string TopicPath(string topicName, string version)

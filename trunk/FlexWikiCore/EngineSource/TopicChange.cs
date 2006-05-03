@@ -28,16 +28,16 @@ namespace FlexWiki
         private string _author;
         private DateTime _created;
         private DateTime _modified;
-        private NamespaceQualifiedTopicVersionKey _topic;
+        private QualifiedTopicRevision _topic;
 
         // Constructors
 
-        public TopicChange(NamespaceQualifiedTopicVersionKey topic, DateTime created, string author) :
+        public TopicChange(QualifiedTopicRevision topic, DateTime created, string author) :
             this(topic, created, created, author)
         {
         }
 
-        public TopicChange(NamespaceQualifiedTopicVersionKey topic, DateTime created, DateTime modified, string author)
+        public TopicChange(QualifiedTopicRevision topic, DateTime created, DateTime modified, string author)
         {
             _topic = topic;
             _author = author;
@@ -79,7 +79,7 @@ namespace FlexWiki
                 return _modified; 
             }
         }
-        public NamespaceQualifiedTopicVersionKey Topic
+        public QualifiedTopicRevision Topic
         {
             get
             {

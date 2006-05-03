@@ -19,41 +19,41 @@ namespace FlexWiki.UnitTests
 	{
     [Test] public void VersionWithLeadingDigitForName()
     {
-      TopicChange ch = FileSystemStore.TopicChangeFromName(new NamespaceQualifiedTopicVersionKey("Foo.CodeImprovementIdeas(2003-11-23-14-34-03-127.0.0.1)"));
+      TopicChange ch = FileSystemStore.TopicChangeFromName(new QualifiedTopicRevision("Foo.CodeImprovementIdeas(2003-11-23-14-34-03-127.0.0.1)"));
       DateTime dt = new DateTime(2003, 11, 23, 14,34, 3, 0);
       Assert.AreEqual(dt, ch.Created);
     }
 
     [Test] public void VersionWithMillisecondsBiggie()
     {
-      TopicChange ch = FileSystemStore.TopicChangeFromName(new NamespaceQualifiedTopicVersionKey("Foo.CodeImprovementIdeas(2003-11-23-14-34-03.8890-127.0.0.1)"));
+      TopicChange ch = FileSystemStore.TopicChangeFromName(new QualifiedTopicRevision("Foo.CodeImprovementIdeas(2003-11-23-14-34-03.8890-127.0.0.1)"));
       DateTime dt = new DateTime(2003, 11, 23, 14,34, 3, 889);
       Assert.AreEqual(dt, ch.Created);
     }
     [Test] public void VersionWithMillisecondsWithExtraTail()
     {
-      TopicChange ch = FileSystemStore.TopicChangeFromName(new NamespaceQualifiedTopicVersionKey("Foo.CodeImprovementIdeas(2003-11-23-14-34-03.1000-127.0.0.1)"));
+      TopicChange ch = FileSystemStore.TopicChangeFromName(new QualifiedTopicRevision("Foo.CodeImprovementIdeas(2003-11-23-14-34-03.1000-127.0.0.1)"));
       DateTime dt = new DateTime(2003, 11, 23, 14,34, 3, 100);
       Assert.AreEqual(dt, ch.Created);
     }
 
     [Test] public void VersionWithMillisecondsWithLeadingDigitForName()
     {
-      TopicChange ch = FileSystemStore.TopicChangeFromName(new NamespaceQualifiedTopicVersionKey("Foo.CodeImprovementIdeas(2003-11-23-14-34-03.1-127.0.0.1)"));
+      TopicChange ch = FileSystemStore.TopicChangeFromName(new QualifiedTopicRevision("Foo.CodeImprovementIdeas(2003-11-23-14-34-03.1-127.0.0.1)"));
       DateTime dt = new DateTime(2003, 11, 23, 14,34, 3, 100);
       Assert.AreEqual(dt, ch.Created);
     }
 
     [Test] public void VersionWithSimpleName()
 		{
-			TopicChange ch = FileSystemStore.TopicChangeFromName(new NamespaceQualifiedTopicVersionKey("Foo.CodeImprovementIdeas(2003-11-23-14-34-03-Name)"));
+			TopicChange ch = FileSystemStore.TopicChangeFromName(new QualifiedTopicRevision("Foo.CodeImprovementIdeas(2003-11-23-14-34-03-Name)"));
 			DateTime dt = new DateTime(2003, 11, 23, 14,34, 3, 0);
 			Assert.AreEqual(dt, ch.Created);
 		}
 
 		[Test] public void VersionWithSimpleNameWithMilliseconds()
 		{
-			TopicChange ch = FileSystemStore.TopicChangeFromName(new NamespaceQualifiedTopicVersionKey("Foo.CodeImprovementIdeas(2003-11-23-14-34-03.123-Name)"));
+			TopicChange ch = FileSystemStore.TopicChangeFromName(new QualifiedTopicRevision("Foo.CodeImprovementIdeas(2003-11-23-14-34-03.123-Name)"));
 			DateTime dt = new DateTime(2003, 11, 23, 14,34, 3, 123);
 			Assert.AreEqual(dt, ch.Created);
 		}

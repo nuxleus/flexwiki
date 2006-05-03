@@ -329,7 +329,7 @@ namespace FlexWiki
             _blacklistedExternalLinkPrefixes.Add(link);
             RecordFederationPropertiesChanged();
         }
-        public static void AddImplicitPropertiesToHash(Hashtable hash, NamespaceQualifiedTopicVersionKey topic, string lastModBy, DateTime creation, DateTime modification, string content)
+        public static void AddImplicitPropertiesToHash(Hashtable hash, QualifiedTopicRevision topic, string lastModBy, DateTime creation, DateTime modification, string content)
         {
             // Remember that this list is closely bound to some implicit knowledge of what these imports are in the logic in WriteTopic that send change notifications for imports
             // If you add/change these imports, you need to carefully revie wthat code too to be sure it fires the right changed events
@@ -340,7 +340,7 @@ namespace FlexWiki
             hash["_ModificationTime"] = modification.ToString();
             hash["_Body"] = content;
         }
-        public NamespaceQualifiedTopicNameCollection AllNamespaceQualifiedTopicNamesThatExist(TopicName topicName, string nsRelativeTo)
+        public QualifiedTopicNameCollection AllQualifiedTopicNamesThatExist(TopicName topicName, string nsRelativeTo)
         {
             throw new NotImplementedException(); 
         }
@@ -362,7 +362,7 @@ namespace FlexWiki
         /// </summary>
         /// <param name="topic"></param>
         /// <returns></returns>
-        public NamespaceManager NamespaceManagerForTopic(NamespaceQualifiedTopicVersionKey topic)
+        public NamespaceManager NamespaceManagerForTopic(QualifiedTopicRevision topic)
         {
             if (topic == null)
             {
@@ -370,7 +370,7 @@ namespace FlexWiki
             }
             return NamespaceManagerForNamespace(topic.Namespace);
         }
-        public NamespaceManager NamespaceManagerForTopic(RelativeTopicVersionKey topic, string nsRelativeTo)
+        public NamespaceManager NamespaceManagerForTopic(TopicRevision topic, string nsRelativeTo)
         {
             if (topic.IsNamespaceQualified)
             {
@@ -381,7 +381,7 @@ namespace FlexWiki
         }
         public NamespaceManager NamespaceManagerForTopic(TopicName topic, string nsRelativeTo)
         {
-            return NamespaceManagerForTopic(new RelativeTopicVersionKey(topic.QualifiedName), nsRelativeTo);
+            return NamespaceManagerForTopic(new TopicRevision(topic.QualifiedName), nsRelativeTo);
         }
         public NamespaceManager NamespaceManagerForTopic(TopicName topic)
         {
@@ -396,7 +396,7 @@ namespace FlexWiki
             }
             else
             {
-                throw FlexWikiException.NamespaceQualifiedTopicNameExpected(topic); 
+                throw FlexWikiException.QualifiedTopicNameExpected(topic); 
             }
         }
         public static bool CreatePerformanceCounters()
@@ -428,7 +428,7 @@ namespace FlexWiki
         {
             PerformanceCounterCategory.Delete(s_performanceCounterCategoryName);
         }
-        public void DeleteTopic(NamespaceQualifiedTopicVersionKey topic)
+        public void DeleteTopic(QualifiedTopicRevision topic)
         {
             NamespaceManager namespaceManager = NamespaceManagerForTopic(topic);
             if (namespaceManager == null)
@@ -459,7 +459,7 @@ namespace FlexWiki
         [ExposedMethod("GetTopic",  ExposedMethodFlags.NeedContext, "Answer an object whose imports are those of the given topic")]
         public DynamicTopic DynamicTopicForTopic(ExecutionContext ctx, string top)
         {
-            NamespaceQualifiedTopicVersionKey abs = new NamespaceQualifiedTopicVersionKey(top);
+            QualifiedTopicRevision abs = new QualifiedTopicRevision(top);
             if (abs.Namespace == null)
             {
                 throw new Exception("Only fully-qualified topic names can be used with GetTopic(): only got " + top);
@@ -518,15 +518,15 @@ namespace FlexWiki
         //    }
         //    return answer;
         //}
-        public DateTime GetTopicCreationTime(NamespaceQualifiedTopicVersionKey name)
+        public DateTime GetTopicCreationTime(QualifiedTopicRevision name)
         {
             throw new NotImplementedException();
         }
         public DateTime GetTopicCreationTime(TopicName name)
         {
-            return GetTopicCreationTime(new NamespaceQualifiedTopicVersionKey(name)); 
+            return GetTopicCreationTime(new QualifiedTopicRevision(name)); 
         }
-        public string GetTopicFormattedBorder(NamespaceQualifiedTopicVersionKey name, Border border)
+        public string GetTopicFormattedBorder(QualifiedTopicRevision name, Border border)
         {
             string answer = null;
             // OK, we need to figure it out.  
@@ -545,9 +545,9 @@ namespace FlexWiki
         }
         public string GetTopicFormattedBorder(TopicName name, Border border)
         {
-            return GetTopicFormattedBorder(new NamespaceQualifiedTopicVersionKey(name), border); 
+            return GetTopicFormattedBorder(new QualifiedTopicRevision(name), border); 
         }
-        public string GetTopicFormattedContent(NamespaceQualifiedTopicVersionKey name, NamespaceQualifiedTopicVersionKey withDiffsToThisTopic)
+        public string GetTopicFormattedContent(QualifiedTopicRevision name, QualifiedTopicRevision withDiffsToThisTopic)
         {
             string answer = null;
 
@@ -570,7 +570,7 @@ namespace FlexWiki
         /// <returns></returns>
         public TopicVersionInfo GetTopicInfo(string top)
         {
-            NamespaceQualifiedTopicVersionKey abs = new NamespaceQualifiedTopicVersionKey(top);
+            QualifiedTopicRevision abs = new QualifiedTopicRevision(top);
             if (abs.Namespace == null)
             {
                 throw new Exception("Only fully-qualified topic names can be used with GetTopicInfo(): only got " + top);
@@ -585,7 +585,7 @@ namespace FlexWiki
         [ExposedMethod(ExposedMethodFlags.NeedContext, "Get information about the given topic")]
         public TopicVersionInfo GetTopicInfo(ExecutionContext ctx, string top)
         {
-            NamespaceQualifiedTopicVersionKey abs = new NamespaceQualifiedTopicVersionKey(top);
+            QualifiedTopicRevision abs = new QualifiedTopicRevision(top);
             return GetTopicInfo(top);
         }
         public string GetTopicLastModifiedBy(TopicName name)
@@ -603,22 +603,22 @@ namespace FlexWiki
 
             return manager.GetTopicLastModificationTime(topic.LocalName); 
         }
-        public ArrayList GetTopicListPropertyValue(NamespaceQualifiedTopicVersionKey topic, string field)
+        public ArrayList GetTopicListPropertyValue(QualifiedTopicRevision topic, string field)
         {
             throw new NotImplementedException("Change to use the GetTopicProperty functionality of NamespaceManager.");
             //return ParseListPropertyValue(GetTopicProperty(topic, propertyName));
         }
         public ArrayList GetTopicListPropertyValue(TopicName topic, string field)
         {
-            return GetTopicListPropertyValue(new NamespaceQualifiedTopicVersionKey(topic), field); 
+            return GetTopicListPropertyValue(new QualifiedTopicRevision(topic), field); 
         }
-        public DateTime GetTopicModificationTime(NamespaceQualifiedTopicVersionKey topicVersion)
+        public DateTime GetTopicModificationTime(QualifiedTopicRevision topicVersion)
         {
             throw new NotImplementedException(); 
         }
         public DateTime GetTopicModificationTime(TopicName topic)
         {
-            return GetTopicModificationTime(new NamespaceQualifiedTopicVersionKey(topic)); 
+            return GetTopicModificationTime(new QualifiedTopicRevision(topic)); 
         }
         /// <summary>
         /// Answer all the imports (aka properties) for the given topic.  Uncached!
@@ -627,7 +627,7 @@ namespace FlexWiki
         /// </summary>
         /// <param name="topic"></param>
         /// <returns>Hashtable (keys = string propertyName names, values = values [as strings?]);  or null if the topic doesn't exist</returns>
-        public TopicPropertyCollection GetTopicProperties(NamespaceQualifiedTopicVersionKey topic)
+        public TopicPropertyCollection GetTopicProperties(QualifiedTopicRevision topic)
         {
             NamespaceManager namespaceManager = NamespaceManagerForTopic(topic);
             if (namespaceManager == null)
@@ -651,7 +651,7 @@ namespace FlexWiki
         {
             throw new NotImplementedException();
         }
-        public string GetTopicPropertyValue(NamespaceQualifiedTopicVersionKey topic, string property)
+        public string GetTopicPropertyValue(QualifiedTopicRevision topic, string property)
         {
             TopicPropertyCollection properties = GetTopicProperties(topic);
             if (properties == null || !properties.Contains(property))
@@ -664,7 +664,7 @@ namespace FlexWiki
         {
             throw new NotImplementedException();
         }
-        public string GetTopicUnformattedContent(NamespaceQualifiedTopicVersionKey name)
+        public string GetTopicUnformattedContent(QualifiedTopicRevision name)
         {
             throw new NotImplementedException();
         }
@@ -693,7 +693,7 @@ namespace FlexWiki
         /// </summary>
         /// <param name="topic">The topic</param>
         /// <returns>true if the topic exists AND is writable by the current user; else false</returns>
-        public bool IsExistingTopicWritable(NamespaceQualifiedTopicVersionKey topic)
+        public bool IsExistingTopicWritable(QualifiedTopicRevision topic)
         {
             NamespaceManager namespaceManager = NamespaceManagerForTopic(topic);
             if (namespaceManager == null)
@@ -737,7 +737,7 @@ namespace FlexWiki
         /// </summary>
         /// <param name="topic">The topic</param>
         /// <returns>The contents of the topic or null if it can't be read (e.g., doesn't exist)</returns>
-        public string Read(NamespaceQualifiedTopicVersionKey topic)
+        public string Read(QualifiedTopicRevision topic)
         {
             NamespaceManager namespaceManager = NamespaceManagerForTopic(topic);
             if (namespaceManager == null)
@@ -750,31 +750,31 @@ namespace FlexWiki
         {
             if (topic.IsAbsolute)
             {
-                return Read(new NamespaceQualifiedTopicVersionKey(topic)); 
+                return Read(new QualifiedTopicRevision(topic)); 
             }
 
-            throw FlexWikiException.NamespaceQualifiedTopicNameExpected(topic); 
+            throw FlexWikiException.QualifiedTopicNameExpected(topic); 
         }
         /// <summary>
         /// Register the given content store in the federation.
         /// </summary>
-        public NamespaceManager RegisterNamespace(IUnparsedContentProvider contentStore, string ns)
+        public NamespaceManager RegisterNamespace(ContentProviderBase contentStore, string ns)
         {
             return RegisterNamespace(contentStore, ns, null); 
         }
         /// <summary>
         /// Register the given content store in the federation.
         /// </summary>
-        public NamespaceManager RegisterNamespace(IUnparsedContentProvider contentStore, string ns, 
+        public NamespaceManager RegisterNamespace(ContentProviderBase contentStore, string ns, 
             NamespaceProviderParameterCollection parameters)
         {
             // These are the default providers that every namespace gets. Later we might
             // want to make these configurable
             //IUnparsedContentProvider builtinTopicsProvider = new BuiltinTopicsProvider(next);
-            IParsedContentProvider parsingProvider = new ParsingProvider(contentStore);
+            ContentProviderBase parsingProvider = new ParsingProvider(contentStore);
 
             // This line is just to make it easy to add more default providers later
-            IParsedContentProvider providerChain = parsingProvider;
+            ContentProviderBase providerChain = parsingProvider;
 
             NamespaceManager namespaceManager = new NamespaceManager(this, providerChain, ns, parameters);
             _namespaceToNamespaceManagerMap[namespaceManager.Namespace] = namespaceManager;
@@ -798,16 +798,16 @@ namespace FlexWiki
         /// <param name="newName">The new name</param>
         /// <param name="fixup">true to fixup referenced topic *in this namespace*; false to do no fixups</param>
         /// <returns>ArrayList of strings that can be reported back to the user of what happened during the fixup process</returns>
-        public RenameTopicDetails RenameTopic(NamespaceQualifiedTopicVersionKey oldName, LocalTopicVersionKey newName, ReferenceFixupPolicy fixupPolicy, string author)
+        public RenameTopicDetails RenameTopic(QualifiedTopicName oldName, UnqualifiedTopicName newName, ReferenceFixupPolicy fixupPolicy, string author)
         {
             NamespaceManager namespaceManager = NamespaceManagerForTopic(oldName);
             if (namespaceManager == null)
             {
                 throw NamespaceNotFoundException.ForNamespace(oldName.Namespace);
             }
-            return namespaceManager.RenameTopic(oldName.LocalName, newName.Name, fixupPolicy, author);
+            return namespaceManager.RenameTopic(new UnqualifiedTopicName(oldName.LocalName), new UnqualifiedTopicName(newName.LocalName), fixupPolicy, author);
         }
-        public void SetTopicProperty(NamespaceQualifiedTopicVersionKey topic, string field, string value, bool writeNewVersion, string author)
+        public void SetTopicProperty(QualifiedTopicRevision topic, string field, string value, bool writeNewVersion, string author)
         {
             NamespaceManagerForTopic(topic).SetTopicPropertyValue(topic.LocalName, field, value, writeNewVersion, author);
         }
@@ -815,7 +815,7 @@ namespace FlexWiki
         /// <summary>
         /// Answer true if the topic exists; else false
         /// </summary>
-        public bool TopicExists(NamespaceQualifiedTopicVersionKey topic)
+        public bool TopicExists(QualifiedTopicRevision topic)
         {
             NamespaceManager namespaceManager = NamespaceManagerForTopic(topic);
             if (namespaceManager == null)
@@ -831,7 +831,7 @@ namespace FlexWiki
         /// </summary>
         /// <param name="topic"></param>
         /// <returns>Full name or null if it doesn't exist (by throw TopicIsAmbiguousException if it's ambiguous)</returns>
-        public NamespaceQualifiedTopicVersionKey UnambiguousTopicNameFor(RelativeTopicVersionKey topic, string nsRelativeTo)
+        public QualifiedTopicRevision UnambiguousTopicNameFor(TopicRevision topic, string nsRelativeTo)
         {
             NamespaceManager manager = NamespaceManagerForTopic(topic, nsRelativeTo);
 
@@ -849,7 +849,7 @@ namespace FlexWiki
             {
                 throw TopicIsAmbiguousException.ForTopic(topic);
             }
-            return new NamespaceQualifiedTopicVersionKey(topic.LocalName, (string)namespaces[0]);
+            return new QualifiedTopicRevision(topic.LocalName, (string)namespaces[0]);
         }
         /// <summary>
         /// Unregister the given NamespaceManager in the federation.
@@ -871,7 +871,7 @@ namespace FlexWiki
         }
 
 
-        private IBELObject BorderPropertyFromTopic(NamespaceQualifiedTopicVersionKey relativeToTopic, NamespaceQualifiedTopicVersionKey abs, Border border)
+        private IBELObject BorderPropertyFromTopic(QualifiedTopicRevision relativeToTopic, QualifiedTopicRevision abs, Border border)
         {
             NamespaceManager namespaceManager = NamespaceManagerForTopic(abs);
             if (namespaceManager == null)
@@ -932,7 +932,7 @@ namespace FlexWiki
         /// <param name="border"></param>
         /// <param name="rule"></param> 
         /// <returns></returns>
-        private IEnumerable BorderText(NamespaceQualifiedTopicVersionKey name, Border border)
+        private IEnumerable BorderText(QualifiedTopicRevision name, Border border)
         {
             ArrayList answer = new ArrayList();
             NamespaceManager namespaceManager;
@@ -946,7 +946,7 @@ namespace FlexWiki
             {
                 foreach (string at in ParseListPropertyValue(Borders))
                 {
-                    NamespaceQualifiedTopicVersionKey abs = new NamespaceQualifiedTopicVersionKey(at);
+                    QualifiedTopicRevision abs = new QualifiedTopicRevision(at);
                     namespaceManager = NamespaceManagerForTopic(abs);
                     if (abs == null || namespaceManager == null)
                     {
@@ -962,7 +962,7 @@ namespace FlexWiki
             if (namespaceManager != null)
             {
                 borderTopics.AddRange(GetTopicListPropertyValue(
-                    new NamespaceQualifiedTopicVersionKey(namespaceManager.DefinitionTopic), 
+                    new QualifiedTopicRevision(namespaceManager.DefinitionTopic), 
                     bordersTopicsProperty));
             }
 
@@ -984,12 +984,12 @@ namespace FlexWiki
             foreach (string borderTopicName in borderTopics)
             {
                 // Figure out what the absolute topic name is that we're going to get this topic from
-                RelativeTopicVersionKey rel = new RelativeTopicVersionKey(borderTopicName);
+                TopicRevision rel = new TopicRevision(borderTopicName);
                 if (!rel.IsNamespaceQualified)
                 {
-                    rel = new RelativeTopicVersionKey(borderTopicName, name.Namespace);
+                    rel = new TopicRevision(borderTopicName, name.Namespace);
                 }
-                NamespaceQualifiedTopicVersionKey abs = new NamespaceQualifiedTopicVersionKey(rel.LocalName, rel.Namespace);
+                QualifiedTopicRevision abs = new QualifiedTopicRevision(rel.LocalName, rel.Namespace);
                 if (done.Contains(abs))
                 {
                     continue;

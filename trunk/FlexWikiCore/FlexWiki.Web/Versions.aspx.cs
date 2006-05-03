@@ -24,7 +24,7 @@ namespace FlexWiki.Web
 	{
 		protected System.Web.UI.WebControls.PlaceHolder phResult;
 
-		private NamespaceQualifiedTopicVersionKey _TheTopic	= null;
+		private QualifiedTopicRevision _TheTopic	= null;
 		private IEnumerable changeList		= null;
 		
 		#region Web Form Designer generated code
@@ -65,7 +65,7 @@ namespace FlexWiki.Web
 		}
 		
 
-		protected NamespaceQualifiedTopicVersionKey TheTopic
+		protected QualifiedTopicRevision TheTopic
 		{
 			get
 			{
@@ -82,7 +82,7 @@ namespace FlexWiki.Web
 				{
 					topic = Request.QueryString["topic"];
 				}
-				_TheTopic = new NamespaceQualifiedTopicVersionKey(topic);
+				_TheTopic = new QualifiedTopicRevision(topic);
 				return _TheTopic;
 			}
 		}

@@ -112,7 +112,7 @@ namespace FlexWiki.Web
 				{
 					string ns = storeManager.Namespace;
 					bool header = false;
-					foreach (NamespaceQualifiedTopicVersionKey topic in (ArrayList)(searchTopics[storeManager]))
+					foreach (QualifiedTopicRevision topic in (ArrayList)(searchTopics[storeManager]))
 					{
 						string s = Federation.Read(topic);
 						string bodyWithTitle = topic.ToString() + s;

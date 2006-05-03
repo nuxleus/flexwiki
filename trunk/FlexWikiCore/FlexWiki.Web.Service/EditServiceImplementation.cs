@@ -145,7 +145,7 @@ namespace FlexWiki.Web.Services
         [WebMethod]
         public string GetHtmlForTopic(WireTypes.AbsoluteTopicName topicName)
         {
-            NamespaceQualifiedTopicVersionKey atn = new NamespaceQualifiedTopicVersionKey(topicName.Name, topicName.Namespace);
+            QualifiedTopicRevision atn = new QualifiedTopicRevision(topicName.Name, topicName.Namespace);
             return InternalGetHtmlForTopic(atn, null);
         }
 
@@ -158,7 +158,7 @@ namespace FlexWiki.Web.Services
         [WebMethod]
         public string GetHtmlForTopicVersion(WireTypes.AbsoluteTopicName topicName, string version)
         {
-            NamespaceQualifiedTopicVersionKey atn = new NamespaceQualifiedTopicVersionKey(topicName.Name, topicName.Namespace);
+            QualifiedTopicRevision atn = new QualifiedTopicRevision(topicName.Name, topicName.Namespace);
             return InternalGetHtmlForTopic(atn, version);
         }
 
@@ -189,7 +189,7 @@ namespace FlexWiki.Web.Services
         {
             string content = null;
             // OmarS: Do I need to check for Topic existence?
-            NamespaceQualifiedTopicVersionKey atn = new NamespaceQualifiedTopicVersionKey(topicName.Name, topicName.Namespace);
+            QualifiedTopicRevision atn = new QualifiedTopicRevision(topicName.Name, topicName.Namespace);
             atn.Version = topicName.Version; 
 
             if (Federation.TopicExists(atn))
@@ -214,7 +214,7 @@ namespace FlexWiki.Web.Services
         {
             StringCollection topicVersions = new StringCollection();
 
-            NamespaceQualifiedTopicVersionKey atn = new NamespaceQualifiedTopicVersionKey(topicName.Name, topicName.Namespace);
+            QualifiedTopicRevision atn = new QualifiedTopicRevision(topicName.Name, topicName.Namespace);
             IEnumerable changeList = Federation.NamespaceManagerForTopic(atn).AllChangesForTopic(atn.LocalName);
 
             foreach (TopicChange change in changeList)
@@ -253,7 +253,7 @@ namespace FlexWiki.Web.Services
             }
             else
             {
-                NamespaceQualifiedTopicVersionKey atn = new NamespaceQualifiedTopicVersionKey(topicName.Name, topicName.Namespace);
+                QualifiedTopicRevision atn = new QualifiedTopicRevision(topicName.Name, topicName.Namespace);
                 IEnumerable changeList = Federation.NamespaceManagerForTopic(atn).AllChangesForTopic(atn.LocalName);
 
                 foreach (TopicChange change in changeList)
@@ -276,7 +276,7 @@ namespace FlexWiki.Web.Services
         [WebMethod]
         public void SetTextForTopic(WireTypes.AbsoluteTopicName topicName, string postedTopicText, string visitorIdentityString)
         {
-            NamespaceQualifiedTopicVersionKey atn = new NamespaceQualifiedTopicVersionKey(topicName.Name, topicName.Namespace);
+            QualifiedTopicRevision atn = new QualifiedTopicRevision(topicName.Name, topicName.Namespace);
             WriteNewTopic(atn, postedTopicText, GetVisitorIdentity(visitorIdentityString), null);
         }
 
@@ -329,7 +329,7 @@ namespace FlexWiki.Web.Services
                 return visitorIdentityString;
             }
         }
-        private string InternalGetHtmlForTopic(NamespaceQualifiedTopicVersionKey topicName, string version)
+        private string InternalGetHtmlForTopic(QualifiedTopicRevision topicName, string version)
         {
             _linkMaker = new LinkMaker(RootUrl(Context.Request));
 
@@ -371,12 +371,12 @@ namespace FlexWiki.Web.Services
             return full;
         }
 
-        private void WriteNewTopic(NamespaceQualifiedTopicVersionKey theTopic, string postedTopicText, string visitorIdentityString, string version)
+        private void WriteNewTopic(QualifiedTopicRevision theTopic, string postedTopicText, string visitorIdentityString, string version)
         {
             _linkMaker = new LinkMaker(RootUrl(Context.Request));
 
-            NamespaceQualifiedTopicVersionKey newVersionName = new NamespaceQualifiedTopicVersionKey(theTopic.LocalName, theTopic.Namespace);
-            newVersionName.Version = TopicVersionKey.NewVersionStringForUser(visitorIdentityString);
+            QualifiedTopicRevision newVersionName = new QualifiedTopicRevision(theTopic.LocalName, theTopic.Namespace);
+            newVersionName.Version = TopicRevision.NewVersionStringForUser(visitorIdentityString);
             Federation.NamespaceManagerForTopic(newVersionName).WriteTopicAndNewVersion(newVersionName.LocalName, postedTopicText, visitorIdentityString);
         }
 

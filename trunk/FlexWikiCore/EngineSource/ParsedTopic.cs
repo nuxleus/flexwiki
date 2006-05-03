@@ -21,9 +21,9 @@ namespace FlexWiki
     {
         private readonly ExternalReferencesMap _externalReferences = new ExternalReferencesMap(); 
         private readonly TopicPropertyCollection _properties = new TopicPropertyCollection();
-        private readonly RelativeTopicVersionKeyCollection _topicLinks = new RelativeTopicVersionKeyCollection(); 
+        private readonly TopicRevisionCollection _topicLinks = new TopicRevisionCollection(); 
 
-        public ParsedTopic(TopicPropertyCollection properties, RelativeTopicVersionKeyCollection topicLinks, 
+        public ParsedTopic(TopicPropertyCollection properties, TopicRevisionCollection topicLinks, 
             ExternalReferencesMap externalReferences)
         {
             _properties.AddRange(properties);
@@ -52,7 +52,7 @@ namespace FlexWiki
         /// </summary>
         /// <remarks>The topics returned may or may not exist. Also, the list does not
         /// include anything but topic links - links to other URIs are not included.</remarks>
-        public RelativeTopicVersionKeyCollection TopicLinks
+        public TopicRevisionCollection TopicLinks
         {
             get
             {

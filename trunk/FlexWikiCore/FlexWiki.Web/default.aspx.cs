@@ -92,7 +92,7 @@ namespace FlexWiki.Web
 		{
 
 
-			NamespaceQualifiedTopicVersionKey topic = GetTopicVersionKey();	 
+			QualifiedTopicRevision topic = GetTopicVersionKey();	 
 			LinkMaker lm = TheLinkMaker;
 
 			// Consider establishing a redirect if there's a redirect to a topic or an URL
@@ -108,7 +108,7 @@ namespace FlexWiki.Web
 				{
 					// Must be a topic name
 					string trimmed = redir.Trim();
-                    NamespaceQualifiedTopicNameCollection all = Federation.NamespaceManagerForTopic(GetTopicVersionKey()).AllNamespaceQualifiedTopicNamesThatExist(trimmed);
+                    QualifiedTopicNameCollection all = Federation.NamespaceManagerForTopic(GetTopicVersionKey()).AllQualifiedTopicNamesThatExist(trimmed);
 
 					if (all.Count == 1) 
 					{
@@ -116,7 +116,7 @@ namespace FlexWiki.Web
                             new Uri(
                                 new Uri(FullRootUrl(Request)), 
                                 lm.LinkToTopic(
-                                    new NamespaceQualifiedTopicVersionKey(all[0]), 
+                                    new QualifiedTopicRevision(all[0]), 
                                     false, 
                                     Request.QueryString)));
 					}
@@ -147,7 +147,7 @@ namespace FlexWiki.Web
 			if (description != "")
 				Response.Write("<META name=\"description\" content=\"" + description + "\">\n");
 			Response.Write("<META name=\"author\" content=\"" + 
-                Federation.GetTopicLastModifiedBy(GetTopicVersionKey().AsNamespaceQualifiedTopicName()) + 
+                Federation.GetTopicLastModifiedBy(GetTopicVersionKey().AsQualifiedTopicName()) + 
                 "\">\n");
 
 			if (GetTopicVersionKey().Version != null)
@@ -241,9 +241,9 @@ function tbinput()
 						
 			NamespaceManager storeManager = DefaultNamespaceManager;
 			LinkMaker lm = TheLinkMaker;
-			NamespaceQualifiedTopicVersionKey topic = GetTopicVersionKey();	
+			QualifiedTopicRevision topic = GetTopicVersionKey();	
 			bool diffs = Request.QueryString["diff"] == "y";
-			NamespaceQualifiedTopicVersionKey diffVersion = null;
+			QualifiedTopicRevision diffVersion = null;
 			bool restore = (Request.RequestType == "POST" && Request.Form["RestoreTopic"] != null);
 			bool isBlacklistedRestore = false;
 			bool editOnDoubleClick = true;
@@ -256,14 +256,14 @@ function tbinput()
 				}
 				else
 				{
-					Response.Redirect(lm.LinkToTopic(this.RestorePreviousVersion(new NamespaceQualifiedTopicVersionKey(Request.Form["RestoreTopic"]))));
+					Response.Redirect(lm.LinkToTopic(this.RestorePreviousVersion(new QualifiedTopicRevision(Request.Form["RestoreTopic"]))));
 				}
 			}
 
 			// Go edit if we try to view it and it doesn't exist
 			if (!storeManager.TopicExists(topic.LocalName, ImportPolicy.DoNotIncludeImports))
 			{ 
-				Response.Redirect(lm.LinkToEditTopic(topic.AsNamespaceQualifiedTopicName()));
+				Response.Redirect(lm.LinkToEditTopic(topic.AsQualifiedTopicName()));
 				return;
 			}
 
@@ -282,7 +282,7 @@ function tbinput()
 
             if (editOnDoubleClick)
             {
-                Response.Write("<body onclick='javascript: BodyClick()' ondblclick=\"location.href='" + this.TheLinkMaker.LinkToEditTopic(topic.AsNamespaceQualifiedTopicName()) + "'\">");
+                Response.Write("<body onclick='javascript: BodyClick()' ondblclick=\"location.href='" + this.TheLinkMaker.LinkToEditTopic(topic.AsQualifiedTopicName()) + "'\">");
             }
             else
             {

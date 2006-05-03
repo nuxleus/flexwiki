@@ -13,7 +13,7 @@ namespace FlexWiki.UnitTests
         public void AllChangesForTopicSinceBuiltin()
         {
             MockContentStore store = new MockContentStore();
-            IUnparsedContentProvider provider = new BuiltinTopicsProvider(store);
+            UnparsedContentProviderBase provider = new BuiltinTopicsProvider(store);
 
             IList<TopicChange> changes = provider.AllChangesForTopicSince(
                 NamespaceManager.DefinitionTopicName, DateTime.MinValue);

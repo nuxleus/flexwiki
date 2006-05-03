@@ -131,7 +131,7 @@ namespace FlexWiki.UnitTests
             Federation federation = WikiTestUtilities.SetupFederation("test://federationtests",
                 TestContentSets.SingleTopicNoImports);
             NamespaceManager manager = federation.NamespaceManagerForTopic(
-                new NamespaceQualifiedTopicVersionKey("TopicOne", "NoSuchNamespace"));
+                new QualifiedTopicRevision("TopicOne", "NoSuchNamespace"));
 
             Assert.IsNull(manager, "Checking that a null manager is returned when namespace does not exist.");
         }
@@ -142,7 +142,7 @@ namespace FlexWiki.UnitTests
             Federation federation = WikiTestUtilities.SetupFederation("test://federationtests",
                 TestContentSets.SingleTopicNoImports);
 
-            NamespaceManager manager = federation.NamespaceManagerForTopic((NamespaceQualifiedTopicVersionKey) null);
+            NamespaceManager manager = federation.NamespaceManagerForTopic((QualifiedTopicRevision) null);
             Assert.IsNull(manager, "Checking that a null manager is returned when topic key is null.");
 
             manager = federation.NamespaceManagerForTopic((TopicName) null);
@@ -155,7 +155,7 @@ namespace FlexWiki.UnitTests
             Federation federation = WikiTestUtilities.SetupFederation("test://federationtests",
                 TestContentSets.SingleTopicNoImports);
             NamespaceManager manager = federation.NamespaceManagerForTopic(
-                new NamespaceQualifiedTopicVersionKey("TopicOne", "NamespaceOne"));
+                new QualifiedTopicRevision("TopicOne", "NamespaceOne"));
 
             Assert.IsNotNull(manager, "Checking that a non-null manager was returned.");
             Assert.AreEqual("NamespaceOne", manager.Namespace, "Checking that the correct manager was returned."); 

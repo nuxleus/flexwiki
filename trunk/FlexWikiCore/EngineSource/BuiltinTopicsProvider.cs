@@ -2,19 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using FlexWiki.Collections; 
+using FlexWiki.Collections;
 
 namespace FlexWiki
 {
-    public class BuiltinTopicsProvider : IUnparsedContentProvider
+    public class BuiltinTopicsProvider : ContentProviderBase
     {
-        // Constructors
-
-        public BuiltinTopicsProvider(IUnparsedContentProvider next) 
-        {
-            _next = next; 
-        }
-
         // Constants
         #region Constants
         private const string _defaultHomePageContent = @"@flexWiki=http://www.flexwiki.com/default.aspx/FlexWiki/$$$.html
@@ -177,81 +170,75 @@ request.AreDifferencesShown.IfTrue
 }
 ";
         #endregion Constants
+        
+        // Constructors
 
-        // Fields
+        public BuiltinTopicsProvider(ContentProviderBase next)
+            : base(next)
+        {
+        }
 
-        private IUnparsedContentProvider _next;
 
         // Properties
 
-        bool IContentProvider.Exists
+        public override bool Exists
         {
             get { throw new NotImplementedException(); }
         }
 
-        bool IContentProvider.IsReadOnly
+        public override bool IsReadOnly
         {
             get { throw new NotImplementedException(); }
         }
 
-        DateTime IContentProvider.LastRead
+        public override DateTime LastRead
         {
             get { throw new NotImplementedException(); }
-        }
-
-        IUnparsedContentProvider IUnparsedContentProvider.Next
-        {
-            get { return _next; }
         }
 
         // Methods
 
-        TopicChangeCollection IContentProvider.AllChangesForTopicSince(string topic, DateTime stamp)
+        public override TopicChangeCollection AllChangesForTopicSince(UnqualifiedTopicName topic, DateTime stamp)
         {
             throw new NotImplementedException();
         }
 
-        NamespaceQualifiedTopicNameCollection IContentProvider.AllTopics()
+        public override QualifiedTopicNameCollection AllTopics()
         {
             throw new NotImplementedException();
         }
 
-        void IContentProvider.DeleteAllTopicsAndHistory()
+        public override void DeleteAllTopicsAndHistory()
         {
             throw new NotImplementedException();
         }
 
-        void IContentProvider.DeleteTopic(string topic)
+        public override void DeleteTopic(UnqualifiedTopicName topic)
         {
             throw new NotImplementedException();
         }
 
-        void IContentProvider.Initialize(NamespaceManager manager)
+        public override bool IsExistingTopicWritable(UnqualifiedTopicName topic)
         {
             throw new NotImplementedException();
         }
 
-        bool IContentProvider.IsExistingTopicWritable(string topic)
+        public override System.IO.TextReader TextReaderForTopic(UnqualifiedTopicRevision topicRevision)
         {
             throw new NotImplementedException();
         }
 
-        System.IO.TextReader IContentProvider.TextReaderForTopic(string topic, string version)
+        public override bool TopicExists(UnqualifiedTopicName name)
         {
             throw new NotImplementedException();
         }
 
-        bool IContentProvider.TopicExists(string name)
+        public override void WriteTopic(UnqualifiedTopicRevision topicRevision, string content)
         {
             throw new NotImplementedException();
         }
 
-        void IContentProvider.WriteTopic(string topic, string version, string content)
-        {
-            throw new NotImplementedException();
-        }
-
-        void IContentProvider.WriteTopicAndNewVersion(string topic, string content, string author)
+        public override void WriteTopicAndNewVersion(UnqualifiedTopicName topicName, string content, string author)
         {
             throw new NotImplementedException();
         }

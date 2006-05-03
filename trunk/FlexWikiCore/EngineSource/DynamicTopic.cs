@@ -23,16 +23,16 @@ namespace FlexWiki
     {
         private Federation _currentFederation;
         private TopicVersionInfo _currentTopicInfo;
-        private NamespaceQualifiedTopicVersionKey _key;
+        private QualifiedTopicRevision _key;
 
-        public DynamicTopic(Federation aFed, NamespaceQualifiedTopicVersionKey key)
+        public DynamicTopic(Federation aFed, QualifiedTopicRevision key)
         {
             _currentFederation = aFed;
             _key = key;
         }
 
 
-        public NamespaceQualifiedTopicVersionKey Name
+        public QualifiedTopicRevision Name
         {
             get
             {

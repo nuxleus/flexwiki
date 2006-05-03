@@ -22,16 +22,16 @@ namespace FlexWiki
         private string _Body = "";
         private bool _CanOverride;
         private DateTime _CreationTime = DateTime.MinValue;
-        private NamespaceQualifiedTopicVersionKey _FullName;
+        private QualifiedTopicRevision _FullName;
         private string _LastAuthor = Federation.AnonymousUserName;
         private DateTime _LastModificationTime = DateTime.MinValue;
 
-        public BackingTopic(NamespaceQualifiedTopicVersionKey name)
+        public BackingTopic(QualifiedTopicRevision name)
         {
             _FullName = name;
         }
 
-        public BackingTopic(NamespaceQualifiedTopicVersionKey name, string body, bool canOverride)
+        public BackingTopic(QualifiedTopicRevision name, string body, bool canOverride)
         {
             _FullName = name;
             Body = body;
@@ -39,7 +39,7 @@ namespace FlexWiki
         }
 
 
-        public NamespaceQualifiedTopicVersionKey FullName
+        public QualifiedTopicRevision FullName
         {
             get
             {

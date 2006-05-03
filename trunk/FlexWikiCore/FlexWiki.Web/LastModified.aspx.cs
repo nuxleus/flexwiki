@@ -103,7 +103,7 @@ namespace FlexWiki.Web
             IEnumerable t = storeManager.AllTopicsSortedLastModifiedDescending();
 
             Hashtable a = new Hashtable();
-            foreach (NamespaceQualifiedTopicVersionKey topic in t)
+            foreach (QualifiedTopicRevision topic in t)
                 a[topic] = storeManager.GetTopicLastAuthor(topic.LocalName);
 
             history = new ArrayList();
@@ -136,7 +136,7 @@ namespace FlexWiki.Web
             Response.Write("</thead><tbody id=\"MainTable\">");
 
             int row = 0;
-            foreach (NamespaceQualifiedTopicVersionKey topic in topics)
+            foreach (QualifiedTopicRevision topic in topics)
             {
                 Response.Write("<tr id=\"row" + row + "\" class=\"" + (((row & 1) == 0) ? "SearchOddRow" : "SearchEvenRow") + "\">");
                 row++;

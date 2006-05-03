@@ -46,20 +46,20 @@ namespace FlexWiki.Web
         
 			foreach (string topic in topics)
 			{
-				NamespaceQualifiedTopicVersionKey abs;
-				IList tops = DefaultNamespaceManager.AllNamespaceQualifiedTopicNamesThatExist(topic);
+				QualifiedTopicRevision abs;
+				IList tops = DefaultNamespaceManager.AllQualifiedTopicNamesThatExist(topic);
 				if (tops.Count == 0)
 				{
                     // topic doesn't exist, assume in the wiki's home content base
-					abs = new NamespaceQualifiedTopicVersionKey(topic, DefaultNamespaceManager.Namespace);
+					abs = new QualifiedTopicRevision(topic, DefaultNamespaceManager.Namespace);
 				} 
 				else if (tops.Count > 1)
 				{
-					throw TopicIsAmbiguousException.ForTopic(new RelativeTopicVersionKey(topic));
+					throw TopicIsAmbiguousException.ForTopic(new RelativeTopicRevision(topic));
 				}
 				else	// we got just one!
 				{
-					abs = (NamespaceQualifiedTopicVersionKey)tops[0];
+					abs = (QualifiedTopicRevision)tops[0];
 				}
 
 				foreach (string field in fields)

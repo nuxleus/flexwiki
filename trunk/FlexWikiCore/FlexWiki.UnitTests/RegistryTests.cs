@@ -113,46 +113,46 @@ Role:Developer", author);
         [Test]
         public void DoubleHopImportTest()
         {
-            _lm.ReturnToTopicForEditLinks = new NamespaceQualifiedTopicVersionKey("FlexWiki.Other1.OtherOneRefThree");
-            CompareTopic("OtherOneRefThree", @"href=""" + _lm.LinkToTopic(new NamespaceQualifiedTopicVersionKey("Other3.OtherThreeTest")) + @""">OtherThreeTest</a>");
+            _lm.ReturnToTopicForEditLinks = new QualifiedTopicRevision("FlexWiki.Other1.OtherOneRefThree");
+            CompareTopic("OtherOneRefThree", @"href=""" + _lm.LinkToTopic(new QualifiedTopicRevision("Other3.OtherThreeTest")) + @""">OtherThreeTest</a>");
         }
 
         [Test]
         public void BaseToForcedLocal()
         {
-            CompareTopic("TopicFour", @"href=""" + _lm.LinkToTopic(new NamespaceQualifiedTopicVersionKey("FlexWiki.Base.TopicOne")) + @""">TopicOne</a>");
+            CompareTopic("TopicFour", @"href=""" + _lm.LinkToTopic(new QualifiedTopicRevision("FlexWiki.Base.TopicOne")) + @""">TopicOne</a>");
         }
 
         [Test]
         public void BaseToForeignUnqualified()
         {
-            CompareTopic("TopicOne", @"href=""" + _lm.LinkToTopic(new NamespaceQualifiedTopicVersionKey("FlexWiki.Other1.OtherOneHello")) + @""">OtherOneHello</a>");
+            CompareTopic("TopicOne", @"href=""" + _lm.LinkToTopic(new QualifiedTopicRevision("FlexWiki.Other1.OtherOneHello")) + @""">OtherOneHello</a>");
         }
 
         [Test]
         public void BaseToForeignQualified()
         {
-            CompareTopic("TopicTwo", @"href=""" + _lm.LinkToTopic(new NamespaceQualifiedTopicVersionKey("FlexWiki.Other1.OtherOneGoodbye")) + @""">OtherOneGoodbye</a>");
+            CompareTopic("TopicTwo", @"href=""" + _lm.LinkToTopic(new QualifiedTopicRevision("FlexWiki.Other1.OtherOneGoodbye")) + @""">OtherOneGoodbye</a>");
         }
 
         [Test]
         public void BaseToQualifiedAbsent()
         {
-            _lm.ReturnToTopicForEditLinks = new NamespaceQualifiedTopicVersionKey("FlexWiki.Base.TopicThree");
+            _lm.ReturnToTopicForEditLinks = new QualifiedTopicRevision("FlexWiki.Base.TopicThree");
             CompareTopic("TopicThree", @"<p>No.Such.Namespace.FooBar</p>");
         }
 
         [Test]
         public void BaseToUnqualifiedAbsent()
         {
-            _lm.ReturnToTopicForEditLinks = new NamespaceQualifiedTopicVersionKey("FlexWiki.Base.TopicFive");
+            _lm.ReturnToTopicForEditLinks = new QualifiedTopicRevision("FlexWiki.Base.TopicFive");
             CompareTopic("TopicFive", @"class=""create"" href=""" + _lm.LinkToEditTopic(new TopicName("FlexWiki.Base.FooBar")) + @""">FooBar</a>");
         }
 
         [Test]
         public void BaseToForcedLocalAbsent()
         {
-            _lm.ReturnToTopicForEditLinks = new NamespaceQualifiedTopicVersionKey("FlexWiki.Base.TopicSix");
+            _lm.ReturnToTopicForEditLinks = new QualifiedTopicRevision("FlexWiki.Base.TopicSix");
             CompareTopic("TopicSix", @"class=""create"" href=""" + _lm.LinkToEditTopic(new TopicName("FlexWiki.Base.GooBar")) + @""">GooBar</a>");
         }
 
@@ -207,19 +207,19 @@ Role:Developer", author);
         [Test]
         public void ForeignToForeignUnqualified()
         {
-            CompareTopic("OtherOneTopicOne", @"href=""" + _lm.LinkToTopic(new NamespaceQualifiedTopicVersionKey("Other2.OtherTwoHello")) + @""">OtherTwoHello</a>");
+            CompareTopic("OtherOneTopicOne", @"href=""" + _lm.LinkToTopic(new QualifiedTopicRevision("Other2.OtherTwoHello")) + @""">OtherTwoHello</a>");
         }
 
         [Test]
         public void ForeignToForeignQualified()
         {
-            CompareTopic("OtherOneTopicTwo", @"href=""" + _lm.LinkToTopic(new NamespaceQualifiedTopicVersionKey("Other2.OtherTwoGoodbye")) + @""">OtherTwoGoodbye</a>");
+            CompareTopic("OtherOneTopicTwo", @"href=""" + _lm.LinkToTopic(new QualifiedTopicRevision("Other2.OtherTwoGoodbye")) + @""">OtherTwoGoodbye</a>");
         }
 
         [Test]
         public void ForeignToQualifiedAbsent()
         {
-            _lm.ReturnToTopicForEditLinks = new NamespaceQualifiedTopicVersionKey("FlexWiki.Other1.OtherOneTopicThree");
+            _lm.ReturnToTopicForEditLinks = new QualifiedTopicRevision("FlexWiki.Other1.OtherOneTopicThree");
             CompareTopic("OtherOneTopicThree", @"<p>No.Such.Namespace.FooBar</p>");
         }
 
@@ -232,21 +232,21 @@ Role:Developer", author);
         [Test]
         public void ForeignToUnqualifiedAbsent()
         {
-            _lm.ReturnToTopicForEditLinks = new NamespaceQualifiedTopicVersionKey("FlexWiki.Other1.OtherOneTopicFive");
+            _lm.ReturnToTopicForEditLinks = new QualifiedTopicRevision("FlexWiki.Other1.OtherOneTopicFive");
             CompareTopic("OtherOneTopicFive", @"class=""create"" href=""" + _lm.LinkToEditTopic(new TopicName("FlexWiki.Other1.FooBar")) + @""">FooBar</a>");
         }
 
         [Test]
         public void ForeignToForcedLocalAbsent()
         {
-            _lm.ReturnToTopicForEditLinks = new NamespaceQualifiedTopicVersionKey("FlexWiki.Other1.OtherOneTopicSix");
+            _lm.ReturnToTopicForEditLinks = new QualifiedTopicRevision("FlexWiki.Other1.OtherOneTopicSix");
             CompareTopic("OtherOneTopicSix", @"class=""create"" href=""" + _lm.LinkToEditTopic(new TopicName("FlexWiki.Other1.GooBar")) + @""">GooBar</a>");
         }
 
         [Test]
         public void ReferenceTopicInNonImportedNamespace()
         {
-            CompareTopic("Space5.AbsRef", @"href=""" + _lm.LinkToTopic(new NamespaceQualifiedTopicVersionKey("Other2.OtherTwoHello")) + @""">OtherTwoHello</a>");
+            CompareTopic("Space5.AbsRef", @"href=""" + _lm.LinkToTopic(new QualifiedTopicRevision("Other2.OtherTwoHello")) + @""">OtherTwoHello</a>");
         }
 
         [Test]
@@ -262,7 +262,7 @@ Role:Developer", author);
         private void CompareTopic(string topic, string outputMustContain)
         {
             TopicName abs = _base.UnambiguousTopicNameFor(topic);
-            string o = Formatter.FormattedTopic(new NamespaceQualifiedTopicVersionKey(abs), OutputFormat.HTML, null, Federation, _lm);
+            string o = Formatter.FormattedTopic(new QualifiedTopicRevision(abs), OutputFormat.HTML, null, Federation, _lm);
             string o1 = o.Replace("\r", "");
             string o2 = outputMustContain.Replace("\r", "");
             bool pass = o1.IndexOf(o2) >= 0;

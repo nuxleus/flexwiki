@@ -53,11 +53,11 @@ namespace FlexWiki.Web
         }
         #endregion
 
-        protected NamespaceQualifiedTopicVersionKey AbsTopicName
+        protected QualifiedTopicRevision AbsTopicName
         {
             get
             {
-                return new NamespaceQualifiedTopicVersionKey(Request.QueryString["topic"]);
+                return new QualifiedTopicRevision(Request.QueryString["topic"]);
             }
         }
 
@@ -116,7 +116,7 @@ namespace FlexWiki.Web
 
         protected void PerformRename()
         {
-            NamespaceQualifiedTopicVersionKey oldName = new NamespaceQualifiedTopicVersionKey(OldName, Namespace);
+            QualifiedTopicRevision oldName = new QualifiedTopicRevision(OldName, Namespace);
             NamespaceManager storeManager = Federation.NamespaceManagerForNamespace(Namespace);
 
             string defaultNamespace = DefaultNamespace;
