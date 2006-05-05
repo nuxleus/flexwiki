@@ -33,6 +33,11 @@ namespace FlexWiki
         {
         }
 
+        public UnqualifiedTopicRevision(UnqualifiedTopicName name, string version)
+            : base(name, version)
+        {
+        }
+
         public UnqualifiedTopicRevision(string name, string version)
             : base(name, null, version)
         {

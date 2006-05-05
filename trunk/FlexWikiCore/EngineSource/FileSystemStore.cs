@@ -101,10 +101,6 @@ namespace FlexWiki
                 return _lastRead;
             }
         }
-        private string Namespace
-        {
-            get { return NamespaceManager.Namespace; }
-        }
 
         // Methods
 

@@ -127,9 +127,9 @@ PropertyOne: ValueC");
 a link to WikiTopicOne and WikiTopicTwo and ForeignNamespace.WikiTopicOne");
 
             AssertTopicLinksCorrect(parsedTopic.TopicLinks,
-                new RelativeTopicRevision("WikiTopicOne"),
-                new RelativeTopicRevision("WikiTopicTwo"),
-                new RelativeTopicRevision("WikiTopicOne", "ForeignNamespace"));
+                new TopicRevision("WikiTopicOne"),
+                new TopicRevision("WikiTopicTwo"),
+                new TopicRevision("WikiTopicOne", "ForeignNamespace"));
         }
         
         [Test]
@@ -147,8 +147,8 @@ a link to WikiTopicOne and WikiTopicTwo and ForeignNamespace.WikiTopicOne");
 a link to WikiTopicOne, another link to WikiTopicOne, and a link to WikiTopicTwo.");
 
             AssertTopicLinksCorrect(parsedTopic.TopicLinks,
-                new RelativeTopicRevision("WikiTopicOne"),
-                new RelativeTopicRevision("WikiTopicTwo"));
+                new TopicRevision("WikiTopicOne"),
+                new TopicRevision("WikiTopicTwo"));
         }
 
         [Test]
@@ -158,8 +158,8 @@ a link to WikiTopicOne, another link to WikiTopicOne, and a link to WikiTopicTwo
 to WikiTopicOne and WikiTopicTwo");
 
             AssertTopicLinksCorrect(parsedTopic.TopicLinks,
-                new RelativeTopicRevision("WikiTopicOne"),
-                new RelativeTopicRevision("WikiTopicTwo")
+                new TopicRevision("WikiTopicOne"),
+                new TopicRevision("WikiTopicTwo")
                 );
         }
 
@@ -179,8 +179,8 @@ to WikiTopicOne and WikiTopicTwo");
 			}
         }
 
-        private static void AssertTopicLinksCorrect(IList<RelativeTopicRevision> actualLinks,
-            params RelativeTopicRevision[] expectedLinks)
+        private static void AssertTopicLinksCorrect(IList<TopicRevision> actualLinks,
+            params TopicRevision[] expectedLinks)
         {
             Assert.AreEqual(expectedLinks.Length, actualLinks.Count,
                 "Checking that the right number of links were returned.");

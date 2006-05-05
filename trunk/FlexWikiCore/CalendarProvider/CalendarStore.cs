@@ -23,9 +23,9 @@ namespace FlexWiki.CalendarProvider
     /// <summary>
     /// Summary description for CalendarStore.
     /// </summary>
-    public class CalendarStore : UnparsedContentProviderBase
+    public class CalendarStore : ContentProviderBase
     {
-        public CalendarStore(int year, int month)
+        public CalendarStore(int year, int month) : base(null)
         {
             _year = year;
             _month = month;
@@ -45,14 +45,14 @@ namespace FlexWiki.CalendarProvider
                 return DateTime.MinValue;
             }
         }
-        public bool Exists
+        public override bool Exists
         {
             get
             {
                 return true;
             }
         }
-        public bool IsReadOnly
+        public override bool IsReadOnly
         {
             get { return true; }
         }
@@ -66,18 +66,13 @@ namespace FlexWiki.CalendarProvider
             {
             }
         }
-        public DateTime LastRead
+        public override DateTime LastRead
         {
             get
             {
                 return _lastRead;
             }
         }
-        public UnparsedContentProviderBase Next
-        {
-            get { throw new NotSupportedException(); }
-        }
-
         protected IEnumerable Dates
         {
             get
@@ -109,7 +104,7 @@ namespace FlexWiki.CalendarProvider
         /// <param name="topic">A given date</param>
         /// <param name="stamp">A non-null timestamp; changes before this time won't be included in the answer </param>
         /// <returns>Enumeration of TopicChanges</returns>
-        TopicChangeCollection ContentProviderBase.AllChangesForTopicSince(string topic, DateTime stamp)
+        public override TopicChangeCollection AllChangesForTopicSince(UnqualifiedTopicName topic, DateTime stamp)
         {
             throw new NotImplementedException();
             /*
@@ -124,22 +119,22 @@ namespace FlexWiki.CalendarProvider
              */
         }
 
-        QualifiedTopicNameCollection ContentProviderBase.AllTopics()
+        public override QualifiedTopicNameCollection AllTopics()
         {
             throw new NotImplementedException(); 
         }
 
-        void ContentProviderBase.DeleteAllTopicsAndHistory()
+        public override void DeleteAllTopicsAndHistory()
         {
             throw new NotImplementedException();
         }
 
-        void ContentProviderBase.DeleteTopic(string topicName)
+        public override void DeleteTopic(UnqualifiedTopicName topicName)
         {
             throw new NotImplementedException();
         }
 
-        void ContentProviderBase.Initialize(NamespaceManager namespaceManager)
+        public override void Initialize(NamespaceManager namespaceManager)
         {
             throw new NotImplementedException();
 
@@ -156,12 +151,12 @@ namespace FlexWiki.CalendarProvider
             //_Topics[a] = DateTime.MinValue;
         }
 
-        bool ContentProviderBase.IsExistingTopicWritable(string topicName)
+        public override bool IsExistingTopicWritable(UnqualifiedTopicName topicName)
         {
             throw new NotImplementedException();
         }
 
-        TextReader ContentProviderBase.TextReaderForTopic(string topic, string version)
+        public override TextReader TextReaderForTopic(UnqualifiedTopicRevision revision)
         {
             throw new NotImplementedException();
 
@@ -177,7 +172,7 @@ namespace FlexWiki.CalendarProvider
             //return new StringReader(b.ToString());
         }
         
-        bool ContentProviderBase.TopicExists(string name)
+        public override bool TopicExists(UnqualifiedTopicName name)
         {
             throw new NotImplementedException();
 
@@ -190,12 +185,12 @@ namespace FlexWiki.CalendarProvider
             //return false;
         }
         
-        void ContentProviderBase.WriteTopic(string topic, string version, string content)
+        public override void WriteTopic(UnqualifiedTopicRevision revision, string content)
         {
             throw new NotImplementedException();
         }
 
-        void ContentProviderBase.WriteTopicAndNewVersion(string topic, string content, string author)
+        public override void WriteTopicAndNewVersion(UnqualifiedTopicName topic, string content, string author)
         {
             throw new NotImplementedException();
         }

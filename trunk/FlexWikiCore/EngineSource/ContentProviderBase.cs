@@ -63,6 +63,10 @@ namespace FlexWiki
                 return _next.LastRead;
             }
         }
+        public string Namespace
+        {
+            get { return NamespaceManager.Namespace; }
+        }
         public NamespaceManager NamespaceManager
         {
             get { return _namespaceManager; }

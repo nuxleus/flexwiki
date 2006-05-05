@@ -420,7 +420,7 @@ this file must be present at <b>" + HtmlWriter.Escape(FederationNamespaceMap) + 
             AddResult(r);
         }
 
-        private static ParsedContentProviderBase ContentStore(NamespaceManager storeManager)
+        private static ContentProviderBase ContentStore(NamespaceManager storeManager)
         {
             throw new NotImplementedException("Deprecated because the configuration checker winds up with too much internal knowledge of the content provider chain.");
         }

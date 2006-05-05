@@ -24,7 +24,7 @@ namespace FlexWiki.UnitTests
     /// <summary>
     /// A content store whose purpose is to provide storage during unit tests.
     /// </summary>
-    internal class MockContentStore : UnparsedContentProviderBase
+    internal class MockContentStore : ContentProviderBase
     {
         private NamespaceManager _namespaceManager;
         private DateTime _created;
@@ -37,6 +37,7 @@ namespace FlexWiki.UnitTests
         }
 
         internal MockContentStore(MockSetupOptions options)
+            : base(null)
         {
             _options = options;
         }
@@ -49,7 +50,7 @@ namespace FlexWiki.UnitTests
             }
         }
 
-        public bool Exists
+        public override bool Exists
         {
             get
             {
@@ -57,7 +58,7 @@ namespace FlexWiki.UnitTests
             }
         }
 
-        public bool IsReadOnly
+        public override bool IsReadOnly
         {
             get
             {
@@ -65,23 +66,7 @@ namespace FlexWiki.UnitTests
             }
         }
 
-        public DateTime LastRead
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public NamespaceManager NamespaceManager
-        {
-            get
-            {
-                return _namespaceManager;
-            }
-        }
-
-        public UnparsedContentProviderBase Next
+        public override DateTime LastRead
         {
             get
             {
@@ -94,12 +79,7 @@ namespace FlexWiki.UnitTests
             get { return NamespaceManager.Federation; }
         }
 
-        private string Namespace
-        {
-            get { return NamespaceManager.Namespace; }
-        }
-
-        public TopicChangeCollection AllChangesForTopicSince(string topicName, DateTime stamp)
+        public override TopicChangeCollection AllChangesForTopicSince(UnqualifiedTopicName topicName, DateTime stamp)
         {
             MockTopic topic = GetTopic(topicName, ExistencePolicy.ExistingOnly);
 
@@ -115,7 +95,7 @@ namespace FlexWiki.UnitTests
             {
                 if (topicHistory.Created >= stamp)
                 {
-                    QualifiedTopicRevision namespaceQualifiedTopic = new QualifiedTopicRevision(topicName, Namespace);
+                    QualifiedTopicRevision namespaceQualifiedTopic = new QualifiedTopicRevision(topicName.LocalName, Namespace);
                     namespaceQualifiedTopic.Version = TopicRevision.NewVersionStringForUser(topicHistory.Author, topicHistory.Created);
                     changes.Add(new TopicChange(namespaceQualifiedTopic, topicHistory.Created, topicHistory.Author));
                 }
@@ -124,7 +104,7 @@ namespace FlexWiki.UnitTests
             return changes;
         }
 
-        public QualifiedTopicNameCollection AllTopics()
+        public override QualifiedTopicNameCollection AllTopics()
         {
             QualifiedTopicNameCollection topics = new QualifiedTopicNameCollection();
 
@@ -136,44 +116,16 @@ namespace FlexWiki.UnitTests
             return topics;
         }
 
-        public void DeleteAllTopicsAndHistory()
+        public override void DeleteAllTopicsAndHistory()
         {
             _topics.Clear();
         }
 
-        public void DeleteTopic(string topicName)
+        public override void DeleteTopic(UnqualifiedTopicName topicName)
         {
             MockTopic topic = GetTopic(topicName, ExistencePolicy.All);
 
             topic.IsDeleted = true;
-        }
-
-        public DateTime GetTopicCreationTime(string topicName, string version)
-        {
-            MockTopic topic = GetTopic(topicName, ExistencePolicy.ExistingOnly);
-
-            if (topic == null)
-            {
-                throw TopicNotFoundException.ForTopic(topicName, Namespace);
-            }
-
-            if (version != null)
-            {
-                foreach (MockTopicHistory history in topic.History)
-                {
-                    if (history.Version == version)
-                    {
-                        return history.Created;
-                    }
-                }
-            }
-            else
-            {
-                return topic.Latest.Created;
-            }
-
-            throw TopicNotFoundException.ForTopic(topicName, Namespace);
-
         }
 
         //public IList<TopicProperty> GetTopicProperty(LocalTopicName topicName, string propertyName)
@@ -191,43 +143,35 @@ namespace FlexWiki.UnitTests
         //  return null;
         //}
 
-        public void Initialize(NamespaceManager manager)
+        public override void Initialize(NamespaceManager manager)
         {
+            base.Initialize(manager);
+
             _namespaceManager = manager;
             _created = manager.Federation.TimeProvider.Now;
         }
 
-        public bool IsExistingTopicWritable(string topic)
+        public override bool IsExistingTopicWritable(UnqualifiedTopicName topic)
         {
             // We're not implementing security here, so existence is good enough
             // to allow a write. 
             return TopicExists(topic);
         }
 
-        public DateTime LastModified(bool includeImports)
-        {
-            throw new NotImplementedException();
-        }
-
-        public string LatestVersionForTopic(string topic)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool TopicExists(string name)
+        public override bool TopicExists(UnqualifiedTopicName name)
         {
             return GetTopic(name, ExistencePolicy.ExistingOnly) != null;
         }
 
-        public TextReader TextReaderForTopic(string topicName, string version)
+        public override TextReader TextReaderForTopic(UnqualifiedTopicRevision revision)
         {
-            MockTopic topic = GetTopic(topicName, ExistencePolicy.ExistingOnly);
+            MockTopic topic = GetTopic(revision.LocalName, ExistencePolicy.ExistingOnly);
             if (topic == null)
             {
                 return null;
             }
 
-            MockTopicHistory history = topic[version];
+            MockTopicHistory history = topic[revision.Version];
 
             if (history == null)
             {
@@ -237,14 +181,9 @@ namespace FlexWiki.UnitTests
             return new StringReader(history.Contents);
         }
 
-        public void Validate()
+        public override void WriteTopic(UnqualifiedTopicRevision revision, string content)
         {
-            throw new NotImplementedException();
-        }
-
-        public void WriteTopic(string topicName, string version, string content)
-        {
-            MockTopic topic = RetrieveOrCreateTopic(topicName);
+            MockTopic topic = RetrieveOrCreateTopic(revision.LocalName);
 
             MockTopicHistory history = null;
             if (topic.History.Count == 0)
@@ -252,11 +191,11 @@ namespace FlexWiki.UnitTests
                 history = new MockTopicHistory(content, "", Federation.TimeProvider.Now);
                 topic.History.Add(history);
             }
-            else if (version != null)
+            else if (revision.Version != null)
             {
                 foreach (MockTopicHistory h in topic.History)
                 {
-                    if (version == h.Version)
+                    if (revision.Version == h.Version)
                     {
                         history = h;
                     }
@@ -272,9 +211,9 @@ namespace FlexWiki.UnitTests
             topic.IsDeleted = false;
         }
 
-        public void WriteTopicAndNewVersion(string topicName, string content, string author)
+        public override void WriteTopicAndNewVersion(UnqualifiedTopicName topicName, string content, string author)
         {
-            MockTopic topic = RetrieveOrCreateTopic(topicName);
+            MockTopic topic = RetrieveOrCreateTopic(topicName.LocalName);
 
             topic.History.Add(new MockTopicHistory(content, author, Federation.TimeProvider.Now));
 
@@ -306,6 +245,11 @@ namespace FlexWiki.UnitTests
             }
         }
 #endif
+
+        private MockTopic GetTopic(UnqualifiedTopicName topicName, ExistencePolicy existencePolicy)
+        {
+            return GetTopic(topicName.LocalName, existencePolicy); 
+        }
 
         private MockTopic GetTopic(string topicName, ExistencePolicy existencePolicy)
         {

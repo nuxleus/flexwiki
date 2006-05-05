@@ -61,6 +61,11 @@ namespace FlexWiki
 			return answer;
 		}
 
+        public static TopicNotFoundException ForTopic(UnqualifiedTopicName topic, string ns)
+        {
+            return ForTopic(new UnqualifiedTopicRevision(topic), ns); 
+        }
+
 		public static TopicNotFoundException ForTopic(UnqualifiedTopicRevision topic, string ns)
 		{
 			QualifiedTopicRevision t = new QualifiedTopicRevision(topic.NameWithVersion, ns);

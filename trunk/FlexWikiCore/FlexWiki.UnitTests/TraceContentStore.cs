@@ -8,17 +8,14 @@ using FlexWiki.Collections;
 
 namespace FlexWiki.UnitTests
 {
-    internal class TraceContentProvider : UnparsedContentProviderBase
+    internal class TraceContentProvider : ContentProviderBase
     {
-        public DateTime Created
+        public TraceContentProvider(ContentProviderBase next)
+            : base(next)
         {
-            get
-            {
-                RegisterCall(MethodInfo.GetCurrentMethod());
-                throw new NotImplementedException(); 
-            }
         }
-        public bool Exists
+
+        public override bool Exists
         {
             get 
             { 
@@ -26,7 +23,7 @@ namespace FlexWiki.UnitTests
                 throw new NotImplementedException(); 
             }
         }
-        public bool IsReadOnly
+        public override bool IsReadOnly
         {
             get
             {
@@ -34,20 +31,7 @@ namespace FlexWiki.UnitTests
                 throw new NotImplementedException(); 
             }
         }
-        public UnparsedContentProviderBase Next
-        {
-            get
-            {
-                RegisterCall(MethodInfo.GetCurrentMethod());
-                throw new NotImplementedException(); 
-            }
-            set
-            {
-                RegisterCall(MethodInfo.GetCurrentMethod());
-                throw new NotImplementedException();
-            }
-        }
-        public DateTime LastRead 
+        public override DateTime LastRead 
         {
             get 
             {
@@ -56,92 +40,52 @@ namespace FlexWiki.UnitTests
             }
         }
 
-        public TopicChangeCollection AllChangesForTopicSince(string topic, DateTime stamp)
+        public override TopicChangeCollection AllChangesForTopicSince(UnqualifiedTopicName topic, DateTime stamp)
         {
             RegisterCall(MethodInfo.GetCurrentMethod());
             throw new NotImplementedException(); 
         }
-        public QualifiedTopicNameCollection AllTopics()
+        public override QualifiedTopicNameCollection AllTopics()
         {
             RegisterCall(MethodInfo.GetCurrentMethod());
             throw new NotImplementedException();
         }
-        public void DeleteAllTopicsAndHistory()
+        public override void DeleteAllTopicsAndHistory()
         {
             RegisterCall(MethodInfo.GetCurrentMethod());
             throw new NotImplementedException();
         }
-        public void DeleteTopic(string topic)
+        public override void DeleteTopic(UnqualifiedTopicName topic)
         {
             RegisterCall(MethodInfo.GetCurrentMethod());
             throw new NotImplementedException();
         }
-        public RelativeTopicRevisionCollection GetReferences(string referencingTopic)
+        public override void Initialize(NamespaceManager manager)
         {
             RegisterCall(MethodInfo.GetCurrentMethod());
             throw new NotImplementedException();
         }
-        public DateTime GetTopicCreationTime(string topic)
+        public override bool IsExistingTopicWritable(UnqualifiedTopicName topic)
         {
             RegisterCall(MethodInfo.GetCurrentMethod());
             throw new NotImplementedException();
         }
-        public DateTime GetTopicLastModificationTime(string topic)
+        public override System.IO.TextReader TextReaderForTopic(UnqualifiedTopicRevision revision)
         {
             RegisterCall(MethodInfo.GetCurrentMethod());
             throw new NotImplementedException();
         }
-        public string GetTopicLastAuthor(string topic)
+        public override bool TopicExists(UnqualifiedTopicName name)
         {
             RegisterCall(MethodInfo.GetCurrentMethod());
             throw new NotImplementedException();
         }
-        public TopicPropertyCollection GetTopicProperties(string topic, string property)
+        public override void WriteTopic(UnqualifiedTopicRevision revision, string content)
         {
             RegisterCall(MethodInfo.GetCurrentMethod());
             throw new NotImplementedException();
         }
-        public void Initialize(NamespaceManager manager)
-        {
-            RegisterCall(MethodInfo.GetCurrentMethod());
-            throw new NotImplementedException();
-        }
-        public bool IsExistingTopicWritable(string topic)
-        {
-            RegisterCall(MethodInfo.GetCurrentMethod());
-            throw new NotImplementedException();
-        }
-        public string LatestVersionForTopic(string topic)
-        {
-            RegisterCall(MethodInfo.GetCurrentMethod());
-            throw new NotImplementedException();
-        }
-        public DateTime LastModified(bool includeImports)
-        {
-            RegisterCall(MethodInfo.GetCurrentMethod());
-            throw new NotImplementedException();
-        }
-        public System.IO.TextReader TextReaderForTopic(string topic, string version)
-        {
-            RegisterCall(MethodInfo.GetCurrentMethod());
-            throw new NotImplementedException();
-        }
-        public bool TopicExists(string name)
-        {
-            RegisterCall(MethodInfo.GetCurrentMethod());
-            throw new NotImplementedException();
-        }
-        public void Validate()
-        {
-            RegisterCall(MethodInfo.GetCurrentMethod());
-            throw new NotImplementedException();
-        }
-        public void WriteTopic(string topic, string version, string content)
-        {
-            RegisterCall(MethodInfo.GetCurrentMethod());
-            throw new NotImplementedException();
-        }
-        public void WriteTopicAndNewVersion(string topic, string content, string author)
+        public override void WriteTopicAndNewVersion(UnqualifiedTopicName topic, string content, string author)
         {
             RegisterCall(MethodInfo.GetCurrentMethod());
             throw new NotImplementedException();

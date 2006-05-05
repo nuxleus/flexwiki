@@ -13,10 +13,10 @@ namespace FlexWiki.UnitTests
         public void AllChangesForTopicSinceBuiltin()
         {
             MockContentStore store = new MockContentStore();
-            UnparsedContentProviderBase provider = new BuiltinTopicsProvider(store);
+            ContentProviderBase provider = new BuiltinTopicsProvider(store);
 
             IList<TopicChange> changes = provider.AllChangesForTopicSince(
-                NamespaceManager.DefinitionTopicName, DateTime.MinValue);
+                new UnqualifiedTopicName(NamespaceManager.DefinitionTopicName), DateTime.MinValue);
 
             Assert.AreEqual(1, changes.Count, "Checking that exactly one change was listed.");
             Assert.AreEqual(string.Empty, changes[0].Author,

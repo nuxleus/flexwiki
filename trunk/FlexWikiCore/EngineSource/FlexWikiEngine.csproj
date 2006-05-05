@@ -99,7 +99,7 @@
     </Compile>
     <Compile Include="Collections\UnqualifiedTopicRevisionCollection.cs" />
     <Compile Include="Collections\QualifiedTopicNameCollection.cs" />
-    <Compile Include="Collections\RelativeTopicRevisionCollection.cs">
+    <Compile Include="Collections\TopicRevisionCollection.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="QualifiedTopicName.cs" />

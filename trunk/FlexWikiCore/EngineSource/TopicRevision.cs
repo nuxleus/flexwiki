@@ -71,6 +71,10 @@ namespace FlexWiki
         {
             throw new NotImplementedException(); 
         }
+        public TopicRevision(TopicName name, string version)
+        {
+            throw new NotImplementedException(); 
+        }
 
         // Properties
 

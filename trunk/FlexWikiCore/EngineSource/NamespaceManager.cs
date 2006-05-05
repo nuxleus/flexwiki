@@ -694,14 +694,18 @@ namespace FlexWiki
         /// <returns></returns>
         public DateTime GetTopicCreationTime(string topic, string version)
         {
-            TopicChangeCollection changes = AllChangesForTopic(topic);
+            return GetTopicCreationTime(new UnqualifiedTopicRevision(topic, version)); 
+        }
+        public DateTime GetTopicCreationTime(UnqualifiedTopicRevision revision)
+        {
+            TopicChangeCollection changes = AllChangesForTopic(revision.Name);
 
             if (changes == null)
             {
-                throw TopicNotFoundException.ForTopic(new UnqualifiedTopicRevision(topic), Namespace); 
+                throw TopicNotFoundException.ForTopic(revision, Namespace); 
             }
 
-            if (version == null)
+            if (revision.Version == null)
             {
                 return changes.Latest.Created;
             }
@@ -709,14 +713,14 @@ namespace FlexWiki
             {
                 foreach (TopicChange change in changes)
                 {
-                    if (change.Version == version)
+                    if (change.Version == revision.Version)
                     {
                         return change.Created; 
                     }
                 }
             }
 
-            throw TopicNotFoundException.ForTopic(new UnqualifiedTopicRevision(topic), Namespace); 
+            throw TopicNotFoundException.ForTopic(revision, Namespace); 
         }
         [ExposedMethod(ExposedMethodFlags.Default, "Get information about the given topic")]
         public TopicVersionInfo GetTopicInfo(string topicName)
@@ -1256,7 +1260,11 @@ namespace FlexWiki
         /// <param name="content">The content</param>
         public void WriteTopicAndNewVersion(string topic, string content, string author)
         {
-            ContentProviderChain.WriteTopicAndNewVersion(new UnqualifiedTopicName(topic), content, author);
+            WriteTopicAndNewVersion(new UnqualifiedTopicName(topic), content, author); 
+        }
+        public void WriteTopicAndNewVersion(UnqualifiedTopicName topic, string content, string author)
+        {
+            ContentProviderChain.WriteTopicAndNewVersion(topic, content, author);
         }
 
         // Private methods

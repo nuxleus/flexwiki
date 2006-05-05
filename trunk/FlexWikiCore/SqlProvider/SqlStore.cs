@@ -24,7 +24,7 @@ namespace FlexWiki.SqlProvider
     /// <summary>
     /// Summary description for SqlStore.
     /// </summary>
-    public class SqlStore : UnparsedContentProviderBase
+    public class SqlStore : ContentProviderBase
     {
         // Nested Types
 
@@ -52,7 +52,7 @@ namespace FlexWiki.SqlProvider
 
         // Constructors
         
-        public SqlStore()
+        public SqlStore() : base(null)
         {
 
         }
@@ -81,13 +81,9 @@ namespace FlexWiki.SqlProvider
         {
             get { return StoreManager.Federation; }
         }
-        bool ContentProviderBase.IsReadOnly
+        public override bool IsReadOnly
         {
             get { throw new NotImplementedException(); }
-        }
-        private string Namespace
-        {
-            get { return StoreManager.Namespace; }
         }
         //
         // Public methods
@@ -96,26 +92,22 @@ namespace FlexWiki.SqlProvider
         // 
         // Private methods
         // 
-        DateTime ContentProviderBase.LastRead
+        public override DateTime LastRead
         {
             get { return _lastRead; }
-        }
-        UnparsedContentProviderBase UnparsedContentProviderBase.Next
-        {
-            // This provider is always at the end of the chain.
-            get { throw new NotSupportedException(); }
         }
 
         private static string MakeTopicName(string name)
         {
             return MakeTopicName(new UnqualifiedTopicRevision(name)); 
         }
-        private static string MakeTopicName(UnqualifiedTopicRevision name)
+        private static string MakeTopicName(UnqualifiedTopicName topic)
         {
-            if (name.Version == null || name.Version.Length == 0)
-                return name.Name;
-            else
-                return name.Name + "(" + name.Version + ")";
+            return MakeTopicName(new UnqualifiedTopicRevision(topic)); 
+        }
+        private static string MakeTopicName(UnqualifiedTopicRevision revision)
+        {
+            return revision.QualifiedNameWithVersion; 
         }
         /// <summary>
         /// Read the Namespace details from the store.
@@ -184,7 +176,7 @@ namespace FlexWiki.SqlProvider
 
 
 
-        void ContentProviderBase.Initialize(NamespaceManager storeManager)
+        public override void Initialize(NamespaceManager storeManager)
         {
             _storeManager = storeManager;
             _connectionString = StoreManager.Parameters["Connection String"].Value;
@@ -210,7 +202,7 @@ namespace FlexWiki.SqlProvider
 
         }
 
-        bool ContentProviderBase.Exists
+        public override bool Exists
         {
             get { return SqlHelper.NamespaceExists(Namespace, _connectionString); }
         }
@@ -220,7 +212,7 @@ namespace FlexWiki.SqlProvider
         /// </summary>
         /// <param name="name">Name of the topic</param>
         /// <returns>true if it exists</returns>
-        bool ContentProviderBase.TopicExists(string name)
+        public override bool TopicExists(UnqualifiedTopicName name)
         {
             return SqlHelper.TopicExists(Namespace, MakeTopicName(name), _connectionString);
         }
@@ -230,19 +222,19 @@ namespace FlexWiki.SqlProvider
         /// </summary>
         /// <param name="topic">The topic (must directly be in this content base)</param>
         /// <returns>true if the topic exists AND is writable by the current user; else false</returns>
-        bool ContentProviderBase.IsExistingTopicWritable(string topic)
+        public override bool IsExistingTopicWritable(UnqualifiedTopicName topic)
         {
-            if (!SqlHelper.TopicExists(Namespace, topic, _connectionString))
+            if (!SqlHelper.TopicExists(Namespace, topic.LocalName, _connectionString))
             {
                 return false;
             }
 
-            return SqlHelper.IsExistingTopicWritable(Namespace, topic, _connectionString);
+            return SqlHelper.IsExistingTopicWritable(Namespace, topic.LocalName, _connectionString);
         }
 
         private SqlInfoForTopic[] SqlTopicInfosForTopic(UnqualifiedTopicRevision topic)
         {
-            return SqlHelper.GetSqlTopicInfosForTopic(Namespace, topic.Name, _connectionString);
+            return SqlHelper.GetSqlTopicInfosForTopic(Namespace, topic.LocalName, _connectionString);
         }
 
 
@@ -252,12 +244,12 @@ namespace FlexWiki.SqlProvider
         /// <param name="topic"></param>
         /// <exception cref="TopicNotFoundException">Thrown when the topic doesn't exist</exception>
         /// <returns>TextReader</returns>
-        TextReader ContentProviderBase.TextReaderForTopic(string topic, string version)
+        public override TextReader TextReaderForTopic(UnqualifiedTopicRevision revision)
         {
-            string topicName = MakeTopicName(new UnqualifiedTopicRevision(topic, version));
+            string topicName = MakeTopicName(revision);
             if (topicName == null || !SqlHelper.TopicExists(Namespace, topicName, _connectionString))
             {
-                throw TopicNotFoundException.ForTopic(topic, Namespace);
+                throw TopicNotFoundException.ForTopic(revision, Namespace);
             }
             return new StringReader(SqlHelper.GetTopicBody(Namespace, topicName, _connectionString));
         }
@@ -266,14 +258,14 @@ namespace FlexWiki.SqlProvider
         /// Delete a topic
         /// </summary>
         /// <param name="topic"></param>
-        void ContentProviderBase.DeleteTopic(string topic)
+        public override void DeleteTopic(UnqualifiedTopicName topic)
         {
-            if (!SqlHelper.TopicExists(Namespace, topic, _connectionString))
+            if (!SqlHelper.TopicExists(Namespace, topic.LocalName, _connectionString))
             {
                 return;
             }
 
-            SqlHelper.DeleteTopic(Namespace, topic, _connectionString);
+            SqlHelper.DeleteTopic(Namespace, topic.LocalName, _connectionString);
 
             //      // Fire the event
             //      FederationUpdate update = new FederationUpdate();
@@ -285,7 +277,7 @@ namespace FlexWiki.SqlProvider
         /// Answer an (unsorted) enumeration of all topic in the ContentProviderChain (doesn't include imports)
         /// </summary>
         /// <returns>Enumeration of AbsoluteTopicNames</returns>
-        QualifiedTopicNameCollection ContentProviderBase.AllTopics()
+        public override QualifiedTopicNameCollection AllTopics()
         {
             return AllTopicsSorted(null);
         }
@@ -334,10 +326,10 @@ namespace FlexWiki.SqlProvider
         /// <param name="stamp">A non-null timestamp; changes before this time won't be included in the answer </param>
         /// <param name="rule">A composite cache rule to fill with rules that represented accumulated dependencies (or null)</param>
         /// <returns>Enumeration of TopicChanges</returns>
-        TopicChangeCollection ContentProviderBase.AllChangesForTopicSince(string topic, DateTime stamp)
+        public override TopicChangeCollection AllChangesForTopicSince(UnqualifiedTopicName topic, DateTime stamp)
         {
             TopicChangeCollection answer = new TopicChangeCollection();
-            SqlInfoForTopic[] infos = SqlHelper.GetSqlTopicInfosForTopicSince(Namespace, topic, stamp, ConnectionString);
+            SqlInfoForTopic[] infos = SqlHelper.GetSqlTopicInfosForTopicSince(Namespace, topic.LocalName, stamp, ConnectionString);
             ArrayList sortable = new ArrayList();
             foreach (SqlInfoForTopic each in infos)
             {
@@ -349,7 +341,7 @@ namespace FlexWiki.SqlProvider
             {
                 if (each.LastModificationTime < stamp)
                     continue;
-                QualifiedTopicRevision name = new QualifiedTopicRevision(topic, Namespace);
+                QualifiedTopicRevision name = new QualifiedTopicRevision(topic.LocalName, Namespace);
                 name.Version = each.Version;
                 TopicChange change = TopicChangeFromName(name);
                 answer.Add(change);
@@ -418,9 +410,9 @@ namespace FlexWiki.SqlProvider
         /// <param name="topic">Topic to write</param>
         /// <param name="content">New content</param>
         /// <param name="gen">Object to recieve change info about the topic</param>
-        void ContentProviderBase.WriteTopic(string topic, string version, string content)
+        public override void WriteTopic(UnqualifiedTopicRevision revision, string content)
         {
-            string topicName = MakeTopicName(topic);
+            string topicName = MakeTopicName(revision);
             bool isNew = !(SqlHelper.TopicExists(Namespace, topicName, _connectionString));
 
             // Get old topic so we can analyze it for imports to compare with the new one
@@ -434,14 +426,14 @@ namespace FlexWiki.SqlProvider
                 throw new NotImplementedException(); 
             }
 
-            string nameWithVersion = new UnqualifiedTopicRevision(topic, version).NameWithVersion; 
-            SqlHelper.WriteTopic(Namespace, topicName, LastWriteTime(nameWithVersion), _connectionString, content, ((version != null && version.Length > 0) ? true : false));
+            string nameWithVersion = revision.NameWithVersion; 
+            SqlHelper.WriteTopic(Namespace, topicName, LastWriteTime(nameWithVersion), _connectionString, content, ((revision.Version != null && revision.Version.Length > 0) ? true : false));
 
             // Record changes
-            RecordTopicChanges(new UnqualifiedTopicRevision(topic, version), isNew, content, oldText, oldProperties);
+            RecordTopicChanges(revision, isNew, content, oldText, oldProperties);
         }
 
-        void ContentProviderBase.WriteTopicAndNewVersion(string topic, string content, string author)
+        public override void WriteTopicAndNewVersion(UnqualifiedTopicName topic, string content, string author)
         {
             throw new NotImplementedException();
         }
@@ -631,7 +623,7 @@ namespace FlexWiki.SqlProvider
         /// Delete a content base (kills everything inside recursively).  Note that this does *not* include unregistering
         /// the content base within the federation.
         /// </summary>
-        void ContentProviderBase.DeleteAllTopicsAndHistory()
+        public override void DeleteAllTopicsAndHistory()
         {
             SqlHelper.DeleteNamespace(Namespace, _connectionString);
             //OnFederationUpdated(new FederationUpdateEventArgs(update));

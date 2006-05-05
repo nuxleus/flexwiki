@@ -166,8 +166,8 @@ namespace FlexWiki.Web
                 fixupPolicy = ReferenceFixupPolicy.FixReferences; 
             }
 
-            RenameTopicDetails results = storeManager.RenameTopic(oldName.LocalName, newName, fixupPolicy, 
-                VisitorIdentityString);
+            RenameTopicDetails results = storeManager.RenameTopic(new UnqualifiedTopicName(oldName.LocalName), new UnqualifiedTopicName(newName), 
+                fixupPolicy, VisitorIdentityString);
 
             Response.Write("Renamed <i>" + oldAppearsAs + "</i> to <i>" + newName + "</i><br/>");
             Response.Write("<br/>");

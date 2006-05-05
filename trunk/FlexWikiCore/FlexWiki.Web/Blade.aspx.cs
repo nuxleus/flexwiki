@@ -55,7 +55,7 @@ namespace FlexWiki.Web
 				} 
 				else if (tops.Count > 1)
 				{
-					throw TopicIsAmbiguousException.ForTopic(new RelativeTopicRevision(topic));
+					throw TopicIsAmbiguousException.ForTopic(new TopicRevision(topic));
 				}
 				else	// we got just one!
 				{

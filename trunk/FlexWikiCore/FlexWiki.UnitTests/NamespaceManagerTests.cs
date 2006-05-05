@@ -219,7 +219,7 @@ namespace FlexWiki.UnitTests
               TestContentSets.NonImportingReferencingSet);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            QualifiedTopicRevisionCollection referencedTopics = manager.AllReferencesByTopic(null, ExistencePolicy.ExistingOnly);
+            QualifiedTopicRevisionCollection referencedTopics = manager.AllReferencesByTopic((string) null, ExistencePolicy.ExistingOnly);
         }
         [Test]
         public void AllReferencesByTopicWithImportExistingOnly()
@@ -963,12 +963,13 @@ namespace FlexWiki.UnitTests
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
             // Flip through the history and get the oldest version
-            string topicName = "TopicOne";
+            UnqualifiedTopicName topicName = new UnqualifiedTopicName("TopicOne");
             TopicChangeCollection changes = manager.AllChangesForTopic(topicName);
+            UnqualifiedTopicRevision revision = new UnqualifiedTopicRevision(topicName.LocalName, changes[0].Version); 
 
-            manager.WriteTopic(topicName, changes[0].Version, "Modified content");
+            manager.WriteTopic(revision, "Modified content");
 
-            DateTime creationTime = manager.GetTopicCreationTime(topicName, changes[0].Version);
+            DateTime creationTime = manager.GetTopicCreationTime(revision);
 
             Assert.AreEqual(new DateTime(2004, 10, 28, 14, 11, 02), creationTime,
                 "Checking that the creation time for the first version doesn't change even when modified.");
@@ -1482,7 +1483,7 @@ PropertyOne: List, of, values")
              TestContentSets.SingleTopicNoImports);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            string content = manager.Read("TopicOne", "NoSuchVersion");
+            string content = manager.Read(new UnqualifiedTopicRevision("TopicOne", "NoSuchVersion"));
 
             Assert.IsNull(content, "Checking that content returns null for a nonexistent version.");
         }
@@ -1493,10 +1494,11 @@ PropertyOne: List, of, values")
              TestContentSets.MultipleVersions);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            string topic = "TopicOne";
+            UnqualifiedTopicName topic = new UnqualifiedTopicName("TopicOne");
             TopicChangeCollection changes = manager.AllChangesForTopic(topic);
+            UnqualifiedTopicRevision revision = new UnqualifiedTopicRevision(topic, changes[1].Version); 
 
-            string content = manager.Read(topic, changes[1].Version);
+            string content = manager.Read(revision);
 
             Assert.AreEqual("content2", content, "Checking that the right content was retrieved.");
 
@@ -1508,8 +1510,8 @@ PropertyOne: List, of, values")
              TestContentSets.SingleTopicNoImports);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            string oldName = "NoSuchTopic";
-            string newName = "TopicOneRenamed";
+            UnqualifiedTopicName oldName = new UnqualifiedTopicName("NoSuchTopic");
+            UnqualifiedTopicName newName = new UnqualifiedTopicName("TopicOneRenamed");
             RenameTopicDetails details = manager.RenameTopic(oldName, newName,
                 ReferenceFixupPolicy.DoNotFixReferences, "rename");
 
@@ -1524,8 +1526,8 @@ PropertyOne: List, of, values")
              TestContentSets.SingleTopicNoImports);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            string oldName = "TopicOne";
-            string newName = "TopicOneRenamed";
+            UnqualifiedTopicName oldName = new UnqualifiedTopicName("TopicOne");
+            UnqualifiedTopicName newName = new UnqualifiedTopicName("TopicOneRenamed");
             RenameTopicDetails details = manager.RenameTopic(oldName, newName,
                 ReferenceFixupPolicy.DoNotFixReferences, "rename");
 
@@ -1536,9 +1538,9 @@ PropertyOne: List, of, values")
 
             Assert.AreEqual(newName, redirectTo, "Checking that the topic redirect was added.");
 
-            Assert.AreEqual("rename", AuthorForLastChange(manager, oldName),
+            Assert.AreEqual("rename", AuthorForLastChange(manager, oldName.LocalName),
                 "Checking that the attribution was correct for the change to the old topicName.");
-            Assert.AreEqual("rename", AuthorForLastChange(manager, newName),
+            Assert.AreEqual("rename", AuthorForLastChange(manager, newName.LocalName),
                 "Checking that the attribution was correct for the change to the new topicName.");
 
             Assert.AreEqual(0, details.UpdatedReferenceTopics.Count,
@@ -1553,8 +1555,8 @@ PropertyOne: List, of, values")
              TestContentSets.NonImportingReferencingSet);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            string oldName = "ReferencingTopic";
-            string newName = "ReferencedTopic";
+            UnqualifiedTopicName oldName = new UnqualifiedTopicName("ReferencingTopic");
+            UnqualifiedTopicName newName = new UnqualifiedTopicName("ReferencedTopic");
             RenameTopicDetails details = manager.RenameTopic(oldName, newName,
                 ReferenceFixupPolicy.DoNotFixReferences, "rename");
 
@@ -1571,8 +1573,8 @@ PropertyOne: List, of, values")
              TestContentSets.ImportingReferencingSet);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            string oldName = "ReferencedTopic";
-            string newName = "ReferencedTopicRenamed";
+            UnqualifiedTopicName oldName = new UnqualifiedTopicName("ReferencedTopic");
+            UnqualifiedTopicName newName = new UnqualifiedTopicName("ReferencedTopicRenamed");
             RenameTopicDetails details = manager.RenameTopic(oldName, newName,
                 ReferenceFixupPolicy.FixReferences, "rename");
 
@@ -1657,7 +1659,7 @@ PropertyOne: List, of, values")
              TestContentSets.SingleTopicNoImports);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            string topicName = "TopicOne";
+            UnqualifiedTopicName topicName = new UnqualifiedTopicName("TopicOne");
 
             manager.WriteTopicAndNewVersion(topicName, "new content", "author");
 
@@ -1665,7 +1667,7 @@ PropertyOne: List, of, values")
 
             Assert.AreEqual("new content", manager.TextReaderForTopic(topicName).ReadToEnd(),
               "Checking that latest content is returned when no version is supplied.");
-            Assert.AreEqual("content", manager.TextReaderForTopic(topicName, historicalVersion).ReadToEnd(),
+            Assert.AreEqual("content", manager.TextReaderForTopic(new UnqualifiedTopicRevision(topicName, historicalVersion)).ReadToEnd(),
               "Checking that historical content is returned when requested.");
 
         }
@@ -1687,7 +1689,7 @@ PropertyOne: List, of, values")
               TestContentSets.SingleTopicNoImports);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            TextReader textReader = manager.TextReaderForTopic("TopicOne", "foo");
+            TextReader textReader = manager.TextReaderForTopic(new UnqualifiedTopicRevision("TopicOne", "foo"));
 
             Assert.IsNull(textReader, "Checking that null text reader is returned for nonexistent version");
         }
@@ -1777,9 +1779,9 @@ PropertyOne: List, of, values")
                 TestContentSets.ImportingReferencingSet);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            RelativeTopicRevision topicName = new RelativeTopicRevision("NoSuchTopic");
+            TopicRevision revision = new TopicRevision("NoSuchTopic");
 
-            Assert.IsFalse(manager.TopicExists(topicName, ImportPolicy.DoNotIncludeImports),
+            Assert.IsFalse(manager.TopicExists(revision, ImportPolicy.DoNotIncludeImports),
                 "Checking that a nonexistent topic returns false from TopicExists.");
 
         }
@@ -1790,9 +1792,9 @@ PropertyOne: List, of, values")
                 TestContentSets.ImportingReferencingSet);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            RelativeTopicRevision topicName = new RelativeTopicRevision("ReferencingTopic");
+            TopicRevision revision = new TopicRevision("ReferencingTopic");
 
-            Assert.IsTrue(manager.TopicExists(topicName, ImportPolicy.DoNotIncludeImports),
+            Assert.IsTrue(manager.TopicExists(revision, ImportPolicy.DoNotIncludeImports),
                 "Checking that an existing topic returns true from TopicExists.");
 
         }
@@ -1803,9 +1805,9 @@ PropertyOne: List, of, values")
                 TestContentSets.ImportingReferencingSet);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            RelativeTopicRevision topicName = new RelativeTopicRevision("NoSuchTopic", "SomeNamespace");
+            TopicRevision revision = new TopicRevision("NoSuchTopic", "SomeNamespace");
 
-            Assert.IsFalse(manager.TopicExists(topicName, ImportPolicy.DoNotIncludeImports),
+            Assert.IsFalse(manager.TopicExists(revision, ImportPolicy.DoNotIncludeImports),
                 "Checking that a nonexistent topic returns false from TopicExists.");
         }
         [Test]
@@ -1815,9 +1817,9 @@ PropertyOne: List, of, values")
                 TestContentSets.ImportingReferencingSet);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            RelativeTopicRevision topicName = new RelativeTopicRevision("OtherTopic", "NamespaceTwo");
+            TopicRevision revision = new TopicRevision("OtherTopic", "NamespaceTwo");
 
-            Assert.IsTrue(manager.TopicExists(topicName, ImportPolicy.DoNotIncludeImports),
+            Assert.IsTrue(manager.TopicExists(revision, ImportPolicy.DoNotIncludeImports),
                 "Checking that an existing topic returns true from TopicExists.");
         }
         [Test]
@@ -2049,7 +2051,7 @@ PropertyOne: List, of, values")
             string topicName = "TopicOne";
 
             string newContents = "New contents";
-            manager.WriteTopic(topicName, "NoSuchVersion", newContents);
+            manager.WriteTopic(new UnqualifiedTopicRevision(topicName, "NoSuchVersion"), newContents);
         }
         [Test]
         public void WriteTopicSpecificVersion()
@@ -2058,14 +2060,14 @@ PropertyOne: List, of, values")
                 TestContentSets.MultipleVersions);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            string topicName = "TopicOne";
-
+            UnqualifiedTopicName topicName = new UnqualifiedTopicName("TopicOne");
             TopicChangeCollection changes = manager.AllChangesForTopic(topicName);
+            UnqualifiedTopicRevision revision = new UnqualifiedTopicRevision(topicName, changes[1].Version);
 
             string newContents = "New contents";
-            manager.WriteTopic(topicName, changes[1].Version, newContents);
+            manager.WriteTopic(revision, newContents);
 
-            string actualContents = manager.Read(topicName, changes[1].Version);
+            string actualContents = manager.Read(revision);
 
             Assert.AreEqual(changes.Count, manager.AllChangesForTopic(topicName).Count,
                 "Checking that no new versions were created.");
