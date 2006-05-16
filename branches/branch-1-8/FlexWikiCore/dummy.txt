@@ -21,3 +21,5 @@ Change to check that updating and tagging is working correctly.
 Further changes to check that updating and tagging is working correctly. 
 
 A change after installing the new version of ccnet, in the 1.8 branch to check that it picks up changes. 
+
+A change after updating the build machine to reflect the CVS changes at SourceForge.
