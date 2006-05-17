@@ -390,7 +390,7 @@ namespace FlexWiki
                 return null; 
             }
 
-            if (topic.IsAbsolute)
+            if (topic.IsQualified)
             {
                 return NamespaceManagerForNamespace(topic.Namespace);
             }
@@ -748,7 +748,7 @@ namespace FlexWiki
         }
         public string Read(TopicName topic)
         {
-            if (topic.IsAbsolute)
+            if (topic.IsQualified)
             {
                 return Read(new QualifiedTopicRevision(topic)); 
             }

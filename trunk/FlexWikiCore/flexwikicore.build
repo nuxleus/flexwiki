@@ -16,12 +16,12 @@
 <project name="FlexWikiCore" default="test">
 
   <!-- Make sure we use the 1.1 version of the framework -->
-  <property name="nant.settings.currentframework" value="net-1.1" />
+  <property name="nant.settings.currentframework" value="net-2.0" />
   
   <!-- Where on disk the source tree is rooted. Defaults to the
        directory where this build file lives. -->
   <property name="basedir" 
-	    value="${nant.project.basedir}" 
+	    value="${project::get-base-directory()}" 
 	    unless="${property::exists('basedir')}" />
   
   <echo message="Running from directory ${basedir}" />
@@ -126,7 +126,7 @@
 
   <!-- The name for the virtual directory that gets created in
        the install target. -->
-  <property name="install.vdir.name" value="${nant.project.name}TestBuild" 
+  <property name="install.vdir.name" value="${project::get-name()}TestBuild" 
       unless="${property::exists('install.vdir.name')}" />
 
   <!-- Set this property to true here (or override elsewhere) to skip
@@ -182,7 +182,7 @@
 
   <!-- The name of the .sln file used to compile the project. Defaults
        to having the same name as the NAnt project -->
-  <property name="buildfile.name" value="${nant.project.name}" 
+  <property name="buildfile.name" value="${project::get-name()}" 
       unless="${property::exists('buildfile.name')}" />
 
   <!-- Set this property false here (or override elsewhere) to prevent
@@ -260,8 +260,8 @@
     <asminfo output="${basedir}/SharedAssemblyInfo.cs"
 		      language="CSharp">
 	    <imports>
-	      <import name="System" />
-	      <import name="System.Reflection" />
+	      <import namespace="System" />
+	      <import namespace="System.Reflection" />
 	    </imports>
 	    <attributes>
 	      <attribute type="AssemblyVersionAttribute"
@@ -279,7 +279,7 @@
     <delete file="${init.projectlistpath}" if="${file::exists(init.projectlistpath)}" />
     
     <foreach item="Line" 
-        in="${basedir}/${nant.project.name}.sln"
+        in="${basedir}/${project::get-name()}.sln"
         property="init.line" >
       <do>
         <if test="${string::starts-with(init.line, 'Project(')}">
@@ -296,10 +296,17 @@
   <!-- The build target simply compiles the projects listed in the
        .sln file into the target directory -->
   <target name="build" depends="init" unless="${build.skip}">
-    <solution configuration="${configuration}" 
-        includevsfolders="false"
-	      outputdir="${targetdir}"
-	      solutionfile="${nant.project.name}.sln" />
+    <property name="build.framework.directory" 
+        value="${framework::get-framework-directory(framework::get-target-framework())}" />
+
+    <exec program="msbuild.exe"
+        basedir="${build.framework.directory}"
+        workingdir="${basedir}" >
+        <arg value="/p:Configuration=${configuration}" />
+        <arg value="${project::get-name()}.sln" />
+    </exec>
+        
+  
   </target>
   
   <!-- The test target runs nunit on any assemblies that have NUnit
@@ -307,33 +314,33 @@
   <target name="test" depends="build" unless="${test.skip}">
 
     <!-- Set nunit.skip to true to skip NUnit testing -->
-    <ifnot test="${nunit.skip}">
+    <if test="${not nunit.skip}">
       <!-- This command runs nunit-console and directs the XML report to
 	          the reports directory. -->
       <exec program="nunit-console.exe"
     	    basedir="${basedir}\tools\nunit\bin"
-	        workingdir="${targetdir}"
+	        workingdir="${basedir}"
 	        failonerror="${nunit.breaks.build}">
-        <arg value="FlexWiki.UnitTests.dll" />
+        <arg value="FlexWiki.UnitTests/bin/${configuration}/FlexWiki.UnitTests.dll" />
         <arg value="/xml=${reportdir}\nunit.xml"/>
       </exec>
-    </ifnot>
+    </if>
     
     <!-- Here's where we run FxCop analysis of the project assemblies. 
           Set fxcop.skip to true to skip FxCop testing. -->
-    <ifnot test="${fxcop.skip}">
+    <if test="${not fxcop.skip}">
       <exec program="fxcopcmd"
           basedir="${basedir}/tools/fxcop"
           workingdir="${basedir}"
           failonerror="${fxcop.breaks.build}">
-        <arg value="/project:${nant.project.name}.fxcop" />
+        <arg value="/project:${project::get-name()}.fxcop" />
         <arg value="/out:${path::combine(reportdir, 'fxcop.xml')}" />
       </exec>
-    </ifnot>
+    </if>
     
     <!-- Here's where we set up the SQL Server database to prepare for
           SqlProvider testing -->
-    <ifnot test="${sqlsetup.skip}">
+    <if test="${not sqlsetup.skip}">
       <!-- We're creating a new database (and dropping the one that's there, 
             if there is one), specifying a directory for the data files, and 
             a database name to create. -->
@@ -355,10 +362,10 @@
       </exec>
       -->
 
-    </ifnot>
+    </if>
     
     <!-- Here's where we test the SqlProvider against the database -->
-    <ifnot test="${sqltest.skip}">
+    <if test="${not sqltest.skip}">
     
       <property name="sqltest.assembly" value="FlexWiki.SqlProvider.UnitTests.dll" />
       <property name="sqltest.configfile" value="${sqltest.assembly}.config" />
@@ -376,7 +383,7 @@
         <arg value="${sqltest.assembly}" />
         <arg value="/xml=${reportdir}\sqltest.xml"/>
       </exec>
-    </ifnot>
+    </if>
     
   </target> 
 
@@ -476,13 +483,13 @@
     <!-- Cook up names for the zipfiles based on the project name,
       	 version number, and configuration. --> 
     <property name="dist.web.full.binzip" 
-	      value="${distdir}/${nant.project.name}-${vermajor}.${verminor}.${verbuild}.${verrevision}-web-full-${configuration}.zip" />
+	      value="${distdir}/${project::get-name()}-${vermajor}.${verminor}.${verbuild}.${verrevision}-web-full-${configuration}.zip" />
     <property name="dist.web.upgrade.binzip" 
-	      value="${distdir}/${nant.project.name}-${vermajor}.${verminor}.${verbuild}.${verrevision}-web-upgrade-${configuration}.zip" />
+	      value="${distdir}/${project::get-name()}-${vermajor}.${verminor}.${verbuild}.${verrevision}-web-upgrade-${configuration}.zip" />
     <property name="dist.tools.binzip" 
-	      value="${distdir}/${nant.project.name}-${vermajor}.${verminor}.${verbuild}.${verrevision}-tools-${configuration}.zip" />
+	      value="${distdir}/${project::get-name()}-${vermajor}.${verminor}.${verbuild}.${verrevision}-tools-${configuration}.zip" />
     <property name="dist.srczip" 
-	      value="${distdir}/${nant.project.name}-${vermajor}.${verminor}.${verbuild}.${verrevision}-src.zip" />
+	      value="${distdir}/${project::get-name()}-${vermajor}.${verminor}.${verbuild}.${verrevision}-src.zip" />
 
     <!-- Zip up all the files that we just put in the staging
 	        directory into the web full binaries zip -->
@@ -630,7 +637,7 @@
   
   <target name="run-verify">
     
-    <property name="verify.testassembly" value="FlexWiki.BuildVerificationTests.dll" />
+    <property name="verify.testassembly" value="FlexWiki.BuildVerificationTests/bin/${configuration}/FlexWiki.BuildVerificationTests.dll" />
     
     <property name="verify.config.path" 
         value="${path::combine(targetdir, verify.testassembly + '.config')}" />

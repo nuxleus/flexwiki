@@ -35,7 +35,6 @@ namespace FlexWiki
 
         public TopicRevision()
         {
-            throw new NotImplementedException(); 
         }
         public TopicRevision(string name)
         {
@@ -96,7 +95,7 @@ namespace FlexWiki
         {
             get
             {
-                return Name.LocalName;
+                return Name == null ? null : Name.LocalName;
             }
             set
             {
@@ -111,7 +110,7 @@ namespace FlexWiki
         {
             get
             {
-                return Name.Namespace;
+                return Name == null ? null : Name.Namespace;
             }
         }
         public string QualifiedName

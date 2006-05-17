@@ -19,6 +19,7 @@ using FlexWiki.Formatting;
 namespace FlexWiki.UnitTests
 {
     [TestFixture]
+    [Ignore("This test disabled during the 2.0 upgrade. Re-enable as functionality is implemented.")]
     public class DefaultAuthorizationConfigurationProviderTests
     {
         private const string _baseUri = "http://localhost/flexwiki";

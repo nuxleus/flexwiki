@@ -27,6 +27,7 @@ using NUnit.Framework;
 namespace FlexWiki.UnitTests
 {
     [TestFixture]
+    [Ignore("This test disabled during the 2.0 upgrade. Re-enable as functionality is implemented.")]
     public class FormattingServicesTests
     {
         private Federation _federation;

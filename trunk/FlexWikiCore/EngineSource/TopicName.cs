@@ -98,7 +98,7 @@ namespace FlexWiki
 
             }
         }
-        public bool IsAbsolute
+        public bool IsQualified
         {
             get { return Namespace != null; }
         }
@@ -116,7 +116,7 @@ namespace FlexWiki
         {
             get
             {
-                if (IsAbsolute)
+                if (IsQualified)
                 {
                     return Namespace + c_separator + LocalName;
                 }
@@ -155,9 +155,36 @@ namespace FlexWiki
             }
             return answer;
         }
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            TopicName that = obj as TopicName; 
+
+            if (that == null)
+            {
+                return false; 
+            }
+
+            return this.QualifiedName == that.QualifiedName; 
+        }
+        public override int GetHashCode()
+        {
+            string qualifiedName = QualifiedName;
+
+            if (qualifiedName == null)
+            {
+                return "<<null>>".GetHashCode(); 
+            }
+
+            return qualifiedName.GetHashCode(); 
+        }
         public QualifiedTopicName ResolveRelativeTo(string ns)
         {
-            if (IsAbsolute)
+            if (IsQualified)
             {
                 return new QualifiedTopicName(LocalName, Namespace);
             }

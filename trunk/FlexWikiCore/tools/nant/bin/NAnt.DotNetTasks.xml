@@ -17,10 +17,10 @@
                 <![CDATA[
             <asminfo output="AssemblyInfo.cs" language="CSharp">
                 <imports>
-                    <import name="System" />
-                    <import name="System.Reflection" />
-                    <import name="System.EnterpriseServices" />
-                    <import name="System.Runtime.InteropServices" />
+                    <import namespace="System" />
+                    <import namespace="System.Reflection" />
+                    <import namespace="System.EnterpriseServices" />
+                    <import namespace="System.Runtime.InteropServices" />
                 </imports>
                 <attributes>
                     <attribute type="ComVisibleAttribute" value="false" />
@@ -49,7 +49,7 @@
                 <![CDATA[
             <asminfo output="AssemblyInfo.cs" language="CSharp">
                 <imports>
-                    <import name="log4net.Config" />
+                    <import namespace="log4net.Config" />
                 </imports>
                 <attributes>
                     <attribute type="DOMConfiguratorAttribute" value="ConfigFile=&quot;config.log4net&quot;,Watch=true" asis="true" />
@@ -255,6 +255,137 @@
             otherwise, <see langword="false" />.
             </returns>
         </member>
+        <member name="P:NAnt.DotNet.Tasks.AssemblyLinkerTask.AlgorithmID">
+            <summary>
+            Specifies an algorithm (in hexadecimal) to hash all files in a 
+            multifile assembly except the file that contains the assembly 
+            manifest. The default algorithm is CALG_SHA1.
+            </summary>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.AssemblyLinkerTask.Company">
+            <summary>
+            Specifies a string for the <b>Company</b> field in the assembly.
+            </summary>
+            <value>
+            A string for the <b>Company</b> field in the assembly.
+            </value>
+            <remarks>
+            If <see cref="P:NAnt.DotNet.Tasks.AssemblyLinkerTask.Company"/> is an empty string (""), the Win32 
+            <b>Company</b> resource appears as a single space.
+            </remarks>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.AssemblyLinkerTask.Configuration">
+            <summary>
+            Specifies a string for the <b>Configuration</b> field in the assembly.
+            </summary>
+            <value>
+            A string for the <b>Configuration</b> field in the assembly.
+            </value>
+            <remarks>
+            If <see cref="P:NAnt.DotNet.Tasks.AssemblyLinkerTask.Configuration"/> is an empty string (""), the Win32
+            <b>Configuration</b> resource appears as a single space.
+            </remarks>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.AssemblyLinkerTask.Copyright">
+            <summary>
+            Specifies a string for the <b>Copyright</b> field in the assembly.
+            </summary>
+            <value>
+            A string for the <b>Copyright</b> field in the assembly.
+            </value>
+            <remarks>
+            If <see cref="P:NAnt.DotNet.Tasks.AssemblyLinkerTask.Copyright"/> is an empty string (""), the Win32
+            <b>Copyright</b> resource appears as a single space.
+            </remarks>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.AssemblyLinkerTask.Culture">
+            <summary>
+            The culture string associated with the output assembly.
+            The string must be in RFC 1766 format, such as "en-US".
+            </summary>
+            <remarks>
+            <para>
+            Corresponds with the <c>/c[ulture]:</c> flag.
+            </para>
+            </remarks>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.AssemblyLinkerTask.DelaySign">
+            <summary>
+            Specifies whether the assembly should be partially signed. The default
+            is <see langword="false" />.
+            </summary>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.AssemblyLinkerTask.Description">
+            <summary>
+            Specifies a string for the <b>Description</b> field in the assembly.
+            </summary>
+            <value>
+            A string for the <b>Description</b> field in the assembly.
+            </value>
+            <remarks>
+            If <see cref="P:NAnt.DotNet.Tasks.AssemblyLinkerTask.Description"/> is an empty string (""), the Win32
+            <b>Description</b> resource appears as a single space.
+            </remarks>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.AssemblyLinkerTask.EvidenceFile">
+            <summary>
+            Security evidence file to embed.
+            </summary>
+            <value>
+            The security evidence file to embed.
+            </value>
+            <remarks>
+            <para>
+            Corresponds with the <c>/e[vidence]</c> flag.
+            </para>
+            </remarks>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.AssemblyLinkerTask.FileVersion">
+            <summary>
+            Specifies a string for the <b>File Version</b> field in the assembly.
+            </summary>
+            <value>
+            A string for the <b>File Version</b> field in the assembly.
+            </value>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.AssemblyLinkerTask.Flags">
+            <summary>
+            Specifies a value (in hexadecimal) for the <b>Flags</b> field in 
+            the assembly.
+            </summary>
+            <value>
+            A value (in hexadecimal) for the <b>Flags</b> field in the assembly.
+            </value>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.AssemblyLinkerTask.KeyContainer">
+            <summary>
+            Specifies a container that holds a key pair.
+            </summary>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.AssemblyLinkerTask.KeyFile">
+            <summary>
+            Specifies a file (filename) that contains a key pair or
+            just a public key to sign an assembly.
+            </summary>
+            <value>
+            The complete path to the key file.
+            </value>
+            <remarks>
+            <para>
+            Corresponds with the <c>/keyf[ile]:</c> flag.
+            </para>
+            </remarks>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.AssemblyLinkerTask.MainMethod">
+            <summary>
+            Specifies the fully-qualified name (class.method) of the method to 
+            use as an entry point when converting a module to an executable file.
+            </summary>
+            <value>
+            The fully-qualified name (class.method) of the method to use as an 
+            entry point when converting a module to an executable file.
+            </value>
+        </member>
         <member name="P:NAnt.DotNet.Tasks.AssemblyLinkerTask.OutputFile">
             <summary>
             The name of the output file for the assembly manifest.
@@ -278,15 +409,44 @@
             </para>
             </remarks>
         </member>
-        <member name="P:NAnt.DotNet.Tasks.AssemblyLinkerTask.Culture">
+        <member name="P:NAnt.DotNet.Tasks.AssemblyLinkerTask.Product">
             <summary>
-            The culture string associated with the output assembly.
-            The string must be in RFC 1766 format, such as "en-US".
+            Specifies a string for the <b>Product</b> field in the assembly.
+            </summary>
+            <value>
+            A string for the <b>Product</b> field in the assembly.
+            </value>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.AssemblyLinkerTask.ProductVersion">
+            <summary>
+            Specifies a string for the <b>Product Version</b> field in the assembly.
+            </summary>
+            <value>
+            A string for the <b>Product Version</b> field in the assembly.
+            </value>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.AssemblyLinkerTask.Resources">
+            <summary>
+            The set of resources to embed.
+            </summary>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.AssemblyLinkerTask.EmbeddedResources">
+            <summary>
+            The set of compiled resources to embed.
             </summary>
             <remarks>
-            <para>
-            Corresponds with the <c>/c[ulture]:</c> flag.
-            </para>
+            Do not yet expose this to build authors.
+            </remarks>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.AssemblyLinkerTask.SupportsTemplate">
+            <summary>
+            Indicates whether the assembly linker for a given target framework
+            supports the "template" option, which takes an assembly from which
+            to get all options except the culture field.
+            The default is <see langword="true" />.
+            </summary>
+            <remarks>
+            TODO: remove this once Mono bug #74814 is fixed.
             </remarks>
         </member>
         <member name="P:NAnt.DotNet.Tasks.AssemblyLinkerTask.TemplateFile">
@@ -303,23 +463,36 @@
             </para>
             </remarks>
         </member>
-        <member name="P:NAnt.DotNet.Tasks.AssemblyLinkerTask.KeyFile">
+        <member name="P:NAnt.DotNet.Tasks.AssemblyLinkerTask.Title">
             <summary>
-            Specifies a file (filename) that contains a key pair or
-            just a public key to sign an assembly.
+            Specifies a string for the <b>Title</b> field in the assembly.
             </summary>
             <value>
-            The complete path to the key file.
+            A string for the <b>Title</b> field in the assembly.
             </value>
-            <remarks>
-            <para>
-            Corresponds with the <c>/keyf[ile]:</c> flag.
-            </para>
-            </remarks>
         </member>
-        <member name="P:NAnt.DotNet.Tasks.AssemblyLinkerTask.Resources">
+        <member name="P:NAnt.DotNet.Tasks.AssemblyLinkerTask.Trademark">
             <summary>
-            The set of resources to embed.
+            Specifies a string for the <b>Trademark</b> field in the assembly.
+            </summary>
+            <value>
+            A string for the <b>Trademark</b> field in the assembly.
+            </value>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.AssemblyLinkerTask.Version">
+            <summary>
+            Specifies version information for the assembly. The format of the 
+            version string is <c>major</c>.<c>minor</c>.<c>build</c>.<c>revision</c>.
+            </summary>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.AssemblyLinkerTask.Win32Icon">
+            <summary>
+            Icon to associate with the assembly.
+            </summary>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.AssemblyLinkerTask.Win32Res">
+            <summary>
+            Inserts a Win32 resource (.res file) in the output file.
             </summary>
         </member>
         <member name="P:NAnt.DotNet.Tasks.AssemblyLinkerTask.ProgramArguments">
@@ -421,6 +594,13 @@
             </summary>
             <param name="writer">The <see cref="T:System.IO.TextWriter"/> to which the list of warnings to suppress should be written.</param>
         </member>
+        <member name="M:NAnt.DotNet.Tasks.CompilerBase.WriteConditionalCompilationConstants(System.IO.TextWriter)">
+            <summary>
+            Writes conditional compilation constants to the specified
+            <see cref="T:System.IO.TextWriter"/>.
+            </summary>
+            <param name="writer">The <see cref="T:System.IO.TextWriter"/> to which the conditional compilation constants should be written.</param>
+        </member>
         <member name="M:NAnt.DotNet.Tasks.CompilerBase.WriteModuleReferences(System.IO.TextWriter)">
             <summary>
             Writes module references to the specified <see cref="T:System.IO.TextWriter"/>.
@@ -446,7 +626,12 @@
             </summary>
             <param name="writer">The <see cref="T:System.IO.TextWriter"/> to which the compiler options should be written.</param>
             <param name="name">The name of the option which should be passed to the compiler.</param>
-            <param name="arg">The value of the option which should be passed to the compiler.</param>
+            <param name="value">The value of the option which should be passed to the compiler.</param>
+            <remarks>
+            The combination of <paramref name="option"/> and 
+            <paramref name="value"/> (separated by a colon) is quoted
+            unless <paramref name="value"/> is already surrounded by quotes.
+            </remarks>
         </member>
         <member name="M:NAnt.DotNet.Tasks.CompilerBase.NeedsCompiling">
             <summary>
@@ -477,12 +662,11 @@
             <param name="resourceAssemblyFile">Resource assembly to generate</param>
             <param name="culture">Culture of the generated assembly.</param>
         </member>
-        <member name="M:NAnt.DotNet.Tasks.CompilerBase.CompileResxResource(System.IO.FileInfo,System.IO.FileInfo)">
+        <member name="M:NAnt.DotNet.Tasks.CompilerBase.CompileResxResources(System.Collections.Specialized.StringCollection)">
             <summary>
-            Compiles a resx files to a .resources file.
+            Compiles a set of resx files to a .resources files.
             </summary>
-            <param name="inputFile">The resx file to compile.</param>
-            <param name="outputFile">The name of the resource file to create.</param>
+            <param name="resxFiles">The set of resx files to compile.</param>
         </member>
         <member name="M:NAnt.DotNet.Tasks.CompilerBase.GetResourceCulture(System.String,System.String)">
             <summary>
@@ -496,6 +680,15 @@
             associated with a specific culture; otherwise, <see langword="null"/>.
             </returns>
         </member>
+        <member name="P:NAnt.DotNet.Tasks.CompilerBase.Debug">
+            <summary>
+            Generate debug output. The default is <see langword="false" />.
+            </summary>
+            <remarks>
+            Only used for &lt;jsc&gt; tasks, but retained for backward 
+            compatibility (Clover.NET).
+            </remarks>
+        </member>
         <member name="P:NAnt.DotNet.Tasks.CompilerBase.OutputFile">
             <summary>
             The output file created by the compiler.
@@ -505,11 +698,6 @@
             <summary>
             Output type. Possible values are <c>exe</c>, <c>winexe</c>,
             <c>library</c> or <c>module</c>.
-            </summary>
-        </member>
-        <member name="P:NAnt.DotNet.Tasks.CompilerBase.Debug">
-            <summary>
-            Generate debug output. The default is <see langword="false" />.
             </summary>
         </member>
         <member name="P:NAnt.DotNet.Tasks.CompilerBase.Define">
@@ -598,6 +786,16 @@
             </para>
             </remarks>
         </member>
+        <member name="P:NAnt.DotNet.Tasks.CompilerBase.KeyContainer">
+            <summary>
+            Specifies the key pair container used to strongname the assembly.
+            </summary>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.CompilerBase.KeyFile">
+            <summary>
+            Specifies a strong name key file.
+            </summary>
+        </member>
         <member name="P:NAnt.DotNet.Tasks.CompilerBase.Lib">
             <summary>
             Additional directories to search in for assembly references.
@@ -673,6 +871,18 @@
             Indicates whether the compiler for a given target framework supports
             a command line option that allows a list of warnings to be
             suppressed. The default is <see langword="false" />.
+            </summary>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.CompilerBase.SupportsKeyContainer">
+            <summary>
+            Indicates whether the compiler for a given target framework supports
+            the "keycontainer" option. The default is <see langword="false" />.
+            </summary>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.CompilerBase.SupportsKeyFile">
+            <summary>
+            Indicates whether the compiler for a given target framework supports
+            the "keyfile" option. The default is <see langword="false" />.
             </summary>
         </member>
         <member name="P:NAnt.DotNet.Tasks.CompilerBase.Extension">
@@ -785,8 +995,18 @@
             <summary>
             Compiles C# programs.
             </summary>
+            <remarks>
+            <note>
+            In order to have <see cref="T:NAnt.DotNet.Tasks.CscTask"/> generate manifest resource names
+            that match those generated by Microsoft Visual Studio.NET, the value of
+            the <see cref="P:NAnt.DotNet.Types.ResourceFileSet.Prefix"/> attribute of the &lt;<see cref="P:NAnt.DotNet.Tasks.CompilerBase.ResourcesList"/>&gt;
+            element should match the "Default Namespace" of the C# project, and the 
+            value of the <see cref="P:NAnt.DotNet.Types.ResourceFileSet.DynamicPrefix"/> attribute 
+            should be set to "<see langword="true"/>".
+            </note>
+            </remarks>
             <example>
-              <para>Compile <c>helloworld.cs</c> to <c>helloworld.exe</c>.</para>
+              <para>Compile a "HelloWorld" application, including embedded resources.</para>
               <code>
                 <![CDATA[
             <csc target="exe" output="HelloWorld.exe" debug="true">
@@ -834,6 +1054,18 @@
             number. 
             </remarks>
         </member>
+        <member name="P:NAnt.DotNet.Tasks.CscTask.DebugOutput">
+            <summary>
+            Specifies the type of debugging information generated by the 
+            compiler. The default is <see cref="F:NAnt.DotNet.Types.DebugOutput.None"/>.
+            </summary>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.CscTask.Debug">
+            <summary>
+            No longer expose this to build authors. Use <see cref="P:NAnt.DotNet.Tasks.CscTask.DebugOutput"/>
+            instead.
+            </summary>
+        </member>
         <member name="P:NAnt.DotNet.Tasks.CscTask.DocFile">
             <summary>
             The name of the XML documentation file to generate.
@@ -843,6 +1075,15 @@
             Corresponds with the <c>/doc:</c> flag.
             </para>
             </remarks>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.CscTask.FileAlign">
+            <summary>
+            Specifies the size of sections in the output file. Valid values are
+            512, 1024, 2048, 4096, and 8192.
+            </summary>
+            <value>
+            The size of sections in the output file.
+            </value>
         </member>
         <member name="P:NAnt.DotNet.Tasks.CscTask.NoStdLib">
             <summary>
@@ -890,6 +1131,17 @@
             </para>
             </remarks>
         </member>
+        <member name="P:NAnt.DotNet.Tasks.CscTask.LangVersion">
+            <summary>
+            Causes the compiler to only accept syntax that is included in a
+            given specification.
+            </summary>
+            <remarks>
+            <para>
+            Corresponds with the <c>/langversion</c> flag.
+            </para>
+            </remarks>
+        </member>
         <member name="P:NAnt.DotNet.Tasks.CscTask.Optimize">
             <summary>
             Specifies whether the compiler should perform optimizations to the 
@@ -903,6 +1155,21 @@
             <remarks>
             <para>
             Corresponds with the <c>/optimize[+|-]</c> flag.
+            </para>
+            </remarks>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.CscTask.Platform">
+            <summary>
+            Specifies which platform version of common language runtime (CLR)
+            can run the output file.
+            </summary>
+            <value>
+            The platform version of common language runtime (CLR) that can run
+            the output file.
+            </value>
+            <remarks>
+            <para>
+            Corresponds with the <c>/platform</c> flag.
             </para>
             </remarks>
         </member>
@@ -930,6 +1197,27 @@
             Corresponds with the <c>/codepage</c> flag.
             </para>
             </remarks>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.CscTask.SupportsDocGeneration">
+            <summary>
+            Specifies whether the compiler for the active target framework
+            supports generation of XML Documentation file. The default is 
+            <see langword="true" />.
+            </summary>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.CscTask.SupportsPlatform">
+            <summary>
+            Specifies whether the compiler for the active target framework
+            supports limiting the platform on which the compiled code can run.
+            The default is <see langword="false" />.
+            </summary>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.CscTask.SupportsLangVersion">
+            <summary>
+            Specifies whether the compiler for the active target framework
+            supports accepting only a specific language syntax.
+            The default is <see langword="false" />.
+            </summary>
         </member>
         <member name="P:NAnt.DotNet.Tasks.CscTask.Extension">
             <summary>
@@ -1340,6 +1628,21 @@
             </summary>
             <param name="writer"><see cref="T:System.IO.TextWriter"/> to which the compiler options should be written.</param>
         </member>
+        <member name="P:NAnt.DotNet.Tasks.JscTask.Platform">
+            <summary>
+            Specifies which platform version of common language runtime (CLR)
+            can run the output file.
+            </summary>
+            <value>
+            The platform version of common language runtime (CLR) that can run
+            the output file.
+            </value>
+            <remarks>
+            <para>
+            Corresponds with the <c>/platform</c> flag.
+            </para>
+            </remarks>
+        </member>
         <member name="P:NAnt.DotNet.Tasks.JscTask.WarningLevel">
             <summary>
             Specifies the warning level for the compiler to display. Valid 
@@ -1393,6 +1696,57 @@
             Corresponds with the <c>/codepage</c> flag.
             </para>
             </remarks>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.JscTask.KeyContainer">
+            <summary>
+            Specifies the key pair container used to strongname the assembly.
+            </summary>
+            <remarks>
+            Override to avoid exposing this to build authors, as the JScript.NET
+            does not support this.
+            </remarks>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.JscTask.KeyFile">
+            <summary>
+            Specifies a strong name key file.
+            </summary>
+            <remarks>
+            Override to avoid exposing this to build authors, as the JScript.NET
+            does not support this.
+            </remarks>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.JscTask.SupportsKeyContainer">
+            <summary>
+            Indicates whether the compiler for a given target framework supports
+            the "keycontainer" option. The default is <see langword="false" />.
+            </summary>
+            <value>
+            <see langword="false" />.
+            </value>
+            <remarks>
+            Override to avoid exposing this to build authors, as the JScript.NET
+            does not support this.
+            </remarks>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.JscTask.SupportsKeyFile">
+            <summary>
+            Indicates whether the compiler for a given target framework supports
+            the "keyfile" option. The default is <see langword="false" />.
+            </summary>
+            <value>
+            <see langword="false" />.
+            </value>
+            <remarks>
+            Override to avoid exposing this to build authors, as the JScript.NET
+            does not support this.
+            </remarks>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.JscTask.SupportsPlatform">
+            <summary>
+            Specifies whether the compiler for the active target framework
+            supports limiting the platform on which the compiled code can run.
+            The default is <see langword="false" />.
+            </summary>
         </member>
         <member name="P:NAnt.DotNet.Tasks.JscTask.Modules">
             <summary>
@@ -1496,6 +1850,11 @@
             Names of the references to scan for the licensed component.
             </summary>
         </member>
+        <member name="P:NAnt.DotNet.Tasks.LicenseTask.LicenseTarget">
+            <summary>
+            Specifies the executable for which the .licenses file is generated.
+            </summary>
+        </member>
         <member name="P:NAnt.DotNet.Tasks.LicenseTask.Target">
             <summary>
             Specifies the executable for which the .licenses file is generated.
@@ -1592,13 +1951,21 @@
         </member>
         <member name="T:NAnt.DotNet.Tasks.NDocTask">
             <summary>
-            Runs NDoc to create documentation.
+            Runs NDoc V1.3.1 to create documentation.
             </summary>
             <remarks>
               <para>
               See the <see href="http://ndoc.sourceforge.net/">NDoc home page</see> for more 
               information.
               </para>
+              <note>
+              By default, only the NDoc MSDN documenter ships as part of the NAnt 
+              distribution. To make another NDoc documenter from the NDoc V1.3.1 
+              distribution available to the <see cref="T:NAnt.DotNet.Tasks.NDocTask"/>, copy the 
+              documenter assembly (and possible dependencies) to the "lib" 
+              directory corresponding with the CLR you're running NAnt on 
+              (eg. &lt;nant root&gt;/bin/lib/net/1.1).
+              </note>
             </remarks>
             <example>
               <para>
@@ -1688,8 +2055,12 @@
             <summary>
             Returns the documenter for the given project.
             </summary>
-            <exception cref="T:NAnt.Core.BuildException">Documenter <paramref name="documenterName"/> is not found.</exception>
-            <exception cref="T:System.ArgumentNullException"><paramref name="project"/> is <see langword="null"/>.</exception>
+            <exception cref="T:NAnt.Core.BuildException">
+            Documenter <paramref name="documenterName"/> is not found.
+            </exception>
+            <exception cref="T:System.ArgumentNullException">
+            <paramref name="project"/> is <see langword="null"/>.
+            </exception>
         </member>
         <member name="M:NAnt.DotNet.Tasks.NDocTask.ExpandPropertiesInNodes(System.Xml.XmlNodeList)">
             <summary>
@@ -1941,19 +2312,11 @@
             otherwise <see langword="false" />.
             </returns>
         </member>
-        <member name="M:NAnt.DotNet.Tasks.ResGenTask.AppendArgument(System.String)">
-            <summary>
-            Adds a command line argument to the command line for the external
-            program that is used to convert the resource files.
-            </summary>
-            <param name="s">The argument that should be added to the command line.</param>
-        </member>
-        <member name="M:NAnt.DotNet.Tasks.ResGenTask.GetOutputFile(System.IO.FileInfo,System.String)">
+        <member name="M:NAnt.DotNet.Tasks.ResGenTask.GetOutputFile(System.IO.FileInfo)">
             <summary>
             Determines the full path and extension for the output file.
             </summary>
             <param name="file">The output file for which the full path and extension should be determined.</param>
-            <param name="prefix">prefix to prepend to the output .resources file</param>
             <returns>
             The full path (with extensions) for the specified file.
             </returns>
@@ -1975,6 +2338,17 @@
             2.0 resx files can only be compiled with a resgen tool that supported
             assembly references, so this method will not be used anyway.
             </remarks>
+        </member>
+        <member name="M:NAnt.DotNet.Tasks.ResGenTask.GetExternalFileReferences(System.IO.FileInfo)">
+            <summary>
+            Returns a list of external file references for the specified file.
+            </summary>
+            <param name="resxFile">The resx file for which a list of external file references should be returned.</param>
+            <returns>
+            A list of external file references for the specified file, or
+            <see langword="null" /> if <paramref name="resxFile" /> does not 
+            exist or does not support external file references.
+            </returns>
         </member>
         <member name="P:NAnt.DotNet.Tasks.ResGenTask.InputFile">
             <summary>
@@ -1999,6 +2373,13 @@
             The directory to which outputs will be stored.
             </summary>
         </member>
+        <member name="P:NAnt.DotNet.Tasks.ResGenTask.UseSourcePath">
+            <summary>
+            Use each source file's directory as the current directory for 
+            resolving relative file paths. The default is <see langword="false" />.
+            Only supported when targeting .NET 2.0 (or higher).
+            </summary>
+        </member>
         <member name="P:NAnt.DotNet.Tasks.ResGenTask.Resources">
             <summary>
             Takes a list of <c>.resx</c> or <c>.txt</c> files to convert to <c>.resources</c> files.      
@@ -2014,6 +2395,18 @@
             Indicates whether assembly references are supported by the 
             <c>resgen</c> tool for the current target framework. The default 
             is <see langword="false" />.
+            </summary>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.ResGenTask.SupportsExternalFileReferences">
+            <summary>
+            Indicates whether external file references are supported by the 
+            <c>resgen</c> tool for the current target framework. The default 
+            is <see langword="false" />.
+            </summary>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.ResGenTask.QualifiedResources">
+            <summary>
+            For internal use only !
             </summary>
         </member>
         <member name="P:NAnt.DotNet.Tasks.ResGenTask.BaseDirectory">
@@ -2043,6 +2436,35 @@
             Override in derived classes to explicitly set the location of the 
             external tool.
             </remarks>
+        </member>
+        <member name="T:NAnt.DotNet.Tasks.QualifiedResource">
+            <summary>
+            For internal use only !
+            </summary>
+        </member>
+        <member name="M:NAnt.DotNet.Tasks.QualifiedResource.#ctor(System.IO.FileInfo,System.IO.FileInfo)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NAnt.DotNet.Tasks.QualifiedResource"/>
+            class for a given input and output file.
+            </summary>
+            <param name="input">The resource to compile.</param>
+            <param name="output">The compiled resource.</param>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.QualifiedResource.Input">
+            <summary>
+            Gets the resource file to compile.
+            </summary>
+            <value>
+            The resource file to compile.
+            </value>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.QualifiedResource.Output">
+            <summary>
+            Gets the compiled resource file.
+            </summary>
+            <value>
+            The compiled resource file.
+            </value>
         </member>
         <member name="T:NAnt.DotNet.Tasks.ScriptTask">
             <summary>
@@ -2089,11 +2511,13 @@
               <para>Run C# code that writes a message to the build log.</para>
               <code>
                     &lt;script language="C#"&gt;
-                        &lt;code&gt;&lt;![CDATA[
+                        &lt;code&gt;
+                          &lt;![CDATA[
                             public static void ScriptMain(Project project) {
-                                project.Log(Level.Info, "Hello World from a script task using C#"); 
+                                project.Log(Level.Info, "Hello World from a script task using C#");
                             }
-                        ]]&gt;&lt;/code&gt;
+                          ]]&gt;
+                        &lt;/code&gt;
                     &lt;/script&gt;
               </code>
             </example>
@@ -2101,28 +2525,121 @@
               <para>Define a custom function and call it using C#.</para>
               <code>
                     &lt;script language="C#" prefix="test" &gt;
-                        &lt;code&gt;&lt;![CDATA[                 
-            
+                        &lt;code&gt;
+                          &lt;![CDATA[
                             [Function("test-func")]
                             public static string Testfunc(  ) {
-                                    return "some result !!!!!!!!";
+                                return "some result !!!!!!!!";
                             }
-                    ]]&gt;&lt;/code&gt;
+                          ]]&gt;
+                        &lt;/code&gt;
                     &lt;/script&gt;
                     &lt;echo message='${test::test-func()}'/&gt;
-            
               </code>
             </example>
             <example>
-              <para>Run Visual Basic.NET code that writes a message to the build log.</para>
+              <para>Use a custom namespace in C# to create a database</para>
+              <code>
+                    &lt;script language="C#" &gt;
+                        &lt;references&gt;
+                            &lt;include name="System.Data.dll" /&gt;
+                        &lt;/references&gt;
+                        &lt;imports&gt;
+                            &lt;import namespace="System.Data.SqlClient" /&gt;
+                        &lt;/imports&gt;
+                        &lt;code&gt;
+                          &lt;![CDATA[
+                            public static void ScriptMain(Project project) {
+                                string dbUserName = "nant";
+                                string dbPassword = "nant";
+                                string dbServer = "(local)";
+                                string dbDatabaseName = "NAntSample";
+                                string connectionString = String.Format("Server={0};uid={1};pwd={2};", dbServer, dbUserName, dbPassword);
+                                
+                                SqlConnection connection = new SqlConnection(connectionString);
+                                string createDbQuery = "CREATE DATABASE " + dbDatabaseName;
+                                SqlCommand createDatabaseCommand = new SqlCommand(createDbQuery);
+                                createDatabaseCommand.Connection = connection;
+                                
+                                connection.Open();
+                                
+                                try {
+                                    createDatabaseCommand.ExecuteNonQuery();
+                                    project.Log(Level.Info, "Database added successfully: " + dbDatabaseName);
+                                } catch (Exception e) {
+                                    project.Log(Level.Error, e.ToString());
+                                } finally {
+                                    connection.Close();
+                                }
+                            }
+                          ]]&gt;
+                        &lt;/code&gt;
+                    &lt;/script&gt;
+              </code>
+            </example>
+            <example>
+              <para>
+              Run Visual Basic.NET code that writes a message to the build log.
+              </para>
               <code>
                     &lt;script language="VB"&gt;
-                        &lt;code&gt;&lt;![CDATA[
+                        &lt;code&gt;
+                          &lt;![CDATA[
                             Public Shared Sub ScriptMain(project As Project)
                                 project.Log(Level.Info, "Hello World from a script task using Visual Basic.NET")
                             End Sub
-                        ]]&gt;&lt;/code&gt;
+                          ]]&gt;
+                        &lt;/code&gt;
                     &lt;/script&gt;
+              </code>
+            </example>
+            <example>
+              <para>Define a custom task and call it using C#.</para>
+              <code>
+                    &lt;script language="C#" prefix="test" &gt;
+                        &lt;code&gt;
+                          &lt;![CDATA[
+                            [TaskName("usertask")]
+                            public class TestTask : Task {
+                              #region Private Instance Fields
+                                          private string _message;
+                                          #endregion Private Instance Fields
+                                          #region Public Instance Properties
+                                          [TaskAttribute("message", Required=true)]
+                              public string FileName {
+                                  get { return _message; }
+                                  set { _message = value; }
+                              }
+                                          #endregion Public Instance Properties
+                                          #region Override implementation of Task
+                                          protected override void ExecuteTask() {
+                                  Log(Level.Info, _message.ToUpper());
+                              }
+                              #endregion Override implementation of Task
+                            }
+                          ]]&gt;
+                        &lt;/code&gt;
+                    &lt;/script&gt;
+                    &lt;usertask message='Hello from UserTask'/&gt;
+              </code>
+            </example>
+            <example>
+              <para>
+              Define a custom function and call it using <see href="http://boo.codehaus.org/">Boo</see>.
+              </para>
+              <code>
+                    &lt;script language="Boo.CodeDom.BooCodeProvider, Boo.CodeDom, Version=1.0.0.0, Culture=neutral, PublicKeyToken=32c39770e9a21a67"
+                        failonerror="true"&gt;
+                        &lt;code&gt;
+                          &lt;![CDATA[
+                           
+                            [Function("test-func")]
+                            def MyFunc():
+                                return "Hello from Boo !!!!!!"
+                          ]]&gt;
+                        &lt;/code&gt;
+                    &lt;/script&gt;
+                    &lt;echo message='${script::test-func()}'/&gt;
               </code>
             </example>
         </member>
@@ -2138,8 +2655,8 @@
         </member>
         <member name="P:NAnt.DotNet.Tasks.ScriptTask.Language">
             <summary>
-            The language of the script block. Possible values are "VB", "C#",
-            "JS", "VJS" or a fully-qualified name for a class implementing 
+            The language of the script block. Possible values are "VB", "vb", "VISUALBASIC", "C#", "c#", "CSHARP".
+            "JS", "js", "JSCRIPT" "VJS", "vjs", "JSHARP" or a fully-qualified name for a class implementing 
             <see cref="T:System.CodeDom.Compiler.CodeDomProvider"/>.
             </summary>
         </member>
@@ -2174,6 +2691,16 @@
             <summary>
             Compiles Visual Basic.NET programs.
             </summary>
+            <remarks>
+            <note>
+            In order to have <see cref="T:NAnt.DotNet.Tasks.VbcTask"/> generate manifest resource names
+            that match those generated by Microsoft Visual Studio.NET, the value of
+            the <see cref="P:NAnt.DotNet.Types.ResourceFileSet.Prefix"/> attribute of the &lt;<see cref="P:NAnt.DotNet.Tasks.CompilerBase.ResourcesList"/>&gt;
+            element should match the "Root namespace" of the VB.NET project, and the 
+            value of the <see cref="P:NAnt.DotNet.Types.ResourceFileSet.DynamicPrefix"/> attribute 
+            should be set to "<see langword="false"/>".
+            </note>
+            </remarks>
             <example>
               <para>Example build file using this task.</para>
               <code>
@@ -2187,13 +2714,13 @@
               <target name="build">
                  <vbc target="exe" output="${basename}-vb.exe" rootnamespace="${basename}">
                     <imports>
-                        <import name="System" />
-                        <import name="System.Data" />
+                        <import namespace="System" />
+                        <import namespace="System.Data" />
                     </imports>
                     <sources>
                        <include name="${basename}.vb" />
                     </sources>
-                    <resources dynamicprefix="true">
+                    <resources prefix="${basename}" dynamicprefix="true">
                         <include name="**/*.resx" />
                     </resources>
                     <references>
@@ -2221,6 +2748,13 @@
             <see langword="null"/> if the dependent source file does not exist.
             </returns>
         </member>
+        <member name="M:NAnt.DotNet.Tasks.VbcTask.WriteConditionalCompilationConstants(System.IO.TextWriter)">
+            <summary>
+            Writes conditional compilation constants to the specified
+            <see cref="T:System.IO.TextWriter"/>.
+            </summary>
+            <param name="writer">The <see cref="T:System.IO.TextWriter"/> to which the conditional compilation constants should be written.</param>
+        </member>
         <member name="M:NAnt.DotNet.Tasks.VbcTask.WriteOptions(System.IO.TextWriter)">
             <summary>
             Writes the compiler options to the specified <see cref="T:System.IO.TextWriter"/>.
@@ -2244,6 +2778,18 @@
             <remarks>
             This address must be specified as a hexadecimal number.
             </remarks>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.VbcTask.DebugOutput">
+            <summary>
+            Specifies the type of debugging information generated by the 
+            compiler. The default is <see cref="F:NAnt.DotNet.Types.DebugOutput.None"/>.
+            </summary>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.VbcTask.Debug">
+            <summary>
+            No longer expose this to build authors. Use <see cref="P:NAnt.DotNet.Tasks.VbcTask.DebugOutput"/>
+            instead.
+            </summary>
         </member>
         <member name="P:NAnt.DotNet.Tasks.VbcTask.DocFile">
             <summary>
@@ -2322,6 +2868,21 @@
             </value>
             <remarks><a href="ms-help://MS.NETFrameworkSDK/vblr7net/html/valrfOptionstrictEnforceStrictTypeSemantics.htm">See the Microsoft.NET Framework SDK documentation for details.</a></remarks>
         </member>
+        <member name="P:NAnt.DotNet.Tasks.VbcTask.Platform">
+            <summary>
+            Specifies which platform version of common language runtime (CLR)
+            can run the output file.
+            </summary>
+            <value>
+            The platform version of common language runtime (CLR) that can run
+            the output file.
+            </value>
+            <remarks>
+            <para>
+            Corresponds with the <c>/platform</c> flag.
+            </para>
+            </remarks>
+        </member>
         <member name="P:NAnt.DotNet.Tasks.VbcTask.RemoveIntChecks">
             <summary>
             Specifies whether the <c>/removeintchecks</c> option gets passed to 
@@ -2343,6 +2904,20 @@
             namespace of the project.
             </value>
             <remarks><a href="ms-help://MS.NETFrameworkSDK/vblr7net/html/valrfRootnamespace.htm">See the Microsoft.NET Framework SDK documentation for details.</a></remarks>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.VbcTask.SupportsDocGeneration">
+            <summary>
+            Specifies whether the compiler for the active target framework
+            supports generation of XML Documentation file. The default is 
+            <see langword="false" />.
+            </summary>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.VbcTask.SupportsPlatform">
+            <summary>
+            Specifies whether the compiler for the active target framework
+            supports limiting the platform on which the compiled code can run.
+            The default is <see langword="false" />.
+            </summary>
         </member>
         <member name="P:NAnt.DotNet.Tasks.VbcTask.Extension">
             <summary>
@@ -2373,21 +2948,41 @@
             </value>
         </member>
         <member name="T:NAnt.DotNet.Tasks.VjcTask">
-             <summary>
-             Compiles Visual J# programs using vjc, Microsoft's J# compiler.
-             </summary>
-             <example>
-               <para>Compile <c>helloworld.jsl</c> to <c>helloworld.exe</c>.</para>
-               <code>
-                 <![CDATA[
+            <summary>
+            Compiles Visual J# programs using vjc, Microsoft's J# compiler.
+            </summary>
+            <remarks>
+            <note>
+            In order to have <see cref="T:NAnt.DotNet.Tasks.VjcTask"/> generate manifest resource names
+            that match those generated by Microsoft Visual Studio.NET, the value of
+            the <see cref="P:NAnt.DotNet.Types.ResourceFileSet.Prefix"/> attribute of the &lt;<see cref="P:NAnt.DotNet.Tasks.CompilerBase.ResourcesList"/>&gt;
+            element should match the "Default Package" of the J#.NET project, and 
+            the value of the <see cref="P:NAnt.DotNet.Types.ResourceFileSet.DynamicPrefix"/> attribute
+            should be set to "<see langword="true"/>".
+            </note>
+            </remarks>
+            <example>
+              <para>Compile a "HelloWorld" application, including embedded resources.</para>
+              <code>
+                <![CDATA[
             <vjc target="exe" output="helloworld.exe" debug="true">
-               <sources>
-                  <include name="helloworld.jsl" />
-               </sources>
+                <sources>
+                    <include name="helloworld.jsl" />
+                </sources>
+                <resources prefix="HelloWorld" dynamicprefix="true">
+                    <include name="**/*.resx" />
+                </resources>
+                <references>
+                    <include name="System.dll" />
+                    <include name="System.Data.dll" />
+                    <include name="System.Drawing.dll" />
+                    <include name="System.Windows.Forms.dll" />
+                    <include name="System.Xml.dll" />
+                </references>
             </vjc>
-                 ]]>
-               </code>
-             </example>
+                ]]>
+              </code>
+            </example>
         </member>
         <member name="M:NAnt.DotNet.Tasks.VjcTask.WriteModuleReferences(System.IO.TextWriter)">
             <summary>
@@ -2414,6 +3009,18 @@
             This address can be specified as a decimal, hexadecimal, or octal 
             number. 
             </remarks>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.VjcTask.DebugOutput">
+            <summary>
+            Specifies the type of debugging information generated by the 
+            compiler. The default is <see cref="F:NAnt.DotNet.Types.DebugOutput.None"/>.
+            </summary>
+        </member>
+        <member name="P:NAnt.DotNet.Tasks.VjcTask.Debug">
+            <summary>
+            No longer expose this to build authors. Use <see cref="P:NAnt.DotNet.Tasks.VjcTask.DebugOutput"/>
+            instead.
+            </summary>
         </member>
         <member name="P:NAnt.DotNet.Tasks.VjcTask.SecureScoping">
             <summary>
@@ -2798,6 +3405,7 @@
             The primary reason for this class is to allow the <see cref="P:NAnt.DotNet.Types.LibDirectorySet.BaseDirectory"/>
             to always be the same value as the parent <see cref="T:NAnt.DotNet.Types.AssemblyFileSet"/>
             </remarks>
+            <seealso cref="T:NAnt.Core.Types.FileSet"/>
         </member>
         <member name="M:NAnt.DotNet.Types.LibDirectorySet.#ctor(NAnt.DotNet.Types.AssemblyFileSet)">
             <summary>
@@ -2816,6 +3424,82 @@
             <summary>
             Specialized <see cref="T:NAnt.Core.Types.FileSet"/> class for managing assembly files.
             </summary>
+            <remarks>
+              <para>
+              If an include pattern does not contain any wildcard characters then 
+              the assembly will be searched for in following locations (in the order listed):
+              </para>
+              <list type="bullet">
+                <item>
+                  <description>
+                  The base directory of the fileset.
+                  </description>
+                </item>
+                <item>
+                  <description>
+                  The directories specified using the nested &lt;lib&gt; element.
+                  </description>
+                </item>
+                <item>
+                  <description>
+                  The assembly directory of the current target framework.
+                  </description>
+                </item>
+              </list>
+            </remarks>
+            <example>
+              <para>
+              Define a reference with name "sys.assemblies", holding
+              a set of system assemblies.
+              </para>
+              <code>
+                <![CDATA[
+            <assemblyfileset id="sys.assemblies">
+                <include name="System.dll" />
+                <include name="System.Data.dll" />
+                <include name="System.Xml.dll" />
+            </assemblyfileset>
+                ]]>
+              </code>
+              <para>
+              Use the predefined set of assemblies to compile a C# assembly.
+              </para>
+              <code>
+                <![CDATA[
+            <csc target="exe" output="HelloWorld.exe">
+                <sources>
+                    <include name="**/*.cs" />
+                </sources>
+                <references refid="sys.assemblies" />
+            </csc>
+                ]]>
+              </code>
+            </example>
+            <example>
+              <para>
+              Compile a C# assembly using assembly references that are searched for
+              in the "Third Party Assemblies" and "Company Assemblies"
+              directories.
+              </para>
+              <code>
+                <![CDATA[
+            <csc target="exe" output="HelloWorld.exe">
+                <sources>
+                    <include name="**/*.cs" />
+                </sources>
+                <references>
+                    <lib>
+                        <include name="Third Party Assemblies" />
+                        <include name="Company Assemblies" />
+                    </lib>
+                    <include name="log4net.dll" />
+                    <include name="Company.Business.dll" />
+                </references>
+            </csc>
+                ]]>
+              </code>
+            </example>
+            <seealso cref="T:NAnt.Core.Types.FileSet"/>
         </member>
         <member name="M:NAnt.DotNet.Types.AssemblyFileSet.#ctor">
             <summary>
@@ -3002,6 +3686,700 @@
             </summary>
             <returns>
             The current element in the collection.
+            </returns>
+        </member>
+        <member name="T:NAnt.DotNet.Types.DebugOutput">
+            <summary>
+            Specifies the type of debugging information generated by the compiler.
+            </summary>
+            <remarks>
+              <para>
+              For backward compatibility, the following string values can also be
+              used in build files:
+              </para>
+              <list type="table">
+                <listheader>
+                  <term>Value</term>
+                  <description>Corresponding field</description>
+                </listheader>
+                <item>
+                  <term>"true"</term>
+                  <description><see cref="F:NAnt.DotNet.Types.DebugOutput.Enable"/></description>
+                </item>
+                <item>
+                  <term>"false"</term>
+                  <description><see cref="F:NAnt.DotNet.Types.DebugOutput.None"/></description>
+                </item>
+              </list>
+              <para>
+              When set to <see langword="Enabled"/> then the following conditional 
+              compilation symbols will also be defined:
+              </para>
+              <list type="bullet">
+                <item>
+                  <description>DEBUG</description>
+                </item>
+                <item>
+                  <description>TRUE</description>
+                </item>
+              </list>
+            </remarks>
+        </member>
+        <member name="F:NAnt.DotNet.Types.DebugOutput.None">
+            <summary>
+            Create no debug information.
+            </summary>
+        </member>
+        <member name="F:NAnt.DotNet.Types.DebugOutput.Enable">
+            <summary>
+            Enable attaching a debugger to the running program.
+            </summary>
+        </member>
+        <member name="F:NAnt.DotNet.Types.DebugOutput.Full">
+            <summary>
+            Enable attaching a debugger to the running program.
+            </summary>
+        </member>
+        <member name="F:NAnt.DotNet.Types.DebugOutput.PdbOnly">
+            <summary>
+            Only display assembler when the running program is attached to the 
+            debugger.
+            </summary>
+        </member>
+        <member name="T:NAnt.DotNet.Types.DebugOutputConverter">
+            <summary>
+            Specialized <see cref="T:System.ComponentModel.EnumConverter"/> that also supports 
+            case-insensitive conversion of "true" to 
+            <see cref="F:NAnt.DotNet.Types.DebugOutput.Enable"/> and "false" to
+            <see cref="F:NAnt.DotNet.Types.DebugOutput.None"/>.
+            </summary>
+        </member>
+        <member name="M:NAnt.DotNet.Types.DebugOutputConverter.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:NAnt.DotNet.Types.DebugOutputConverter"/>
+            class.
+            </summary>
+        </member>
+        <member name="M:NAnt.DotNet.Types.DebugOutputConverter.ConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Globalization.CultureInfo,System.Object)">
+            <summary>
+            Converts the given object to the type of this converter, using the 
+            specified context and culture information.
+            </summary>
+            <param name="context">An <see cref="T:System.ComponentModel.ITypeDescriptorContext"/> that provides a format context.</param>
+            <param name="culture">A <see cref="T:System.Globalization.CultureInfo"/> object. If a <see langword="null"/> is passed, the current culture is assumed.</param>
+            <param name="value">The <see cref="T:System.Object"/> to convert.</param>
+            <returns>
+            An <see cref="T:System.Object"/> that represents the converted value.
+            </returns>
+        </member>
+        <member name="T:NAnt.DotNet.Types.EmbeddedResource">
+            <summary>
+            Represents an embedded resource.
+            </summary>
+            <remarks>
+            Do not yet expose this to build authors.
+            </remarks>
+        </member>
+        <member name="M:NAnt.DotNet.Types.EmbeddedResource.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NAnt.DotNet.Types.EmbeddedResource"/>
+            with the specified file name and manifest resource name.
+            </summary>
+            <param name="file">The path of the compiled resource.</param>
+            <param name="manifestResourceName">The manifest resource name of the embedded resource.</param>
+        </member>
+        <member name="P:NAnt.DotNet.Types.EmbeddedResource.File">
+            <summary>
+            Gets the physical location of the resource to embed.
+            </summary>
+            <value>
+            The physical location of the resource to embed.
+            </value>
+        </member>
+        <member name="P:NAnt.DotNet.Types.EmbeddedResource.ManifestResourceName">
+            <summary>
+            Gets the manifest resource name to use when embedding the resource.
+            </summary>
+            <value>
+            The manifest resource name to use when embedding the resource.
+            </value>
+        </member>
+        <member name="T:NAnt.DotNet.Types.EmbeddedResourceCollection">
+            <summary>
+            Contains a collection of <see cref="T:NAnt.DotNet.Types.EmbeddedResource"/> items.
+            </summary>
+            <remarks>
+            Do not yet expose this to build authors.
+            </remarks>
+        </member>
+        <member name="T:NAnt.DotNet.Types.DataTypeCollectionBase">
+            <summary>
+            Base class for collections that needs to be globally referencable.
+            </summary>
+        </member>
+        <member name="M:NAnt.DotNet.Types.DataTypeCollectionBase.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:NAnt.DotNet.Types.DataTypeCollectionBase"/>
+            class.
+            </summary>
+        </member>
+        <member name="M:NAnt.DotNet.Types.DataTypeCollectionBase.CopyTo(System.Array,System.Int32)">
+            <summary>
+            Copies the items of the collection to an <see cref="T:System.Array"/>,
+            starting at a particular index.
+            </summary>
+            <param name="array">The one-dimensional <see cref="T:System.Array"/> that is the destination of the items copied from the collection. The <see cref="T:System.Array"/> must have zero-based indexing.</param>
+            <param name="index">The zero-based index in <paramref name="array"/> at which copying begins.</param>
+        </member>
+        <member name="M:NAnt.DotNet.Types.DataTypeCollectionBase.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+            Returns an enumerator that can iterate through a collection.
+            </summary>
+            <returns>
+            An <see cref="T:System.Collections.IEnumerator"/> that can be used to iterate through 
+            the collection.
+            </returns>
+        </member>
+        <member name="M:NAnt.DotNet.Types.DataTypeCollectionBase.RemoveAt(System.Int32)">
+            <summary>
+            Removes an item at a specific index.
+            </summary>
+            <param name="index">The zero-based index of the item to remove.</param>
+        </member>
+        <member name="M:NAnt.DotNet.Types.DataTypeCollectionBase.Clear">
+            <summary>
+            Removes all items from the collection.
+            </summary>
+        </member>
+        <member name="M:NAnt.DotNet.Types.DataTypeCollectionBase.ValidateType(System.Object)">
+            <summary>
+            Used by methods that take <see cref="T:System.Object"/> instances as argument
+            to verify whether the instance is valid for the collection class.
+            </summary>
+            <param name="value">The instance to verify.</param>
+        </member>
+        <member name="M:NAnt.DotNet.Types.DataTypeCollectionBase.RangeCheck(System.Int32)">
+            <summary>
+            Checks whether the specified index is within the range of this
+            collection.
+            </summary>
+            <param name="index">The index to check.</param>
+        </member>
+        <member name="P:NAnt.DotNet.Types.DataTypeCollectionBase.System#Collections#ICollection#IsSynchronized">
+            <summary>
+            Gets a value indicating whether access to the collection is 
+            synchronized (thread-safe).
+            </summary>
+            <value>
+            <see langword="false" />.
+            </value>
+        </member>
+        <member name="P:NAnt.DotNet.Types.DataTypeCollectionBase.Count">
+            <summary>
+            Gets the number of items in the collection.
+            </summary>
+            <value>
+            The number of items in the collection.
+            </value>
+        </member>
+        <member name="P:NAnt.DotNet.Types.DataTypeCollectionBase.System#Collections#ICollection#SyncRoot">
+            <summary>
+            Gets an object that can be used to synchronize access to the 
+            collection.
+            </summary>
+            <value>
+            An object that can be used to synchronize access to the collection.
+            </value>
+        </member>
+        <member name="P:NAnt.DotNet.Types.DataTypeCollectionBase.IsFixedSize">
+            <summary>
+            Gets a value indicating whether the collection has a fixed size.
+            </summary>
+            <value>
+            <see langword="false" />.
+            </value>
+        </member>
+        <member name="P:NAnt.DotNet.Types.DataTypeCollectionBase.IsReadOnly">
+            <summary>
+            Gets a value indicating whether the collection has a fixed size.
+            </summary>
+            <value>
+            <see langword="false" />.
+            </value>
+        </member>
+        <member name="P:NAnt.DotNet.Types.DataTypeCollectionBase.List">
+            <summary>
+            Gets the list of elements contained in the 
+            <see cref="T:NAnt.DotNet.Types.DataTypeCollectionBase"/> instance.
+            </summary>
+            <value>
+            An <see cref="T:System.Collections.ArrayList"/> containing the elements of the 
+            collection.
+            </value>
+        </member>
+        <member name="P:NAnt.DotNet.Types.DataTypeCollectionBase.ItemType">
+            <summary>
+            Gets the <see cref="T:System.Type"/> of the items in this collection.
+            </summary>
+            <value>
+            The <see cref="T:System.Type"/> of the items in this collection.
+            </value>
+        </member>
+        <member name="M:NAnt.DotNet.Types.EmbeddedResourceCollection.GetEnumerator">
+            <summary>
+            Returns an enumerator that can iterate through the collection.
+            </summary>
+            <returns>
+            A <see cref="T:NAnt.DotNet.Types.EmbeddedResourceEnumerator"/> for the entire collection.
+            </returns>
+        </member>
+        <member name="M:NAnt.DotNet.Types.EmbeddedResourceCollection.System#Collections#IList#Insert(System.Int32,System.Object)">
+            <summary>
+            Inserts a <see cref="T:NAnt.DotNet.Types.EmbeddedResource"/> into the collection at the
+            specified index.
+            </summary>
+            <param name="index">The zero-based index at which <paramref name="item"/> should be inserted.</param>
+            <param name="value">The <see cref="T:NAnt.DotNet.Types.EmbeddedResource"/> to insert.</param>
+        </member>
+        <member name="M:NAnt.DotNet.Types.EmbeddedResourceCollection.System#Collections#IList#Remove(System.Object)">
+            <summary>
+            Removes the specified <see cref="T:NAnt.DotNet.Types.EmbeddedResource"/> from the
+            collection.
+            </summary>
+            <param name="value">The <see cref="T:NAnt.DotNet.Types.EmbeddedResource"/> to remove from the collection.</param>
+        </member>
+        <member name="M:NAnt.DotNet.Types.EmbeddedResourceCollection.System#Collections#IList#Contains(System.Object)">
+            <summary>
+            Determines whether a <see cref="T:NAnt.DotNet.Types.EmbeddedResource"/> is in the collection.
+            </summary>
+            <param name="value">The <see cref="T:NAnt.DotNet.Types.EmbeddedResource"/> to locate in the collection.</param> 
+            <returns>
+            <see langword="true"/> if <paramref name="value"/> is found in the 
+            collection; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:NAnt.DotNet.Types.EmbeddedResourceCollection.System#Collections#IList#IndexOf(System.Object)">
+            <summary>
+            Gets the location of a <see cref="T:NAnt.DotNet.Types.EmbeddedResource"/> in the collection.
+            </summary>
+            <param name="value">The <see cref="T:NAnt.DotNet.Types.EmbeddedResource"/> object to locate.</param> 
+            <returns>
+            The zero-based location of the <see cref="T:NAnt.DotNet.Types.EmbeddedResource"/> in the
+            collection.
+            </returns>
+            <remarks>
+            If the <see cref="T:NAnt.DotNet.Types.EmbeddedResource"/> is not currently a member of 
+            the collection, -1 is returned.
+            </remarks>
+        </member>
+        <member name="M:NAnt.DotNet.Types.EmbeddedResourceCollection.System#Collections#IList#Add(System.Object)">
+            <summary>
+            Adds a <see cref="T:NAnt.DotNet.Types.EmbeddedResource"/> to the end of the collection.
+            </summary>
+            <param name="value">The <see cref="T:NAnt.DotNet.Types.EmbeddedResource"/> to be added to the end of the collection.</param> 
+            <returns>
+            The position into which the new item was inserted.
+            </returns>
+        </member>
+        <member name="M:NAnt.DotNet.Types.EmbeddedResourceCollection.AddRange(NAnt.DotNet.Types.EmbeddedResourceCollection)">
+            <summary>
+            Adds the items of a <see cref="T:NAnt.DotNet.Types.EmbeddedResourceCollection"/> to the end of the collection.
+            </summary>
+            <param name="items">The <see cref="T:NAnt.DotNet.Types.EmbeddedResourceCollection"/> to be added to the end of the collection.</param> 
+        </member>
+        <member name="M:NAnt.DotNet.Types.EmbeddedResourceCollection.Add(NAnt.DotNet.Types.EmbeddedResource)">
+            <summary>
+            Adds a <see cref="T:NAnt.DotNet.Types.EmbeddedResource"/> to the end of the collection.
+            </summary>
+            <param name="value">The <see cref="T:NAnt.DotNet.Types.EmbeddedResource"/> to be added to the end of the collection.</param> 
+            <returns>
+            The position into which the new item was inserted.
+            </returns>
+        </member>
+        <member name="M:NAnt.DotNet.Types.EmbeddedResourceCollection.Insert(System.Int32,NAnt.DotNet.Types.EmbeddedResource)">
+            <summary>
+            Inserts a <see cref="T:NAnt.DotNet.Types.EmbeddedResource"/> into the collection at the
+            specified index.
+            </summary>
+            <param name="index">The zero-based index at which <paramref name="item"/> should be inserted.</param>
+            <param name="value">The <see cref="T:NAnt.DotNet.Types.EmbeddedResource"/> to insert.</param>
+        </member>
+        <member name="M:NAnt.DotNet.Types.EmbeddedResourceCollection.Remove(NAnt.DotNet.Types.EmbeddedResource)">
+            <summary>
+            Removes the specified <see cref="T:NAnt.DotNet.Types.EmbeddedResource"/> from the
+            collection.
+            </summary>
+            <param name="value">The <see cref="T:NAnt.DotNet.Types.EmbeddedResource"/> to remove from the collection.</param>
+        </member>
+        <member name="M:NAnt.DotNet.Types.EmbeddedResourceCollection.Contains(NAnt.DotNet.Types.EmbeddedResource)">
+            <summary>
+            Determines whether a <see cref="T:NAnt.DotNet.Types.EmbeddedResource"/> is in the collection.
+            </summary>
+            <param name="value">The <see cref="T:NAnt.DotNet.Types.EmbeddedResource"/> to locate in the collection.</param> 
+            <returns>
+            <see langword="true"/> if <paramref name="value"/> is found in the 
+            collection; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:NAnt.DotNet.Types.EmbeddedResourceCollection.IndexOf(NAnt.DotNet.Types.EmbeddedResource)">
+            <summary>
+            Gets the location of a <see cref="T:NAnt.DotNet.Types.EmbeddedResource"/> in the collection.
+            </summary>
+            <param name="value">The <see cref="T:NAnt.DotNet.Types.EmbeddedResource"/> object to locate.</param> 
+            <returns>
+            The zero-based location of the <see cref="T:NAnt.DotNet.Types.EmbeddedResource"/> in the
+            collection.
+            </returns>
+            <remarks>
+            If the <see cref="T:NAnt.DotNet.Types.EmbeddedResource"/> is not currently a member of 
+            the collection, -1 is returned.
+            </remarks>
+        </member>
+        <member name="P:NAnt.DotNet.Types.EmbeddedResourceCollection.Item(System.Int32)">
+            <summary>
+            Gets or sets the item at the specified index.
+            </summary>
+            <param name="index">The zero-based index of the item to get or set.</param>
+        </member>
+        <member name="P:NAnt.DotNet.Types.EmbeddedResourceCollection.Item(System.String)">
+            <summary>
+            Gets the <see cref="T:NAnt.DotNet.Types.EmbeddedResource"/> with the specified manifest
+            resource name.
+            </summary>
+            <param name="value">The manifest resource name of the <see cref="T:NAnt.DotNet.Types.EmbeddedResource"/> to get.</param>
+        </member>
+        <member name="P:NAnt.DotNet.Types.EmbeddedResourceCollection.ItemType">
+            <summary>
+            Gets the <see cref="T:System.Type"/> of the items in this collection.
+            </summary>
+            <value>
+            The <see cref="T:System.Type"/> of the items in this collection.
+            </value>
+        </member>
+        <member name="P:NAnt.DotNet.Types.EmbeddedResourceCollection.System#Collections#IList#$Item$(System.Int32)">
+            <summary>
+            Gets or sets the item at the specified index.
+            </summary>
+            <param name="index">The zero-based index of the item to get or set.</param>
+        </member>
+        <member name="T:NAnt.DotNet.Types.EmbeddedResourceEnumerator">
+            <summary>
+            Enumerates the <see cref="T:NAnt.DotNet.Types.EmbeddedResource"/> items of a <see cref="T:NAnt.DotNet.Types.EmbeddedResourceCollection"/>.
+            </summary>
+        </member>
+        <member name="M:NAnt.DotNet.Types.EmbeddedResourceEnumerator.#ctor(NAnt.DotNet.Types.EmbeddedResourceCollection)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NAnt.DotNet.Types.EmbeddedResourceEnumerator"/> class
+            with the specified <see cref="T:NAnt.DotNet.Types.EmbeddedResourceCollection"/>.
+            </summary>
+            <param name="arguments">The collection that should be enumerated.</param>
+        </member>
+        <member name="M:NAnt.DotNet.Types.EmbeddedResourceEnumerator.MoveNext">
+            <summary>
+            Advances the enumerator to the next item of the collection.
+            </summary>
+            <returns>
+            <see langword="true" /> if the enumerator was successfully advanced 
+            to the next item; <see langword="false" /> if the enumerator has 
+            passed the end of the collection.
+            </returns>
+        </member>
+        <member name="M:NAnt.DotNet.Types.EmbeddedResourceEnumerator.Reset">
+            <summary>
+            Sets the enumerator to its initial position, which is before the 
+            first item in the collection.
+            </summary>
+        </member>
+        <member name="P:NAnt.DotNet.Types.EmbeddedResourceEnumerator.Current">
+            <summary>
+            Gets the current item in the collection.
+            </summary>
+            <returns>
+            The current item in the collection.
+            </returns>
+        </member>
+        <member name="P:NAnt.DotNet.Types.EmbeddedResourceEnumerator.System#Collections#IEnumerator#Current">
+            <summary>
+            Gets the current item in the collection.
+            </summary>
+            <returns>
+            The current item in the collection.
+            </returns>
+        </member>
+        <member name="T:NAnt.DotNet.Types.NamespaceImport">
+            <summary>
+            Represents a namespace to import.
+            </summary>
+        </member>
+        <member name="M:NAnt.DotNet.Types.NamespaceImport.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:NAnt.DotNet.Types.NamespaceImport"/> 
+            class.
+            </summary>
+        </member>
+        <member name="M:NAnt.DotNet.Types.NamespaceImport.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NAnt.DotNet.Types.NamespaceImport"/> 
+            class for the specified namespace.
+            </summary>
+            <param name="nameSpace">The namespace.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="nameSpace"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="P:NAnt.DotNet.Types.NamespaceImport.TempName">
+            <summary>
+            The name of the namespace to import.
+            </summary>
+            <value>
+            The name of the namespace to import.
+            </value>
+        </member>
+        <member name="P:NAnt.DotNet.Types.NamespaceImport.Namespace">
+            <summary>
+            The name of the namespace to import.
+            </summary>
+            <value>
+            The name of the namespace to import.
+            </value>
+        </member>
+        <member name="P:NAnt.DotNet.Types.NamespaceImport.IfDefined">
+            <summary>
+            Indicates if the import should be generated. 
+            </summary>
+            <value>
+            <see langword="true" /> if the import should be generated; otherwise,
+            <see langword="false" />.
+            </value>
+        </member>
+        <member name="P:NAnt.DotNet.Types.NamespaceImport.UnlessDefined">
+            <summary>
+            Indicates if the import should be not generated. 
+            </summary>
+            <value>
+            <see langword="true" /> if the import should be not generated; 
+            otherwise, <see langword="false" />.
+            </value>
+        </member>
+        <member name="T:NAnt.DotNet.Types.NamespaceImportCollection">
+            <summary>
+            Contains a collection of <see cref="T:NAnt.DotNet.Types.NamespaceImport"/> items.
+            </summary>
+            <example>
+              <para>Define a reference with name "system.imports".</para>
+              <code>
+                <![CDATA[
+            <namespaceimports id="system.imports">
+                <import namespace="System" />
+                <import namespace="System.Data" />
+            </namespaceimports>
+                ]]>
+              </code>
+              <para>Use the predefined set of imports to compile a VB.NET assembly.</para>
+              <code>
+                <![CDATA[
+            <vbc target="exe" output="HelloWorld.exe" rootnamespace="HelloWorld">
+                <imports refid="system.imports" />
+                <sources>
+                    <include name="**/*.vb" />
+                </sources>
+                <references>
+                    <include name="System.dll" />
+                    <include name="System.Data.dll" />
+                </references>
+            </vbc>
+                ]]>
+              </code>
+            </example>
+        </member>
+        <member name="M:NAnt.DotNet.Types.NamespaceImportCollection.GetEnumerator">
+            <summary>
+            Returns an enumerator that can iterate through the collection.
+            </summary>
+            <returns>
+            A <see cref="T:NAnt.DotNet.Types.NamespaceImportEnumerator"/> for the entire collection.
+            </returns>
+        </member>
+        <member name="M:NAnt.DotNet.Types.NamespaceImportCollection.ToString">
+            <summary>
+            Returns a comma-delimited list of namespace imports.
+            </summary>
+            <returns>
+            A comma-delimited list of namespace imports, or an empty 
+            <see cref="T:System.String"/> if there are no namespace imports.
+            </returns>
+            <remarks>
+            Each namespace import is quoted individually.
+            </remarks>
+        </member>
+        <member name="M:NAnt.DotNet.Types.NamespaceImportCollection.System#Collections#IList#Insert(System.Int32,System.Object)">
+            <summary>
+            Inserts a <see cref="T:NAnt.DotNet.Types.NamespaceImport"/> into the collection at the
+            specified index.
+            </summary>
+            <param name="index">The zero-based index at which <paramref name="item"/> should be inserted.</param>
+            <param name="value">The <see cref="T:NAnt.DotNet.Types.NamespaceImport"/> to insert.</param>
+        </member>
+        <member name="M:NAnt.DotNet.Types.NamespaceImportCollection.System#Collections#IList#Remove(System.Object)">
+            <summary>
+            Removes the specified <see cref="T:NAnt.DotNet.Types.NamespaceImport"/> from the
+            collection.
+            </summary>
+            <param name="value">The <see cref="T:NAnt.DotNet.Types.NamespaceImport"/> to remove from the collection.</param>
+        </member>
+        <member name="M:NAnt.DotNet.Types.NamespaceImportCollection.System#Collections#IList#Contains(System.Object)">
+            <summary>
+            Determines whether a <see cref="T:NAnt.DotNet.Types.NamespaceImport"/> is in the collection.
+            </summary>
+            <param name="value">The <see cref="T:NAnt.DotNet.Types.NamespaceImport"/> to locate in the collection.</param> 
+            <returns>
+            <see langword="true"/> if <paramref name="value"/> is found in the 
+            collection; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:NAnt.DotNet.Types.NamespaceImportCollection.System#Collections#IList#IndexOf(System.Object)">
+            <summary>
+            Gets the location of a <see cref="T:NAnt.DotNet.Types.NamespaceImport"/> in the collection.
+            </summary>
+            <param name="value">The <see cref="T:NAnt.DotNet.Types.NamespaceImport"/> object to locate.</param> 
+            <returns>
+            The zero-based location of the <see cref="T:NAnt.DotNet.Types.NamespaceImport"/> in the
+            collection.
+            </returns>
+            <remarks>
+            If the <see cref="T:NAnt.DotNet.Types.NamespaceImport"/> is not currently a member of 
+            the collection, -1 is returned.
+            </remarks>
+        </member>
+        <member name="M:NAnt.DotNet.Types.NamespaceImportCollection.System#Collections#IList#Add(System.Object)">
+            <summary>
+            Adds a <see cref="T:NAnt.DotNet.Types.NamespaceImport"/> to the end of the collection.
+            </summary>
+            <param name="value">The <see cref="T:NAnt.DotNet.Types.NamespaceImport"/> to be added to the end of the collection.</param> 
+            <returns>
+            The position into which the new item was inserted.
+            </returns>
+        </member>
+        <member name="M:NAnt.DotNet.Types.NamespaceImportCollection.AddRange(NAnt.DotNet.Types.NamespaceImportCollection)">
+            <summary>
+            Adds the items of a <see cref="T:NAnt.DotNet.Types.NamespaceImportCollection"/> to the end of the collection.
+            </summary>
+            <param name="items">The <see cref="T:NAnt.DotNet.Types.NamespaceImportCollection"/> to be added to the end of the collection.</param> 
+        </member>
+        <member name="M:NAnt.DotNet.Types.NamespaceImportCollection.Add(NAnt.DotNet.Types.NamespaceImport)">
+            <summary>
+            Adds a <see cref="T:NAnt.DotNet.Types.NamespaceImport"/> to the end of the collection.
+            </summary>
+            <param name="value">The <see cref="T:NAnt.DotNet.Types.NamespaceImport"/> to be added to the end of the collection.</param> 
+            <returns>
+            The position into which the new item was inserted.
+            </returns>
+        </member>
+        <member name="M:NAnt.DotNet.Types.NamespaceImportCollection.Insert(System.Int32,NAnt.DotNet.Types.NamespaceImport)">
+            <summary>
+            Inserts a <see cref="T:NAnt.DotNet.Types.NamespaceImport"/> into the collection at the
+            specified index.
+            </summary>
+            <param name="index">The zero-based index at which <paramref name="item"/> should be inserted.</param>
+            <param name="value">The <see cref="T:NAnt.DotNet.Types.NamespaceImport"/> to insert.</param>
+        </member>
+        <member name="M:NAnt.DotNet.Types.NamespaceImportCollection.Remove(NAnt.DotNet.Types.NamespaceImport)">
+            <summary>
+            Removes the specified <see cref="T:NAnt.DotNet.Types.NamespaceImport"/> from the
+            collection.
+            </summary>
+            <param name="value">The <see cref="T:NAnt.DotNet.Types.NamespaceImport"/> to remove from the collection.</param>
+        </member>
+        <member name="M:NAnt.DotNet.Types.NamespaceImportCollection.Contains(NAnt.DotNet.Types.NamespaceImport)">
+            <summary>
+            Determines whether a <see cref="T:NAnt.DotNet.Types.NamespaceImport"/> is in the collection.
+            </summary>
+            <param name="value">The <see cref="T:NAnt.DotNet.Types.NamespaceImport"/> to locate in the collection.</param> 
+            <returns>
+            <see langword="true"/> if <paramref name="value"/> is found in the 
+            collection; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:NAnt.DotNet.Types.NamespaceImportCollection.IndexOf(NAnt.DotNet.Types.NamespaceImport)">
+            <summary>
+            Gets the location of a <see cref="T:NAnt.DotNet.Types.NamespaceImport"/> in the collection.
+            </summary>
+            <param name="value">The <see cref="T:NAnt.DotNet.Types.NamespaceImport"/> object to locate.</param> 
+            <returns>
+            The zero-based location of the <see cref="T:NAnt.DotNet.Types.NamespaceImport"/> in the
+            collection.
+            </returns>
+            <remarks>
+            If the <see cref="T:NAnt.DotNet.Types.NamespaceImport"/> is not currently a member of 
+            the collection, -1 is returned.
+            </remarks>
+        </member>
+        <member name="P:NAnt.DotNet.Types.NamespaceImportCollection.Item(System.Int32)">
+            <summary>
+            Gets or sets the item at the specified index.
+            </summary>
+            <param name="index">The zero-based index of the item to get or set.</param>
+        </member>
+        <member name="P:NAnt.DotNet.Types.NamespaceImportCollection.Item(System.String)">
+            <summary>
+            Gets the <see cref="T:NAnt.DotNet.Types.NamespaceImport"/> with the specified namespace.
+            </summary>
+            <param name="value">The namespace of the <see cref="T:NAnt.DotNet.Types.NamespaceImport"/> to get.</param>
+        </member>
+        <member name="P:NAnt.DotNet.Types.NamespaceImportCollection.ItemType">
+            <summary>
+            Gets the <see cref="T:System.Type"/> of the items in this collection.
+            </summary>
+            <value>
+            The <see cref="T:System.Type"/> of the items in this collection.
+            </value>
+        </member>
+        <member name="P:NAnt.DotNet.Types.NamespaceImportCollection.System#Collections#IList#$Item$(System.Int32)">
+            <summary>
+            Gets or sets the item at the specified index.
+            </summary>
+            <param name="index">The zero-based index of the item to get or set.</param>
+        </member>
+        <member name="T:NAnt.DotNet.Types.NamespaceImportEnumerator">
+            <summary>
+            Enumerates the <see cref="T:NAnt.DotNet.Types.NamespaceImport"/> items of a <see cref="T:NAnt.DotNet.Types.NamespaceImportCollection"/>.
+            </summary>
+        </member>
+        <member name="M:NAnt.DotNet.Types.NamespaceImportEnumerator.#ctor(NAnt.DotNet.Types.NamespaceImportCollection)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NAnt.DotNet.Types.NamespaceImportEnumerator"/> class
+            with the specified <see cref="T:NAnt.DotNet.Types.NamespaceImportCollection"/>.
+            </summary>
+            <param name="arguments">The collection that should be enumerated.</param>
+        </member>
+        <member name="M:NAnt.DotNet.Types.NamespaceImportEnumerator.MoveNext">
+            <summary>
+            Advances the enumerator to the next item of the collection.
+            </summary>
+            <returns>
+            <see langword="true" /> if the enumerator was successfully advanced 
+            to the next item; <see langword="false" /> if the enumerator has 
+            passed the end of the collection.
+            </returns>
+        </member>
+        <member name="M:NAnt.DotNet.Types.NamespaceImportEnumerator.Reset">
+            <summary>
+            Sets the enumerator to its initial position, which is before the 
+            first item in the collection.
+            </summary>
+        </member>
+        <member name="P:NAnt.DotNet.Types.NamespaceImportEnumerator.Current">
+            <summary>
+            Gets the current item in the collection.
+            </summary>
+            <returns>
+            The current item in the collection.
+            </returns>
+        </member>
+        <member name="P:NAnt.DotNet.Types.NamespaceImportEnumerator.System#Collections#IEnumerator#Current">
+            <summary>
+            Gets the current item in the collection.
+            </summary>
+            <returns>
+            The current item in the collection.
             </returns>
         </member>
         <member name="T:NAnt.DotNet.Types.Package">

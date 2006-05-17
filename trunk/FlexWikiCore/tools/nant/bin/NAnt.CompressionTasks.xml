@@ -4,134 +4,32 @@
         <name>NAnt.CompressionTasks</name>
     </assembly>
     <members>
-        <member name="T:NAnt.Compression.Tasks.UnZipTask">
+        <member name="T:NAnt.Compression.Tasks.GUnzip">
             <summary>
-            Extracts files from a zip file.
+            Expands a file packed using GZip compression.
             </summary>
-            <remarks>
-              <para>Uses <see href="http://www.icsharpcode.net/OpenSource/SharpZipLib/">#ziplib</see> (SharpZipLib), an open source Zip/GZip library written entirely in C#.</para>
-            </remarks>
             <example>
-              <para>Extracts all the file from the zip, preserving the directory structure.</para>
+              <para>Expands &quot;test.tar.gz&quot; to &quot;test2.tar&quot;.</para>
               <code>
                 <![CDATA[
-            <unzip zipfile="backup.zip"/>
+            <gunzip src="test.tar.gz" dest="test.tar" />
                 ]]>
               </code>
             </example>
         </member>
-        <member name="M:NAnt.Compression.Tasks.UnZipTask.ExecuteTask">
+        <member name="M:NAnt.Compression.Tasks.GUnzip.ExecuteTask">
             <summary>
-            Extracts the files from the zip file.
+            Extracts the file from the gzip archive.
             </summary>
         </member>
-        <member name="M:NAnt.Compression.Tasks.UnZipTask.ExtractFile(System.IO.Stream,System.String,System.DateTime)">
+        <member name="P:NAnt.Compression.Tasks.GUnzip.SrcFile">
             <summary>
-            Extracts a file entry from the specified stream.
-            </summary>
-            <param name="inputStream">The <see cref="T:System.IO.Stream"/> containing the compressed entry.</param>
-            <param name="entryName">The name of the entry including directory information.</param>
-            <param name="entryDate">The date of the entry.</param>
-            <exception cref="T:NAnt.Core.BuildException">
-              <para>The destination directory for the entry could not be created.</para>
-              <para>-or-</para>
-              <para>The entry could not be extracted.</para>
-            </exception>
-            <remarks>
-            We cannot rely on the fact that the directory entry of a given file
-            is created before the file is extracted, so we should create the
-            directory if it doesn't yet exist.
-            </remarks>
-        </member>
-        <member name="M:NAnt.Compression.Tasks.UnZipTask.ExtractDirectory(System.IO.Stream,System.String,System.DateTime)">
-            <summary>
-            Extracts a directory entry from the specified stream.
-            </summary>
-            <param name="inputStream">The <see cref="T:System.IO.Stream"/> containing the directory entry.</param>
-            <param name="entryName">The name of the directory entry.</param>
-            <param name="entryDate">The date of the entry.</param>
-            <exception cref="T:NAnt.Core.BuildException">
-              <para>The destination directory for the entry could not be created.</para>
-            </exception>
-        </member>
-        <member name="P:NAnt.Compression.Tasks.UnZipTask.ZipFile">
-            <summary>
-            The archive file to expand.
+            The file to expand.
             </summary>
         </member>
-        <member name="P:NAnt.Compression.Tasks.UnZipTask.ToDirectory">
+        <member name="P:NAnt.Compression.Tasks.GUnzip.DestFile">
             <summary>
-            The directory where the expanded files should be stored. The 
-            default is the project base directory.
-            </summary>
-        </member>
-        <member name="P:NAnt.Compression.Tasks.UnZipTask.Overwrite">
-            <summary>
-            Overwrite files, even if they are newer than the corresponding 
-            entries in the archive. The default is <see langword="true" />.
-            </summary>
-        </member>
-        <member name="T:NAnt.Compression.Tasks.ZipTask">
-            <summary>
-            Creates a zip file from the specified filesets.
-            </summary>
-            <remarks>
-              <para>Uses <see href="http://www.icsharpcode.net/OpenSource/SharpZipLib/">#ziplib</see> (SharpZipLib), an open source Tar/Zip/GZip library written entirely in C#.</para>
-            </remarks>
-            <example>
-              <para>
-              Zip all files in <c>${build.dir}</c> and <c>${doc.dir}</c> into a file
-              called &quot;backup.zip&quot;.
-              </para>
-              <code>
-                <![CDATA[
-            <zip zipfile="backup.zip">
-                <fileset basedir="${bin.dir}" prefix="bin">
-                    <include name="**/*" />
-                </fileset>
-                <fileset basedir="${doc.dir}" prefix="doc">
-                    <include name="**/*" />
-                </fileset>
-            </zip>
-                ]]>
-              </code>
-            </example>
-        </member>
-        <member name="M:NAnt.Compression.Tasks.ZipTask.ExecuteTask">
-            <summary>
-            Creates the zip file.
-            </summary>
-        </member>
-        <member name="P:NAnt.Compression.Tasks.ZipTask.ZipFile">
-            <summary>
-            The zip file to create.
-            </summary>
-        </member>
-        <member name="P:NAnt.Compression.Tasks.ZipTask.Comment">
-            <summary>
-            The comment for the file.
-            </summary>
-        </member>
-        <member name="P:NAnt.Compression.Tasks.ZipTask.Stamp">
-            <summary>
-            Date/time stamp for the files in the format MM/DD/YYYY HH:MM:SS.
-            </summary>
-        </member>
-        <member name="P:NAnt.Compression.Tasks.ZipTask.ZipLevel">
-            <summary>
-            Desired level of compression. Possible values are 0 (STORE only) 
-            to 9 (highest). The default is <c>6</c>.
-            </summary>
-        </member>
-        <member name="P:NAnt.Compression.Tasks.ZipTask.IncludeEmptyDirs">
-            <summary>
-            Include empty directories in the generated zip file. The default is
-            <see langword="false" />.
-            </summary>
-        </member>
-        <member name="P:NAnt.Compression.Tasks.ZipTask.ZipFileSets">
-            <summary>
-            The set of files to be included in the archive.
+            The destination file.
             </summary>
         </member>
         <member name="T:NAnt.Compression.Tasks.TarTask">
@@ -204,6 +102,174 @@
         <member name="F:NAnt.Compression.Tasks.TarCompressionMethod.BZip2">
             <summary>
             BZIP2 compression.
+            </summary>
+        </member>
+        <member name="T:NAnt.Compression.Tasks.UnZipTask">
+            <summary>
+            Extracts files from a zip file.
+            </summary>
+            <remarks>
+              <para>Uses <see href="http://www.icsharpcode.net/OpenSource/SharpZipLib/">#ziplib</see> (SharpZipLib), an open source Zip/GZip library written entirely in C#.</para>
+            </remarks>
+            <example>
+              <para>Extracts all the file from the zip, preserving the directory structure.</para>
+              <code>
+                <![CDATA[
+            <unzip zipfile="backup.zip"/>
+                ]]>
+              </code>
+            </example>
+        </member>
+        <member name="M:NAnt.Compression.Tasks.UnZipTask.ExecuteTask">
+            <summary>
+            Extracts the files from the zip file.
+            </summary>
+        </member>
+        <member name="M:NAnt.Compression.Tasks.UnZipTask.ExtractFile(System.IO.Stream,System.String,System.DateTime)">
+            <summary>
+            Extracts a file entry from the specified stream.
+            </summary>
+            <param name="inputStream">The <see cref="T:System.IO.Stream"/> containing the compressed entry.</param>
+            <param name="entryName">The name of the entry including directory information.</param>
+            <param name="entryDate">The date of the entry.</param>
+            <exception cref="T:NAnt.Core.BuildException">
+              <para>The destination directory for the entry could not be created.</para>
+              <para>-or-</para>
+              <para>The entry could not be extracted.</para>
+            </exception>
+            <remarks>
+            We cannot rely on the fact that the directory entry of a given file
+            is created before the file is extracted, so we should create the
+            directory if it doesn't yet exist.
+            </remarks>
+        </member>
+        <member name="M:NAnt.Compression.Tasks.UnZipTask.ExtractDirectory(System.IO.Stream,System.String,System.DateTime)">
+            <summary>
+            Extracts a directory entry from the specified stream.
+            </summary>
+            <param name="inputStream">The <see cref="T:System.IO.Stream"/> containing the directory entry.</param>
+            <param name="entryName">The name of the directory entry.</param>
+            <param name="entryDate">The date of the entry.</param>
+            <exception cref="T:NAnt.Core.BuildException">
+              <para>The destination directory for the entry could not be created.</para>
+            </exception>
+        </member>
+        <member name="P:NAnt.Compression.Tasks.UnZipTask.ZipFile">
+            <summary>
+            The archive file to expand.
+            </summary>
+        </member>
+        <member name="P:NAnt.Compression.Tasks.UnZipTask.ToDirectory">
+            <summary>
+            The directory where the expanded files should be stored. The 
+            default is the project base directory.
+            </summary>
+        </member>
+        <member name="P:NAnt.Compression.Tasks.UnZipTask.Overwrite">
+            <summary>
+            Overwrite files, even if they are newer than the corresponding 
+            entries in the archive. The default is <see langword="true" />.
+            </summary>
+        </member>
+        <member name="P:NAnt.Compression.Tasks.UnZipTask.Encoding">
+            <summary>
+            The character encoding that has been used for filenames inside the
+            zip file. The default is the system's OEM code page.
+            </summary>
+        </member>
+        <member name="T:NAnt.Compression.Tasks.ZipTask">
+            <summary>
+            Creates a zip file from the specified filesets.
+            </summary>
+            <remarks>
+              <para>Uses <see href="http://www.icsharpcode.net/OpenSource/SharpZipLib/">#ziplib</see> (SharpZipLib), an open source Tar/Zip/GZip library written entirely in C#.</para>
+            </remarks>
+            <example>
+              <para>
+              Zip all files in <c>${build.dir}</c> and <c>${doc.dir}</c> into a file
+              called &quot;backup.zip&quot;.
+              </para>
+              <code>
+                <![CDATA[
+            <zip zipfile="backup.zip">
+                <fileset basedir="${bin.dir}" prefix="bin">
+                    <include name="**/*" />
+                </fileset>
+                <fileset basedir="${doc.dir}" prefix="doc">
+                    <include name="**/*" />
+                </fileset>
+            </zip>
+                ]]>
+              </code>
+            </example>
+        </member>
+        <member name="M:NAnt.Compression.Tasks.ZipTask.ExecuteTask">
+            <summary>
+            Creates the zip file.
+            </summary>
+        </member>
+        <member name="P:NAnt.Compression.Tasks.ZipTask.ZipFile">
+            <summary>
+            The zip file to create.
+            </summary>
+        </member>
+        <member name="P:NAnt.Compression.Tasks.ZipTask.Comment">
+            <summary>
+            The comment for the file.
+            </summary>
+        </member>
+        <member name="P:NAnt.Compression.Tasks.ZipTask.Stamp">
+            <summary>
+            Date/time stamp for the files in the format MM/DD/YYYY HH:MM:SS.
+            </summary>
+        </member>
+        <member name="P:NAnt.Compression.Tasks.ZipTask.ZipLevel">
+            <summary>
+            Desired level of compression. Possible values are 0 (STORE only) 
+            to 9 (highest). The default is <c>6</c>.
+            </summary>
+        </member>
+        <member name="P:NAnt.Compression.Tasks.ZipTask.IncludeEmptyDirs">
+            <summary>
+            Include empty directories in the generated zip file. The default is
+            <see langword="false" />.
+            </summary>
+        </member>
+        <member name="P:NAnt.Compression.Tasks.ZipTask.ZipFileSets">
+            <summary>
+            The set of files to be included in the archive.
+            </summary>
+        </member>
+        <member name="P:NAnt.Compression.Tasks.ZipTask.DuplicateHandling">
+            <summary>
+            Specifies the behaviour when a duplicate file is found. The default
+            is <see cref="F:NAnt.Compression.Types.DuplicateHandling.Add"/>.
+            </summary>
+        </member>
+        <member name="P:NAnt.Compression.Tasks.ZipTask.Encoding">
+            <summary>
+            The character encoding to use for filenames and comment inside the
+            zip file. The default is the system's OEM code page.
+            </summary>
+        </member>
+        <member name="T:NAnt.Compression.Types.DuplicateHandling">
+            <summary>
+            Specifies how entries with the same name should be processed.
+            </summary>
+        </member>
+        <member name="F:NAnt.Compression.Types.DuplicateHandling.Add">
+            <summary>
+            Overwrite existing entry with same name.
+            </summary>
+        </member>
+        <member name="F:NAnt.Compression.Types.DuplicateHandling.Preserve">
+            <summary>
+            Preserve existing entry with the same name.
+            </summary>
+        </member>
+        <member name="F:NAnt.Compression.Types.DuplicateHandling.Fail">
+            <summary>
+            Report failure when two entries have the same name.
             </summary>
         </member>
         <member name="T:NAnt.Compression.Types.TarFileSet">

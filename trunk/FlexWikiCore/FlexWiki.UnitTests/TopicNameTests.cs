@@ -67,6 +67,41 @@ namespace FlexWiki.UnitTests
             Assert.AreEqual("Dotted.Namespace", topicName.Namespace);
         }
         [Test]
+        public void EqualsTests()
+        {
+            Assert.AreEqual(new TopicName("Foo"), new TopicName("Foo"),
+                "Checking that unqualifed names are equivalent.");
+            Assert.AreEqual(new TopicName("Foo.Bar"), new TopicName("Foo.Bar"),
+                "Checking that qualified names are equivalent.");
+
+            Assert.AreEqual(new TopicName("Foo.Bar"), new QualifiedTopicName("Foo.Bar"),
+                "Checking that a TopicName can be equivalent to a QualifiedTopicName.");
+            Assert.AreEqual(new TopicName("Foo"), new UnqualifiedTopicName("Foo"),
+                "Checking that a TopicName can be equivalent to an UnqualifiedTopicName.");
+
+            Assert.AreEqual(new TopicName(), new TopicName(), 
+                "Checking that two default topic names are equivalent."); 
+            Assert.IsFalse(new TopicName("Foo.Bar").Equals(new TopicName()), 
+                "Checking that a nondefault topic name is not equivalent to a default topic name.");
+            Assert.IsFalse(new TopicName().Equals(new TopicName("Foo.Bar")), 
+                "Checking that a default topic name is not equivalent to a nondefault topic name.");             
+
+            Assert.IsFalse(new TopicName("Foo").Equals(new TopicName("Bar")),
+                "Checking that two topic names with different local names are not equivalent.");
+            Assert.IsFalse(new TopicName("Foo").Equals(new TopicName("foo")),
+                "Checking that two topic names that differ only by case are not equivalent."); 
+            Assert.IsFalse(new TopicName("Foo.Bar").Equals(new TopicName("Foo.Baaz")), 
+                "Checking that two topic names that differ only by local name are not equivalent."); 
+            Assert.IsFalse(new TopicName("Foo.Bar").Equals(new TopicName("Boo.Bar")), 
+                "Checking that two topic names that differ only by namespace are not equivalent."); 
+
+            Assert.IsFalse(new TopicName("Foo.Bar").Equals(new object()), 
+                "Checking that a topic name is not equivalent to something that is not a topic name."); 
+            Assert.IsFalse(new TopicName("Foo.Bar").Equals(null), 
+                "Checking that a topic name is not equivalent to null."); 
+
+        }
+        [Test]
         public void FormattedName()
         {
             Assert.AreEqual("TEST That Acryonyms SPACE Correctly", 
@@ -74,19 +109,14 @@ namespace FlexWiki.UnitTests
                 "Checking that FormattedName deals with acronyms correctly.");
         }
         [Test]
-        [Ignore("These are from the 1.8 code and need to be refactored.")]
-        public void LegacyTests()
+        public void GetHashCodeTests()
         {
-            Assert.AreEqual("Hello", new QualifiedTopicRevision("Hello").LocalName);
-            Assert.AreEqual("Hello", new QualifiedTopicRevision("Dog.Hello").LocalName);
-            Assert.AreEqual("Dog", new QualifiedTopicRevision("Dog.Hello").Namespace);
-            Assert.AreEqual("Cat.Dog", new QualifiedTopicRevision("Cat.Dog.Hello").Namespace);
-            Assert.AreEqual("Hello", new QualifiedTopicRevision("Cat.Dog.Hello").LocalName);
-
-            Assert.AreEqual(null, new QualifiedTopicRevision("Hello()").Version);
-            Assert.AreEqual("123-abc", new QualifiedTopicRevision("Hello(123-abc)").Version);
-            Assert.AreEqual("Hello", new QualifiedTopicRevision("Hello(123-abc)").LocalName);
-            Assert.AreEqual(null, new QualifiedTopicRevision("Hello(123-abc)").Namespace);
+            Assert.IsNotNull(new TopicName().GetHashCode(),
+                "Checking that a default topic name still has a hash code.");
+            Assert.IsNotNull(new TopicName("Foo").GetHashCode(),
+                "Checking that an unqualified topic name has a hash code.");
+            Assert.IsNotNull(new TopicName("Foo.Bar").GetHashCode(),
+                "Checking that a qualified topic name has a hash code."); 
         }
         [Test]
         [ExpectedException(typeof(ArgumentException), "A null topic name is not legal.")]

@@ -32,29 +32,6 @@ namespace FlexWiki.UnitTests
     public class NamespaceManagerTests
     {
         [Test]
-        public void NamespaceQualifiedTopicNameFor()
-        {
-            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests/",
-              TestContentSets.SingleTopicNoImports);
-            NamespaceManager storeManager = federation.NamespaceManagerForNamespace("NamespaceOne");
-
-            TopicName topicName = storeManager.QualifiedTopicNameFor("TopicOne");
-            Assert.AreEqual("NamespaceOne.TopicOne", topicName.QualifiedName,
-                "Checking that NamespaceQualifiedTopicNameFor returns a fully qualified name.");
-
-        }
-        [Test]
-        public void NamespaceQualifiedTopicNameForNonExistentTopic()
-        {
-            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests/",
-              TestContentSets.SingleTopicNoImports);
-            NamespaceManager storeManager = federation.NamespaceManagerForNamespace("NamespaceOne");
-
-            TopicName topicName = storeManager.QualifiedTopicNameFor("NoSuchTopic");
-            Assert.AreEqual("NamespaceOne.NoSuchTopic", topicName.QualifiedName,
-                "Checking that NamespaceQualifiedNameFor returns a fully qualified name even for a nonexistent topic.");
-        }
-        [Test]
         public void AllNamespaceQualifiedNamesThatExistNoImport()
         {
             Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests/",
@@ -1453,6 +1430,29 @@ PropertyOne: List, of, values")
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
             Assert.AreEqual(0, manager.Parameters.Count, "Checking that the parameter list is empty.");
+        }
+        [Test]
+        public void QualifiedTopicNameFor()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests/",
+              TestContentSets.SingleTopicNoImports);
+            NamespaceManager storeManager = federation.NamespaceManagerForNamespace("NamespaceOne");
+
+            TopicName topicName = storeManager.QualifiedTopicNameFor("TopicOne");
+            Assert.AreEqual("NamespaceOne.TopicOne", topicName.QualifiedName,
+                "Checking that NamespaceQualifiedTopicNameFor returns a fully qualified name.");
+
+        }
+        [Test]
+        public void QualifiedTopicNameForNonExistentTopic()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests/",
+              TestContentSets.SingleTopicNoImports);
+            NamespaceManager storeManager = federation.NamespaceManagerForNamespace("NamespaceOne");
+
+            TopicName topicName = storeManager.QualifiedTopicNameFor("NoSuchTopic");
+            Assert.AreEqual("NamespaceOne.NoSuchTopic", topicName.QualifiedName,
+                "Checking that NamespaceQualifiedNameFor returns a fully qualified name even for a nonexistent topic.");
         }
         [Test]
         public void Read()
