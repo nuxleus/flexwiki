@@ -95,7 +95,21 @@ fake=http://should.not.be/recognized");
         [Test]
         public void ParseMultilineProperty()
         {
-            Assert.Fail("Not yet implemented.");
+            ParsedTopic parsedTopic = TopicParser.Parse(@"Multiline:[
+first line
+foobar
+second line
+]
+More junk here");
+            Assert.AreEqual(1, parsedTopic.Properties.Count,
+                "Checking that the right number of properties were processed.");
+            Assert.AreEqual(1, parsedTopic.Properties["Multiline"].Values.Count,
+                "Checking that the property has the right number of values."); 
+            Assert.AreEqual(@"first line
+foobar
+second line
+", parsedTopic.Properties["Multiline"].Values[0].RawValue,
+            "Checking that the property value is correct."); 
         }
 
         [Test]

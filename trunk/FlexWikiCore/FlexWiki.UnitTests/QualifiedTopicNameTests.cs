@@ -56,7 +56,6 @@ namespace FlexWiki.UnitTests
         {
             QualifiedTopicName topicName = new QualifiedTopicName("LocalName", null);
         }
-        [Test]
         public void ConstructionByQualifiedName()
         {
             QualifiedTopicName topicName = new QualifiedTopicName("Dotted.Namespace.LocalName");

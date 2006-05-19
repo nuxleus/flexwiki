@@ -40,7 +40,7 @@ namespace FlexWiki
         {
             if (name == null)
             {
-                throw new ArgumentException("topic cannot be null", "topic"); 
+                throw new ArgumentException("topic cannot be null"); 
             }
 
             // start by triming off the version if present
@@ -68,11 +68,13 @@ namespace FlexWiki
         }
         public TopicRevision(string localName, string ns, string version)
         {
-            throw new NotImplementedException(); 
+            _topicName = new TopicName(localName, ns);
+            _version = version; 
         }
         public TopicRevision(TopicName name, string version)
         {
-            throw new NotImplementedException(); 
+            _topicName = name;
+            _version = version; 
         }
 
         // Properties
@@ -159,8 +161,15 @@ namespace FlexWiki
         }
         public int CompareTo(object obj)
         {
-            if (obj is TopicRevision)
-                return -1;
+            if (obj == null)
+            {
+                return 1; 
+            }
+
+            if (!(obj is TopicRevision))
+            {
+                throw new ArgumentException("obj is not a TopicRevision"); 
+            }
             return QualifiedNameWithVersion.CompareTo((obj as TopicRevision).QualifiedNameWithVersion);
         }
         /// <summary>

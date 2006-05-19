@@ -55,6 +55,10 @@ namespace FlexWiki
              */
         }
 
+        public QualifiedTopicRevision(string localName, string ns, string version) : base(localName, ns, version)
+        {
+        }
+
         /// <summary>
         /// Create a new topic of the same type as this one with the given string
         /// </summary>

@@ -13,6 +13,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text; 
 using System.Text.RegularExpressions;
 
 using FlexWiki.Collections;
@@ -133,12 +134,80 @@ namespace FlexWiki
             return references;
 
         }
+        private static void ParseMultiLineProperties(string text, TopicPropertyCollection properties)
+        {
+            string[] lines = text.Split('\n');
+
+            Regex propertyPattern = s_multilinePropertyRegex;
+            bool inMultilineProperty = false;
+
+            string currentProperty = null;
+            string endDelimiter = null;
+
+            StringBuilder rawValueBuilder = new StringBuilder();
+
+            foreach (string line in lines)
+            {
+                if (inMultilineProperty)
+                {
+                    if (endDelimiter != null && line.Trim() == endDelimiter)
+                    {
+                        inMultilineProperty = false;
+
+                        TopicProperty property = new TopicProperty(currentProperty);
+                        property.Values.Add(new TopicPropertyValue(rawValueBuilder.ToString()));
+
+                        properties.Add(property);
+                    }
+                    else
+                    {
+                        rawValueBuilder.Append(line);
+                        rawValueBuilder.Append("\n");
+                    }
+                }
+                else
+                {
+                    Match match = propertyPattern.Match(line);
+                    if (match.Success)
+                    {
+                        inMultilineProperty = true;
+                        currentProperty = match.Groups["name"].Value;
+                        string delimiter = match.Groups["delim"].Value;
+
+                        switch (delimiter)
+                        {
+                            case "[":
+                                endDelimiter = "]";
+                                break;
+                            case "{":
+                                endDelimiter = "}";
+                                break;
+                            default:
+                                endDelimiter = null;
+                                break;
+                        }
+
+                        string rawValue = match.Groups["val"].Value.Trim();
+
+                        rawValueBuilder.Length = 0;
+                        rawValueBuilder.Append(rawValue);
+                    }
+                }
+            }
+        }
         private static TopicPropertyCollection ParseProperties(string text)
         {
-            // TODO: Deal with multiline imports.
+            TopicPropertyCollection properties = new TopicPropertyCollection();
+
+            ParseSingleLineProperties(text, properties);
+            ParseMultiLineProperties(text, properties); 
+
+            return properties;
+        }
+        private static void ParseSingleLineProperties(string text, TopicPropertyCollection properties)
+        {
             Regex propertyPattern = new Regex(c_propertyPattern, RegexOptions.Multiline);
 
-            TopicPropertyCollection properties = new TopicPropertyCollection();
             foreach (Match match in propertyPattern.Matches(text))
             {
                 string name = match.Groups["name"].Value;
@@ -160,7 +229,6 @@ namespace FlexWiki
                 topicProperty.Values.Add(value);
 
             }
-            return properties;
         }
         private static TopicRevisionCollection ParseTopicLinks(string text)
         {
