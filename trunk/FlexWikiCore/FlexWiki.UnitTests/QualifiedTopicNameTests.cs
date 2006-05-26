@@ -16,6 +16,14 @@ namespace FlexWiki.UnitTests
             Assert.IsNull(topicName.LocalName, "Checking that localname is null by default."); 
         }
         [Test]
+        public void ConstructionByDottedName()
+        {
+            QualifiedTopicName topicName = new QualifiedTopicName("Dotted.Namespace.LocalName");
+
+            Assert.AreEqual("LocalName", topicName.LocalName);
+            Assert.AreEqual("Dotted.Namespace", topicName.Namespace);
+        }
+        [Test]
         [ExpectedException(typeof(ArgumentException), "A namespace is required.")]
         public void ConstructionByEmptyNamespaceExplicit()
         {
@@ -55,13 +63,6 @@ namespace FlexWiki.UnitTests
         public void ConstructionByNullNamespace()
         {
             QualifiedTopicName topicName = new QualifiedTopicName("LocalName", null);
-        }
-        public void ConstructionByQualifiedName()
-        {
-            QualifiedTopicName topicName = new QualifiedTopicName("Dotted.Namespace.LocalName");
-
-            Assert.AreEqual("LocalName", topicName.LocalName);
-            Assert.AreEqual("Dotted.Namespace", topicName.Namespace);
         }
 
     }

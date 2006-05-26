@@ -108,7 +108,7 @@ namespace FlexWiki.BuildVerificationTests
     public void Rename()
     {
       QualifiedTopicRevision before = new QualifiedTopicRevision("RenameableTopic", "NamespaceOne"); 
-      string renameUrl = TheLinkMaker.LinkToRename(before.QualifiedName); 
+      string renameUrl = TheLinkMaker.LinkToRename(before.DottedName); 
       DocumentElement doc = TheBrowser.Navigate(renameUrl, true); 
 
       InputElement newName = doc.GetElementByName("newName") as InputElement; 

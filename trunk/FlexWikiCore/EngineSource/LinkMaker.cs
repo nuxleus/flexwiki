@@ -149,7 +149,7 @@ namespace FlexWiki
 
         public string LinkToTopic(TopicName topic)
         {
-            return LinkToTopic(topic.QualifiedName); 
+            return LinkToTopic(topic.DottedName); 
         }
 
         [ExposedMethod(ExposedMethodFlags.Default, "Answer a link to the given topic")]
@@ -171,12 +171,12 @@ namespace FlexWiki
 
         public string LinkToTopic(TopicRevision topic, bool showDiffs)
         {
-            return TopicLink(topic.QualifiedNameWithVersion, showDiffs, null);
+            return TopicLink(topic.DottedNameWithVersion, showDiffs, null);
         }
 
         public string LinkToTopic(TopicRevision topic, bool showDiffs, NameValueCollection extraQueryParms)
         {
-            return TopicLink(topic.QualifiedNameWithVersion, showDiffs, extraQueryParms);
+            return TopicLink(topic.DottedNameWithVersion, showDiffs, extraQueryParms);
         }
 
         private string TopicLink(string top, bool showDiffs, NameValueCollection extraQueryParms)
@@ -220,7 +220,7 @@ namespace FlexWiki
 
         public string LinkToLogin(TopicRevision topic)
         {
-            return LinkToLogin(topic.QualifiedNameWithVersion);
+            return LinkToLogin(topic.DottedNameWithVersion);
         }
 
         public string LinkToLogoff(TopicRevision topic)
@@ -246,7 +246,7 @@ namespace FlexWiki
 
         public string LinkToPrintView(TopicRevision topic)
         {
-            return PrintLink(topic.QualifiedNameWithVersion);
+            return PrintLink(topic.DottedNameWithVersion);
         }
 
         private string PrintLink(string top)
@@ -260,7 +260,7 @@ namespace FlexWiki
 
         public string LinkToEditTopic(TopicName topic)
         {
-            return EditLink(topic.QualifiedName);
+            return EditLink(topic.DottedName);
         }
 
         [ExposedMethod(ExposedMethodFlags.Default, "Answer a link to the page that lets the user edit the given topic")]
@@ -277,7 +277,7 @@ namespace FlexWiki
             builder.Append(HttpUtility.UrlEncode(top));
             if (ReturnToTopicForEditLinks != null)
             {
-                builder.Append("&return=" + HttpUtility.UrlEncode(ReturnToTopicForEditLinks.QualifiedName));
+                builder.Append("&return=" + HttpUtility.UrlEncode(ReturnToTopicForEditLinks.DottedName));
             }
 
             return builder.ToString();
@@ -292,7 +292,7 @@ namespace FlexWiki
 
         public string LinkToRestore(TopicRevision topic)
         {
-            return RestoreLink(topic.QualifiedNameWithVersion);
+            return RestoreLink(topic.DottedNameWithVersion);
         }
 
         /// <summary>

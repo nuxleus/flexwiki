@@ -124,7 +124,7 @@ namespace FlexWiki.Web
 							header = true;
 
 							Response.Write("<div class='searchHitHead'>");
-							Response.Write(@"<a title=""" + topic.QualifiedName + @"""  href=""" + lm.LinkToTopic(topic) + @""">");
+							Response.Write(@"<a title=""" + topic.DottedName + @"""  href=""" + lm.LinkToTopic(topic) + @""">");
 							Response.Write(topic.LocalName);
 							Response.Write("</a>");
 							Response.Write("</div>");

@@ -107,7 +107,7 @@ namespace FlexWiki.SqlProvider
         }
         private static string MakeTopicName(UnqualifiedTopicRevision revision)
         {
-            return revision.QualifiedNameWithVersion; 
+            return revision.DottedNameWithVersion; 
         }
         /// <summary>
         /// Read the Namespace details from the store.
@@ -426,7 +426,7 @@ namespace FlexWiki.SqlProvider
                 throw new NotImplementedException(); 
             }
 
-            string nameWithVersion = revision.NameWithVersion; 
+            string nameWithVersion = revision.DottedNameWithVersion; 
             SqlHelper.WriteTopic(Namespace, topicName, LastWriteTime(nameWithVersion), _connectionString, content, ((revision.Version != null && revision.Version.Length > 0) ? true : false));
 
             // Record changes

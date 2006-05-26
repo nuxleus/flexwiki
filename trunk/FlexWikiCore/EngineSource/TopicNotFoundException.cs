@@ -68,7 +68,7 @@ namespace FlexWiki
 
 		public static TopicNotFoundException ForTopic(UnqualifiedTopicRevision topic, string ns)
 		{
-			QualifiedTopicRevision t = new QualifiedTopicRevision(topic.NameWithVersion, ns);
+			QualifiedTopicRevision t = new QualifiedTopicRevision(topic.DottedNameWithVersion, ns);
 			return ForTopic(t);
 		}
 

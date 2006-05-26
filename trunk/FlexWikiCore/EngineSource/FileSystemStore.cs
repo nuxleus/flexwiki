@@ -517,7 +517,7 @@ namespace FlexWiki
 
         private string TopicPath(UnqualifiedTopicRevision revision)
         {
-            return TopicPath(revision.Name, revision.Version); 
+            return TopicPath(revision.LocalName, revision.Version); 
         }
 
         private string TopicPath(UnqualifiedTopicName topic, string version)

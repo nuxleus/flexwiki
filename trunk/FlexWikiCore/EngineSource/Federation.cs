@@ -334,7 +334,7 @@ namespace FlexWiki
             // Remember that this list is closely bound to some implicit knowledge of what these imports are in the logic in WriteTopic that send change notifications for imports
             // If you add/change these imports, you need to carefully revie wthat code too to be sure it fires the right changed events
             hash["_TopicName"] = topic.LocalName;
-            hash["_TopicFullName"] = topic.QualifiedNameWithVersion;
+            hash["_TopicFullName"] = topic.DottedNameWithVersion;
             hash["_LastModifiedBy"] = lastModBy;
             hash["_CreationTime"] = creation.ToString();
             hash["_ModificationTime"] = modification.ToString();
@@ -372,7 +372,7 @@ namespace FlexWiki
         }
         public NamespaceManager NamespaceManagerForTopic(TopicRevision topic, string nsRelativeTo)
         {
-            if (topic.IsNamespaceQualified)
+            if (topic.IsQualified)
             {
                 return NamespaceManagerForNamespace(topic.Namespace); 
             }
@@ -381,7 +381,7 @@ namespace FlexWiki
         }
         public NamespaceManager NamespaceManagerForTopic(TopicName topic, string nsRelativeTo)
         {
-            return NamespaceManagerForTopic(new TopicRevision(topic.QualifiedName), nsRelativeTo);
+            return NamespaceManagerForTopic(new TopicRevision(topic.DottedName), nsRelativeTo);
         }
         public NamespaceManager NamespaceManagerForTopic(TopicName topic)
         {
@@ -893,9 +893,9 @@ namespace FlexWiki
             }
 
             // Yup, so evaluate it!
-            string code = "federation.GetTopic(\"" + abs.QualifiedName + "\")." + borderPropertyName + "(federation.GetTopicInfo(\"" + relativeToTopic + "\"))";
+            string code = "federation.GetTopic(\"" + abs.DottedName + "\")." + borderPropertyName + "(federation.GetTopicInfo(\"" + relativeToTopic + "\"))";
 
-            BehaviorInterpreter interpreter = new BehaviorInterpreter(abs.QualifiedName + "#" + borderPropertyName, code, this, this.WikiTalkVersion, null);
+            BehaviorInterpreter interpreter = new BehaviorInterpreter(abs.DottedName + "#" + borderPropertyName, code, this, this.WikiTalkVersion, null);
             if (!interpreter.Parse())
             {
                 throw new Exception("Border property expression failed to parse.");
@@ -983,9 +983,9 @@ namespace FlexWiki
             Set done = new Set();
             foreach (string borderTopicName in borderTopics)
             {
-                // Figure out what the absolute topic name is that we're going to get this topic from
+                // Figure out what the qualified topic name is that we're going to get this topic from
                 TopicRevision rel = new TopicRevision(borderTopicName);
-                if (!rel.IsNamespaceQualified)
+                if (!rel.IsQualified)
                 {
                     rel = new TopicRevision(borderTopicName, name.Namespace);
                 }

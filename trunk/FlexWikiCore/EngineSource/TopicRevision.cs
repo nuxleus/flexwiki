@@ -36,30 +36,30 @@ namespace FlexWiki
         public TopicRevision()
         {
         }
-        public TopicRevision(string name)
+        public TopicRevision(string revision)
         {
-            if (name == null)
+            if (revision == null)
             {
                 throw new ArgumentException("topic cannot be null"); 
             }
 
             // start by triming off the version if present
             _version = null;
-            if (name.EndsWith(")"))
+            if (revision.EndsWith(")"))
             {
-                int open = name.IndexOf("(");
+                int open = revision.IndexOf("(");
                 if (open >= 0)
                 {
-                    _version = name.Substring(open + 1, name.Length - open - 2);
+                    _version = revision.Substring(open + 1, revision.Length - open - 2);
                     if (_version == "")
                     {
                         _version = null;
                     }
-                    name = name.Substring(0, open);
+                    revision = revision.Substring(0, open);
                 }
             }
 
-            _topicName = new TopicName(name); 
+            _topicName = new TopicName(revision); 
 
         }
         public TopicRevision(string localName, string ns)
@@ -79,6 +79,25 @@ namespace FlexWiki
 
         // Properties
 
+        public string DottedName
+        {
+            get
+            {
+                return Name.DottedName;
+            }
+        }
+        public string DottedNameWithVersion
+        {
+            get
+            {
+                string answer = DottedName;
+                if (Version != null)
+                {
+                    answer += "(" + Version + ")";
+                }
+                return answer;
+            }
+        }
         /// <summary>
         /// Answer the name (without namespace) with spaces inserted to make the name more readable
         /// </summary> 
@@ -89,9 +108,9 @@ namespace FlexWiki
                 return Name.FormattedName;
             }
         }
-        public bool IsNamespaceQualified
+        public bool IsQualified
         {
-            get { throw new NotImplementedException(); }
+            get { return Name.IsQualified; }
         }
         public string LocalName
         {
@@ -115,25 +134,6 @@ namespace FlexWiki
                 return Name == null ? null : Name.Namespace;
             }
         }
-        public string QualifiedName
-        {
-            get
-            {
-                return Name.QualifiedName;
-            }
-        }
-        public string QualifiedNameWithVersion
-        {
-            get
-            {
-                string answer = QualifiedName;
-                if (Version != null)
-                {
-                    answer += "(" + Version + ")";
-                }
-                return answer;
-            }
-        }
         public string Version
         {
             get
@@ -150,14 +150,15 @@ namespace FlexWiki
         // Methods
 
         /// <summary>
-        /// Answer this as an absolute topic name.  If this is an absolute name already, answer it.  If it isn't, 
-        /// answer an absolute name, filling in any unspecified namespace with the supplied default.
+        /// Answer this as a qualified topic name.  If this is a qualified name already, answer it.  If it isn't, 
+        /// answer a qualified name, filling in any unspecified namespace with the supplied default.
         /// </summary>
         /// <param name="defaultNamespace"></param>
         /// <returns></returns>
         public virtual QualifiedTopicRevision ResolveRelativeTo(string defaultNamespace)
         {
-            throw new NotImplementedException(); 
+            TopicName name = Name.ResolveRelativeTo(defaultNamespace);
+            return new QualifiedTopicRevision(name.LocalName, name.Namespace, Version); 
         }
         public int CompareTo(object obj)
         {
@@ -170,7 +171,7 @@ namespace FlexWiki
             {
                 throw new ArgumentException("obj is not a TopicRevision"); 
             }
-            return QualifiedNameWithVersion.CompareTo((obj as TopicRevision).QualifiedNameWithVersion);
+            return DottedNameWithVersion.CompareTo((obj as TopicRevision).DottedNameWithVersion);
         }
         /// <summary>
         /// Compare two TopicNames.  Topic names are equal if their name, namespace and version components are equal (case-insensitive)
@@ -179,15 +180,15 @@ namespace FlexWiki
         /// <returns></returns>
         public override bool Equals(object obj)
         {
-            return obj is TopicRevision && ((TopicRevision)obj).QualifiedNameWithVersion.ToLower() == QualifiedNameWithVersion.ToLower();
+            return obj is TopicRevision && ((TopicRevision)obj).DottedNameWithVersion.ToLower() == DottedNameWithVersion.ToLower();
         }
         public override int GetHashCode()
         {
-            return QualifiedNameWithVersion.GetHashCode();
+            return DottedNameWithVersion.GetHashCode();
         }
-        public virtual TopicRevision NewOfSameType(string topic)
+        public virtual TopicRevision NewOfSameType(string revision)
         {
-            return new TopicRevision(LocalName, Namespace, Version); 
+            return new TopicRevision(revision); 
         }
         /// <summary>
         /// Answer a version string that can be used to identify a topic version for the supplied user.
@@ -198,9 +199,9 @@ namespace FlexWiki
         /// version strings being returned, as DateTime only has a resolution of about 15ms. The fix for this
         /// is to sleep at least 30ms between calls to this method when specifying the same user, or to 
         /// specify different users.</remarks>
-        public static string NewVersionStringForUser(string user)
+        public static string NewVersionStringForUser(string user, ITimeProvider timeProvider)
         {
-            return NewVersionStringForUser(user, DateTime.Now);
+            return NewVersionStringForUser(user, timeProvider.Now);
         }
         public static string NewVersionStringForUser(string user, DateTime timestamp)
         {
@@ -213,7 +214,7 @@ namespace FlexWiki
         }
         public override string ToString()
         {
-            return QualifiedNameWithVersion;
+            return DottedNameWithVersion;
         }
 
     }

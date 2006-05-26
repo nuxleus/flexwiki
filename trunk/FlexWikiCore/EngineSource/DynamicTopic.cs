@@ -77,10 +77,10 @@ namespace FlexWiki
                 return new BELString(val);
             // It's a block, so fire up the interpreter
             if (!val.EndsWith("}"))
-                throw new ExecutionException(ctx.CurrentLocation, "Topic member " + name + " defined in " + Name.QualifiedName + " is not well-formed; missing closing '}' for code block.");
+                throw new ExecutionException(ctx.CurrentLocation, "Topic member " + name + " defined in " + Name.DottedName + " is not well-formed; missing closing '}' for code block.");
             NamespaceManager cb = CurrentFederation.NamespaceManagerForTopic(Name);
             TopicContext newContext = new TopicContext(ctx.CurrentFederation, cb, CurrentTopicInfo);
-            BehaviorInterpreter interpreter = new BehaviorInterpreter(Name.QualifiedName + "#" + name, val, CurrentFederation, CurrentFederation.WikiTalkVersion, ctx.Presenter);
+            BehaviorInterpreter interpreter = new BehaviorInterpreter(Name.DottedName + "#" + name, val, CurrentFederation, CurrentFederation.WikiTalkVersion, ctx.Presenter);
             if (!interpreter.Parse())
                 throw new ExecutionException(ctx.CurrentLocation, "Syntax error in " + interpreter.ErrorString);
 

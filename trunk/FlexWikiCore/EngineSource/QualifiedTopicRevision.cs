@@ -32,8 +32,10 @@ namespace FlexWiki
         public QualifiedTopicRevision(string topic)
             : base(topic)
         {
-            // TODO: throw exception if there's no namespace qualification? Does the base 
-            // TODO: class do this already/ 
+            if (Namespace == null)
+            {
+                throw new ArgumentException("A namespace is required."); 
+            }
         }
 
         public QualifiedTopicRevision(TopicName topic) : this(topic.LocalName, topic.Namespace)
@@ -45,18 +47,26 @@ namespace FlexWiki
         /// </summary>
         /// <param name="topic">Topic name (no namespace)</param>
         /// <param name="theNamespace">The namespace</param>
-        public QualifiedTopicRevision(string topic, string theNamespace)
-            : base(topic, theNamespace)
+        public QualifiedTopicRevision(string topic, string ns)
+            : base(topic, ns)
         {
-            throw new NotImplementedException(); 
-            /*
-            if (topic.IndexOf(TopicName.Separator) > 0)
-                throw new ArgumentException("Qualified topic name can not be used when namespace is specified", topic);
-             */
+            if (Namespace == null)
+            {
+                throw new ArgumentException("A namespace is required.");
+            }
         }
 
         public QualifiedTopicRevision(string localName, string ns, string version) : base(localName, ns, version)
         {
+            if (Namespace == null)
+            {
+                throw new ArgumentException("A namespace is required.");
+            }
+        }
+
+        public QualifiedTopicName AsQualifiedTopicName()
+        {
+            return new QualifiedTopicName(this.LocalName, this.Namespace);
         }
 
         /// <summary>
@@ -67,22 +77,6 @@ namespace FlexWiki
         public override TopicRevision NewOfSameType(string topic)
         {
             return new QualifiedTopicRevision(topic);
-        }
-
-
-        public QualifiedTopicName AsQualifiedTopicName()
-        {
-            return new QualifiedTopicName(this.LocalName, this.Namespace); 
-        }
-
-        /// <summary>
-        /// Answer this object as an <see cref="NamespaceQualfiedTopicVersionKey"/> (which it already is :-))
-        /// </summary>
-        /// <param name="defaultNamespace">n/a (only useful in other overrides)</param>
-        /// <returns></returns>
-        public override QualifiedTopicRevision ResolveRelativeTo(string defaultNamespace)
-        {
-            return this;
         }
 
     }

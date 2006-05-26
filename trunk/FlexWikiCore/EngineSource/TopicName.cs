@@ -112,7 +112,7 @@ namespace FlexWiki
             get { return _namespace; }
             set { _namespace = value; }
         }
-        public string QualifiedName
+        public string DottedName
         {
             get
             {
@@ -169,11 +169,11 @@ namespace FlexWiki
                 return false; 
             }
 
-            return this.QualifiedName == that.QualifiedName; 
+            return this.DottedName == that.DottedName; 
         }
         public override int GetHashCode()
         {
-            string qualifiedName = QualifiedName;
+            string qualifiedName = DottedName;
 
             if (qualifiedName == null)
             {

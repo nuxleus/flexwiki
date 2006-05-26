@@ -59,7 +59,7 @@ namespace FlexWiki.Web.Admin
 					UIResponse.Write("<tr><td  class='UpdateKey' valign='top'>Topics Created</td><td  class='UpdateValue' valign='top'>");
 					foreach (QualifiedTopicRevision t in update.Update.CreatedTopics)
 					{
-						UIResponse.Write(EscapeHTML(t.QualifiedNameWithVersion));
+						UIResponse.Write(EscapeHTML(t.DottedNameWithVersion));
 						UIResponse.Write("<br />");
 					}
 					UIResponse.Write("</td></tr>");
@@ -70,7 +70,7 @@ namespace FlexWiki.Web.Admin
 					UIResponse.Write("<tr><td  class='UpdateKey' valign='top'>Topics Updated</td><td  class='UpdateValue' valign='top'>");
 					foreach (QualifiedTopicRevision t in update.Update.UpdatedTopics)
 					{
-						UIResponse.Write(EscapeHTML(t.QualifiedNameWithVersion));
+						UIResponse.Write(EscapeHTML(t.DottedNameWithVersion));
 						UIResponse.Write("<br />");
 					}
 					UIResponse.Write("</td></tr>");
@@ -82,7 +82,7 @@ namespace FlexWiki.Web.Admin
 					UIResponse.Write("<tr><td  class='UpdateKey' valign='top'>Topics Deleted</td><td  class='UpdateValue' valign='top'>");
 					foreach (QualifiedTopicRevision t in update.Update.DeletedTopics)
 					{
-						UIResponse.Write(EscapeHTML(t.QualifiedNameWithVersion));
+						UIResponse.Write(EscapeHTML(t.DottedNameWithVersion));
 						UIResponse.Write("<br />");
 					}
 					UIResponse.Write("</td></tr>");
@@ -96,7 +96,7 @@ namespace FlexWiki.Web.Admin
 					UIResponse.Write("<table cellpadding='2' cellspacing='0' border='0'>");
 					foreach (QualifiedTopicRevision t in update.Update.AllTopicsWithChangedProperties)
 					{
-						UIResponse.Write("<tr><td class='UpdateDivider' colspan=2 valign='top'>" + t.QualifiedNameWithVersion + "</td></tr>");
+						UIResponse.Write("<tr><td class='UpdateDivider' colspan=2 valign='top'>" + t.DottedNameWithVersion + "</td></tr>");
 						
 						IList props;
 

@@ -111,7 +111,7 @@ namespace FlexWiki.Web
 
 			HtmlStringWriter w = new HtmlStringWriter();
 			w.WritePara(String.Format("{0} attempted to post a change with banned content to the topic {1} on the FlexWiki site at {2}.", 
-				HtmlStringWriter.Escape(VisitorIdentityString), HtmlStringWriter.Escape(TheTopic.QualifiedName), HtmlStringWriter.Escape((Request.Url.Host))));
+				HtmlStringWriter.Escape(VisitorIdentityString), HtmlStringWriter.Escape(TheTopic.DottedName), HtmlStringWriter.Escape((Request.Url.Host))));
 			w.WritePara("Banned content includes:");
 			w.WriteStartUnorderedList();
 			string proposed = PostedTopicText;
@@ -163,7 +163,7 @@ namespace FlexWiki.Web
 				try
 				{
 					QualifiedTopicRevision newVersionName = new QualifiedTopicRevision(TheTopic.LocalName, TheTopic.Namespace);
-					newVersionName.Version = TopicRevision.NewVersionStringForUser(VisitorIdentityString);
+					newVersionName.Version = TopicRevision.NewVersionStringForUser(VisitorIdentityString, Federation.TimeProvider);
 					NamespaceManager storeManager = Federation.NamespaceManagerForNamespace(TheTopic.Namespace);
 					storeManager.WriteTopicAndNewVersion(newVersionName.LocalName, PostedTopicText, VisitorIdentityString);		
 					returnTo = TheTopic;

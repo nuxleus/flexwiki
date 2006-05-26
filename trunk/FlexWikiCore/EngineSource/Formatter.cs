@@ -1198,7 +1198,7 @@ namespace FlexWiki.Formatting
                     // Turn any escape sequences into unescaped @@
                     expr = expr.Replace(escapedTwo, BehaviorDelimiter);
                     TopicContext tc = new TopicContext(Federation, NamespaceManager, new TopicVersionInfo(Federation, CurrentTopic));
-                    BehaviorInterpreter interpreter = new BehaviorInterpreter(CurrentTopic == null ? "" : CurrentTopic.QualifiedName, expr, Federation, Federation.WikiTalkVersion, this);
+                    BehaviorInterpreter interpreter = new BehaviorInterpreter(CurrentTopic == null ? "" : CurrentTopic.DottedName, expr, Federation, Federation.WikiTalkVersion, this);
                     string replacement = null;
                     if (!interpreter.Parse())
                     {	// parse failed
@@ -2023,7 +2023,7 @@ namespace FlexWiki.Formatting
                 // Ignore apparent links to non-existent namespaces.
                 if ((null == relName.Namespace) || (null != Federation.NamespaceManagerForNamespace(relName.Namespace)))
                 {
-                    // Build a list of all the possible absoluteNames for this topic
+                    // Build a list of all the possible qualified names for this topic
                     QualifiedTopicNameCollection qualifiedNames = new QualifiedTopicNameCollection();
                     // Start with the singulars in the various reachable namespaces, then add the plurals
                     qualifiedNames.AddRange(Federation.AllQualifiedTopicNamesThatExist(relName, NamespaceManager.Namespace));
@@ -2077,7 +2077,7 @@ namespace FlexWiki.Formatting
                             {
                                 replacement += "onmouseover=\"TopicTipOn(this, '" + tipid + "', event);\" onmouseout=\"TopicTipOff();\" ";
                             }
-                            replacement += "href=\"" + LinkMaker().LinkToTopic(abs.QualifiedName);
+                            replacement += "href=\"" + LinkMaker().LinkToTopic(abs.DottedName);
                             if (anchor.Length > 0)
                             {
                                 replacement += "#" + anchor;
@@ -2110,7 +2110,7 @@ namespace FlexWiki.Formatting
                 }
                 else
                 {
-                    str = ReplaceMatch(answer, str, m, before + relName.QualifiedName + after);
+                    str = ReplaceMatch(answer, str, m, before + relName.DottedName + after);
                 }
             }
 

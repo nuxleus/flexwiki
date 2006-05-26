@@ -120,7 +120,7 @@ namespace FlexWiki.Web
             NamespaceManager storeManager = Federation.NamespaceManagerForNamespace(Namespace);
 
             string defaultNamespace = DefaultNamespace;
-            string oldAppearsAs = (oldName.Namespace == defaultNamespace) ? oldName.LocalName : oldName.QualifiedName;
+            string oldAppearsAs = (oldName.Namespace == defaultNamespace) ? oldName.LocalName : oldName.DottedName;
             string newName = NewName;
             string newAppearsAs = (oldName.Namespace == defaultNamespace) ? newName : Namespace + "." + newName;
 
@@ -173,7 +173,7 @@ namespace FlexWiki.Web
             Response.Write("<br/>");
             foreach (TopicName topic in results.UpdatedReferenceTopics)
             {
-                Response.Write(String.Format("Topic {0} had its references updated. <br>", topic.QualifiedName));
+                Response.Write(String.Format("Topic {0} had its references updated. <br>", topic.DottedName));
             }
             bool redir = LeaveRedirect == "on";
             if (redir)

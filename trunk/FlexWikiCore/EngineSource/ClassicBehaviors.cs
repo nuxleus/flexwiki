@@ -179,7 +179,7 @@ namespace FlexWiki
 
                 foreach (TopicName topic in namespaceManager.AllTopics(ImportPolicy.DoNotIncludeImports))
                 {
-                    if (topic.LocalName.StartsWith("_") || (ctx.CurrentTopicName != null && topic.QualifiedName == ctx.CurrentTopicName.QualifiedName)) // no sense listing the page we're currently viewing
+                    if (topic.LocalName.StartsWith("_") || (ctx.CurrentTopicName != null && topic.DottedName == ctx.CurrentTopicName.DottedName)) // no sense listing the page we're currently viewing
                     {
                         continue;
                     }
@@ -187,7 +187,7 @@ namespace FlexWiki
                     {
                         if (titleFilter == null || titleFilter.IsMatch(topic.LocalName))
                         {
-                            result += "\t* \"" + topic.QualifiedName + "\":" + topic.Namespace + ".[" + topic.LocalName + "]" + Environment.NewLine;
+                            result += "\t* \"" + topic.DottedName + "\":" + topic.Namespace + ".[" + topic.LocalName + "]" + Environment.NewLine;
                         }
                         string topicSummary = ctx.CurrentFederation.GetTopicPropertyValue(topic, "Summary");
                         if (topicSummary.Length > 0)
@@ -200,7 +200,7 @@ namespace FlexWiki
                         string topicProperty = ctx.CurrentFederation.GetTopicPropertyValue(topic, arg2);
                         if (topicProperty.Length > 0)
                         {
-                            result += "\t* \"" + topic.QualifiedName + "\":" + topic.Namespace + ".[" + topic.LocalName + "]" + Environment.NewLine + "\t\t* " + topicProperty + Environment.NewLine;
+                            result += "\t* \"" + topic.DottedName + "\":" + topic.Namespace + ".[" + topic.LocalName + "]" + Environment.NewLine + "\t\t* " + topicProperty + Environment.NewLine;
                         }
                     }
                 }

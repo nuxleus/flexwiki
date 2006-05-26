@@ -100,7 +100,7 @@ namespace FlexWiki.Web
 <ul>");
             foreach (TopicName each in hits)
             {
-                Response.Write("<li><a href='" + lm.LinkToTopic(each) + "'>" + each.QualifiedName + "</a></li>");
+                Response.Write("<li><a href='" + lm.LinkToTopic(each) + "'>" + each.DottedName + "</a></li>");
             }
 			Response.Write(@"
 </ul>

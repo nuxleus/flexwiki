@@ -142,7 +142,7 @@ namespace FlexWiki.Web
                 row++;
 
                 Response.Write("<td>");
-                Response.Write("<b><a title=\"" + topic.QualifiedName + "\"  href=\"" + lm.LinkToTopic(topic) + "\">");
+                Response.Write("<b><a title=\"" + topic.DottedName + "\"  href=\"" + lm.LinkToTopic(topic) + "\">");
                 Response.Write(topic.LocalName);
                 Response.Write("</a></b>");
                 Response.Write("</td>");

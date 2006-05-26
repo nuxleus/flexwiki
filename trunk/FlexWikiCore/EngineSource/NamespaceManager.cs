@@ -430,7 +430,7 @@ namespace FlexWiki
             return ContentProviderChain.AllChangesForTopicSince(topic, stamp);
         }
         /// <summary>
-        /// Given a local topic name, answer all of the absolute topic names that actually exist
+        /// Given a local topic name, answer all of the qualified topic names that actually exist
         /// </summary>
         /// <param name="topic"></param>
         /// <returns></returns>
@@ -698,7 +698,7 @@ namespace FlexWiki
         }
         public DateTime GetTopicCreationTime(UnqualifiedTopicRevision revision)
         {
-            TopicChangeCollection changes = AllChangesForTopic(revision.Name);
+            TopicChangeCollection changes = AllChangesForTopic(revision.DottedName);
 
             if (changes == null)
             {
@@ -883,7 +883,7 @@ namespace FlexWiki
         /// Answer an <see cref="QualifiedTopicName"/> for the given topic name local to this ContentProviderChain.
         /// </summary>
         /// <param name="localTopicName">A topic name</param>
-        /// <returns>An AbsoluteTopicName</returns>
+        /// <returns>A <see cref="QualifiedTopicName"/> object.</returns>
         public QualifiedTopicName QualifiedTopicNameFor(string localTopicName)
         {
             return QualifiedTopicNameFor(new UnqualifiedTopicName(localTopicName)); 
@@ -1098,14 +1098,14 @@ namespace FlexWiki
             }
         }
         /// <summary>
-        /// Answer true if the given topic exists in this namespace or in an imported namespace (if it's relative), or in the given namespace (if it's absolute)
+        /// Answer true if the given topic exists in this namespace or in an imported namespace (if it's relative), or in the given namespace (if it's qualified)
         /// </summary>
         /// <param name="topic">The topic to check for</param>
         /// <returns>true if the topic exists</returns>
-        /// <remarks>importPolicy is ignored if the topic name is absolute.</remarks>
+        /// <remarks>importPolicy is ignored if the topic name is qualified.</remarks>
         public bool TopicExists(TopicRevision topic, ImportPolicy importPolicy)
         {
-            if (topic.IsNamespaceQualified)
+            if (topic.IsQualified)
             {
                 return Federation.TopicExists(new QualifiedTopicRevision(topic.LocalName, topic.Namespace));
             }
@@ -1347,7 +1347,7 @@ namespace FlexWiki
                 // Now see if we got any hits or not
                 string rep = Formatter.s_beforeWikiName + "(" + Formatter.RegexEscapeTopic(each) + ")" + Formatter.s_afterWikiName;
                 // if the reference was fully qualified, retain that form in the new reference
-                string replacementName = each.IndexOf(".") > -1 ? newTopicName.QualifiedName : newTopicName.LocalName;
+                string replacementName = each.IndexOf(".") > -1 ? newTopicName.DottedName : newTopicName.LocalName;
                 current = Regex.Replace(current, rep, "${before}" + replacementName + "${after}");
                 any = true;
             }
@@ -1399,7 +1399,7 @@ namespace FlexWiki
 
         private bool TopicVersionExists(UnqualifiedTopicRevision revision)
         {
-            TopicChangeCollection changes = AllChangesForTopic(revision.Name);
+            TopicChangeCollection changes = AllChangesForTopic(revision.AsUnqualifiedTopicName());
 
             if (changes == null)
             {

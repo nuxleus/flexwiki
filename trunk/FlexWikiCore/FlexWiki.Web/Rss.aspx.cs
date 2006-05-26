@@ -256,7 +256,7 @@ namespace FlexWiki.Web
                 Uri link = new Uri(new Uri(FullRootUrl(Request)), TheLinkMaker.LinkToTopic(
                     new QualifiedTopicRevision(topic), true));
                 newsletter.WriteStartElement("a");
-                newsletter.WriteAttributeString("title", HtmlWriter.Escape(topic.QualifiedName));
+                newsletter.WriteAttributeString("title", HtmlWriter.Escape(topic.DottedName));
                 newsletter.WriteAttributeString("href", link.AbsoluteUri);
                 newsletter.WriteString(HtmlWriter.Escape(topic.LocalName));
                 newsletter.WriteEndElement();
@@ -306,7 +306,7 @@ namespace FlexWiki.Web
 
                 newsletter.WriteString("View the ");
                 newsletter.WriteStartElement("a");
-                newsletter.WriteAttributeString("title", "Versions for " + HtmlWriter.Escape(topic.QualifiedName));
+                newsletter.WriteAttributeString("title", "Versions for " + HtmlWriter.Escape(topic.DottedName));
                 newsletter.WriteAttributeString("href", link.AbsoluteUri);
                 newsletter.WriteString("complete version history");
                 newsletter.WriteEndElement();

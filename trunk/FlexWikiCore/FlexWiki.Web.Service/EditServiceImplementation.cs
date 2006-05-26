@@ -376,7 +376,7 @@ namespace FlexWiki.Web.Services
             _linkMaker = new LinkMaker(RootUrl(Context.Request));
 
             QualifiedTopicRevision newVersionName = new QualifiedTopicRevision(theTopic.LocalName, theTopic.Namespace);
-            newVersionName.Version = TopicRevision.NewVersionStringForUser(visitorIdentityString);
+            newVersionName.Version = TopicRevision.NewVersionStringForUser(visitorIdentityString, Federation.TimeProvider);
             Federation.NamespaceManagerForTopic(newVersionName).WriteTopicAndNewVersion(newVersionName.LocalName, postedTopicText, visitorIdentityString);
         }
 

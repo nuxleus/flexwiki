@@ -49,7 +49,7 @@
     <WarningLevel>4</WarningLevel>
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
-    <UseVSHostingProcess>true</UseVSHostingProcess>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -116,6 +116,7 @@
     <Compile Include="CachingTests.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="QualifiedTopicRevisionTests.cs" />
     <Compile Include="UnqualifiedTopicNameTests.cs" />
     <Compile Include="MockTopicCollection.cs" />
     <Compile Include="MockTopicHistory.cs" />
@@ -213,6 +214,7 @@
     </Compile>
     <Compile Include="TopicPropertyTests.cs" />
     <Compile Include="TraceContentStore.cs" />
+    <Compile Include="UnqualifiedTopicRevisionTests.cs" />
     <Compile Include="WikiTalkTests.cs">
       <SubType>Code</SubType>
     </Compile>

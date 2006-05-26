@@ -478,7 +478,7 @@ namespace FlexWiki.Web
             try
             {
                 QualifiedTopicRevision newVersionName = new QualifiedTopicRevision(topic.LocalName, topic.Namespace);
-                newVersionName.Version = TopicRevision.NewVersionStringForUser(VisitorIdentityString);
+                newVersionName.Version = TopicRevision.NewVersionStringForUser(VisitorIdentityString, Federation.TimeProvider);
                 NamespaceManager namespaceManager = Federation.NamespaceManagerForNamespace(topic.Namespace);
                 namespaceManager.WriteTopicAndNewVersion(newVersionName.LocalName,
                     Federation.Read(topic), VisitorIdentityString);

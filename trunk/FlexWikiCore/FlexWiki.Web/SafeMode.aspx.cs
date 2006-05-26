@@ -198,7 +198,7 @@ namespace FlexWiki.Web
 				first = false;
 			}					
 
-			QualifiedTopicRevision permaTopic = new QualifiedTopicRevision(topic.QualifiedNameWithVersion);
+			QualifiedTopicRevision permaTopic = new QualifiedTopicRevision(topic.DottedNameWithVersion);
 			if (permaTopic.Version == null)
 			{
 				permaTopic.Version = mostRecentVersion;
@@ -337,7 +337,7 @@ function tbinput()
 
 			Command(lm, "Lost&nbsp;and&nbsp;Found", "Show unreferenced topics", lm.LinkToLostAndFound(topic.Namespace));
 			Command(lm, "Find&nbsp;References", "Find mentions of this topic in other topics", RootUrl(Request) + "Search.aspx?search=" + topic.LocalName);
-			Command(lm, "Rename", "Rename this topic (use with care)", RootUrl(Request) + "Rename.aspx?topic=" + topic.QualifiedName);
+			Command(lm, "Rename", "Rename this topic (use with care)", RootUrl(Request) + "Rename.aspx?topic=" + topic.DottedName);
 			Response.Write("</td>");
 			Response.Write("</tr></table>");
 

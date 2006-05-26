@@ -128,14 +128,14 @@ namespace FlexWiki.UnitTests
         public void QualifiedName()
         {
             TopicName topicName = new TopicName("TopicName", "Namespace");
-            Assert.AreEqual("Namespace.TopicName", topicName.QualifiedName,
+            Assert.AreEqual("Namespace.TopicName", topicName.DottedName,
                 "Checking that a topic name with a non-null namespace returns the correct QualifiedName.");
         }
         [Test]
         public void QualifiedNameNullNamepace()
         {
             TopicName topicName = new TopicName("TopicName");
-            Assert.AreEqual("TopicName", topicName.QualifiedName,
+            Assert.AreEqual("TopicName", topicName.DottedName,
                 "Checking that a topic name with a non-null namespace returns the correct QualifiedName.");
         }
         [Test]
@@ -145,7 +145,7 @@ namespace FlexWiki.UnitTests
 
             QualifiedTopicName qualifiedName = topicName.ResolveRelativeTo("SomeNamespace");
 
-            Assert.AreEqual("Namespace.TopicName", qualifiedName.QualifiedName,
+            Assert.AreEqual("Namespace.TopicName", qualifiedName.DottedName,
                 "Checking that the original namespace is kept when resolving an already-qualified name."); 
         }
         [Test]
@@ -155,7 +155,7 @@ namespace FlexWiki.UnitTests
 
             QualifiedTopicName qualifiedName = topicName.ResolveRelativeTo("SomeNamespace");
 
-            Assert.AreEqual("SomeNamespace.TopicName", qualifiedName.QualifiedName,
+            Assert.AreEqual("SomeNamespace.TopicName", qualifiedName.DottedName,
                 "Checking that the new namespace is used when resolving an unqualified name.");
         }
 
@@ -171,7 +171,7 @@ namespace FlexWiki.UnitTests
             for (int i = 0; i < expectedAlternates.Length; i++)
             {
                 TopicName expectedAlternate = new TopicName(expectedAlternates[i], "TestNamespace");
-                Assert.AreEqual(expectedAlternate.QualifiedName, actualAlternates[i].QualifiedName,
+                Assert.AreEqual(expectedAlternate.DottedName, actualAlternates[i].DottedName,
                     message);
             }
         }

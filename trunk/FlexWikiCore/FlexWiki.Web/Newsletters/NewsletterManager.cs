@@ -155,7 +155,7 @@ namespace FlexWiki.Web.Newsletters
             foreach (TopicChange each in AllChangesForTopicsSince(topics, DateTime.MinValue))
             {
                 ArrayList list;
-                QualifiedTopicRevision nameWithoutVersion = new QualifiedTopicRevision(each.Topic.QualifiedName);
+                QualifiedTopicRevision nameWithoutVersion = new QualifiedTopicRevision(each.Topic.DottedName);
                 if (!changeMap.ContainsKey(nameWithoutVersion))
                     changeMap[nameWithoutVersion] = new ArrayList();
                 list = (ArrayList)(changeMap[nameWithoutVersion]);
@@ -204,11 +204,11 @@ namespace FlexWiki.Web.Newsletters
                     changeMap.Remove(each);
                     continue;
                 }
-                string appearAs = (homeNamespace == each.Namespace) ? each.LocalName : each.QualifiedName;
+                string appearAs = (homeNamespace == each.Namespace) ? each.LocalName : each.DottedName;
                 TopicChange newestChange = (TopicChange)(changesForThisTopic[0]);
 
                 builder.Append("<tr>");
-                builder.Append("<td class='NewsletterTOCBodyCell'>" + "<div class='NewsletterTableOfContentsChangedTopicName'><a href='#" + each.QualifiedName + "'>" + appearAs + "</a></div>" + "</td>");
+                builder.Append("<td class='NewsletterTOCBodyCell'>" + "<div class='NewsletterTableOfContentsChangedTopicName'><a href='#" + each.DottedName + "'>" + appearAs + "</a></div>" + "</td>");
                 builder.Append("<td class='NewsletterTOCBodyCell'>" + changesForThisTopic.Count + "</td>");
                 builder.Append("<td class='NewsletterTOCBodyCell'>" + newestChange.Created.ToString() + "</td>");
                 builder.Append("</tr>");
@@ -224,7 +224,7 @@ namespace FlexWiki.Web.Newsletters
                     continue;
 
                 ArrayList changesForThisTopic = (ArrayList)(changeMap[each]);
-                string appearAs = (homeNamespace == each.Namespace) ? each.LocalName : each.QualifiedName;
+                string appearAs = (homeNamespace == each.Namespace) ? each.LocalName : each.DottedName;
 
                 TopicChange newestChange = (TopicChange)(changesForThisTopic[0]);
                 TopicChange oldestChange = (TopicChange)immediatelyPreviousVersions[each];
@@ -246,7 +246,7 @@ namespace FlexWiki.Web.Newsletters
 
 
                 builder.AppendFormat("<div class='NewsletterTopicName'>");
-                builder.AppendFormat("<a name='#" + each.QualifiedName + "'>{0}</a>", "<a href='" + lm.LinkToTopic(each) + "'>" + appearAs + "</a>");
+                builder.AppendFormat("<a name='#" + each.DottedName + "'>{0}</a>", "<a href='" + lm.LinkToTopic(each) + "'>" + appearAs + "</a>");
                 builder.AppendFormat(" (");
                 builder.AppendFormat("<span class='NewsletterTopicChangers'>{0}</span>", Formatter.EscapeHTML(changedBy));
                 builder.AppendFormat(" )");
@@ -295,7 +295,7 @@ namespace FlexWiki.Web.Newsletters
                     answer.Clear();
                     foreach (TopicName topic in namespaceManager.AllTopics(ImportPolicy.DoNotIncludeImports))
                     {
-                        answer.Add(topic.QualifiedName, topic);
+                        answer.Add(topic.DottedName, topic);
                     }
                     // No need to continue iterating after we find the wildcard 
                     break;
@@ -304,7 +304,7 @@ namespace FlexWiki.Web.Newsletters
                 {
                     foreach (TopicName topic in namespaceManager.AllQualifiedTopicNamesThatExist(s))
                     {
-                        answer.Add(topic.QualifiedName, topic);
+                        answer.Add(topic.DottedName, topic);
                     }
                 }
             }
@@ -314,7 +314,7 @@ namespace FlexWiki.Web.Newsletters
             {
                 foreach (TopicName topic in namespaceManager.AllQualifiedTopicNamesThatExist(s))
                 {
-                    answer.Remove(topic.QualifiedName);
+                    answer.Remove(topic.DottedName);
                 }
             }
 
@@ -323,7 +323,7 @@ namespace FlexWiki.Web.Newsletters
             {
                 foreach (TopicName topic in namespaceManager.AllQualifiedTopicNamesThatExist(s))
                 {
-                    answer.Remove(topic.QualifiedName);
+                    answer.Remove(topic.DottedName);
                 }
             }
 
@@ -355,7 +355,7 @@ namespace FlexWiki.Web.Newsletters
                     changeCount++;
                     answer.Add(obj);
                 }
-                LogLine("\tAllChangesForTopicsSince topic(" + each.QualifiedName + ") since(" + since.ToString() + ") - " + changeCount + " change(s)");
+                LogLine("\tAllChangesForTopicsSince topic(" + each.DottedName + ") since(" + since.ToString() + ") - " + changeCount + " change(s)");
             }
             return answer;
         }
@@ -397,7 +397,7 @@ namespace FlexWiki.Web.Newsletters
         // History for a topic is in the same namespace, called _NewsletterHistory
         private QualifiedTopicRevision NewsletterHistoryTopicFor(QualifiedTopicRevision newsletter)
         {
-            QualifiedTopicRevision answer = new QualifiedTopicRevision(newsletter.QualifiedName);
+            QualifiedTopicRevision answer = new QualifiedTopicRevision(newsletter.DottedName);
             answer.LocalName = "_NewsletterHistory";
             return answer;
         }

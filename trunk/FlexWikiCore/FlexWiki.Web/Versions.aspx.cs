@@ -89,7 +89,7 @@ namespace FlexWiki.Web
 
 		protected string LinkToCompare()
 		{
-			return TheLinkMaker.LinkToCompare(TheTopic.QualifiedName, int.MinValue, int.MinValue);
+			return TheLinkMaker.LinkToCompare(TheTopic.DottedName, int.MinValue, int.MinValue);
 		}
 
 		protected void ShowPage()
@@ -122,13 +122,13 @@ namespace FlexWiki.Web
 				}
 				else
 				{
-					output.AppendFormat(" (<a href='{0}' title='Show Difference with current version'>Current</a>)", TheLinkMaker.LinkToCompare(TheTopic.QualifiedName, 0, row));
+					output.AppendFormat(" (<a href='{0}' title='Show Difference with current version'>Current</a>)", TheLinkMaker.LinkToCompare(TheTopic.DottedName, 0, row));
 				}
 
 
 				if (row < lastRow)
 				{
-					output.AppendFormat(" (<a href='{0}' style='standardsButton' title='Show Difference with preceding version' tabindex={1}>Previous</a>)", TheLinkMaker.LinkToCompare(TheTopic.QualifiedName, row, row+1), row+1);
+					output.AppendFormat(" (<a href='{0}' style='standardsButton' title='Show Difference with preceding version' tabindex={1}>Previous</a>)", TheLinkMaker.LinkToCompare(TheTopic.DottedName, row, row+1), row+1);
 				}
 				else
 				{

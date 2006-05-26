@@ -117,7 +117,96 @@ namespace FlexWiki.UnitTests
             Assert.AreEqual("1.0", revision.Version, "Checking that version is correct.");
 
         }
+        [Test]
+        public void EqualsTest()
+        {
+            TopicRevision aa11 = new TopicRevision("A", "A", "1");
+            TopicRevision aa12 = new TopicRevision("A", "A", "1");
+            TopicRevision aa21 = new TopicRevision("A", "A", "2");
+            TopicRevision ab11 = new TopicRevision("A", "B", "1");
+            TopicRevision ba11 = new TopicRevision("B", "A", "1");
 
+            Assert.IsTrue(aa11.Equals(aa11), "Checking that an object compares equal to itself.");
+            Assert.IsTrue(aa11.Equals(aa12), "Checking that an object compares equal to an equivalent object.");
+            Assert.IsFalse(aa11.Equals(aa21), "Checking that an object is not equal to something with a different version.");
+            Assert.IsFalse(aa11.Equals(ab11), "Checking that an object is not equal to something with a different namespace.");
+            Assert.IsFalse(aa11.Equals(ba11), "Checking that an object is not equal to something with a different local name.");
+            Assert.IsFalse(aa11.Equals(null), "Checking that an object is not equal to null."); 
+        }
+        [Test]
+        public void GetHashCodeTests()
+        {
+            TopicRevision aa11 = new TopicRevision("A", "A", "1");
+            TopicRevision aa12 = new TopicRevision("A", "A", "1");
+            TopicRevision aa21 = new TopicRevision("A", "A", "2");
+            TopicRevision ab11 = new TopicRevision("A", "B", "1");
+            TopicRevision ba11 = new TopicRevision("B", "A", "1");
+
+            Assert.AreEqual(aa11.GetHashCode(), aa11.GetHashCode(), 
+                "Checking that an object always returns the same hash code.");
+            Assert.AreEqual(aa12.GetHashCode(), aa11.GetHashCode(), 
+                "Checking that an object returns the same hash code as an equivalent object.");
+            Assert.IsFalse(aa11.GetHashCode() == aa21.GetHashCode(), 
+                "Checking that an object with a different version returns a different hash code.");
+            Assert.IsFalse(aa11.GetHashCode() == ab11.GetHashCode(), 
+                "Checking that an object with a different namespace returns a different hash code.");
+            Assert.IsFalse(aa11.GetHashCode() == ba11.GetHashCode(),
+                "Checking that an object with a different local name returns a different hash code.");
+
+        }
+        [Test]
+        public void LocalNameForNullName()
+        {
+            TopicRevision revision = new TopicRevision();
+
+            Assert.IsNull(revision.Name); 
+            Assert.IsNull(revision.LocalName, "Checking that LocalName doesn't blow up even when Name is null."); 
+        }
+        [Test]
+        public void NewOfSameType()
+        {
+            TopicRevision revision = new TopicRevision().NewOfSameType("A.B(C)");
+
+            Assert.AreEqual(typeof(TopicRevision), revision.GetType(), "Checking that the newly created type is a TopicRevision.");
+            Assert.AreEqual("A.B(C)", revision.DottedNameWithVersion, "Checking that the correct properties were parsed."); 
+        }
+        [Test]
+        public void NewVersionStringForUserFromTimeProvider()
+        {
+            MockTimeProvider timeProvider = new MockTimeProvider(TimeSpan.FromSeconds(1));
+
+            string versionString = TopicRevision.NewVersionStringForUser("candera", timeProvider);
+
+            Assert.AreEqual("2004-10-28-14-11-00.0000-candera", versionString, 
+                "Checking that the correct version string was returned."); 
+        }
+        [Test]
+        public void NewVersionStringForUserFromTimestamp()
+        {
+            string versionString = TopicRevision.NewVersionStringForUser("candera", new DateTime(2004, 10, 28, 14, 11, 00));
+            Assert.AreEqual("2004-10-28-14-11-00.0000-candera", versionString, 
+                "Checking that the correct version string was returned."); 
+        }
+        [Test]
+        public void ResolveRelativeToFromQualified()
+        {
+            TopicRevision revision = new TopicRevision("TopicName", "Namespace", "version");
+
+            QualifiedTopicRevision qualifiedRevision = revision.ResolveRelativeTo("SomeNamespace");
+
+            Assert.AreEqual("Namespace.TopicName(version)", qualifiedRevision.DottedNameWithVersion,
+                "Checking that the original namespace is kept when resolving an already-qualified revision.");
+        }
+        [Test]
+        public void ResolveRelativeToFromUnqualified()
+        {
+            TopicRevision revision = new TopicRevision(new TopicName("TopicName"), "version");
+
+            QualifiedTopicRevision qualifiedRevision = revision.ResolveRelativeTo("SomeNamespace");
+
+            Assert.AreEqual("SomeNamespace.TopicName(version)", qualifiedRevision.DottedNameWithVersion,
+                "Checking that the new namespace is used when resolving an unqualified name.");
+        }
 
     }
 }

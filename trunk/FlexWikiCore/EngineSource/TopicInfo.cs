@@ -47,7 +47,7 @@ namespace FlexWiki
             get
             {
                 TopicChangeCollection answer = new TopicChangeCollection();
-                foreach (TopicChange each in Federation.GetTopicChanges(new TopicName(TopicRevision.QualifiedName)))
+                foreach (TopicChange each in Federation.GetTopicChanges(new TopicName(TopicRevision.DottedName)))
                 {
                     answer.Add(each);
                 }
@@ -179,7 +179,7 @@ namespace FlexWiki
 
         public int CompareTo(object obj)
         {
-            return this.TopicRevision.QualifiedName.CompareTo(((TopicVersionInfo)obj).TopicRevision.QualifiedName);
+            return this.TopicRevision.DottedName.CompareTo(((TopicVersionInfo)obj).TopicRevision.DottedName);
         }
         [ExposedMethod(ExposedMethodFlags.Default, "Answer an array of the values in the given list property")]
         public ArrayList GetListProperty(string propertyName)
