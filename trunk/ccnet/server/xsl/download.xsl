@@ -37,7 +37,7 @@
             FlexWiki project site</a>.</p>
             <p>
             Download binaries and source for interim build <xsl:value-of select="concat($vermajor, '.', $verminor, '.', $verbuild, '.', $verrevision, ' ')" />
-            <a href="{$projectURL}/download/{$vermajor}.{$verminor}.{$verbuild}.{$verrevision}/">here</a></p>
+            <a href="{$projectURL}/download/{/cruisecontrol/@project}/{$vermajor}.{$verminor}/{$vermajor}.{$verminor}.{$verbuild}.{$verrevision}/">here</a></p>
           </td>
         </tr>
       </table>

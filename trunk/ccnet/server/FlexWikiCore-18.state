@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<IntegrationResult xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ProjectName>FlexWikiCore-18</ProjectName>
+  <ProjectUrl>http://builds.flexwiki.com/</ProjectUrl>
+  <BuildCondition>ForceBuild</BuildCondition>
+  <Label>1726</Label>
+  <WorkingDirectory>C:\builds\ccnet\server\flexwikicore-18</WorkingDirectory>
+  <ArtifactDirectory>C:\builds\ccnet\server\FlexWikiCore-18\Artifacts</ArtifactDirectory>
+  <Status>Failure</Status>
+  <LastIntegrationStatus>Failure</LastIntegrationStatus>
+  <LastSuccessfulIntegrationLabel>1725</LastSuccessfulIntegrationLabel>
+  <StartTime>2006-05-25T05:09:23.1022304-07:00</StartTime>
+  <EndTime>2006-05-25T05:18:42.3664128-07:00</EndTime>
+</IntegrationResult>

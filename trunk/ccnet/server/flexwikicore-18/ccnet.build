@@ -1,0 +1,58 @@
+<project name="ccnet" default="go">
+  <target name="go">
+    
+    <property name="module.name" value="FlexWikiCore" />
+
+	<cvs-update destination="build" 
+		recursive="true"
+		overwritelocal="true" 
+		cvsfullpath="C:\program files\tortoisecvs\cvs.exe" />
+
+    <!-- Override the version numbers when building from CCNet -->
+    <property name="verrevision" value="${CCNetLabel}" />
+
+    <!-- Build the project --> 
+    <nant buildfile="build\${module.name}.build"
+	      inheritall="true"
+	      target="clean verify" />
+
+    <!-- Figure out what version just got built -->
+    <property name="versionfile" value="build\reports\version.xml" />
+    <xmlpeek file="${versionfile}" 
+	     property="vermajor"
+	     xpath="/version/major" />
+    <xmlpeek file="${versionfile}" 
+	     property="verminor"
+	     xpath="/version/minor" />
+    <xmlpeek file="${versionfile}" 
+	     property="verbuild"
+	     xpath="/version/build" />
+    <xmlpeek file="${versionfile}" 
+	     property="verrevision"
+	     xpath="/version/revision" />
+    
+    <!-- Move the zips to the directory where they can be downloaded -->
+    <property name="downloaddir" 
+	      value="..\download\${CCNetProject}\${vermajor}.${verminor}.${verbuild}.${verrevision}" />
+    <mkdir dir="${downloaddir}" />
+    <copy todir="${downloaddir}">
+      <fileset basedir="build\dist">
+	      <includes
+	        name="*${vermajor}.${verminor}.${verbuild}.${verrevision}*.zip" />
+      </fileset>
+    </copy>
+
+    <property name="cvs.tag" value="v${vermajor}-${verminor}-${verbuild}-${verrevision}" />
+
+	<!-- Tag the repository with the build number -->
+    <exec program="cvs.exe"
+	      workingdir="build">
+      <arg value="tag" />     <!-- Command -->
+      <arg value="-F" />      <!-- Move tag if it already exists -->
+      <arg value="-R" />      <!-- Recursive -->
+      <arg value="${cvs.tag}" /> <!-- Tag name -->
+    </exec>
+
+
+  </target>
+</project>
