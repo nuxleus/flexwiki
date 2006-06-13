@@ -1,0 +1,96 @@
+<form ID="RefreshForm" method="post">
+<table width="100%">
+<tr>
+	<td align="right"><input type="submit" align="right" name="$refreshButtonName" value="Refresh status" /></td>
+</tr>
+</table>
+</form>
+
+#if ($forceBuildMessage.Length > 0)
+<P><span id="StatusLabel"><b><font color="#4A3C8C">$forceBuildMessage</font></b></span></P>
+#end
+
+#if ($projectGrid.Length > 0)
+<table cellspacing="0" cellpadding="3" rules="rows" bordercolor="#333399" border="1" id="StatusGrid" bgcolor="White" width="100%">
+	<tr bgcolor="#333399" class="ProjectGridHeader">
+		<td>
+			<a href="$projectNameSortLink"><b>Project Name</b></a>
+		</td>
+		<td align="Center">
+			<a href="$buildStatusSortLink"><b>Last Build Status</b></a>
+		</td>
+		<td align="Center">
+			<a href="$lastBuildDateSortLink"><b>Last Build Time</b></a>
+		</td>
+		<td align="Center">
+			<b>Last Build Label</b>
+		</td>
+		<td align="Center">
+			<b>CCNet Status</b>
+		</td>
+		<td align="Center">
+			<b>Activity</b>
+		</td>
+		<td align="Center">
+			<b>Force Build</b>
+		</td>
+	</tr>
+	
+	#foreach ($projectGridRow in $projectGrid)
+	<tr bgcolor="Ivory">
+		<td align="Left">
+			<font color="Black">
+				<a href="$projectGridRow.Url">$projectGridRow.Name</a>
+			</font>
+		</td>
+		<td align="Center">
+			<font color="$projectGridRow.BuildStatusHtmlColor">
+				<b>$projectGridRow.BuildStatus</b>
+			</font>
+		</td>
+		<td align="Center">
+			<font color="Black">$projectGridRow.LastBuildDate</font>
+		</td>
+		<td align="Center">
+			<font color="Black">$projectGridRow.LastBuildLabel</font>
+		</td>
+		<td align="Center">
+			<font color="Black">$projectGridRow.Status</font>
+		</td>
+		<td align="Center">
+			<font color="Black">$projectGridRow.Activity</font>
+		</td>
+		<form method="post">
+			<input type="hidden" name="forcebuild" value="true" />
+			<input type="hidden" name="forceBuildProject" value="$projectGridRow.Name" />
+			<input type="hidden" name="forceBuildServer" value="$projectGridRow.ServerName" />
+			<td align="Center">
+				<font color="Black">
+					<input type="submit" name="$projectGridRow.ForceBuildButtonName" value="Force"/>
+				</font>
+			</td>
+		</form>
+	</tr>
+	#end
+</table>
+#end
+
+#if ($exceptions.Length > 0)
+<P>
+<span id="ExceptionTitleLabel">There were exceptions connecting to the following servers:</span>
+</P>
+<table cellspacing="0" cellpadding="4" rules="all" bordercolor="#CC9966" border="1" id="ExceptionGrid" bgcolor="White" width="100%">
+	<tr bgcolor="#990000">
+		<th><font color="#FFFFCC"><b>Server Name</b></font></th>
+		<th><font color="#FFFFCC"><b>Url</b></font></th>
+		<th><font color="#FFFFCC"><b>Message</b></font></th>
+	</tr>
+	#foreach ($exception in $exceptions)
+	<tr bgcolor="White">
+		<td><font color="#330099">$exception.ServerName</font></td>
+		<td><font color="#330099">$exception.Url</font></td>
+		<td><font color="#330099">$exception.Message</font></td>
+	</tr>
+	#end
+</table>
+#end

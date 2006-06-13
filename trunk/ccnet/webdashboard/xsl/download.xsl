@@ -1,0 +1,31 @@
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+
+  <xsl:output method="html" />
+
+  <xsl:template match="/">
+    <xsl:if test="not (/cruisecontrol/build/@error) and not (/cruisecontrol/exception) and (/cruisecontrol/build/version)">
+      <xsl:variable name="vermajor" select="/cruisecontrol/build/version/major" />
+      <xsl:variable name="verminor" select="/cruisecontrol/build/version/minor" />
+      <xsl:variable name="verbuild" select="/cruisecontrol/build/version/build" />
+      <xsl:variable name="verrevision" select="/cruisecontrol/build/version/revision" />
+      
+      <table class="section-table" cellpadding="2" cellspacing="0" border="0" width="98%">
+        <tr>
+          <td class="sectionheader">
+             Download links
+          </td>
+        </tr>
+        <tr>
+          <td>
+	    <p><b>NOTE!</b> This build is an interim build meant for FlexWiki developer use only. It is unsupported, and may 
+            not even work at all. Any problems you experience, you will be on your own to solve.</p>
+            <p>Supported builds (binaries and source) are available on the <a href="http://sourceforge.net/projects/flexwiki/">
+            FlexWiki project site</a>.</p>
+            <p>Download binaries and source for interim build <xsl:value-of select="concat($vermajor, '.', $verminor, '.', $verbuild, '.', $verrevision, ' ')" /> 
+               <a href="/download/{/cruisecontrol/@project}/{$vermajor}.{$verminor}.{$verbuild}.{$verrevision}/">here</a></p>
+          </td>
+        </tr>
+      </table>
+    </xsl:if>
+  </xsl:template>
+</xsl:stylesheet>
