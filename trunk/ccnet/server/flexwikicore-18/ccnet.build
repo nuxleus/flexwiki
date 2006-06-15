@@ -14,7 +14,7 @@
     <!-- Build the project --> 
     <nant buildfile="build\${module.name}.build"
 	      inheritall="true"
-	      target="clean verify" />
+	      target="clean dist" />
 
     <!-- Figure out what version just got built -->
     <property name="versionfile" value="build\reports\version.xml" />
