@@ -129,11 +129,11 @@ namespace FlexWiki.Web
 			{
 				if (counter == _diff)
 				{
-					newestTopicVersion = new QualifiedTopicRevision(change.Fullname);
+					newestTopicVersion = new QualifiedTopicRevision(change.DottedName);
 				}
 				else if (counter == _oldid)
 				{
-					oldTopicVersion = new QualifiedTopicRevision(change.Fullname);
+					oldTopicVersion = new QualifiedTopicRevision(change.DottedName);
 					break;
 				}
 				counter++;

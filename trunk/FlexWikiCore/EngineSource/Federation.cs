@@ -770,12 +770,9 @@ namespace FlexWiki
         {
             // These are the default providers that every namespace gets. Later we might
             // want to make these configurable
-            //IUnparsedContentProvider builtinTopicsProvider = new BuiltinTopicsProvider(next);
-            ContentProviderBase parsingProvider = new ParsingProvider(contentStore);
-
-            // This line is just to make it easy to add more default providers later
-            ContentProviderBase providerChain = parsingProvider;
-
+            ContentProviderBase providerChain = new BuiltinTopicsProvider(contentStore); 
+            providerChain = new ParsingProvider(providerChain);
+            
             NamespaceManager namespaceManager = new NamespaceManager(this, providerChain, ns, parameters);
             _namespaceToNamespaceManagerMap[namespaceManager.Namespace] = namespaceManager;
 
@@ -962,7 +959,7 @@ namespace FlexWiki
             if (namespaceManager != null)
             {
                 borderTopics.AddRange(GetTopicListPropertyValue(
-                    new QualifiedTopicRevision(namespaceManager.DefinitionTopic), 
+                    new QualifiedTopicRevision(namespaceManager.DefinitionTopicName), 
                     bordersTopicsProperty));
             }
 
@@ -974,7 +971,7 @@ namespace FlexWiki
 
 
             // Finally, any border elements form the topic itself (skip the def topic so we don't get double borders!)
-            if (namespaceManager == null || namespaceManager.DefinitionTopic.ToString() != name.ToString())
+            if (namespaceManager == null || namespaceManager.DefinitionTopicName.ToString() != name.ToString())
             {
                 borderTopics.AddRange(GetTopicListPropertyValue(name, bordersTopicsProperty));
             }
@@ -1064,32 +1061,33 @@ namespace FlexWiki
         /// <param name="config"></param>
         public void LoadFromConfiguration()
         {
-            try
-            {
-                FederationConfiguration config = Application.FederationConfiguration; 
+            // TODO: This needs to be rewritten when the new config schema is done
+            //try
+            //{
+            //    FederationConfiguration config = Application.FederationConfiguration; 
 
-                //UpdateGenerator.Push();
-                _namespaceToNamespaceManagerMap = new Hashtable();
-                foreach (NamespaceProviderDefinition def in config.NamespaceMappings)
-                {
-                    LoadNamespacesFromProviderDefinition(def);
-                }
-                _defaultNamespace = config.DefaultNamespace;
-                Borders = config.Borders;
-                AboutWikiString = config.AboutWikiString;
-                WikiTalkVersion = config.WikiTalkVersion;
-                NoFollowExternalHyperlinks = config.NoFollowExternalHyperlinks;
-                foreach (string link in config.BlacklistedExternalLinks)
-                {
-                    AddBlacklistedExternalLinkPrefix(link);
-                }
-                UpdateGenerator.RecordNamespaceListChanged();
-                UpdateGenerator.RecordFederationPropertiesChanged();
-            }
-            finally
-            {
-                UpdateGenerator.Pop();
-            }
+            //    //UpdateGenerator.Push();
+            //    _namespaceToNamespaceManagerMap = new Hashtable();
+            //    foreach (NamespaceProviderDefinition def in config.NamespaceMappings)
+            //    {
+            //        LoadNamespacesFromProviderDefinition(def);
+            //    }
+            //    _defaultNamespace = config.DefaultNamespace;
+            //    Borders = config.Borders;
+            //    AboutWikiString = config.AboutWikiString;
+            //    WikiTalkVersion = config.WikiTalkVersion;
+            //    NoFollowExternalHyperlinks = config.NoFollowExternalHyperlinks;
+            //    foreach (string link in config.BlacklistedExternalLinks)
+            //    {
+            //        AddBlacklistedExternalLinkPrefix(link);
+            //    }
+            //    //UpdateGenerator.RecordNamespaceListChanged();
+            //    //UpdateGenerator.RecordFederationPropertiesChanged();
+            //}
+            //finally
+            //{
+            //    //UpdateGenerator.Pop();
+            //}
         }
         /// <summary>
         /// Create a namespace provider for the description and then give it a chance to create its namespace(s)

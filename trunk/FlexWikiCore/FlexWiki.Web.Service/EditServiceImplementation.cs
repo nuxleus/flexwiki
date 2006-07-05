@@ -260,7 +260,7 @@ namespace FlexWiki.Web.Services
                 {
                     if (change.Version == version)
                     {
-                        WriteNewTopic(change.Topic, Federation.Read(change.Topic), visitorIdentityString, version);
+                        WriteNewTopic(change.TopicRevision, Federation.Read(change.TopicRevision), visitorIdentityString, version);
                         break;
                     }
                 }
@@ -346,7 +346,7 @@ namespace FlexWiki.Web.Services
                 {
                     if (change.Version == version)
                     {
-                        return FlexWiki.Formatting.Formatter.FormattedTopic(change.Topic, OutputFormat.HTML, null, Federation, _linkMaker);
+                        return FlexWiki.Formatting.Formatter.FormattedTopic(change.TopicRevision, OutputFormat.HTML, null, Federation, _linkMaker);
                     }
                 }
 

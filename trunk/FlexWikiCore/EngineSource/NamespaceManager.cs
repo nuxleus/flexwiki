@@ -39,6 +39,7 @@ namespace FlexWiki
     {
         // Fields
 
+        private static string s_bordersTopicLocalName = "_NormalBorders"; 
         private static string s_defaultHomePage = "HomePage";
         private static string s_definitionTopicName = "_ContentBaseDefinition";
         /// <summary>
@@ -69,29 +70,42 @@ namespace FlexWiki
                     _parameters.Add(parameter);
                 }
             }
+
+            _contentProviderChain.Initialize(this); 
         }
 
         // Properties
 
+        public static string BordersTopicLocalName
+        {
+            get { return s_bordersTopicLocalName; }
+        }
+        public QualifiedTopicName BordersTopicName
+        {
+            get
+            {
+                return new QualifiedTopicName(BordersTopicLocalName, Namespace); 
+            }
+        }
         public string Contact
         {
             get
             {
-                return GetLastPropertyValue(DefinitionTopicName, "Contact");
+                return GetLastPropertyValue(DefinitionTopicLocalName, "Contact");
             }
         }
         /// <summary>
         /// Answer the full <see cref="QualifiedTopicName" /> for the definition topic for this content base
         /// </summary>
         [XmlIgnore]
-        public QualifiedTopicName DefinitionTopic
+        public QualifiedTopicName DefinitionTopicName
         {
             get
             {
-                return new QualifiedTopicName(DefinitionTopicName, Namespace);
+                return new QualifiedTopicName(DefinitionTopicLocalName, Namespace);
             }
         }
-        public static string DefinitionTopicName
+        public static string DefinitionTopicLocalName
         {
             get { return s_definitionTopicName; }
         }
@@ -102,7 +116,7 @@ namespace FlexWiki
         {
             get
             {
-                TopicProperty property = GetTopicProperty(DefinitionTopicName,
+                TopicProperty property = GetTopicProperty(DefinitionTopicLocalName,
                     "Description");
 
                 if (property == null)
@@ -117,7 +131,7 @@ namespace FlexWiki
         {
             get
             {
-                TopicProperty property = GetTopicProperty(DefinitionTopicName,
+                TopicProperty property = GetTopicProperty(DefinitionTopicLocalName,
                     "DisplaySpacesInWikiLinks");
 
                 if (property == null)
@@ -226,7 +240,7 @@ namespace FlexWiki
         {
             get
             {
-                TopicProperty property = GetTopicProperty(DefinitionTopicName,
+                TopicProperty property = GetTopicProperty(DefinitionTopicLocalName,
                     "HomePage");
 
                 if (property == null)
@@ -244,14 +258,14 @@ namespace FlexWiki
             }
             set
             {
-                SetTopicPropertyValue(DefinitionTopicName, "HomePage", value, false, "system"); 
+                SetTopicPropertyValue(DefinitionTopicLocalName, "HomePage", value, false, "system"); 
             }
         }
-        public TopicName HomePageTopicName
+        public QualifiedTopicName HomePageTopicName
         {
             get
             {
-                return new TopicName(HomePage, Namespace);
+                return new QualifiedTopicName(HomePage, Namespace);
             }
         }
         /// <summary>
@@ -261,7 +275,7 @@ namespace FlexWiki
         {
             get
             {
-                TopicProperty property = GetTopicProperty(DefinitionTopicName,
+                TopicProperty property = GetTopicProperty(DefinitionTopicLocalName,
                     "ImageURL");
 
                 if (property == null)
@@ -319,7 +333,7 @@ namespace FlexWiki
             {
                 List<string> importedNamespaces = new List<string>();
 
-                TopicProperty importProperty = GetTopicProperty(DefinitionTopicName, "Import");
+                TopicProperty importProperty = GetTopicProperty(DefinitionTopicLocalName, "Import");
 
                 if (importProperty != null)
                 {
@@ -380,7 +394,7 @@ namespace FlexWiki
         {
             get
             {
-                return GetLastPropertyValue(DefinitionTopicName, "Title");
+                return GetLastPropertyValue(DefinitionTopicLocalName, "Title");
             }
         }
 
@@ -668,7 +682,35 @@ namespace FlexWiki
         {
             return FriendlyTitle;
         }
-  
+
+        /// <summary>
+        /// Returns a particular content provider from the content provider chain. This
+        /// method is intended to be used primarily by unit test codes. Use of this 
+        /// method in production code is a likely sign that you are doing something 
+        /// wrong, and may well result in incorrect behavior. 
+        /// </summary>
+        /// <param name="type">The type of the provider to retrieve.</param>
+        /// <returns>A content provider from the content provider chain.</returns>
+        /// <remarks>If more than one provider in the content chain is of the 
+        /// requested type, the first provider will be returned. This
+        /// method is intended to be used primarily by unit test codes. Use of this 
+        /// method in production code is a likely sign that you are doing something 
+        /// wrong, and may well result in incorrect behavior. </remarks>
+        public ContentProviderBase GetProvider(Type type)
+        {
+            ContentProviderBase provider = ContentProviderChain;
+
+            while (provider != null)
+            {
+                if (provider.GetType() == type)
+                {
+                    return provider; 
+                }
+                provider = provider.Next;
+            }
+
+            return null; 
+        }
         /// <summary>
         /// Returns a list of all references from all topics in this namespace. 
         /// </summary>
@@ -948,7 +990,7 @@ namespace FlexWiki
 
             string oldTopicOldContents = Read(oldName.LocalName);
             string oldTopicNewContents = string.Format("Redirect: {0}\n\nThis topic was renamed to {0}.",
-                newName);
+                newName.LocalName);
 
             WriteTopicAndNewVersion(oldName.LocalName, oldTopicNewContents, author);
             WriteTopicAndNewVersion(newName.LocalName, oldTopicOldContents, author);
@@ -1248,7 +1290,7 @@ namespace FlexWiki
             {
                 if (!TopicVersionExists(revision))
                 {
-                    throw FlexWikiException.VersionDoesNotExist(revision); 
+                    throw FlexWikiException.VersionDoesNotExist(new QualifiedTopicName(revision.LocalName, this.Namespace),revision.Version); 
                 }
             }
             ContentProviderChain.WriteTopic(revision, content);
@@ -1323,8 +1365,8 @@ namespace FlexWiki
             MatchCollection wikiNames = Formatter.extractWikiNames.Matches(current);
             ArrayList processed = new ArrayList();
             bool any = false;
-            TopicRevision newTopicKey = new QualifiedTopicRevision(newName);
-            TopicName newTopicName = new TopicName(newTopicKey.LocalName, newTopicKey.Namespace); 
+            TopicRevision newTopicRevision = new QualifiedTopicRevision(newName, this.Namespace);
+            TopicName newTopicName = new TopicName(newTopicRevision.LocalName, newTopicRevision.Namespace); 
             foreach (Match m in wikiNames)
             {
                 string each = m.Groups["topic"].ToString();
@@ -1416,7 +1458,6 @@ namespace FlexWiki
 
             return false; 
         }
-
 
     }
 }

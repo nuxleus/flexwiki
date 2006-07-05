@@ -91,7 +91,7 @@ namespace FlexWiki.UnitTests
             manager.WriteTopicAndNewVersion(topicName, "Version two", "Author 2");
             manager.WriteTopicAndNewVersion(topicName, "Version three", "Author 3");
 
-            IList<TopicChange> changes = manager.AllChangesForTopicSince(topicName, new DateTime(2004, 10, 28, 14, 11, 02));
+            TopicChangeCollection changes = manager.AllChangesForTopicSince(topicName, new DateTime(2004, 10, 28, 14, 11, 02));
 
             Assert.AreEqual(2, changes.Count, "Checking that the correct number of changes were returned.");
             AssertTopicChangeCorrect(changes[0], topicName, "Author 2", new DateTime(2004, 10, 28, 14, 11, 02), "Version two");
@@ -122,7 +122,7 @@ namespace FlexWiki.UnitTests
 
             string topicName = "TopicOne";
 
-            IList<TopicChange> changes = manager.AllChangesForTopicSince(topicName, new DateTime(2004, 10, 28, 14, 11, 00));
+            TopicChangeCollection changes = manager.AllChangesForTopicSince(topicName, new DateTime(2004, 10, 28, 14, 11, 00));
 
             Assert.IsNull(changes, "Checking that a null changelist was returned.");
         }
@@ -189,7 +189,7 @@ namespace FlexWiki.UnitTests
             );
         }
         [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [ExpectedException(typeof(ArgumentException))]
         public void AllReferencesByTopicNullArgument()
         {
             Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",
@@ -245,7 +245,7 @@ namespace FlexWiki.UnitTests
 
             QualifiedTopicNameCollection topics = manager.AllTopics(ImportPolicy.DoNotIncludeImports);
 
-            Assert.AreEqual(0, topics.Count, "Checking that no topics were returned.");
+            Assert.AreEqual(2, topics.Count, "Checking that the two default topics were returned.");
 
         }
         [Test]
@@ -260,7 +260,9 @@ namespace FlexWiki.UnitTests
             AssertTopicsCorrectUnordered(topics,
                 new TopicName("_ContentBaseDefinition", "NamespaceOne"),
                 new TopicName("ReferencedTopic", "NamespaceOne"),
-                new TopicName("ReferencingTopic", "NamespaceOne"));
+                new TopicName("ReferencingTopic", "NamespaceOne"),
+                new TopicName("HomePage", "NamespaceOne"),          // Built-in topic
+                new TopicName("_NormalBorders", "NamespaceOne"));   // Built-in topic
         }
         [Test]
         public void AllTopicsMultipleTopicsWithImport()
@@ -277,7 +279,12 @@ namespace FlexWiki.UnitTests
                 new TopicName("ReferencedTopic", "NamespaceOne"),
                 new TopicName("ReferencedTopic", "NamespaceTwo"),
                 new TopicName("ImportedTopic", "NamespaceTwo"),
-                new TopicName("OtherTopic", "NamespaceTwo")
+                new TopicName("OtherTopic", "NamespaceTwo"),
+                // Built-in topics
+                new TopicName("HomePage", "NamespaceOne"),
+                new TopicName("_NormalBorders", "NamespaceOne"),
+                new TopicName("HomePage", "NamespaceTwo"),
+                new TopicName("_NormalBorders", "NamespaceTwo")
                 );
         }
         [Test]
@@ -289,7 +296,12 @@ namespace FlexWiki.UnitTests
 
             QualifiedTopicNameCollection topics = manager.AllTopics(ImportPolicy.DoNotIncludeImports);
 
-            AssertTopicsCorrectUnordered(topics, new TopicName("TopicOne", "NamespaceOne"));
+            AssertTopicsCorrectUnordered(topics,
+                new TopicName("TopicOne", "NamespaceOne"),
+                // Built-in topics
+                new TopicName("_NormalBorders", "NamespaceOne"),
+                new TopicName("HomePage", "NamespaceOne")
+            );
         }
         [Test]
         public void AllTopicsSortedNoImport()
@@ -302,6 +314,8 @@ namespace FlexWiki.UnitTests
 
             AssertTopicsCorrectOrdered(topics,
                 new TopicName("_ContentBaseDefinition", "NamespaceOne"),
+                new TopicName("_NormalBorders", "NamespaceOne"), // Built-in
+                new TopicName("HomePage", "NamespaceOne"),       // Built-in
                 new TopicName("ReferencedTopic", "NamespaceOne"),
                 new TopicName("ReferencingTopic", "NamespaceOne")
             );
@@ -317,6 +331,10 @@ namespace FlexWiki.UnitTests
 
             AssertTopicsCorrectOrdered(topics,
                 new TopicName("_ContentBaseDefinition", "NamespaceOne"),
+                new TopicName("_NormalBorders", "NamespaceOne"), // Built-in
+                new TopicName("_NormalBorders", "NamespaceTwo"), // Built-in
+                new TopicName("HomePage", "NamespaceOne"), // Built-in
+                new TopicName("HomePage", "NamespaceTwo"), // Built-in
                 new TopicName("ImportedTopic", "NamespaceTwo"),
                 new TopicName("OtherTopic", "NamespaceTwo"),
                 new TopicName("ReferencedTopic", "NamespaceOne"),
@@ -336,7 +354,9 @@ namespace FlexWiki.UnitTests
             AssertTopicsCorrectOrdered(topics,
                 new TopicName("ReferencedTopic", "NamespaceOne"),
                 new TopicName("ReferencingTopic", "NamespaceOne"),
-                new TopicName("_ContentBaseDefinition", "NamespaceOne")
+                new TopicName("_ContentBaseDefinition", "NamespaceOne"), 
+                new TopicName("_NormalBorders", "NamespaceOne"),
+                new TopicName("HomePage", "NamespaceOne")
             );
         }
         [Test]
@@ -447,7 +467,7 @@ namespace FlexWiki.UnitTests
         [Test]
         public void DefinitionTopicLocalName()
         {
-            Assert.AreEqual("_ContentBaseDefinition", NamespaceManager.DefinitionTopicName,
+            Assert.AreEqual("_ContentBaseDefinition", NamespaceManager.DefinitionTopicLocalName,
                 "Checking that NamespaceManager.DefinitionTopicLocalName is correct.");
         }
         [Test]
@@ -457,10 +477,10 @@ namespace FlexWiki.UnitTests
                 TestContentSets.SingleEmptyNamespace);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            TopicName expected = new TopicName(NamespaceManager.DefinitionTopicName,
+            TopicName expected = new TopicName(NamespaceManager.DefinitionTopicLocalName,
                 manager.Namespace);
 
-            Assert.AreEqual(expected.DottedName, manager.DefinitionTopic.DottedName,
+            Assert.AreEqual(expected.DottedName, manager.DefinitionTopicName.DottedName,
                 "Checking that DefinitionTopicName is correct.");
         }
         [Test]
@@ -472,8 +492,12 @@ namespace FlexWiki.UnitTests
 
             manager.DeleteAllTopicsAndHistory();
 
-            Assert.AreEqual(0, manager.AllTopics(ImportPolicy.DoNotIncludeImports).Count,
-                "Checking that the contents of the namespace were deleted.");
+            // Built-in topics should remain
+            Assert.AreEqual(2, manager.AllTopics(ImportPolicy.DoNotIncludeImports).Count,
+                "Checking that the non-default contents of the namespace were deleted.");
+            AssertTopicsCorrectUnordered(manager.AllTopics(ImportPolicy.DoNotIncludeImports),
+                new TopicName("NamespaceOne.HomePage"),
+                new TopicName("NamespaceOne._NormalBorders")); 
         }
         [Test]
         public void DeleteTopic()
@@ -485,8 +509,13 @@ namespace FlexWiki.UnitTests
             string topic = "TopicOne";
             manager.DeleteTopic(topic);
 
-            // The topic should be gone, and its history should be invisible. 
-            Assert.AreEqual(0, manager.AllTopics(ImportPolicy.DoNotIncludeImports).Count, "Checking that no topics are present.");
+            // The topic should be gone, and its history should be invisible. Only 
+            // default topics should remain. 
+            QualifiedTopicNameCollection topics = manager.AllTopics(ImportPolicy.DoNotIncludeImports);
+            Assert.AreEqual(2, topics.Count, "Checking that no topics are present.");
+            AssertTopicsCorrectUnordered(topics,
+                new TopicName("NamespaceOne.HomePage"),
+                new TopicName("NamespaceOne._NormalBorders")); 
             Assert.IsNull(manager.AllChangesForTopic(topic),
                 "Checking that history for deleted topics is not visible.");
 
@@ -674,7 +703,7 @@ namespace FlexWiki.UnitTests
              TestContentSets.SingleEmptyNamespace);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            manager.WriteTopicAndNewVersion(manager.DefinitionTopic.LocalName, "", "author");
+            manager.WriteTopicAndNewVersion(manager.DefinitionTopicName.LocalName, "", "author");
 
             Assert.IsNull(manager.ExposedImageURL(new ExecutionContext()),
                 "Checking that ImageURL returns null when _ContentBaseDefinition has no ImageURL property.");
@@ -851,6 +880,28 @@ namespace FlexWiki.UnitTests
                 "Checking that friendly title comes from Title property when present.");
         }
         [Test]
+        public void GetProviderNegative()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",
+              TestContentSets.SingleEmptyNamespace);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+
+            Assert.IsNull(manager.GetProvider(typeof(NamespaceManagerTests)),
+                "Checking that asking for a provider of a type not in the pipeline returns null.");
+        }
+        [Test]
+        public void GetProviderPositive()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",
+              TestContentSets.SingleEmptyNamespace);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+
+            MockContentStore provider = (MockContentStore) manager.GetProvider(typeof(MockContentStore));
+
+            Assert.IsNotNull(provider, "Checking that a provider could be successfully retrieved.");
+
+        }
+        [Test]
         public void GetReferenceMapAll()
         {
             Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",
@@ -859,7 +910,8 @@ namespace FlexWiki.UnitTests
 
             ReferenceMap map = manager.GetReferenceMap(ExistencePolicy.All);
 
-            Assert.AreEqual(2, map.Keys.Count, "Checking that two items are present in the map.");
+            // The four references include the two built-in topics
+            Assert.AreEqual(4, map.Keys.Count, "Checking that two items are present in the map.");
 
             Assert.AreEqual(3, map["ReferencingTopic"].Count, "Checking that ReferencingTopic references three topics.");
             Assert.AreEqual(
@@ -887,7 +939,8 @@ namespace FlexWiki.UnitTests
 
             ReferenceMap map = manager.GetReferenceMap(ExistencePolicy.ExistingOnly);
 
-            Assert.AreEqual(2, map.Keys.Count, "Checking that two items are present in the map.");
+            // The two default topics have references as well
+            Assert.AreEqual(4, map.Keys.Count, "Checking that two items are present in the map.");
 
             Assert.AreEqual(2, map["ReferencingTopic"].Count, "Checking that ReferencingTopic references two topics.");
             Assert.AreEqual(
@@ -942,7 +995,7 @@ namespace FlexWiki.UnitTests
             // Flip through the history and get the oldest version
             UnqualifiedTopicName topicName = new UnqualifiedTopicName("TopicOne");
             TopicChangeCollection changes = manager.AllChangesForTopic(topicName);
-            UnqualifiedTopicRevision revision = new UnqualifiedTopicRevision(topicName.LocalName, changes[0].Version); 
+            UnqualifiedTopicRevision revision = new UnqualifiedTopicRevision(topicName.LocalName, changes[0].Version);
 
             manager.WriteTopic(revision, "Modified content");
 
@@ -1070,7 +1123,7 @@ namespace FlexWiki.UnitTests
             Assert.AreEqual(3, properties.Count, "Checking that the correct number of properties were returned.");
             AssertTopicPropertyCorrect(properties[0], "PropertyOne", "Value one");
             AssertTopicPropertyCorrect(properties[1], "PropertyTwo", "Value two");
-            AssertTopicPropertyCorrect(properties[2], "OtherProperty", "Some value", "Some other value"); 
+            AssertTopicPropertyCorrect(properties[2], "OtherProperty", "Some value", "Some other value");
 
         }
         [Test]
@@ -1158,11 +1211,11 @@ PropertyOne: List, of, values")
              TestContentSets.SingleEmptyNamespace);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            manager.WriteTopicAndNewVersion(NamespaceManager.DefinitionTopicName,
+            manager.WriteTopicAndNewVersion(NamespaceManager.DefinitionTopicLocalName,
                 "", "Namespace manager tests");
 
             Assert.AreEqual("HomePage", manager.HomePage,
-                "Checking that the home page defaults to the correct value when no value is specified."); 
+                "Checking that the home page defaults to the correct value when no value is specified.");
 
         }
         [Test]
@@ -1185,7 +1238,7 @@ PropertyOne: List, of, values")
 
             manager.HomePage = "FooBar";
 
-            Assert.AreEqual("FooBar", manager.HomePage, "Checking that the home page was changed."); 
+            Assert.AreEqual("FooBar", manager.HomePage, "Checking that the home page was changed.");
         }
         [Test]
         public void HomePageSetOverwrite()
@@ -1195,7 +1248,7 @@ PropertyOne: List, of, values")
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
             manager.HomePage = "FooBar";
-        
+
             Assert.AreEqual("FooBar", manager.HomePage, "Checking that the home page was changed.");
         }
         [Test]
@@ -1247,7 +1300,7 @@ PropertyOne: List, of, values")
              TestContentSets.SingleEmptyNamespace);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            manager.WriteTopicAndNewVersion(manager.DefinitionTopic.LocalName, "", "author");
+            manager.WriteTopicAndNewVersion(manager.DefinitionTopicName.LocalName, "", "author");
 
             Assert.IsNull(manager.ImageURL,
                 "Checking that ImageURL returns null when _ContentBaseDefinition has no ImageURL property.");
@@ -1496,7 +1549,7 @@ PropertyOne: List, of, values")
 
             UnqualifiedTopicName topic = new UnqualifiedTopicName("TopicOne");
             TopicChangeCollection changes = manager.AllChangesForTopic(topic);
-            UnqualifiedTopicRevision revision = new UnqualifiedTopicRevision(topic, changes[1].Version); 
+            UnqualifiedTopicRevision revision = new UnqualifiedTopicRevision(topic, changes[1].Version);
 
             string content = manager.Read(revision);
 
@@ -1536,7 +1589,7 @@ PropertyOne: List, of, values")
 
             string redirectTo = manager.GetTopicProperty(oldName, "Redirect").LastValue;
 
-            Assert.AreEqual(newName, redirectTo, "Checking that the topic redirect was added.");
+            Assert.AreEqual(newName.DottedName, redirectTo, "Checking that the topic redirect was added.");
 
             Assert.AreEqual("rename", AuthorForLastChange(manager, oldName.LocalName),
                 "Checking that the attribution was correct for the change to the old topicName.");
@@ -1858,12 +1911,14 @@ PropertyOne: List, of, values")
 
             ArrayList topics = manager.Topics(new ExecutionContext());
 
-            Assert.AreEqual(2, topics.Count, "Checking that two topics were returned.");
-            Assert.AreEqual("NamespaceOne.TopicOne", ((TopicVersionInfo) topics[0]).ExposedFullname,
-                "Checking that the first topic returned was correct.");
-            Assert.AreEqual("NamespaceOne._ContentBaseDefinition", ((TopicVersionInfo) topics[1]).ExposedFullname,
-                "Checking that the second topic returned was correct.");
+            Assert.AreEqual(4, topics.Count, "Checking that four topics were returned.");
+            AssertTopicsCorrectUnordered(topics,
+                new TopicName("NamespaceOne.TopicOne"),
+                new TopicName("NamespaceOne._ContentBaseDefinition"),
+                new TopicName("NamespaceOne.HomePage"),             // Built-in
+                new TopicName("NamespaceOne._NormalBorders"));      // Built-in
         }
+
         [Test]
         public void TopicsWithNoValueSpecified()
         {
@@ -2083,9 +2138,9 @@ PropertyOne: List, of, values")
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
             string topic = "TopicOne";
-            TopicChangeCollection changesBefore = manager.AllChangesForTopic(topic); 
+            TopicChangeCollection changesBefore = manager.AllChangesForTopic(topic);
 
-            string content = "New content"; 
+            string content = "New content";
             string author = "New author";
             manager.WriteTopicAndNewVersion(topic, content, author);
 
@@ -2096,7 +2151,7 @@ PropertyOne: List, of, values")
             Assert.AreEqual(content, manager.Read(topic),
                 "Checking that the content is correct.");
             Assert.AreEqual(author, changesAfter.Latest.Author,
-                "Checking that the correct author was written."); 
+                "Checking that the correct author was written.");
         }
 
         [Test]
@@ -2107,7 +2162,7 @@ PropertyOne: List, of, values")
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
             string topic = "NewTopic";
-                    string content = "New content";
+            string content = "New content";
             string author = "New author";
             manager.WriteTopicAndNewVersion(topic, content, author);
 
@@ -2136,7 +2191,7 @@ PropertyOne: List, of, values")
         private void AssertTopicChangeCorrect(TopicChange actualChange, string expectedName,
           string expectedAuthor, DateTime expectedTimestamp, string message)
         {
-            Assert.AreEqual(expectedName, actualChange.Topic.LocalName, "Checking that name was correct for " + message);
+            Assert.AreEqual(expectedName, actualChange.TopicRevision.LocalName, "Checking that name was correct for " + message);
             Assert.AreEqual(expectedAuthor, actualChange.Author, "Checking that author was correct for " + message);
             Assert.AreEqual(expectedTimestamp, actualChange.Created, "Checking that timestamp was correct for " + message);
         }
@@ -2150,7 +2205,7 @@ PropertyOne: List, of, values")
             for (int i = 0; i < values.Length; i++)
             {
                 Assert.AreEqual(values[i], topicProperty.Values[i].RawValue,
-                    string.Format("Checking that value {0} is correct.", i)); 
+                    string.Format("Checking that value {0} is correct.", i));
             }
         }
         private void AssertTopicsCorrectOrdered(QualifiedTopicNameCollection actualTopics,
@@ -2164,6 +2219,18 @@ PropertyOne: List, of, values")
                 string message = string.Format("Checking that topic {0} was present.", expectedTopics[i]);
                 Assert.AreEqual(expectedTopics[i].DottedName, actualTopics[i].DottedName, message);
             }
+        }
+        private void AssertTopicsCorrectUnordered(ArrayList actualTopics, params TopicName[] expectedTopics)
+        {
+            QualifiedTopicNameCollection topics = new QualifiedTopicNameCollection();
+
+            foreach (TopicVersionInfo actualTopic in actualTopics)
+            {
+                QualifiedTopicName topic = new QualifiedTopicName(actualTopic.ExposedFullname);
+                topics.Add(topic);
+            }
+
+            AssertTopicsCorrectUnordered(topics, expectedTopics);
         }
         private void AssertTopicsCorrectUnordered(QualifiedTopicNameCollection actualTopics,
             params TopicName[] expectedTopics)

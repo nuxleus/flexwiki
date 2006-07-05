@@ -42,7 +42,8 @@ namespace FlexWiki.UnitTests
         {
             LinkMaker linkMaker = new LinkMaker(siteUrl);
             MockWikiApplication application = new MockWikiApplication(
-                federationConfiguration, linkMaker, 
+                federationConfiguration, 
+                linkMaker, 
                 OutputFormat.HTML, 
                 new MockTimeProvider(TimeSpan.FromSeconds(1)));
             Federation federation = new Federation(application);

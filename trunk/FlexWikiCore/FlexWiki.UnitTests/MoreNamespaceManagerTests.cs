@@ -53,7 +53,7 @@ namespace FlexWiki.UnitTests
             string author = "tester-joebob";
             WikiTestUtilities.WriteTestTopicAndNewVersion(
                 _base, 
-                _base.DefinitionTopic.LocalName, 
+                _base.DefinitionTopicName.LocalName, 
                 @"
 Description: Test description
 Import: FlexWiki.Projects.Wiki1, FlexWiki.Projects.Wiki2", author);

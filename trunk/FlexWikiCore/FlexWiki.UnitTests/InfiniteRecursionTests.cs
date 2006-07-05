@@ -52,7 +52,7 @@ namespace FlexWiki.UnitTests
             string author = "tester-joebob";
             WikiTestUtilities.WriteTestTopicAndNewVersion(
                 _base,
-                _base.DefinitionTopic.LocalName, 
+                _base.DefinitionTopicName.LocalName, 
 @"
 Description: Test description
 Import: FlexWiki.Projects.Wiki1",
@@ -60,7 +60,7 @@ Import: FlexWiki.Projects.Wiki1",
 
             WikiTestUtilities.WriteTestTopicAndNewVersion(
                 _imp1, 
-                _imp1.DefinitionTopic.LocalName, 
+                _imp1.DefinitionTopicName.LocalName, 
 @"
 Description: Test1 description
 Import: FlexWiki.Projects.Wiki2", 
@@ -68,7 +68,7 @@ Import: FlexWiki.Projects.Wiki2",
 
             WikiTestUtilities.WriteTestTopicAndNewVersion(
                 _imp2, 
-                _imp2.DefinitionTopic.LocalName, 
+                _imp2.DefinitionTopicName.LocalName, 
 @"
 Description: Test1 description
 Import: FlexWiki.Projects.Wiki", 

@@ -58,8 +58,8 @@ namespace FlexWiki
             {
                 return new FlexWikiException("A null topic name was specified."); 
             }
-            return new FlexWikiException(string.Format("Topic {0}.{1} does not have a version {2}.", 
-                topic.Namespace ?? "<<null>>", topic.LocalName ?? "<<null>>", 
+            return new FlexWikiException(string.Format("Topic {0} does not have a version {1}.", 
+                topic.DottedName, 
                 version ?? "<<null>>")); 
         }
     }

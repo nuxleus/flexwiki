@@ -197,7 +197,7 @@ namespace FlexWiki.Formatting
 					// Locate any topics via the NamespaceWith propertyName to see 
                     // if there's anybody else we should import (for all topics in the namespace)
 					ArrayList nswith = topicContext.CurrentFederation.GetTopicInfo(ctx, 
-                        topicContext.CurrentTopic.NamespaceManager.DefinitionTopic.DottedName).GetListProperty("NamespaceWith");
+                        topicContext.CurrentTopic.NamespaceManager.DefinitionTopicName.DottedName).GetListProperty("NamespaceWith");
 					if (nswith != null)
 					{
 						nswith.Reverse();
@@ -208,7 +208,7 @@ namespace FlexWiki.Formatting
 							if (abs == null)
 							{
 								throw new Exception("No such topic: " + top + " (as specifed in NamespaceWith: property for " + 
-                                    topicContext.CurrentTopic.NamespaceManager.DefinitionTopic.DottedName + ")");
+                                    topicContext.CurrentTopic.NamespaceManager.DefinitionTopicName.DottedName + ")");
 							}
 							theScope = new TopicScope(theScope, new DynamicTopic(topic.Federation, abs));
 						}

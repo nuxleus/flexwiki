@@ -54,7 +54,7 @@ namespace FlexWiki.UnitTests
             _namespaceManager2 = WikiTestUtilities.CreateMockStore(Federation, ns2);
 
             WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "HomePage", "", _user);
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, _namespaceManager.DefinitionTopic.LocalName, @"Import: FlexWiki2", _user);
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, _namespaceManager.DefinitionTopicName.LocalName, @"Import: FlexWiki2", _user);
             WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "QualifiedLocalPropertyRef", @"
 Color: green
 color=@@topics.QualifiedLocalPropertyRef.Color@@", _user);

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO; 
 using System.Text;
 
 using FlexWiki.Collections;
@@ -10,7 +11,8 @@ namespace FlexWiki
     {
         // Constants
         #region Constants
-        private const string _defaultHomePageContent = @"@flexWiki=http://www.flexwiki.com/default.aspx/FlexWiki/$$$.html
+        private const string c_builtInAuthor = "FlexWiki"; 
+        private const string c_defaultHomePageContent = @"@flexWiki=http://www.flexwiki.com/default.aspx/FlexWiki/$$$.html
 
 !About Wiki
 If you're new to WikiWiki@flexWiki, you should read the VisitorWelcome@flexWiki or OneMinuteWiki@flexWiki .  The two most important things to know are 
@@ -19,7 +21,7 @@ If you're new to WikiWiki@flexWiki, you should read the VisitorWelcome@flexWiki 
 
 Check out the FlexWikiFaq@flexWiki as a means  to collaborate on questions you may have on FlexWiki@flexWiki
 ";
-        private const string _defaultNormalBordersContent = @"
+        private const string c_defaultNormalBordersContent = @"
 :MenuItem:{ tip, command, url |
   with (Presentations) 
   {[
@@ -171,6 +173,8 @@ request.AreDifferencesShown.IfTrue
 ";
         #endregion Constants
         
+        // Fields
+
         // Constructors
 
         public BuiltinTopicsProvider(ContentProviderBase next)
@@ -181,67 +185,141 @@ request.AreDifferencesShown.IfTrue
 
         // Properties
 
-        public override bool Exists
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        public override bool IsReadOnly
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        public override DateTime LastRead
-        {
-            get { throw new NotImplementedException(); }
-        }
-
         // Methods
 
         public override TopicChangeCollection AllChangesForTopicSince(UnqualifiedTopicName topic, DateTime stamp)
         {
-            throw new NotImplementedException();
-        }
+            TopicChangeCollection changes = Next.AllChangesForTopicSince(topic, stamp);
 
+            if (IsBuiltInTopic(topic))
+            {
+                // All the built-in topics have a default revision at DateTime.MinValue. If the 
+                // timestamp is later than that, we don't report back the default revision.
+                if (stamp == DateTime.MinValue)
+                {
+                    if (changes == null)
+                    {
+                        changes = new TopicChangeCollection();
+                    }
+
+                    changes.Insert(0,
+                        new TopicChange(
+                            new QualifiedTopicRevision(
+                                topic.LocalName,
+                                NamespaceManager.Namespace,
+                                QualifiedTopicRevision.NewVersionStringForUser(c_builtInAuthor, DateTime.MinValue)),
+                            DateTime.MinValue,
+                            c_builtInAuthor));
+                }
+            }
+
+            return changes; 
+        }
         public override QualifiedTopicNameCollection AllTopics()
         {
-            throw new NotImplementedException();
-        }
+            QualifiedTopicNameCollection topics = Next.AllTopics();
 
-        public override void DeleteAllTopicsAndHistory()
+            foreach (QualifiedTopicName builtInTopic in GetBuiltInTopics())
+            {
+                if (!topics.Contains(builtInTopic))
+                {
+                    topics.Add(builtInTopic); 
+                }
+            }
+
+            return topics; 
+        }
+        public override TextReader TextReaderForTopic(UnqualifiedTopicRevision topicRevision)
         {
-            throw new NotImplementedException();
+            // We need to special-case the definition topic because otherwise we 
+            // cause an infinite loop: this method calls NamespaceManager.HomePage, 
+            // which calls TextReaderForTopic on the definition topic to figure out
+            // which topic is the home page. 
+            if (IsDefinitionTopic(topicRevision))
+            {
+                return Next.TextReaderForTopic(topicRevision); 
+            }
+            else if (!IsBuiltInTopic(topicRevision))
+            {
+                return Next.TextReaderForTopic(topicRevision); 
+            }
+            else if (topicRevision.Version == null)
+            {
+                TopicChangeCollection changes = Next.AllChangesForTopicSince(
+                    topicRevision.AsUnqualifiedTopicName(), DateTime.MinValue);
+                if (changes == null || changes.Count == 0)
+                {
+                    string defaultContent = DefaultContentFor(topicRevision.LocalName);
+                    return new StringReader(defaultContent);
+                }
+                else
+                {
+                    return Next.TextReaderForTopic(topicRevision);
+                }
+            }
+            else if (topicRevision.Version == TopicRevision.NewVersionStringForUser(c_builtInAuthor, DateTime.MinValue))
+            {
+                string defaultContent = DefaultContentFor(topicRevision.LocalName);
+                return new StringReader(defaultContent);
+            }
+            else
+            {
+                return Next.TextReaderForTopic(topicRevision);
+            }
         }
-
-        public override void DeleteTopic(UnqualifiedTopicName topic)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override bool IsExistingTopicWritable(UnqualifiedTopicName topic)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override System.IO.TextReader TextReaderForTopic(UnqualifiedTopicRevision topicRevision)
-        {
-            throw new NotImplementedException();
-        }
-
         public override bool TopicExists(UnqualifiedTopicName name)
         {
-            throw new NotImplementedException();
+            if (IsBuiltInTopic(name))
+            {
+                return true; 
+            }
+
+            return Next.TopicExists(name); 
         }
 
-        public override void WriteTopic(UnqualifiedTopicRevision topicRevision, string content)
+        private string DefaultContentFor(string topic)
         {
-            throw new NotImplementedException();
+            QualifiedTopicName topicName = new QualifiedTopicName(topic, Namespace);
+
+            if (topicName.Equals(NamespaceManager.HomePageTopicName))
+            {
+                return c_defaultHomePageContent; 
+            }
+            else if (topicName.Equals(NamespaceManager.BordersTopicName))
+            {
+                return c_defaultNormalBordersContent;
+            }
+            else
+            {
+                return null; 
+            }
+            
+        }
+        private QualifiedTopicNameCollection GetBuiltInTopics()
+        {
+            // We need to build this every time, because the name of the HomePage can change dynamically.
+            QualifiedTopicNameCollection builtInTopics = new QualifiedTopicNameCollection();
+
+            builtInTopics.Add(NamespaceManager.HomePageTopicName);
+            builtInTopics.Add(NamespaceManager.BordersTopicName);
+
+            return builtInTopics;
+        }
+        private bool IsBuiltInTopic(UnqualifiedTopicRevision revision)
+        {
+            return IsBuiltInTopic(new UnqualifiedTopicName(revision.LocalName));
+        }
+        private bool IsBuiltInTopic(UnqualifiedTopicName topic)
+        {
+            QualifiedTopicName qualifiedTopicName = new QualifiedTopicName(topic.LocalName, Namespace);
+            return GetBuiltInTopics().Contains(qualifiedTopicName); 
+        }
+        private bool IsDefinitionTopic(UnqualifiedTopicRevision topicRevision)
+        {
+            QualifiedTopicName topicName = new QualifiedTopicName(topicRevision.LocalName, Namespace);
+            return topicName.Equals(NamespaceManager.DefinitionTopicName);
         }
 
-        public override void WriteTopicAndNewVersion(UnqualifiedTopicName topicName, string content, string author)
-        {
-            throw new NotImplementedException();
-        }
 
     }
 }

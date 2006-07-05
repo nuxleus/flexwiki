@@ -26,7 +26,6 @@ namespace FlexWiki.UnitTests
     /// </summary>
     internal class MockContentStore : ContentProviderBase
     {
-        private NamespaceManager _namespaceManager;
         private DateTime _created;
         private MockSetupOptions _options;
         private readonly MockTopicCollection _topics = new MockTopicCollection();
@@ -145,9 +144,7 @@ namespace FlexWiki.UnitTests
 
         public override void Initialize(NamespaceManager manager)
         {
-            base.Initialize(manager);
-
-            _namespaceManager = manager;
+            base.Initialize(manager); 
             _created = manager.Federation.TimeProvider.Now;
         }
 

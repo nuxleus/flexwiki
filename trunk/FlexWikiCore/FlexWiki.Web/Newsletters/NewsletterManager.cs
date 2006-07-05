@@ -155,7 +155,7 @@ namespace FlexWiki.Web.Newsletters
             foreach (TopicChange each in AllChangesForTopicsSince(topics, DateTime.MinValue))
             {
                 ArrayList list;
-                QualifiedTopicRevision nameWithoutVersion = new QualifiedTopicRevision(each.Topic.DottedName);
+                QualifiedTopicRevision nameWithoutVersion = new QualifiedTopicRevision(each.TopicRevision.DottedName);
                 if (!changeMap.ContainsKey(nameWithoutVersion))
                     changeMap[nameWithoutVersion] = new ArrayList();
                 list = (ArrayList)(changeMap[nameWithoutVersion]);
@@ -255,7 +255,7 @@ namespace FlexWiki.Web.Newsletters
                 builder.Append("<div class='NewsletterTopicBody'>");
                 try
                 {
-                    builder.Append(Formatter.FormattedTopicWithSpecificDiffs(newestChange.Topic, OutputFormat.HTML, oldestChange.Topic, Federation, lm));
+                    builder.Append(Formatter.FormattedTopicWithSpecificDiffs(newestChange.TopicRevision, OutputFormat.HTML, oldestChange.TopicRevision, Federation, lm));
                 }
                 catch (Exception ex)
                 {

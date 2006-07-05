@@ -85,7 +85,7 @@ namespace FlexWiki.UnitTests
             _storeTwo = WikiTestUtilities.CreateMockStore(Federation, _storeTwoId);
 
             // Create the _ContentBaseDefinition topics so the wiki will actually work
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_storeOne, _storeOne.DefinitionTopic.LocalName,
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_storeOne, _storeOne.DefinitionTopicName.LocalName,
       @"Import: SecurityTestsTwo
 Contact: CraigAndera
 Description: A test namespace
@@ -97,7 +97,7 @@ ImageURL: http://localhost/wiki/images/",
             WikiTestUtilities.WriteTestTopicAndNewVersion(_storeOne, "ReferencedTopicOne", "Referenced by another topicName", "SecurityTests");
             WikiTestUtilities.WriteTestTopicAndNewVersion(_storeOne, "ReferencedTopicTwo", "Referenced by another topicName", "SecurityTests");
 
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_storeTwo, _storeTwo.DefinitionTopic.LocalName, "Test content", "SecurityTests");
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_storeTwo, _storeTwo.DefinitionTopicName.LocalName, "Test content", "SecurityTests");
             WikiTestUtilities.WriteTestTopicAndNewVersion(_storeTwo, "TopicOne", "NamespaceTwo.TopicOne test content", "SecurityTests");
             WikiTestUtilities.WriteTestTopicAndNewVersion(_storeTwo, "NamespaceTwoTopic", "Foo: Bar\nNamespaceTwo.TopicOne test content", "SecurityTests");
 
@@ -402,7 +402,7 @@ ImageURL: http://localhost/wiki/images/",
         public void DefinitionTopicNameNegative()
         {
             EstablishRoles();
-            Assert.IsNull(_storeOne.DefinitionTopic,
+            Assert.IsNull(_storeOne.DefinitionTopicName,
               "Checking that nothing is returned when no access is granted");
         }
 
@@ -410,7 +410,7 @@ ImageURL: http://localhost/wiki/images/",
         public void DefinitionTopicNamePositive()
         {
             EstablishRoles("NamespaceOneReaders");
-            Assert.IsNotNull(_storeOne.DefinitionTopic,
+            Assert.IsNotNull(_storeOne.DefinitionTopicName,
               "Checking that a non-null topic name is returned when no access is granted");
         }
 
@@ -639,7 +639,7 @@ ImageURL: http://localhost/wiki/images/",
             NamespaceManager storeThree = WikiTestUtilities.CreateMockStore(Federation, "NamespaceThree");
 
             // Create the _ContentBaseDefinition topics so the wiki will actually work
-            WikiTestUtilities.WriteTestTopicAndNewVersion(storeThree, storeThree.DefinitionTopic.LocalName,
+            WikiTestUtilities.WriteTestTopicAndNewVersion(storeThree, storeThree.DefinitionTopicName.LocalName,
               @"Import: SecurityTestsTwo
 Contact: CraigAndera
 Description: A test namespace

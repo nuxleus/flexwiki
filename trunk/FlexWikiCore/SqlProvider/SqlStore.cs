@@ -136,9 +136,9 @@ namespace FlexWiki.SqlProvider
                 //StoreManager.DisplaySpacesInWikiLinks = Convert.ToBoolean(System.Configuration.ConfigurationManager.AppSettings["DisplaySpacesInWikiLinks"]);
             }
 
-            if (SqlHelper.TopicExists(Namespace, NamespaceManager.DefinitionTopicName, ConnectionString))
+            if (SqlHelper.TopicExists(Namespace, NamespaceManager.DefinitionTopicLocalName, ConnectionString))
             {
-                _definitionTopicLastRead = SqlHelper.GetTopicLastWriteTime(Namespace, NamespaceManager.DefinitionTopicName, ConnectionString);
+                _definitionTopicLastRead = SqlHelper.GetTopicLastWriteTime(Namespace, NamespaceManager.DefinitionTopicLocalName, ConnectionString);
 
                 // TODO: Deal with the way properties are extracted now. 
                 Hashtable hash = null; 

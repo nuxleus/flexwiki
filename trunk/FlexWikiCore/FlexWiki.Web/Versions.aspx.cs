@@ -145,7 +145,7 @@ namespace FlexWiki.Web
 				}
 				else 
 				{
-					output.Append("&nbsp;&nbsp;<span class='version'><a href='" + TheLinkMaker.LinkToTopic(change.Topic)  + "' title='Show this version' >");
+					output.Append("&nbsp;&nbsp;<span class='version'><a href='" + TheLinkMaker.LinkToTopic(change.TopicRevision)  + "' title='Show this version' >");
 					if (change.Created.Date == DateTime.Now.Date)
 					{
 						output.Append(" Today, " + change.Created.ToString("HH:mm"));

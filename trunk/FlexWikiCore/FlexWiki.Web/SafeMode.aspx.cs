@@ -191,7 +191,7 @@ namespace FlexWiki.Web
 						s += change.Created.ToString("MMM d yyyy  H:mm");
 				}	
 				s += "&nbsp;&nbsp;(" + change.Author + ")";	
-				QualifiedTopicRevision linkTo = change.Topic;
+				QualifiedTopicRevision linkTo = change.TopicRevision;
 				if (first)
 					linkTo.Version = null;	// don't include the version for the latest one
 				options += "<option rawValue='"+ lm.LinkToTopic(linkTo)  + "' " + sel + ">" + s + "</option>";

@@ -72,7 +72,7 @@ namespace FlexWiki
             get { return _namespaceManager; }
         }
 
-        protected virtual ContentProviderBase Next
+        public virtual ContentProviderBase Next
         {
             get { return _next; }
             set { _next = value; }
@@ -124,7 +124,11 @@ namespace FlexWiki
         }
         public virtual void Initialize(NamespaceManager namespaceManager)
         {
-            _namespaceManager = namespaceManager; 
+            _namespaceManager = namespaceManager;
+            if (_next != null)
+            {
+                _next.Initialize(namespaceManager);
+            }
         }
         /// <summary>
         /// Answer whether a topic exists and is writable

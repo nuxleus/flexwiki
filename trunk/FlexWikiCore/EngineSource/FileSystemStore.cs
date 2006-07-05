@@ -73,7 +73,7 @@ namespace FlexWiki
         {
             get
             {
-                return NamespaceManager.DefinitionTopicName + ".wiki";
+                return NamespaceManager.DefinitionTopicLocalName + ".wiki";
             }
         }
         private Federation Federation

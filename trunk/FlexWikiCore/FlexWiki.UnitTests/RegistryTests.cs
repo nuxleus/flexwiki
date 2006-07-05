@@ -59,7 +59,7 @@ namespace FlexWiki.UnitTests
             _other3 = WikiTestUtilities.CreateMockStore(Federation, "Other3");
             _namespaceManager5 = WikiTestUtilities.CreateMockStore(Federation, "Space5");
 
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_base, _base.DefinitionTopic.LocalName, @"Import: FlexWiki.Other1, Other2", author);
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_base, _base.DefinitionTopicName.LocalName, @"Import: FlexWiki.Other1, Other2", author);
             WikiTestUtilities.WriteTestTopicAndNewVersion(_base, "TopicOne", @"OtherOneHello", author);
             WikiTestUtilities.WriteTestTopicAndNewVersion(_base, "TopicTwo", @"FlexWiki.Other1.OtherOneGoodbye", author);
             WikiTestUtilities.WriteTestTopicAndNewVersion(_base, "TopicThree", @"No.Such.Namespace.FooBar", author);
@@ -69,7 +69,7 @@ Role:Designer", author);
             WikiTestUtilities.WriteTestTopicAndNewVersion(_base, "TopicSix", @".GooBar
 Role:Developer", author);
 
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_other1, _other1.DefinitionTopic.LocalName, @"Import: Other3,Other2", author);
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_other1, _other1.DefinitionTopicName.LocalName, @"Import: Other3,Other2", author);
             WikiTestUtilities.WriteTestTopicAndNewVersion(_other1, "OtherOneHello", @"hello
 Role:Developer", author);
             WikiTestUtilities.WriteTestTopicAndNewVersion(_other1, "OtherOneGoodbye", @"goodbye", author);

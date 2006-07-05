@@ -64,11 +64,11 @@ namespace FlexWiki
             }
         }
         [ExposedMethod(ExposedMethodFlags.Default, "Answer the full name of the topic whose change is described by this TopicChange")]
-        public string Fullname
+        public string DottedName
         {
             get
             {
-                return Topic.ToString();
+                return TopicRevision.DottedName;
             }
         }
         [ExposedMethod(ExposedMethodFlags.Default, "Answer a DateTime that indicates when this version was last modified.")]
@@ -79,7 +79,7 @@ namespace FlexWiki
                 return _modified; 
             }
         }
-        public QualifiedTopicRevision Topic
+        public QualifiedTopicRevision TopicRevision
         {
             get
             {
@@ -91,7 +91,7 @@ namespace FlexWiki
         {
             get
             {
-                return Topic.Version;
+                return TopicRevision.Version;
             }
         }
 
@@ -103,7 +103,7 @@ namespace FlexWiki
                 return -1;
             TopicChange other = (TopicChange)obj;
             int answer;
-            answer = Topic.CompareTo(other.Topic);
+            answer = TopicRevision.CompareTo(other.TopicRevision);
             if (answer != 0)
                 return answer;
             return Created.CompareTo(other.Created);

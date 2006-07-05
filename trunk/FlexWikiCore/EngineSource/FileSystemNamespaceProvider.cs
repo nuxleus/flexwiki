@@ -154,17 +154,17 @@ namespace FlexWiki
             string author = "";
             FileSystemStore store = new FileSystemStore();
             NamespaceManager manager = aFed.RegisterNamespace(store, Namespace);
-            manager.WriteTopic(NamespaceManager.DefinitionTopicName, "");
-            manager.SetTopicPropertyValue(NamespaceManager.DefinitionTopicName, "Contact", Contact, false, author);
-            manager.SetTopicPropertyValue(NamespaceManager.DefinitionTopicName, "Title", Title, false, author);
+            manager.WriteTopic(NamespaceManager.DefinitionTopicLocalName, "");
+            manager.SetTopicPropertyValue(NamespaceManager.DefinitionTopicLocalName, "Contact", Contact, false, author);
+            manager.SetTopicPropertyValue(NamespaceManager.DefinitionTopicLocalName, "Title", Title, false, author);
             string defaultImportedNamespaces = System.Configuration.ConfigurationManager.AppSettings["DefaultImportedNamespaces"];
             if (defaultImportedNamespaces != null)
             {
-                manager.SetTopicPropertyValue(NamespaceManager.DefinitionTopicName, "Import", defaultImportedNamespaces, false, author);
+                manager.SetTopicPropertyValue(NamespaceManager.DefinitionTopicLocalName, "Import", defaultImportedNamespaces, false, author);
             }
 
             // whoever is last should write a new version
-            manager.SetTopicPropertyValue(NamespaceManager.DefinitionTopicName, "Description", NamespaceDescription, true, author);
+            manager.SetTopicPropertyValue(NamespaceManager.DefinitionTopicLocalName, "Description", NamespaceDescription, true, author);
 
             ArrayList answer = new ArrayList();
             answer.Add(Namespace);
