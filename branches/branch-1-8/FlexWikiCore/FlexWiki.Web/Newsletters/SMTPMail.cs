@@ -161,7 +161,7 @@ namespace FlexWiki.Newsletters
         Header.Append("\r\n");
       }
       Header.Append( "Date: " );
-      Header.Append(DateTime.Now.ToString("ddd, d M y H:m:s z" ));
+      Header.Append(DateTime.Now.ToString("ddd, dd MMM yyyy HH:mm:ss zzzz" ));
       Header.Append("\r\n");
       Header.Append("Subject: " + message.Subject+ "\r\n");
 	  Header.Append("MIME-Version: 1.0\r\n");
